@@ -7,7 +7,7 @@ var express = require('express'),
     request = require("request");
 
 // Set server port
-app.listen(process.env.PORT || 4000);
+app.set('port', (process.env.PORT || 5000));
 console.log('server is running');
 
 var connection = mysql.createConnection({
@@ -57,6 +57,9 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
+});
+app.listen(app.get('port'), function() {
+  console.log("Node app is running at localhost:" + app.get('port'));
 });
 
 io.on('connection', function(socket) {
@@ -120,9 +123,6 @@ io.on('connection', function(socket) {
             io.emit("next song");
         }
     });
-});
-http.listen(process.env.PORT || 4001, function() {
-    console.log('listening on *:4001');
 });
 
 function genID(length) {

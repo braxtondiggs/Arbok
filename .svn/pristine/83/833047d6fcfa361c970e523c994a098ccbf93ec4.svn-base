@@ -1,0 +1,8 @@
+dependencies: \
+  /Users/braxtondiggs/Documents/Sites/Quilava/platforms/ios/CordovaLib/Classes/CDVPlugin.m \
+  /Users/braxtondiggs/Documents/Sites/Quilava/platforms/ios/CordovaLib/Classes/CDVPlugin.h \
+  /Users/braxtondiggs/Documents/Sites/Quilava/platforms/ios/CordovaLib/Classes/CDVPluginResult.h \
+  /Users/braxtondiggs/Documents/Sites/Quilava/platforms/ios/CordovaLib/Classes/NSMutableArray+QueueAdditions.h \
+  /Users/braxtondiggs/Documents/Sites/Quilava/platforms/ios/CordovaLib/Classes/CDVCommandDelegate.h \
+  /Users/braxtondiggs/Documents/Sites/Quilava/platforms/ios/CordovaLib/Classes/CDVAvailability.h \
+  /Users/braxtondiggs/Documents/Sites/Quilava/platforms/ios/CordovaLib/Classes/CDVInvokedUrlCommand.h

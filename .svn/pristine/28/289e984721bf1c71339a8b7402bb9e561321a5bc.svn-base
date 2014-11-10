@@ -1,0 +1,85 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Base extends CI_Controller {
+	function __construct()
+	{
+		parent::__construct();
+		header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+		$this->load->helper(array('form', 'url'));
+	}
+	
+	public function index(){
+		$this->load->view('home');
+	}
+	public function test() {
+		$this->load->view('test');
+	}
+	public function delete() {
+		$path = $this->input->post('file');
+		unlink(FCPATH .'tmp/' . basename($path));
+	}
+	public function upload() {
+		$config['upload_path'] = 'tmp/';
+		$config['allowed_types'] = '*';
+
+		$this->load->library('upload', $config);
+
+		if (!$this->upload->do_upload('audio')){
+			$error = json_encode(array('error' => $this->upload->display_errors()));
+			print_r($error);
+		}else{
+			$data = $this->upload->data();
+			$json = json_encode(array('upload_data' => $data, 'id3' => $this->_getID3($data['full_path'])));
+			print_r($json);
+		}
+	}
+	
+	
+	private function _getID3($filename=NULL){
+		$FrameData = array('AENC'=>'Audio encryption',  'APIC'=>'Attached picture', 'COMM'=>'Comments', 'COMR'=>'Commercial frame', 'ENCR'=>'Encryption method registration', 'EQUA'=>'Equalization', 'ETCO'=>'Event timing codes', 'GEOB'=>'General encapsulated object', 'GRID'=>'Group identification registration', 'IPLS'=>'Involved people list', 'LINK'=>'Linked information', 'MCDI'=>'Music CD identifier', 'MLLT'=>'MPEG location lookup table', 'OWNE'=>'Ownership frame', 'PRIV'=>'Private frame', 'PCNT'=>'Play counter', 'POPM'=>'Popularimeter', 'POSS'=>'Position synchronisation frame', 'RBUF'=>'Recommended buffer size', 'RVAD'=>'Relative volume adjustment', 'RVRB'=>'Reverb', 'SYLT'=>'Synchronized lyric/text', 'SYTC'=>'Synchronized tempo codes', 'TALB'=>'Album/Movie/Show title', 'TBPM'=>'BPM (beats per minute)', 'TCOM'=>'Composer', 'TCON'=>'Content type', 'TCOP'=>'Copyright message', 'TDAT'=>'Date', 'TDLY'=>'Playlist delay', 'TENC'=>'Encoded by', 'TEXT'=>'Lyricist/Text writer', 'TFLT'=>'File type', 'TIME'=>'Time', 'TIT1'=>'Content group description', 'TIT2'=>'Title/songname/content description', 'TIT3'=>'Subtitle/Description refinement', 'TKEY'=>'Initial key', 'TLAN'=>'Language(s)', 'TLEN'=>'Length', 'TMED'=>'Media type', 'TOAL'=>'Original album', 'TOFN'=>'Original filename', 'TOLY'=>'Original lyricist(s)/text writer(s)', 'TOPE'=>'Original artist(s)/performer(s)', 'TORY'=>'Original release year', 'TOWN'=>'File owner/licensee', 'TPE1'=>'Lead performer(s)/Soloist(s)', 'TPE2'=>'Band/orchestra/accompaniment', 'TPE3'=>'Conductor/performer refinement', 'TPE4'=>'Interpreted, remixed, or otherwise modified by', 'TPOS'=>'Part of a set', 'TPUB'=>'Publisher', 'TRCK'=>'Track number/Position in set', 'TRDA'=>'Recording dates', 'TRSN'=>'Internet radio station name', 'TRSO'=>'Internet radio station owner', 'TSIZ'=>'Size', 'TSRC'=>'ISRC (international standard recording code)', 'TSSE'=>'Software/Hardware and settings used for encoding', 'TYER'=>'Year', 'TXXX'=>'User defined text information frame', 'UFID'=>'Unique file identifier', 'USER'=>'Terms of use', 'USLT'=>'Unsychronized lyric/text transcription', 'WCOM'=>'Commercial information', 'WCOP'=>'Copyright/Legal information', 'WOAF'=>'Official audio file webpage', 'WOAR'=>'Official artist/performer webpage', 'WOAS'=>'Official audio source webpage', 'WORS'=>'Official internet radio station homepage', 'WPAY'=>'Payment', 'WPUB'=>'Publishers official webpage', 'WXXX'=>'User defined URL link frame');
+		$Genres = array(0 => 'Blues', 1 => 'Classic Rock', 2 => 'Country', 3 => 'Dance', 4 => 'Disco', 5 => 'Funk', 6 => 'Grunge', 7 => 'Hip-Hop', 8 => 'Jazz', 9 => 'Metal', 10 => 'New Age', 11 => 'Oldies', 12 => 'Other', 13 => 'Pop', 14 => 'R&B', 15 => 'Rap', 16 => 'Reggae', 17 => 'Rock', 18 => 'Techno', 19 => 'Industrial', 20 => 'Alternative', 21 => 'Ska', 22 => 'Death Metal', 23 => 'Pranks', 24 => 'Soundtrack', 25 => 'Euro-Techno', 26 => 'Ambient', 27 => 'Trip-Hop', 28 => 'Vocal', 29 => 'Jazz+Funk', 30 => 'Fusion', 31 => 'Trance', 32 => 'Classical', 33 => 'Instrumental', 34 => 'Acid', 35 => 'House', 36 => 'Game', 37 => 'Sound Clip', 38 => 'Gospel', 39 => 'Noise', 40 => 'Alternative Rock', 41 => 'Bass', 42 => 'Soul', 43 => 'Punk', 44 => 'Space', 45 => 'Meditative', 46 => 'Instrumental Pop', 47 => 'Instrumental Rock', 48 => 'Ethnic', 49 => 'Gothic', 50 => 'Darkwave', 51 => 'Techno-Industrial', 52 => 'Electronic', 53 => 'Pop-Folk', 54 => 'Eurodance', 55 => 'Dream', 56 => 'Southern Rock', 57 => 'Comedy', 58 => 'Cult', 59 => 'Gangsta', 60 => 'Top 40', 61 => 'Christian Rap', 62 => 'Pop/Funk', 63 => 'Jungle', 64 => 'Native US', 65 => 'Cabaret', 66 => 'New Wave', 67 => 'Psychadelic', 68 => 'Rave', 69 => 'Showtunes', 70 => 'Trailer', 71 => 'Lo-Fi', 72 => 'Tribal', 73 => 'Acid Punk', 74 => 'Acid Jazz', 75 => 'Polka', 76 => 'Retro', 77 => 'Musical', 78 => 'Rock & Roll', 79 => 'Hard Rock', 80 => 'Folk', 81 => 'Folk-Rock', 82 => 'National Folk', 83 => 'Swing', 84 => 'Fast Fusion', 85 => 'Bebob', 86 => 'Latin', 87 => 'Revival', 88 => 'Celtic', 89 => 'Bluegrass', 90 => 'Avantgarde', 91 => 'Gothic Rock', 92 => 'Progressive Rock', 93 => 'Psychedelic Rock', 94 => 'Symphonic Rock', 95 => 'Slow Rock', 96 => 'Big Band', 97 => 'Chorus', 98 => 'Easy Listening', 99 => 'Acoustic', 100 => 'Humour', 101 => 'Speech', 102 => 'Chanson', 103 => 'Opera', 104 => 'Chamber Music', 105 => 'Sonata', 106 => 'Symphony', 107 => 'Booty Bass', 108 => 'Primus', 109 => 'Porn Groove', 110 => 'Satire', 111 => 'Slow Jam', 112 => 'Club', 113 => 'Tango', 114 => 'Samba', 115 => 'Folklore', 116 => 'Ballad', 117 => 'Power Ballad', 118 => 'Rhytmic Soul', 119 => 'Freestyle', 120 => 'Duet', 121 => 'Punk Rock', 122 => 'Drum Solo', 123 => 'Acapella', 124 => 'Euro-House', 125 => 'Dance Hall', 126 => 'Goa', 127 => 'Drum & Bass', 128 => 'Club-House', 129 => 'Hardcore', 130 => 'Terror', 131 => 'Indie', 132 => 'BritPop', 133 => 'Negerpunk', 134 => 'Polsk Punk', 135 => 'Beat', 136 => 'Christian Gangsta', 137 => 'Heavy Metal', 138 => 'Black Metal', 139 => 'Crossover', 140 => 'Contemporary C', 141 => 'Christian Rock', 142 => 'Merengue', 143 => 'Salsa', 144 => 'Thrash Metal', 145 => 'Anime', 146 => 'JPop', 147 => 'SynthPop');
+	 
+		if (strtoupper($filename)=="GETFRAMES")
+			RETURN $FrameData;
+		if (strtoupper($filename)=="GETGENRES")
+			RETURN $Genres;
+	 
+		if (!$ID3Header = file_get_contents($filename,NULL,NULL,0,5000))
+			trigger_error("File not found in getID3",E_USER_ERROR);
+	 
+		$OutChar = $OutNum = $Explode = $ASCII = NULL;
+		for ($i=0;$i<=strlen($ID3Header);$i++)
+			{
+			$ThisChar = substr($ID3Header,$i,1);
+			if (ord($ThisChar)>31 && ord($ThisChar)<127)
+				$ASCII .= $ThisChar;
+			}
+		//Detect the frame's start	
+		foreach($FrameData as $k => $v)
+			{
+			$FrameStart[$k] = stripos($ASCII,$k)+strlen($k);
+			if ($FrameStart[$k]==4)
+				unset($FrameStart[$k]);
+			}
+		//Detect conflicting frame to find end of frame
+		foreach($FrameStart as $FSKey => $FSValue)
+			{
+			$ThisFrame = substr($ASCII,$FSValue,80);
+			$LastCheck=80;
+	 
+			foreach($FrameData as $k => $v)
+				{
+				if (stripos($ThisFrame,$k)<=$LastCheck && stripos($ThisFrame,$k)>0)
+					$LastCheck = stripos($ThisFrame,$k);
+				}
+			$FrameLength[$FSKey] = $LastCheck;
+			}
+		foreach($FrameStart as $k => $v)
+			{
+			$FrameOut[$FrameData[$k]] = trim(substr($ASCII,$v,$FrameLength[$k]));
+			$FrameOut[$k] = trim(substr($ASCII,$v,$FrameLength[$k]));
+			}
+		RETURN $FrameOut;	
+	}
+}

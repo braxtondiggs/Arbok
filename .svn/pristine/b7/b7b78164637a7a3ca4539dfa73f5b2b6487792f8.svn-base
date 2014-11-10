@@ -1,0 +1,133 @@
+var express = require('express')
+  , app = express()  
+  , server = require('http').createServer(app)
+  , path = require('path')
+  , io = require('socket.io').listen(server)
+  , spawn = require('child_process').spawn
+  //, mysql = require('mysql')
+
+// all environments
+app.set('port', process.env.TEST_PORT || 8080);
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.static(path.join(__dirname, 'public')));
+/*
+var db = mysql.createConnection({
+    host: 'localhost',
+    port: 8889,
+    user: 'root',
+    password: 'root',
+    database: 'node'
+})
+
+db.connect(function(err){
+    if (err) console.log(err)
+})*/
+
+// development only
+if ('development' == app.get('env')) {
+  app.use(express.errorHandler());
+}
+
+//Routes
+app.get('/', function (req, res) {
+  res.sendfile(__dirname + '/public/index.html');
+});
+
+server.listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
+
+//Socket.io Config
+io.set('log level', 1);
+
+server.listen(app.get('port'), function(){
+  console.log('QBox is running on port ' + app.get('port'));
+});
+
+var ss, rr, playlist = Array(), votes = {total: 0, count: 0, actions: {up: 0, down:0}};
+//playlist = {0: {info: {client_name: "Sango - Da Rocinha - 01 Sempre.mp3", file_name: "Sango_-_Da_Rocinha_-_01_Sempre.mp3"}, 'id3': {album: "Da Rocinha", art: "", artist: "Sango", track: "Sempre"}}, 1: {info: {client_name: "Sango - Da Rocinha - 01 Sempre.mp3", file_name: "Sango_-_Da_Rocinha_-_01_Sempre.mp3"}, 'id3': {album: "Da Rocinha", art: "", artist: "Sango", track: "Sempre"}}, 2: {info: {client_name: "Sango - Da Rocinha - 01 Sempre.mp3", file_name: "Sango_-_Da_Rocinha_-_01_Sempre.mp3"}, 'id3': {album: "Da Rocinha", art: "", artist: "Sango", track: "Sempre"}}};
+//Run and pipe shell script output
+function run_shell(cmd, args, cb, end) {
+    var spawn = require('child_process').spawn,
+        child = spawn(cmd, args),
+        me = this;
+    child.stdout.on('data', function (buffer) { cb(me, buffer); });
+    child.stdout.on('end', end);
+}
+
+//Socket.io Server
+io.sockets.on('connection', function (socket) {
+    socket.on("screen", function(data){
+	socket.type = "screen";
+	ss = socket;
+	ss.emit('init', {'playlist': playlist, 'vote': votes});
+	console.log("Screen ready...");
+    });
+    socket.on("remote", function(data){
+	socket.type = "remote";
+	rr  = socket;
+	rr.emit('init', {'playlist': playlist[0], 'vote': votes})
+	console.log("Remote ready...");
+    });
+    socket.on("new song", function(data){
+	ss.emit('new song', data);
+    });
+    socket.on("song change", function(data){
+	votes = {total: 0, count: 0, actions: {up: 0, down:0}};
+	rr.emit('song change', data);
+    });
+    socket.on("playlist", function(data) {
+	playlist = data;
+    });
+    socket.on("emptied", function(data) {
+	playlist = Array();
+	rr.emit('song change', playlist[0]);
+    });
+    socket.on("vote", function(data){
+	var val = (data.action == "up")?1:-1;
+	votes.total+=val;
+	votes.count+=1;
+	if (data.action == "up") {
+	    votes.actions.up+=1;
+	}else {
+	    votes.actions.down+=1; 
+	}
+	rr.emit('vote change', data);
+	ss.emit('vote change', data);
+    });
+    
+        // Use node's db injection format to filter incoming data
+       //db.query('INSERT INTO notes (note) VALUES (?)', data.action)
+ })
+ 
+ /* socket.on("upload", function(data) {
+    console.log(data);
+    console.log('upload start');
+    io.sockets.emit("uploadstart", data);
+  });
+ 
+ socket.on("video", function(data){
+
+    if( data.action === "play"){
+    var id = data.video_id,
+         url = "http://www.youtube.com/watch?v="+id;
+
+    var runShell = new run_shell('youtube-dl',['-o','%(id)s.%(ext)s','-f','/18/22',url],
+        function (me, buffer) {
+            me.stdout += buffer.toString();
+            socket.emit("loading",{output: me.stdout});
+            console.log(me.stdout);
+         },
+        function () {
+            //child = spawn('omxplayer',[id+'.mp4']);
+            omx.start(id+'.mp4');
+        });
+    }
+
+ });
+});*/
+ 
+ 

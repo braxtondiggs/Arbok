@@ -1,0 +1,121 @@
+$(function() {
+    $(".menu-button").on("click", function() {
+        $(this).toggleClass("closing opening").css({'background-color':'#666'}).delay(150).queue(function(){$(this).css({'background-color':'transparent'});$(this).dequeue();});
+        $(".slidr").toggleClass("opened closed");
+        return false;
+    });
+    $(".menu-search").on("click", function() {
+        MenuItem($(this));
+        $(".search-page").show();
+        toggleSlidr();
+        $("header").addClass("search");
+        $(".search").trigger("focus");
+        return false;
+    });
+    $(".search").on("keyup", function() {
+        if ($(this).val().length >= 1) {
+            $(".clear-search").fadeIn();
+        }else{
+            $(".clear-search").fadeOut();
+        }
+    })
+    $(".clear-search").on("click", function() {
+        $(".search").val("");
+        $(this).fadeOut();
+    });
+    $("#header-search form").on("submit", function() {
+        search();
+        $("input.search").trigger("blur");
+        return false;
+    });
+    $("#search-tracks").on("click", "li", function() {
+        //navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        var position;
+        position.coords.latitude = 38.903274;
+        position.coords.longitude = -77.021602;
+        onSuccess(position);
+    });
+    function search() {
+        var s = $("input.search").val();
+        $.ajax({
+            type: "GET",
+            crossDomain: true,
+            url: "http://10.0.0.229:4000/search",
+            data: {v: s}
+        }).done(function(data){
+            $(".search-results ul").html("");
+            $.each(data.tracks.items, function(k, v) {
+                if (s.toLowerCase().indexOf(v.name.toLowerCase()) > -1) {
+                    console.log("track "+ v.name);
+                    $("#search-tracks").append($("<li />",{"data-id":v.id}).append($("<h5 />").text(v.name)).append($("<p />").text(v.artists[0].name)))
+                }else if (s.toLowerCase().indexOf(v.artists[0].name.toLowerCase()) > -1) {
+                    $("#search-artist").append($("<li />",{"data-id":""}).append($("<img />", {href: "http://placehold.it/80x80"})).append($("<h5 />").text(v.artists[0].name)))
+                }else if (s.toLowerCase().indexOf(v.album.name.toLowerCase()) > -1) {
+                    $("#search-album").append($("<li />",{"data-id":""}).append($("<img />", {href: v.album.images[2].url})).append($("<h5 />").text(v.album.name)).append($("<p />").text(v.artists[0].name)))
+                }
+            });
+        });
+    }
+    function toggleSlidr() {
+         $(".slidr").toggleClass("opened closed");
+         $(".menu-button").toggleClass("closing opening")
+    }
+    function removeSearch() {
+         $("header").removeClass("search");
+    }
+    function MenuItem(_this) {
+         $(".slidr-menu li.active").removeClass("active");
+         $(".container > ul > li").hide();
+         $(_this).addClass('active');
+    }
+    
+    function onSuccess(position) {
+        console.log(position);
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        $.ajax({
+            type: "GET",
+            crossDomain: true,
+            url: "http://10.0.0.229:4000/servers",
+            data: {lat: lat, lon: lon}
+        }).done(function(data){
+        
+        })
+    }
+    function onError(error) {
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    }
+});
+
+var app = {
+    // Application Constructor
+    initialize: function() {
+        this.bindEvents();
+    },
+    // Bind Event Listeners
+    //
+    // Bind any events that are required on startup. Common events are:
+    // 'load', 'deviceready', 'offline', and 'online'.
+    bindEvents: function() {
+        document.addEventListener('deviceready', this.onDeviceReady, false);
+    },
+    // deviceready Event Handler
+    //
+    // The scope of 'this' is the event. In order to call the 'receivedEvent'
+    // function, we must explicitly call 'app.receivedEvent(...);'
+    onDeviceReady: function() {
+        app.receivedEvent('deviceready');
+    },
+    // Update DOM on a Received Event
+    receivedEvent: function(id) {
+        var parentElement = document.getElementById(id);
+        var listeningElement = parentElement.querySelector('.listening');
+        var receivedElement = parentElement.querySelector('.received');
+
+        listeningElement.setAttribute('style', 'display:none;');
+        receivedElement.setAttribute('style', 'display:block;');
+
+        console.log('Received Event: ' + id);
+    }
+};

@@ -7,7 +7,7 @@ var express = require('express'),
     request = require("request");
 
 // Set server port
-app.listen(4000);
+app.listen(process.env.PORT || 4000);
 console.log('server is running');
 
 var connection = mysql.createConnection({
@@ -121,7 +121,7 @@ io.on('connection', function(socket) {
         }
     });
 });
-http.listen(4001, function() {
+http.listen(process.env.PORT || 4001, function() {
     console.log('listening on *:4001');
 });
 

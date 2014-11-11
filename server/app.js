@@ -8,14 +8,34 @@ var express = require('express'),
 
 // Set server port
 app.set('port', (process.env.PORT || 5000));
-console.log('server is running');
 
-var connection = mysql.createConnection({
+var db_config = {
     host: 'us-cdbr-iron-east-01.cleardb.net',
     user: 'b3b9b17a92408d',
     password: 'a0f39082',
     database: 'heroku_d16dd5404e8d931'
-});
+};
+
+function handleDisconnect() {
+    connection = mysql.createConnection(db_config);
+
+    connection.connect(function(err) {
+        if(err) {
+            console.log('error when connecting to db:', err);
+            setTimeout(handleDisconnect, 2000);
+        }
+    });
+
+    connection.on('error', function(err) {
+        console.log('db error', err);
+        if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+            handleDisconnect();
+        }else {
+            throw err;
+        }
+    });
+
+}
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'X-Requested-With');

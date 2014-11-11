@@ -1,8 +1,8 @@
 // set variables for environment
 var express = require('express'),
     app = express(),
-    http = require('http').Server(app),
-    io = require('socket.io')(http),
+    http = require('http').createServer(app),
+    io = require('socket.io').listen(http),
     mysql = require('mysql'),
     request = require("request");
 
@@ -78,7 +78,7 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
-app.listen(app.get('port'), function() {
+http.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
 });
 

@@ -4,23 +4,29 @@ var express = require('express'),
     http = require('http').createServer(app),
     io = require('socket.io').listen(http),
     mysql = require('mysql'),
-    request = require("request");
+    request = require("request"),
+    cheerio = require('cheerio');
 
 // Set server port
 app.set('port', (process.env.PORT || 5000));
 
-var db_config = {
+/*var db_config = {
     host: 'us-cdbr-iron-east-01.cleardb.net',
     user: 'b3b9b17a92408d',
     password: 'a0f39082',
     database: 'heroku_d16dd5404e8d931'
+};*/
+var db_config = {
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'cymbitco_quilava'
 };
-
 function handleDisconnect() {
     connection = mysql.createConnection(db_config);
 
     connection.connect(function(err) {
-        if(err) {
+        if (err) {
             console.log('error when connecting to db:', err);
             setTimeout(handleDisconnect, 2000);
         }
@@ -28,10 +34,42 @@ function handleDisconnect() {
 
     connection.on('error', function(err) {
         console.log('db error', err);
-        if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
             handleDisconnect();
-        }else {
+        } else {
             throw err;
+        }
+    });
+}
+
+var IMVDBurls = {0:{url:"http://imvdb.com/charts/new",title:"Best New Music Video"},1:{url:"http://imvdb.com/new", title:"Brand New Music Videos"}, 2:{url:"http://imvdb.com/charts/week", title:"Top Music Video of The Week"}, 3:{url:"http://imvdb.com/charts/month", title:"Top Music Video of The Month"}, 4:{url:"http://imvdb.com/charts/all", title:"Top Music Video of All Time"}};
+
+
+function getIMVDB(id, list, url) {
+    request(url, function(error, response, html) {
+        if (!error && response.statusCode == 200) {
+            var $ = cheerio.load(html);
+            $("table.imvdb-chart-table tr").each(function(i, element) {
+                var post_music = {
+                    id: id,
+                    artist: $(this).find(".artist_line a").attr("title"),
+                    title:"",
+                    image:""
+                },
+                    post = {
+                        id: id,
+                        title: list
+                    };
+                connection.query("INSERT INTO jukebox_list SET ?", post, function(err, rows, results) {
+                    if (err) throw err;
+                });
+                connection.query("INSERT INTO jukebox_list_music SET ?", post_music, function(err, rows, results) {
+                    if (err) throw err;
+                });
+
+
+                //console.log("artist: " + );
+            });
         }
     });
 }
@@ -79,14 +117,19 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 http.listen(app.get('port'), function() {
-  console.log("Node app is running at localhost:" + app.get('port'));
+    console.log("Node app is running at localhost:" + app.get('port'));
 });
 
 io.on('connection', function(socket) {
     console.log('a user connected');
     socket.on('server init', function(msg, fn) {
         var sid = genID(12),
-            post = {sid: sid, name: msg.name, lat: msg.location.lat, lng: msg.location.lng};
+            post = {
+                sid: sid,
+                name: msg.name,
+                lat: msg.location.lat,
+                lng: msg.location.lng
+            };
         connection.query("INSERT INTO jukebox_locations SET ?", post, function(err, rows, results) {
             if (err) throw err;
             socket.broadcast.emit('New Server');
@@ -116,7 +159,16 @@ io.on('connection', function(socket) {
         }, function(error, response, body) {
             if (!error && response.statusCode === 200) {
                 var customtrack_id = genID(12),
-                    post = {customtrack_id: customtrack_id,track_id: body.id, youtube_id: body.sources[0].source_data, artist: body.artists[0].name, track: body.song_title, image: body.image.o, year: body.year, jukebox_id: jukebox_id};
+                    post = {
+                        customtrack_id: customtrack_id,
+                        track_id: body.id,
+                        youtube_id: body.sources[0].source_data,
+                        artist: body.artists[0].name,
+                        track: body.song_title,
+                        image: body.image.o,
+                        year: body.year,
+                        jukebox_id: jukebox_id
+                    };
                 connection.query("INSERT INTO jukebox_songs SET ?", post, function(err, rows, results) {
                     if (err) throw err;
                 });
@@ -134,8 +186,8 @@ io.on('connection', function(socket) {
     socket.on('song ended', function(msg, fn) {
         var sid = msg.sid,
             tid = msg.tid;
-            console.log("ended");
-        if(sid !== null && tid !== null) {
+        console.log("ended");
+        if (sid !== null && tid !== null) {
             console.log("DELETE FROM jukebox_songs WHERE jukebox_id = '" + sid + "' AND customtrack_id = " + tid + " LIMIT 1;");
             connection.query("DELETE FROM jukebox_songs WHERE jukebox_id = '" + sid + "' AND customtrack_id = '" + tid + "' LIMIT 1;", function(err, rows, results) {
                 if (err) throw err;

@@ -1,7 +1,8 @@
 $(function() {
-    var domain = "192.168.1.10",
-        remote_server = "http://"+domain+":4000/",
-        socket = io.connect('http://'+domain+':4001', {secure:false}),
+    var domain = "localhost",//mvpbox.herokuapp.com
+        port = 5000,
+        remote_server = "http://"+domain+((port!== null)?":"+port+"/":"/"),
+        socket = io.connect('http://'+domain+((port!==null)?":"+port+"/":"/"), {secure:false}),
         server_id = localStorage.getItem("server"),
         playlist = null,
         current = 0,
@@ -39,6 +40,7 @@ $(function() {
         //navigator.geolocation.getCurrentPosition(onSuccess, onError);
         //var position = {coords: {latitude: 38.903274, longitude:-77.021602}};
         //onSuccess(position);
+        console.log("add song");
         var track_id = $(this).data("id");
         socket.emit('add song', {server_id: server_id, track_id: track_id});
         return false;
@@ -61,9 +63,10 @@ $(function() {
     });
     socket.on('new song', function(data) {
         playlist.push(data);
-        if (empty === false) {
+        if (empty === true) {
             current++;
             Player(current);
+            console.log("Empty Queue Play Next Song");
         }
     });
     socket.on('next song', function(data) {
@@ -73,6 +76,8 @@ $(function() {
             empty = false;
         }else {
             empty = true;
+
+            //Reset View on Bottom
         }
     });
     socket.on('connect', function() {

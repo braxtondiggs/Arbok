@@ -1,14 +1,63 @@
 // set variables for environment
 var express = require('express'),
     app = express(),
+    path = require('path'),
+    favicon = require('serve-favicon'),
+    logger = require('morgan'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
     http = require('http').createServer(app),
     io = require('socket.io').listen(http),
     mysql = require('mysql'),
     request = require("request"),
     cheerio = require('cheerio');
 
+
+var routes = require('./routes/index');
+var users = require('./routes/users');
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Set server port
 app.set('port', (process.env.PORT || 5000));
+
+app.use('/', routes);
+app.use('/users', users);
+
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
+
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
+
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
+});
+
+module.exports = app;
 
 /*var db_config = {
     host: 'us-cdbr-iron-east-01.cleardb.net',
@@ -111,11 +160,12 @@ app.get('/server', function(req, res) {
         res.status(404).send('Not found');
     }
 });
-app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/public/index.html');
-});
+/*app.get('/', function(req, res) {
+    res.render(__dirname + '/public/index.html', {
+        title: "HEllo Son"
+    });
+});*/
 http.listen(app.get('port'), function() {
     console.log("Node app is running at localhost:" + app.get('port'));
 });

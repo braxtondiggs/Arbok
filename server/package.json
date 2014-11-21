@@ -1,17 +1,24 @@
 {
   "name": "Quilava",
-  "version": "1.0.0-1",
+  "version": "0.0.1",
+  "private": true,
   "description": "n/a",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node ./bin/www"
   },
   "author": "Cymbit Creative",
   "license": "ISC",
   "dependencies": {
     "express": "^4.9.8",
-    "socket.io": "^1.2.0"
+    "serve-favicon": "~2.1.3",
+    "morgan": "~1.0.0",
+    "cookie-parser": "~1.0.1",
+    "body-parser": "~1.0.0",
+    "debug": "~0.7.4",
+    "jade": "~1.3.0",
+    "socket.io": "^1.2.0",
+    "mongodb": "*",
+    "monk": "*"
   },
   "subdomain": "QBox",
   "engines": {

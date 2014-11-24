@@ -1,8 +1,7 @@
 $(function() {
-    var domain = "localhost",//mvpbox.herokuapp.com
-        port = 5000,
-        remote_server = "http://"+domain+((port!== null)?":"+port+"/":"/"),
-        socket = io.connect('http://'+domain+((port!==null)?":"+port+"/":"/"), {secure:false}),
+    var domain = "localhost",
+        remote_server = "http://"+domain+":5000/",
+        socket = io.connect('http://'+domain+':5000', {secure:false}),
         server_id = localStorage.getItem("server"),
         playlist = null,
         current = 0,
@@ -40,7 +39,6 @@ $(function() {
         //navigator.geolocation.getCurrentPosition(onSuccess, onError);
         //var position = {coords: {latitude: 38.903274, longitude:-77.021602}};
         //onSuccess(position);
-        console.log("add song");
         var track_id = $(this).data("id");
         socket.emit('add song', {server_id: server_id, track_id: track_id});
         return false;
@@ -63,10 +61,9 @@ $(function() {
     });
     socket.on('new song', function(data) {
         playlist.push(data);
-        if (empty === true) {
+        if (empty === false) {
             current++;
             Player(current);
-            console.log("Empty Queue Play Next Song");
         }
     });
     socket.on('next song', function(data) {
@@ -76,8 +73,6 @@ $(function() {
             empty = false;
         }else {
             empty = true;
-
-            //Reset View on Bottom
         }
     });
     socket.on('connect', function() {
@@ -108,7 +103,7 @@ $(function() {
         $.ajax({
             type: "GET",
             crossDomain: true,
-            url: remote_server + "search",
+            url: remote_server + "music/search",
             data: {v: s}
         }).done(function(data){
             $(".search-results ul").html("");
@@ -120,6 +115,8 @@ $(function() {
     function toggleSlidr() {
          $(".slidr").toggleClass("opened closed");
          $(".menu-button").toggleClass("closing opening");
+    }
+    function updateMusic() {
     }
     function removeSearch() {
          $("header").removeClass("search");
@@ -137,7 +134,7 @@ $(function() {
             type: "GET",
             dataType: "json",
             crossDomain: true,
-            url: remote_server + "server",
+            url: remote_server + "player/search",
             data: {lat: lat, lng: lng, distance: 25}
         }).done(function(data){
             $.each(data, function(k, v) {

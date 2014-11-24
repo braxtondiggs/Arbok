@@ -10,11 +10,21 @@ var express = require('express'),
     io = require('socket.io').listen(http),
     mysql = require('mysql'),
     request = require("request"),
-    cheerio = require('cheerio');
+    cheerio = require('cheerio'),
+    trim = require('trim'),
+    CronJob = require('cron').CronJob,
+    time = require('time');
 
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    next();
+});
+var routes = require('./routes/index'),
+    users = require('./routes/users'),
+    player = require('./routes/player'),
+    music = require('./routes/music');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -30,8 +40,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set server port
 app.set('port', (process.env.PORT || 5000));
 
+app.use(function(req,res,next){
+    req.conn = connection;
+    next();
+});
+
 app.use('/', routes);
 app.use('/users', users);
+app.use('/player', player);
+app.use('/music', music);
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -67,6 +84,7 @@ module.exports = app;
 };*/
 var db_config = {
     host: 'localhost',
+    port:8889,
     user: 'root',
     password: 'root',
     database: 'cymbitco_quilava'
@@ -90,82 +108,8 @@ function handleDisconnect() {
         }
     });
 }
-
-var IMVDBurls = {0:{url:"http://imvdb.com/charts/new",title:"Best New Music Video"},1:{url:"http://imvdb.com/new", title:"Brand New Music Videos"}, 2:{url:"http://imvdb.com/charts/week", title:"Top Music Video of The Week"}, 3:{url:"http://imvdb.com/charts/month", title:"Top Music Video of The Month"}, 4:{url:"http://imvdb.com/charts/all", title:"Top Music Video of All Time"}};
-
-
-function getIMVDB(id, list, url) {
-    request(url, function(error, response, html) {
-        if (!error && response.statusCode == 200) {
-            var $ = cheerio.load(html);
-            $("table.imvdb-chart-table tr").each(function(i, element) {
-                var post_music = {
-                    id: id,
-                    artist: $(this).find(".artist_line a").attr("title"),
-                    title:"",
-                    image:""
-                },
-                    post = {
-                        id: id,
-                        title: list
-                    };
-                connection.query("INSERT INTO jukebox_list SET ?", post, function(err, rows, results) {
-                    if (err) throw err;
-                });
-                connection.query("INSERT INTO jukebox_list_music SET ?", post_music, function(err, rows, results) {
-                    if (err) throw err;
-                });
-
-
-                //console.log("artist: " + );
-            });
-        }
-    });
-}
 handleDisconnect();
-app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-    next();
-});
-app.get('/search', function(req, res) {
-    var v = req.query['v'],
-        url = "http://imvdb.com/api/v1/search/videos?q=" + v;
 
-    request({
-        url: url,
-        json: true
-    }, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
-            res.setHeader('Content-Type', 'application/json');
-            res.write(JSON.stringify(body));
-        } else {
-            //show 404 page
-        }
-        res.end();
-    });
-});
-
-app.get('/server', function(req, res) {
-    var lng = req.query['lng'],
-        lat = req.query['lat'],
-        distance = req.query['distance'] || 25;
-    if (lat && lng) {
-        connection.query('SELECT *, ( 3959 * acos( cos( radians(' + lat + ') ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(' + lng + ') ) + sin( radians(' + lat + ') ) * sin( radians( lat ) ) ) ) AS distance FROM jukebox_locations HAVING distance < ' + distance + ' ORDER BY distance LIMIT 0 , 20', function(err, rows, results) { //jukebox_locations
-            if (err) throw err;
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(rows));
-        });
-    } else {
-        res.status(404).send('Not found');
-    }
-});
-
-/*app.get('/', function(req, res) {
-    res.render(__dirname + '/public/index.html', {
-        title: "HEllo Son"
-    });
-});*/
 http.listen(app.get('port'), function() {
     console.log("Node app is running at localhost:" + app.get('port'));
 });
@@ -246,7 +190,43 @@ io.on('connection', function(socket) {
         }
     });
 });
+var IMVDBurls = {0:{url:"http://imvdb.com/charts/new",title:"Best New Music Video"},1:{url:"http://imvdb.com/new", title:"Brand New Music Videos"}, 2:{url:"http://imvdb.com/charts/week", title:"Top Music Video of The Week"}, 3:{url:"http://imvdb.com/charts/month", title:"Top Music Video of The Month"}, 4:{url:"http://imvdb.com/charts/all", title:"Top Music Video of All Time"}};
 
+var job = new CronJob('00 00 12 * * *', function(){
+    connection.query("DELETE FROM jukebox_section_music", function(err, rows, results) {
+        if (err) throw err;
+    });
+    for(var key in IMVDBurls) {
+        getIMVDB(key, IMVDBurls[key].title, IMVDBurls[key].url);
+    }
+  }, function () {
+    // This function is executed when the job stops
+  },
+  true /* Start the job right now */,
+  "America/New_York"
+);
+function getIMVDB(id, list, url) {
+    request(url, function(error, response, html) {
+        if (!error && response.statusCode == 200) {
+            var $ = cheerio.load(html),
+                i = 0;
+            $("table.imvdb-chart-table tr").each(function(i, element) {
+                var post_music = {
+                    section: id,
+                    artist_order: i,
+                    artist_name: trim($(this).find(".artist_line").next("p").text()),
+                    artist_title: trim($(this).find(".artist_line a").attr("title")),
+                    artist_image: trim($(this).find("img").attr("src"))
+                };
+                connection.query("INSERT INTO jukebox_section_music SET ?", post_music, function(err, rows, results) {
+                    if (err) throw err;
+                });
+                i++;
+                console.log("artist: " + post_music.artist_name + ", title: " + post_music.artist_title + ", image: " + post_music.artist_image);
+            });
+        }
+    });
+}
 function genID(length) {
     var text = "",
         possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

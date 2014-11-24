@@ -1,83 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="css/main.css" />
-        <title></title>
-    </head>
-    <body>
-        <header>
-            <a href="#" class="menu-button opening">
-                <div class="toggle">
-                    <div class="patty"></div>
-                </div>
-                <h1 class="menu-title">
-                    <span class="current">Browse</span>
-                    <span class="logo">QBox</span>
-                </h1>
-            </a>
-            <div id="header-search">
-                <form>
-                    <i class="glyphicon glyphicon-search"></i>
-                    <input class="search" type="text" placeholder="Search" />
-                    <a href="#" class="glyphicon glyphicon-remove clear-search hide"></a>
-                </form>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <a href="#" class="menu-button opening">
+            <div class="toggle">
+                <div class="patty"></div>
             </div>
-        </header>
-        <div class="container">
-            <ul id="pages">
-                <li class="find-server active">
-                    <a class="find-servers" href="#">Find a QBox Near Me</a>
-                </li>
-                <li class="servers">
-                    <h4>Public QBoxes</h4>
-                    <ul></ul>
-                </li>
-                <li class="search-page">
-                    <div class="search-results">
-                        <h4>Tracks</h4>
-                        <ul id="search-tracks"></ul>
+            <h1 class="menu-title">
+                <span class="current">Browse</span>
+                <span class="logo">QBox</span>
+            </h1>
+        </a>
+        <div id="header-search">
+            <form>
+                <i class="glyphicon glyphicon-search"></i>
+                <input class="search" type="text" placeholder="Search" />
+                <a href="#" class="glyphicon glyphicon-remove clear-search hide"></a>
+            </form>
+        </div>
+    </header>
+    <div class="container">
+        <ul id="pages">
+            <li class="hompage active">
+                <div id="best_new_music" class="carousel slide" data-ride="carousel">
+                    <h3>Best New Music Video</h3>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active">
+                            <img src="http://placehold.it/350x150" alt="...">
+                            <div class="carousel-caption">
+                                Some Music Info goes ehre
+                            </div>
+                        </div>
                     </div>
-                </li>
-            </ul>
-        </div>
-        <div class="music-bar">
-            <div class="album-cover">
-                <img alt="" src="http://placehold.it/50x50" />
-            </div>
-            <div class="music-info">
-                <h3>BFK</h3>
-                <p>Freddie Gibbs</p>
-            </div>
-        </div>
-        <div class="slidr closed">
-            <div class="slidr-menu">
-                <ul>
-                    <li class="menu-search"><i class="glyphicon glyphicon-search"></i>Search</li>
-                    <li class="menu-browse active"><i class="glyphicon glyphicon-folder-open"></i>Browse</li>
-                    <li class="menu-music"><i class="glyphicon glyphicon-headphones"></i>Your Music</li>
-                    <li class="menu-settings"><i class="glyphicon glyphicon-cog"></i>Settings</li>
-                </ul>
-                <div class="slidr-footer">
-                    Footer Goes Here
+                    <a class="left carousel-control" href="#best_new_music" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#best_new_music" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
                 </div>
-            </div>
-            <div class="overlay" style="display:none;"></div>
+                <h3>Brand New Music Videos</h3>
+                <ul class="brand_new_music"></ul>
+                <h3>Top Music Video of The Week</h3>
+                <ul class="top_week_music"></ul>
+                <h3>Top Music Video of The Month</h3>
+                <ul class="top_month_music"></ul>
+                <h3>Top Music Video of All Time</h3>
+                <ul class="top_all_music"></ul>
+            </li>
+            <li class="find-server">
+                <a class="find-servers" href="#">Find a QBox Near Me</a>
+            </li>
+            <li class="servers">
+                <h4>Public MVPlayers</h4>
+                <ul class="mvplayer_list"></ul>
+            </li>
+            <li class="search-page">
+                <div class="search-results">
+                    <h4>Tracks</h4>
+                    <ul id="search-tracks"></ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="music-bar">
+        <div class="album-cover">
+            <img alt="" src="http://placehold.it/50x50" />
         </div>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/vendor/jquery-2.1.1.min.js"></script>
-        <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
-        <script src="http://mvpbox.herokuapp.com/socket.io/socket.io.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
-        
-        <script type="text/javascript">
-            app.initialize();
-        </script>
-    </body>
+        <div class="music-info">
+            <h3>BFK</h3>
+            <p>Freddie Gibbs</p>
+        </div>
+    </div>
+    <div class="slidr closed">
+        <div class="slidr-menu">
+            <ul>
+                <li class="menu-search"><i class="glyphicon glyphicon-search"></i>Search</li>
+                <li class="menu-browse active"><i class="glyphicon glyphicon-folder-open"></i>Browse</li>
+                <li class="menu-music"><i class="glyphicon glyphicon-headphones"></i>Your Music</li>
+                <li class="menu-settings"><i class="glyphicon glyphicon-cog"></i>Settings</li>
+            </ul>
+            <div class="slidr-footer">
+                Footer Goes Here
+            </div>
+        </div>
+        <div class="overlay" style="display:none;"></div>
+    </div>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/vendor/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
+    <script src="http://mvpbox.herokuapp.com/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+
+    <script type="text/javascript">
+    app.initialize();
+    </script>
+</body>
+
 </html>

@@ -5,8 +5,10 @@ var router = express.Router();
 router.get('/', function(req, res) {
     var conn = req.conn,
         json = [];
-    connection.query('SELECT * FROM jukebox_section_music ORDER BY artist_order', function(err, rows, results) {
+    connection.query('SELECT * FROM jukebox_section_music ORDER BY artist_order LIMIT 50', function(err, rows, results) {
+		res.setHeader('Content-Type', 'application/json');
 		res.write(JSON.stringify(rows));
+		res.end();
     });
 });
 router.get('/search', function(req, res) {

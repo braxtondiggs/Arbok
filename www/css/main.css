@@ -301,6 +301,9 @@ header.search #header-search {
 .container > ul#pages > li.active {
     display:block;
 }
+.carousel-inner>.item>img {
+    width:100%;
+}
 @keyframes fade {
     from { opacity: 1.0; }
     50% { opacity: 0.4; }

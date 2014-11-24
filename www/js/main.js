@@ -84,6 +84,7 @@ $(function() {
             empty = false;
         });
     });
+    updateMusic();
     function Player(id) {
         var image = "http://placehold.it/50x50",
             artist = "Tap Here to Add More!",
@@ -117,6 +118,25 @@ $(function() {
          $(".menu-button").toggleClass("closing opening");
     }
     function updateMusic() {
+        $.ajax({
+            type: "GET",
+            crossDomain: true,
+            url: remote_server + "music"
+        }).done(function(data){
+            $("#best_new_music .carousel-inner").html("");
+            var i= 0,i2  = 0;
+            $.each(data, function(k, v) {
+                 console.log(v.section);
+                if (v.section === 0 && i <= 10) {
+                    $("#best_new_music .carousel-inner").append($("<div />",{"class":"item" + ((i === 0)?" active":"")}).append($("<img />", {src: v.artist_image})).append($("<div />", {"class": "carousel-caption"}).text(v.artist_name)));
+                    i++;
+                }else if(v.section === 1 && i2 <= 10) {
+                }
+            });
+            $('#best_new_music').carousel({
+                  interval:false // remove interval for manual sliding
+                }).carousel(0);
+        });
     }
     function removeSearch() {
          $("header").removeClass("search");

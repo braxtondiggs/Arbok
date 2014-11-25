@@ -188,7 +188,6 @@ header.search #header-search {
 }
 .container {
     margin: 60px 0;
-
 }
 .slidr {
     position: absolute;
@@ -303,6 +302,15 @@ header.search #header-search {
 }
 .carousel-inner>.item>img {
     width:100%;
+}
+.homepage .carousel > h3 {
+    margin:0;
+}
+.homepage .carousel-caption {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    left: 0;
+    bottom:0;
 }
 @keyframes fade {
     from { opacity: 1.0; }

@@ -190,7 +190,7 @@ io.on('connection', function(socket) {
         }
     });
 });
-var IMVDBurls = {0:{url:"http://imvdb.com/charts/new",title:"Best New Music Video"},1:{url:"http://imvdb.com/new", title:"Brand New Music Videos"}, 2:{url:"http://imvdb.com/charts/week", title:"Top Music Video of The Week"}, 3:{url:"http://imvdb.com/charts/month", title:"Top Music Video of The Month"}, 4:{url:"http://imvdb.com/charts/all", title:"Top Music Video of All Time"}};
+var IMVDBurls = {0:{url:"http://imvdb.com/charts/new",title:"Best New Music Video"}, 1:{url:"http://imvdb.com/charts/week", title:"Top Music Video of The Week"}, 2:{url:"http://imvdb.com/charts/month", title:"Top Music Video of The Month"}, 3:{url:"http://imvdb.com/charts/all", title:"Top Music Video of All Time"}};
 
 var job = new CronJob('00 00 12 * * *', function(){
     connection.query("DELETE FROM jukebox_section_music", function(err, rows, results) {
@@ -198,6 +198,7 @@ var job = new CronJob('00 00 12 * * *', function(){
     });
     for(var key in IMVDBurls) {
         getIMVDB(key, IMVDBurls[key].title, IMVDBurls[key].url);
+        console.log("Song Update");
     }
   }, function () {
     // This function is executed when the job stops

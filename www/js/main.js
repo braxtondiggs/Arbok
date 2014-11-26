@@ -142,17 +142,15 @@ $(function() {
             url: remote_server + "music"
         }).done(function(data){
             $("#best_new_music .carousel-inner").html("");
-            var i= 0,i2  = 0;
+            var sections = ["best_new_music", "brand_new_music", "top_week_music", "top_month_music", "top_all_music"];
             $.each(data, function(k, v) {
-                if (v.section === 0 && i <= 10) {
-                    $("#best_new_music .carousel-inner").append($("<div />",{"class":"item" + ((i === 0)?" active":"")}).append($("<img />", {src: v.artist_image})).append($("<div />", {"class": "carousel-caption"}).text(v.artist_name)));
-                    i++;
-                }else if(v.section === 1 && i2 <= 10) {
+                var len = $("#"+sections[v.section]+" .carousel-inner > div").length;
+                if (len <= 10) {
+                    $("#"+sections[v.section]+" .carousel-inner").append($("<div />",{"class":"item" + ((len === 0)?" active":"")}).append($("<img />", {src: v.artist_image})).append($("<div />", {"class": "carousel-caption"}).text(v.artist_name)));
                 }
             });
-            $('#best_new_music').carousel({
-                  interval:false // remove interval for manual sliding
-                }).carousel(0);
+            $('#best_new_music').carousel(0);
+            $(".homepage").fadeIn("slow", function() {$(this).addClass("active");});
         });
     }
     function removeSearch() {

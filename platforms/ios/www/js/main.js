@@ -1,7 +1,7 @@
 $(function() {
-    var domain = "192.168.1.10",
-        remote_server = "http://"+domain+":4000/",
-        socket = io.connect('http://'+domain+':4001', {secure:false}),
+    var domain = "localhost",
+        remote_server = "http://"+domain+":5000/",
+        socket = io.connect('http://'+domain+':5000', {secure:false}),
         server_id = localStorage.getItem("server"),
         playlist = null,
         current = 0,
@@ -84,6 +84,7 @@ $(function() {
             empty = false;
         });
     });
+    updateMusic();
     function Player(id) {
         var image = "http://placehold.it/50x50",
             artist = "Tap Here to Add More!",
@@ -103,7 +104,7 @@ $(function() {
         $.ajax({
             type: "GET",
             crossDomain: true,
-            url: remote_server + "search",
+            url: remote_server + "music/search",
             data: {v: s}
         }).done(function(data){
             $(".search-results ul").html("");
@@ -115,6 +116,27 @@ $(function() {
     function toggleSlidr() {
          $(".slidr").toggleClass("opened closed");
          $(".menu-button").toggleClass("closing opening");
+    }
+    function updateMusic() {
+        $.ajax({
+            type: "GET",
+            crossDomain: true,
+            url: remote_server + "music"
+        }).done(function(data){
+            $("#best_new_music .carousel-inner").html("");
+            var i= 0,i2  = 0;
+            $.each(data, function(k, v) {
+                 console.log(v.section);
+                if (v.section === 0 && i <= 10) {
+                    $("#best_new_music .carousel-inner").append($("<div />",{"class":"item" + ((i === 0)?" active":"")}).append($("<img />", {src: v.artist_image})).append($("<div />", {"class": "carousel-caption"}).text(v.artist_name)));
+                    i++;
+                }else if(v.section === 1 && i2 <= 10) {
+                }
+            });
+            $('#best_new_music').carousel({
+                  interval:false // remove interval for manual sliding
+                }).carousel(0);
+        });
     }
     function removeSearch() {
          $("header").removeClass("search");
@@ -132,7 +154,7 @@ $(function() {
             type: "GET",
             dataType: "json",
             crossDomain: true,
-            url: remote_server + "server",
+            url: remote_server + "player/search",
             data: {lat: lat, lng: lng, distance: 25}
         }).done(function(data){
             $.each(data, function(k, v) {

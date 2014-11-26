@@ -206,7 +206,7 @@ header.search #header-search {
 }
 .slidr .slidr-menu {
     position: fixed;
-    top: 50px;
+    top: 49px;
     background-color: #333;
     z-index: 2000;
     width: 70%;
@@ -237,11 +237,23 @@ header.search #header-search {
     width: 100%;
     height: 100%;
 }
+.profile {
+    text-align: center;
+    border-bottom: 2px #AAA solid;
+}
+.profile img{
+    height: 110px;
+    width: 110px;
+}
+.profile h2 {
+    font-size: 24px;
+}
 .music-bar {
     position: fixed;
     bottom: 0;
     background-color: #333;
     width: 100%;
+    z-index: 10;
 }
 .music-bar .album-cover,
 .music-bar .music-info{
@@ -252,15 +264,49 @@ header.search #header-search {
     height:50px;
     width:50px;
 }
+.music-bar .vote-info {
+    display: inline-block;
+    vertical-align: bottom;
+    margin-bottom: -4px;
+}
+.music-bar .vote-info .glyphicon-thumbs-up{
+    color:green;
+    font-size: 26px;
+    display:block;
+}
+.music-bar .vote-info .glyphicon-thumbs-down{
+    color:red;
+    font-size: 26px;
+    display:block;
+    transform: rotateY(180deg);
+}
+.music-bar .vote-info .vote-data {
+    display:inline-block;
+}
+.music-bar .vote-info .vote-data:first-child {
+    margin-right:4px;
+}
+.music-bar .vote-info .vote-data  span{
+    text-align: center;
+    display: block;
+    margin-top:5px;
+}
 .music-bar .music-info {
-    margin-left:15px;
+    margin: 0 5px;
+    width: calc(100% - 127px);
 }
 .music-bar .music-info h3{
     margin:3px 0 0 0;
     font-size:22px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .music-bar .music-info p {
     margin:0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .search-results, .servers {
     margin-top:20px;
@@ -310,16 +356,16 @@ header.search #header-search {
 }
 .search-results .track-wrapper:after,
 .search-results .artist-wrapper:after {
-    content: "Play Now";
-    width: 125px;
+    content: "\e029";
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 24px;
     display: block;
     position: absolute;
-    bottom: 0;
-    left: 0;
-    text-align: center;
-    font-size: 18px;
-    color:#ec008c;
-    background-color: rgba(0,0,0,0.5);
+    right: 10px;
+    top: 25%;
 }
 .search-results h4:not(:first-child) {
     margin-top:40px

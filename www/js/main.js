@@ -92,7 +92,7 @@ $(function() {
             empty = false;
         });
     });
-    //updateMusic();
+    updateMusic();
     function Player(id) {
         var image = "http://placehold.it/50x50",
             artist = "Tap Here to Add More!",
@@ -150,7 +150,7 @@ $(function() {
                 }
             });
             $('#best_new_music').carousel(0);
-            $(".homepage").fadeIn("slow", function() {$(this).addClass("active");});
+            $(".homepage").fadeIn("slow", function() {$(this).addClass("active").removeAttr("style");});
         });
     }
     function removeSearch() {

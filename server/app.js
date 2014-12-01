@@ -13,7 +13,8 @@ var express = require('express'),
     cheerio = require('cheerio'),
     trim = require('trim'),
     CronJob = require('cron').CronJob,
-    time = require('time');
+    time = require('time'),
+    echonest = require('echonest');
 
 
 app.use(function(req, res, next) {
@@ -40,7 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set server port
 app.set('port', (process.env.PORT || 5000));
 
-app.use(function(req,res,next){
+app.use(function(req, res, next) {
     req.conn = connection;
     next();
 });
@@ -84,11 +85,16 @@ module.exports = app;
 };*/
 var db_config = {
     host: 'localhost',
-    port:8889,
+    port: 8889,
     user: 'root',
     password: 'root',
-    database: 'cymbitco_quilava'
+    database: 'cymbitco_quilava',
+    multipleStatements: true
 };
+var myNest = new echonest.Echonest({
+    api_key: '0NPSO7NBLICGX3CWQ'
+});
+
 function handleDisconnect() {
     connection = mysql.createConnection(db_config);
 
@@ -142,40 +148,37 @@ io.on('connection', function(socket) {
             fn(rows);
         });
     });
+    socket.on('empty queue', function(msg, fn) {
+        var lastArtist = msg.lastArtist,
+            jukebox_id = msg.server_id;
+        console.log(jukebox_id);
+        myNest.artist.similar({
+            name: lastArtist
+        }, function(error, response) {
+            if (error) {
+                console.log(error, response);
+            } else {
+                //console.log(Math.floor(Math.random() * 16));
+                artist = response.artists[Math.floor(Math.random() * 15)].name;
 
-    socket.on("add song", function(msg) {
-        var track_id = msg.track_id,
-            jukebox_id = msg.server_id,
-            url = "http://imvdb.com/api/v1/video/" + track_id + "?include=sources";
-        request({
-            url: url,
-            json: true
-        }, function(error, response, body) {
-            if (!error && response.statusCode === 200) {
-                var customtrack_id = genID(12),
-                    post = {
-                        customtrack_id: customtrack_id,
-                        track_id: body.id,
-                        youtube_id: body.sources[0].source_data,
-                        artist: body.artists[0].name,
-                        track: body.song_title,
-                        image: body.image.o,
-                        year: body.year,
-                        jukebox_id: jukebox_id
-                    };
-                connection.query("INSERT INTO jukebox_songs SET ?", post, function(err, rows, results) {
-                    if (err) throw err;
-                });
-                //socket.broadcast.to(sid).emit("new song", {youtube_id: body.sources[0].source_data, artist: body.artists[0].name, track: body.song_title, image: body.image.o});
-                io.emit("new song", {
-                    youtube_id: body.sources[0].source_data,
-                    artist: body.artists[0].name,
-                    track: body.song_title,
-                    image: body.image.o,
-                    customtrack_id: customtrack_id
+                request({
+                    url: "http://imvdb.com/api/v1/search/videos?q=" + artist,
+                    json: true
+                }, function(error, response, body) {
+                    if (!error && response.statusCode === 200) {
+                        var track_id = body.results[0].id;
+                        newSong(track_id, jukebox_id);
+                    }
                 });
             }
         });
+    });
+
+    socket.on("add song", function(msg) {
+        console.log("add song");
+        var track_id = msg.track_id,
+            jukebox_id = msg.server_id;
+        newSong(track_id, jukebox_id);
     });
     socket.on('song ended', function(msg, fn) {
         var sid = msg.sid,
@@ -189,23 +192,101 @@ io.on('connection', function(socket) {
             io.emit("next song");
         }
     });
-});
-var IMVDBurls = {0:{url:"http://imvdb.com/charts/new",title:"Best New Music Video"}, 1:{url:"http://imvdb.com/charts/week", title:"Top Music Video of The Week"}, 2:{url:"http://imvdb.com/charts/month", title:"Top Music Video of The Month"}, 3:{url:"http://imvdb.com/charts/all", title:"Top Music Video of All Time"}};
+    socket.on("vote", function(msg, fn) {
+        var sid = msg.sid,
+            tid = msg.tid;
+        vote = msg.vote;
+        console.log("voted:" + (vote) ? "true" : "false");
+        var action = (vote) ? "upvote" : "downvote";
+        console.log("UPDATE jukebox_songs SET " + action + " = " + action + "+1 WHERE jukebox_id = '" + sid + "' AND customtrack_id = '" + tid + "' LIMIT 1;");
+        connection.query("UPDATE jukebox_songs SET " + action + " = " + action + "+1 WHERE jukebox_id = '" + sid + "' AND customtrack_id = '" + tid + "' LIMIT 1;", function(err, rows, results) {
+            if (err) throw err;
+        });
+        io.emit(action);
 
-var job = new CronJob('00 00 12 * * *', function(){
-    connection.query("DELETE FROM jukebox_section_music", function(err, rows, results) {
-        if (err) throw err;
     });
-    for(var key in IMVDBurls) {
-        getIMVDB(key, IMVDBurls[key].title, IMVDBurls[key].url);
-        console.log("Song Update");
+
+    function newSong(track_id, jukebox_id) {
+        request({
+            url: "http://imvdb.com/api/v1/video/" + track_id + "?include=sources",
+            json: true
+        }, function(error, response, body) {
+            if (!error && response.statusCode === 200) {
+                var customtrack_id = genID(12),
+                    post = {
+                        customtrack_id: customtrack_id,
+                        track_id: body.id,
+                        youtube_id: body.sources[0].source_data,
+                        artist: body.artists[0].name,
+                        track: body.song_title,
+                        image: body.image.o,
+                        year: body.year,
+                        jukebox_id: jukebox_id,
+                        upvote: 0,
+                        downvote: 0
+                    },
+                    where_post = {
+                        youtube_id: body.sources[0].source_data
+                    };
+                connection.query("SELECT youtube_id FROM jukebox_songs WHERE ?", where_post, function(err, rows, results) {
+                    if (err) throw err;
+                    if (rows.affectedRows) {
+                        connection.query("INSERT INTO jukebox_songs SET ?", post, function(err, rows, results) {
+                            if (err) throw err;
+                            io.emit("new song", {
+                                youtube_id: body.sources[0].source_data,
+                                artist: body.artists[0].name,
+                                track: body.song_title,
+                                image: body.image.o,
+                                customtrack_id: customtrack_id,
+                                upvote: 0,
+                                downvote: 0
+                            });
+                            return true;
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+                //socket.broadcast.to(sid).emit("new song", {youtube_id: body.sources[0].source_data, artist: body.artists[0].name, track: body.song_title, image: body.image.o});
+            }
+        });
     }
-  }, function () {
-    // This function is executed when the job stops
-  },
-  true /* Start the job right now */,
-  "America/New_York"
+});
+var IMVDBurls = {
+    0: {
+        url: "http://imvdb.com/charts/new",
+        title: "Best New Music Video"
+    },
+    1: {
+        url: "http://imvdb.com/charts/week",
+        title: "Top Music Video of The Week"
+    },
+    2: {
+        url: "http://imvdb.com/charts/month",
+        title: "Top Music Video of The Month"
+    },
+    3: {
+        url: "http://imvdb.com/charts/all",
+        title: "Top Music Video of All Time"
+    }
+};
+
+var job = new CronJob('00 00 12 * * *', function() {
+        connection.query("DELETE FROM jukebox_section_music;ALTER TABLE jukebox_section_music AUTO_INCREMENT = 1", function(err, rows, results) {
+            if (err) throw err;
+        });
+        for (var key in IMVDBurls) {
+            getIMVDB(key, IMVDBurls[key].title, IMVDBurls[key].url);
+            console.log("Song Update");
+        }
+    }, function() {
+        // This function is executed when the job stops
+    },
+    true /* Start the job right now */ ,
+    "America/New_York"
 );
+
 function getIMVDB(id, list, url) {
     request(url, function(error, response, html) {
         if (!error && response.statusCode == 200) {
@@ -215,9 +296,9 @@ function getIMVDB(id, list, url) {
                 var post_music = {
                     section: id,
                     artist_order: i,
-                    artist_name: trim($(this).find(".artist_line").next("p").text()),
-                    artist_title: trim($(this).find(".artist_line a").attr("title")),
-                    artist_image: trim($(this).find("img").attr("src"))
+                    artist_name: trim(($(this).find(".artist_line").next("p").text() || '')),
+                    artist_title: trim(($(this).find(".artist_line a").attr("title") || '')),
+                    artist_image: trim(($(this).find("img").attr("src") || ''))
                 };
                 connection.query("INSERT INTO jukebox_section_music SET ?", post_music, function(err, rows, results) {
                     if (err) throw err;
@@ -228,6 +309,7 @@ function getIMVDB(id, list, url) {
         }
     });
 }
+
 function genID(length) {
     var text = "",
         possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

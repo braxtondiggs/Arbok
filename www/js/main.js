@@ -1,10 +1,13 @@
 $(function() {
-    var domain = "192.168.1.13",
+    var domain = "localhost",
         remote_server = "http://"+domain+":5000/",
         socket = io.connect('http://'+domain+':5000', {secure:false}),
         server_id = localStorage.getItem("server"),
-        playlist = null,
+        track_id = null,
+        customtrack_id = null,
+        playlist = [],
         current = 0,
+        hasVoted = parseInt(localStorage.getItem("hasVoted")) || 0,
         empty = true;
     $(".menu-button").on("click", function() {
         $(this).toggleClass("closing opening").css({'background-color':'#666'}).delay(150).queue(function(){$(this).css({'background-color':'transparent'});$(this).dequeue();});
@@ -51,8 +54,15 @@ $(function() {
         return false;
     });
     $("#search-tracks").on("click", "li", function() {
-        var track_id = $(this).data("id");
-        socket.emit('add song', {server_id: server_id, track_id: track_id});
+        if (server_id) {
+            track_id = $(this).data("id");
+            socket.emit('add song', {server_id: server_id, track_id: track_id});
+        }else {
+            alert("You Need to First Select a MVPlayer");
+            var position = {coords: {latitude: 38.903274, longitude:-77.021602}};
+            onSuccess(position);
+            PageSwitch("servers");
+        }
         return false;
     });
     $(".servers > ul").on("click", "li", function() {
@@ -64,14 +74,35 @@ $(function() {
         MenuItem($(".menu-browse"));
         return false;
     });
+    $(".vote-data .glyphicon-thumbs-up").on("click", function() {
+        if (hasVoted <= 0) {
+            socket.emit('vote', {sid: server_id, tid: customtrack_id, vote: true, dup:(hasVoted===0)?false:true});
+            voteAction($(this))
+            localStorage.setItem("hasVoted", 1);
+        }else {
+            alert("You Have Already Voted!");
+        }
+    });
+    $(".vote-data .glyphicon-thumbs-down").on("click", function() {
+        if (hasVoted >= 0) {
+            socket.emit('vote', {sid: server_id, tid: customtrack_id, vote:false, dup:(hasVoted===0)?false:true});
+            voteAction($(this));
+            localStorage.setItem("hasVoted", -1);hasVoted =  -1;
+        }else {
+            alert("You Have Already Voted!");
+        }
+    });
     socket.on("playlist", function(data){
         console.log(data);
     });
     socket.on('new song', function(data) {
+        console.log("new song");
         playlist.push(data);
+        localStorage.setItem("hasVoted", 0);
         if (empty === false) {
-            current++;
+            console.log("new song empty");
             Player(current);
+            current++;
         }
     });
     socket.on('next song', function(data) {
@@ -81,28 +112,52 @@ $(function() {
             empty = false;
         }else {
             empty = true;
+            playlist = [];
+            current = 0;
+            Player(current);
         }
     });
+    socket.on('upvote', function(data) {
+        $(".music-bar .vote-info .upvote").text(parseInt($(this).text())+1);
+    });
+    socket.on('downvote', function(data) {
+        $(".music-bar .vote-info .downvote").text(parseInt($(this).text())+1);
+    });
     socket.on('connect', function() {
+        console.log("connect");
         socket.emit('get playlist', {
             sid: server_id
         }, function(confirm) {
             playlist = confirm;
+            console.log(playlist);
             Player(current);
             empty = false;
         });
     });
     updateMusic();
+    if (hasVoted === 1) {
+        voteAction($('.vote-info i.glyphicon-thumbs-up'));
+    }else if (hasVoted === -1) {
+        voteAction($('.vote-info i.glyphicon-thumbs-down'));
+    }
     function Player(id) {
         var image = "http://placehold.it/50x50",
             artist = "Tap Here to Add More!",
-            track = "No Songs Currently Playing";
+            track = "No Songs Currently Playing",
+            upvote = 0,
+            downvote = 0;
+        $(".music-bar .vote-info").hide();
         if (playlist[id]) {
             image = playlist[id].image;
             track = unescape(playlist[id].track);
             artist = unescape(playlist[id].artist);
+            upvote = playlist[id].upvote;
+            downvote = playlist[id].downvote;
+            customtrack_id =  playlist[id].customtrack_id;
+            $(".music-bar .vote-info").css("display","inline-block");
         }
         $(".music-bar").find(".album-cover img").prop("src", image).end().find(".music-info h3").text(track).next("p").text(artist);
+        $(".vote-info").find(".upvote").text(upvote).end().find(".downvote").text(downvote);
     }
     function PageSwitch(page) {
         $("ul#pages").children("li.active").removeClass("active").end().children("li."+page).addClass("active");
@@ -160,6 +215,9 @@ $(function() {
          $(".slidr-menu li.active").removeClass("active");
          $(_this).addClass('active');
          $(".menu-title .current").text($(_this).text());
+    }
+    function voteAction(_this) {
+        $('.vote-info i.selected').removeClass("selected");$(_this).addClass("selected");
     }
     
     function onSuccess(position) {

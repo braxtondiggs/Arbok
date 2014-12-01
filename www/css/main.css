@@ -266,20 +266,26 @@ header.search #header-search {
     width:50px;
 }
 .music-bar .vote-info {
-    display: inline-block;
+    display: none;
     vertical-align: bottom;
     margin-bottom: -4px;
 }
 .music-bar .vote-info .glyphicon-thumbs-up{
-    color:green;
+    color:#485A48;
     font-size: 26px;
     display:block;
 }
 .music-bar .vote-info .glyphicon-thumbs-down{
-    color:red;
+    color:#5F4A4A;
     font-size: 26px;
     display:block;
     transform: rotateY(180deg);
+}
+.music-bar .vote-info .glyphicon-thumbs-down.selected{
+    color:red;
+}
+.music-bar .vote-info .glyphicon-thumbs-up.selected{
+    color:green;
 }
 .music-bar .vote-info .vote-data {
     display:inline-block;

@@ -4,7 +4,7 @@ var coords = {
     },
     sid = localStorage.getItem("QBox") || null,
     tid = null,
-    playlist = null,
+    playlist = [],
     current = 0,
     player;
 
@@ -17,7 +17,9 @@ $(function() {
 });
 var socket = io.connect();
 socket.on('connect', function() {
-
+    if (current === 0) {
+        //emptyQueue();
+    }
 });
 socket.on('playlist', function(data) {
     console.log(data);
@@ -34,6 +36,8 @@ socket.on('next song', function(data) {
     if (playlist.length - 1 > current) {
         current++;
         PlaySong(current);
+    }else {
+        emptyQueue();
     }
 });
 
@@ -115,5 +119,12 @@ function PlaySong(id) {
     if (playlist[id] && player) {
         player.loadVideoById(playlist[id].youtube_id);
         tid = playlist[id].customtrack_id;
+        localStorage.setItem("lastArtist", playlist[id].artist);
     }
+}
+function emptyQueue() {
+    socket.emit('empty queue', {
+        lastArtist: (localStorage.getItem("lastArtist") || "Taylor Swift"),
+        server_id: sid
+    });
 }

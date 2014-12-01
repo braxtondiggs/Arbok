@@ -1,5 +1,5 @@
 $(function() {
-    var domain = "localhost",
+    var domain = "192.168.1.13",
         remote_server = "http://"+domain+":5000/",
         socket = io.connect('http://'+domain+':5000', {secure:false}),
         server_id = localStorage.getItem("server"),
@@ -11,12 +11,25 @@ $(function() {
         $(".slidr").toggleClass("opened closed");
         return false;
     });
+    $(".menu-browse").on("click", function() {
+        MenuItem($(this));
+        PageSwitch("homepage");
+        toggleSlidr();
+        return false;
+    });
     $(".menu-search").on("click", function() {
         MenuItem($(this));
-        $(".search-page").show();
         toggleSlidr();
         $("header").addClass("search");
         $(".search").trigger("focus");
+        return false;
+    });
+    $(".menu-find").on("click", function() {
+        MenuItem($(this));
+        toggleSlidr();
+        var position = {coords: {latitude: 38.903274, longitude:-77.021602}};
+        onSuccess(position);
+        PageSwitch("servers");
         return false;
     });
     $(".search").on("keyup", function() {
@@ -29,31 +42,26 @@ $(function() {
     $(".clear-search").on("click", function() {
         $(".search").val("");
         $(this).fadeOut();
+        return false;
     });
     $("#header-search form").on("submit", function() {
         search();
         $("input.search").trigger("blur");
+        PageSwitch("search-page");
         return false;
     });
     $("#search-tracks").on("click", "li", function() {
-        //navigator.geolocation.getCurrentPosition(onSuccess, onError);
-        //var position = {coords: {latitude: 38.903274, longitude:-77.021602}};
-        //onSuccess(position);
         var track_id = $(this).data("id");
         socket.emit('add song', {server_id: server_id, track_id: track_id});
         return false;
     });
-    $("a.find-servers").on("click", function() {
-        var position = {coords: {latitude: 38.903274, longitude:-77.021602}};
-        onSuccess(position);
-        PageSwitch("servers");
-        return false;
-    });
-    $(".servers > ul").on("click", "li a.join-server", function() {
-        server_id = $(this).parents("li").data("id");
+    $(".servers > ul").on("click", "li", function() {
+        server_id = $(this).data("id");
         socket.emit('join server', {server_id: server_id});
         localStorage.setItem("server", server_id);
-        socket.join(server_id);
+        //socket.join(server_id);
+        PageSwitch("homepage");
+        MenuItem($(".menu-browse"));
         return false;
     });
     socket.on("playlist", function(data){
@@ -100,22 +108,32 @@ $(function() {
         $("ul#pages").children("li.active").removeClass("active").end().children("li."+page).addClass("active");
     }
     function search() {
-        var s = $("input.search").val();
+        var s = $("input.search").val(),
+            artist = [];
         $.ajax({
             type: "GET",
             crossDomain: true,
             url: remote_server + "music/search",
             data: {v: s}
         }).done(function(data){
-            $(".search-results ul").html("");
+            $(".search-tracks, #search-artist").html("");
             $.each(data.results, function(k, v) {
-                $("#search-tracks").append($("<li />",{"data-id":v.id}).append($("<img />", {src: v.image.b})).append($("<div />", {"class": "track-wrapper"}).append($("<h5 />").text(v.artists[0].name)).append($("<p />").text(v.song_title))));
+                $("#search-tracks ").append($("<li />",{"data-id":v.id}).append($("<img />", {src: v.image.b})).append($("<div />", {"class": "track-wrapper"}).append($("<h5 />").text(v.artists[0].name)).append($("<p />").text(v.song_title))));
+                if(!isInArray(v.artists[0].name, artist)) {
+                    $("#search-artist").append($("<li />",{"data-id":v.id}).append($("<img />", {src: v.image.b})).append($("<div />", {"class": "track-wrapper"}).append($("<h5 />").text(v.artists[0].name))));
+                    artist.push(v.artists[0].name);
+                }
+                console.log(artist);
             });
+            function isInArray(value, array) {
+              return array.indexOf(value) > -1;
+            }
         });
     }
     function toggleSlidr() {
          $(".slidr").toggleClass("opened closed");
          $(".menu-button").toggleClass("closing opening");
+         removeSearch();
     }
     function updateMusic() {
         $.ajax({
@@ -124,18 +142,15 @@ $(function() {
             url: remote_server + "music"
         }).done(function(data){
             $("#best_new_music .carousel-inner").html("");
-            var i= 0,i2  = 0;
+            var sections = ["best_new_music", "brand_new_music", "top_week_music", "top_month_music", "top_all_music"];
             $.each(data, function(k, v) {
-                 console.log(v.section);
-                if (v.section === 0 && i <= 10) {
-                    $("#best_new_music .carousel-inner").append($("<div />",{"class":"item" + ((i === 0)?" active":"")}).append($("<img />", {src: v.artist_image})).append($("<div />", {"class": "carousel-caption"}).text(v.artist_name)));
-                    i++;
-                }else if(v.section === 1 && i2 <= 10) {
+                var len = $("#"+sections[v.section]+" .carousel-inner > div").length;
+                if (len <= 10) {
+                    $("#"+sections[v.section]+" .carousel-inner").append($("<div />",{"class":"item" + ((len === 0)?" active":"")}).append($("<img />", {src: v.artist_image})).append($("<div />", {"class": "carousel-caption"}).append($("<h3 />").text((len+1) + "). "+v.artist_title)).append($("<p />").text(v.artist_name))));
                 }
             });
-            $('#best_new_music').carousel({
-                  interval:false // remove interval for manual sliding
-                }).carousel(0);
+            $('#best_new_music').carousel(0);
+            $(".homepage").fadeIn("slow", function() {$(this).addClass("active").removeAttr("style");});
         });
     }
     function removeSearch() {
@@ -143,19 +158,20 @@ $(function() {
     }
     function MenuItem(_this) {
          $(".slidr-menu li.active").removeClass("active");
-         $(".container > ul > li").hide();
          $(_this).addClass('active');
+         $(".menu-title .current").text($(_this).text());
     }
     
     function onSuccess(position) {
         var lat = position.coords.latitude;
         var lng = position.coords.longitude;
+        $(".servers > ul").html("");
         $.ajax({
             type: "GET",
             dataType: "json",
             crossDomain: true,
             url: remote_server + "player/search",
-            data: {lat: lat, lng: lng, distance: 25}
+            data: {lat: lat, lng: lng, distance: 75}
         }).done(function(data){
             $.each(data, function(k, v) {
                 $(".servers > ul").append($("<li />",{"data-id": v.sid}).append($("<img />", {src: "http://placehold.it/125x70"})).append($("<div />", {"class": "server-wrapper"}).append($("<h5 />").text(v.name)).append($("<p />").text("~ "+(Math.round(v.distance * 1000) / 1000)+" miles")).append($("<a />", {href: "#", class:"join-server"}).text("Join"))));

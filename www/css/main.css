@@ -247,6 +247,7 @@ header.search #header-search {
 }
 .profile h2 {
     font-size: 24px;
+    color:#ec008c;
 }
 .music-bar {
     position: fixed;
@@ -366,6 +367,7 @@ header.search #header-search {
     position: absolute;
     right: 10px;
     top: 25%;
+    color:#ec008c;
 }
 .search-results h4:not(:first-child) {
     margin-top:40px
@@ -387,6 +389,15 @@ header.search #header-search {
     background-color: rgba(0, 0, 0, 0.5);
     left: 0;
     bottom:0;
+    padding:0;
+    color:#ec008c;
+}
+.homepage .carousel-caption h3 {
+    margin:0;
+    font-size:20px;
+}
+.homepage .carousel-caption p {
+    margin:0;
 }
 @keyframes fade {
     from { opacity: 1.0; }

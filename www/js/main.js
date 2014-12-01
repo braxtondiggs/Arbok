@@ -1,5 +1,5 @@
 $(function() {
-    var domain = "localhost",
+    var domain = "192.168.1.13",
         remote_server = "http://"+domain+":5000/",
         socket = io.connect('http://'+domain+':5000', {secure:false}),
         server_id = localStorage.getItem("server"),
@@ -146,7 +146,7 @@ $(function() {
             $.each(data, function(k, v) {
                 var len = $("#"+sections[v.section]+" .carousel-inner > div").length;
                 if (len <= 10) {
-                    $("#"+sections[v.section]+" .carousel-inner").append($("<div />",{"class":"item" + ((len === 0)?" active":"")}).append($("<img />", {src: v.artist_image})).append($("<div />", {"class": "carousel-caption"}).text(v.artist_name)));
+                    $("#"+sections[v.section]+" .carousel-inner").append($("<div />",{"class":"item" + ((len === 0)?" active":"")}).append($("<img />", {src: v.artist_image})).append($("<div />", {"class": "carousel-caption"}).append($("<h3 />").text((len+1) + "). "+v.artist_title)).append($("<p />").text(v.artist_name))));
                 }
             });
             $('#best_new_music').carousel(0);
@@ -171,7 +171,7 @@ $(function() {
             dataType: "json",
             crossDomain: true,
             url: remote_server + "player/search",
-            data: {lat: lat, lng: lng, distance: 25}
+            data: {lat: lat, lng: lng, distance: 75}
         }).done(function(data){
             $.each(data, function(k, v) {
                 $(".servers > ul").append($("<li />",{"data-id": v.sid}).append($("<img />", {src: "http://placehold.it/125x70"})).append($("<div />", {"class": "server-wrapper"}).append($("<h5 />").text(v.name)).append($("<p />").text("~ "+(Math.round(v.distance * 1000) / 1000)+" miles")).append($("<a />", {href: "#", class:"join-server"}).text("Join"))));

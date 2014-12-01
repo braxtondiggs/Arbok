@@ -21,7 +21,7 @@
             </div>
             <h1 class="menu-title">
                 <span class="current">Browse</span>
-                <span class="logo">QBox</span>
+                <span class="logo">MVPlayer</span>
             </h1>
         </a>
         <div id="header-search">
@@ -34,16 +34,10 @@
     </header>
     <div class="container">
         <ul id="pages">
-            <li class="hompage active">
+            <li class="homepage">
                 <div id="best_new_music" class="carousel slide" data-ride="carousel">
                     <h3>Best New Music Video</h3>
                     <div class="carousel-inner" role="listbox">
-                        <div class="item active">
-                            <img src="http://placehold.it/350x150" alt="...">
-                            <div class="carousel-caption">
-                                Some Music Info goes ehre
-                            </div>
-                        </div>
                     </div>
                     <a class="left carousel-control" href="#best_new_music" role="button" data-slide="prev">
                         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -54,17 +48,45 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
-                <h3>Brand New Music Videos</h3>
-                <ul class="brand_new_music"></ul>
-                <h3>Top Music Video of The Week</h3>
-                <ul class="top_week_music"></ul>
-                <h3>Top Music Video of The Month</h3>
-                <ul class="top_month_music"></ul>
-                <h3>Top Music Video of All Time</h3>
-                <ul class="top_all_music"></ul>
-            </li>
-            <li class="find-server">
-                <a class="find-servers" href="#">Find a QBox Near Me</a>
+                <div id="top_week_music" class="carousel slide" data-ride="carousel">
+                    <h3>Top Music Video of The Week</h3>
+                    <div class="carousel-inner" role="listbox">
+                    </div>
+                    <a class="left carousel-control" href="#top_week_music" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#top_week_music" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                <div id="top_month_music" class="carousel slide" data-ride="carousel">
+                    <h3>Top Music Video of The Month</h3>
+                    <div class="carousel-inner" role="listbox">
+                    </div>
+                    <a class="left carousel-control" href="#top_month_music" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#top_month_music" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                <div id="top_all_music" class="carousel slide" data-ride="carousel">
+                    <h3>Top Music Video of All Time</h3>
+                    <div class="carousel-inner" role="listbox">
+                    </div>
+                    <a class="left carousel-control" href="#top_all_music" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#top_all_music" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
             </li>
             <li class="servers">
                 <h4>Public MVPlayers</h4>
@@ -74,6 +96,8 @@
                 <div class="search-results">
                     <h4>Tracks</h4>
                     <ul id="search-tracks"></ul>
+                    <h4>Artist</h4>
+                    <ul id="search-artist"></ul>
                 </div>
             </li>
         </ul>
@@ -86,12 +110,28 @@
             <h3>BFK</h3>
             <p>Freddie Gibbs</p>
         </div>
+        <div class="vote-info">
+            <div class="vote-data">
+                <i class="glyphicon glyphicon-thumbs-up"></i>
+                <span class="upvote">26</span>
+            </div>
+            <div class="vote-data">
+                <i class="glyphicon glyphicon-thumbs-down"></i>
+                <span class="downvote">5</span>
+            </div>
+        </div>
     </div>
     <div class="slidr closed">
         <div class="slidr-menu">
+            <div class="profile">
+                <img class="img-circle" src="http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg" />
+                <h2>JODY HiGHROLLER</h2>
+            </div>
             <ul>
                 <li class="menu-search"><i class="glyphicon glyphicon-search"></i>Search</li>
                 <li class="menu-browse active"><i class="glyphicon glyphicon-folder-open"></i>Browse</li>
+                <li class="menu-find"><i class="glyphicon glyphicon-cloud"></i>Find a MVPlayer</li>
+                <li class="menu-chat"><i class="glyphicon glyphicon-comment"></i>Chat</li>
                 <li class="menu-music"><i class="glyphicon glyphicon-headphones"></i>Your Music</li>
                 <li class="menu-settings"><i class="glyphicon glyphicon-cog"></i>Settings</li>
             </ul>
@@ -104,7 +144,7 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/vendor/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
-    <script src="http://mvpbox.herokuapp.com/socket.io/socket.io.js"></script>
+    <script src="http://192.168.1.13:5000/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 
     <script type="text/javascript">

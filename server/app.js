@@ -148,6 +148,12 @@ io.on('connection', function(socket) {
             fn(rows);
         });
     });
+    socket.on('subscribe', function(data) {
+        socket.join(data.room);
+    });
+    socket.on('unsubscribe', function(data) {
+        socket.leave(data.room);
+    });
     socket.on('empty queue', function(msg, fn) {
         var lastArtist = msg.lastArtist,
             jukebox_id = msg.server_id;
@@ -158,16 +164,25 @@ io.on('connection', function(socket) {
             if (error) {
                 console.log(error, response);
             } else {
-                //console.log(Math.floor(Math.random() * 16));
                 artist = response.artists[Math.floor(Math.random() * 15)].name;
 
                 request({
-                    url: "http://imvdb.com/api/v1/search/videos?q=" + artist,
+                    url: "http://imvdb.com/api/v1/search/entities?q=" + artist,
                     json: true
                 }, function(error, response, body) {
                     if (!error && response.statusCode === 200) {
-                        var track_id = body.results[0].id;
-                        newSong(track_id, jukebox_id);
+                        var artist_id = body.results[0].id;
+
+                        request({
+                            url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
+                            json: true
+                        }, function(error, response, body) {
+                            if (!error && response.statusCode === 200) {
+                                var videos = body.artist_videos.videos;
+                                var track_id = body.artist_videos.videos[Math.floor(Math.random() * videos.length)].id;
+                                newSong(track_id, jukebox_id);
+                            }
+                        });
                     }
                 });
             }
@@ -183,9 +198,7 @@ io.on('connection', function(socket) {
     socket.on('song ended', function(msg, fn) {
         var sid = msg.sid,
             tid = msg.tid;
-        console.log("ended");
         if (sid !== null && tid !== null) {
-            console.log("DELETE FROM jukebox_songs WHERE jukebox_id = '" + sid + "' AND customtrack_id = " + tid + " LIMIT 1;");
             connection.query("DELETE FROM jukebox_songs WHERE jukebox_id = '" + sid + "' AND customtrack_id = '" + tid + "' LIMIT 1;", function(err, rows, results) {
                 if (err) throw err;
             });
@@ -194,16 +207,15 @@ io.on('connection', function(socket) {
     });
     socket.on("vote", function(msg, fn) {
         var sid = msg.sid,
-            tid = msg.tid;
-        vote = msg.vote;
-        console.log("voted:" + (vote) ? "true" : "false");
-        var action = (vote) ? "upvote" : "downvote";
-        console.log("UPDATE jukebox_songs SET " + action + " = " + action + "+1 WHERE jukebox_id = '" + sid + "' AND customtrack_id = '" + tid + "' LIMIT 1;");
+            tid = msg.tid,
+            clients = io.sockets.clients(sid),
+            vote = msg.vote,
+            action = (vote) ? "upvote" : "downvote";
+        console.log("Number of Clients: " + clients);
         connection.query("UPDATE jukebox_songs SET " + action + " = " + action + "+1 WHERE jukebox_id = '" + sid + "' AND customtrack_id = '" + tid + "' LIMIT 1;", function(err, rows, results) {
             if (err) throw err;
         });
         io.emit(action);
-
     });
 
     function newSong(track_id, jukebox_id) {

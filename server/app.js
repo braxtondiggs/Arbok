@@ -157,7 +157,6 @@ io.on('connection', function(socket) {
     socket.on('empty queue', function(msg, fn) {
         var lastArtist = msg.lastArtist,
             jukebox_id = msg.server_id;
-        console.log(jukebox_id);
         myNest.artist.similar({
             name: lastArtist
         }, function(error, response) {
@@ -172,14 +171,13 @@ io.on('connection', function(socket) {
                 }, function(error, response, body) {
                     if (!error && response.statusCode === 200) {
                         var artist_id = body.results[0].id;
-
                         request({
                             url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
                             json: true
                         }, function(error, response, body) {
                             if (!error && response.statusCode === 200) {
                                 var videos = body.artist_videos.videos;
-                                var track_id = body.artist_videos.videos[Math.floor(Math.random() * videos.length)].id;
+                                var track_id = body.artist_videos.videos[Math.floor(Math.random() * videos.length)].id;//Needs to search Featured Artist Also --- Could combine the two arrays and picks from that
                                 newSong(track_id, jukebox_id);
                             }
                         });
@@ -224,12 +222,22 @@ io.on('connection', function(socket) {
             json: true
         }, function(error, response, body) {
             if (!error && response.statusCode === 200) {
+                var sources = body.sources[0].source_data,
+                    YT_Key = 0;
+                for (var key in sources) {
+                    if (sources[key].source === "youtube") {
+                        YT_Key = key;
+                        break;
+                    }else {
+                        //Needs to Alert The user if video does exist
+                    }
+                }
                 var customtrack_id = genID(12),
                     post = {
                         customtrack_id: customtrack_id,
                         track_id: body.id,
                         youtube_id: body.sources[0].source_data,
-                        artist: body.artists[0].name,
+                        artist: body.artists[YT_Key].name,
                         track: body.song_title,
                         image: body.image.o,
                         year: body.year,

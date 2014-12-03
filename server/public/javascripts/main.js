@@ -17,13 +17,17 @@ $(function() {
 });
 var socket = io.connect();
 socket.on('connect', function() {
-    if (current === 0) {
-        emptyQueue();
-    }
+    socket.emit('get playlist', {
+        sid: sid
+    }, function(confirm) {
+        playlist = confirm;
+        console.log(playlist);
+        if (playlist.length - 1 > current) {
+            emptyQueue();
+        }
+    });
 });
-socket.on('playlist', function(data) {
-    console.log(data);
-});
+
 socket.on('new song', function(data) {
     playlist.push(data);
     if (player.getPlayerState() == YT.PlayerState.ENDED || player.getPlayerState == YT.PlayerState.UNSTARTED) {
@@ -36,7 +40,7 @@ socket.on('next song', function(data) {
     if (playlist.length - 1 > current) {
         current++;
         PlaySong(current);
-    }else {
+    } else {
         emptyQueue();
     }
 });
@@ -75,11 +79,13 @@ function onPlayerStateChange(event) {
         });
     }
 }
+
 function onPlayerError(event) {
     socket.emit('song ended', {
         sid: sid,
         tid: tid
     });
+    player.playVideo();
 }
 
 function stopVideo() {
@@ -117,18 +123,19 @@ function displayPosition(position) {
             localStorage.setItem("QBox Playlist", JSON.stringify(confirm));
             playlist = confirm;
             PlaySong(current);
-        }); ///localStorage.getItem("QBox Playlist");console.log(playlist)}); // should get frm localSt
+        });
     }
-    //socket.join(sid);
 }
 
 function PlaySong(id) {
     if (playlist[id] && player) {
         player.loadVideoById(playlist[id].youtube_id);
-        tid = playlist[id].customtrack_id;
+        tid = playlist[id].track_id;
         localStorage.setItem("lastArtist", playlist[id].artist);
+        player.playVideo();
     }
 }
+
 function emptyQueue() {
     socket.emit('empty queue', {
         lastArtist: (localStorage.getItem("lastArtist") || "Taylor Swift"),

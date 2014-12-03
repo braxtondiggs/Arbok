@@ -13,6 +13,11 @@ $(function() {
         hasVoted = parseInt(localStorage.getItem("hasVoted"), 10) || 0,
         empty = true,
         music_bar = $(".music-bar").clone();
+    $(".artist_info .bio").dotdotdot({
+        watch: true,
+        height: 75,
+        after: "i.readmore"
+    });
     $(".menu-button").on("click", function() {
         $(this).toggleClass("closing opening").css({
             'background-color': '#666'
@@ -95,11 +100,15 @@ $(function() {
         }
         return false;
     });
+    $("#search-artist").on("click", "li", function() {
+        getArtistInfo($(this).data("id"));
+        console.log($(this).data("id"));
+        PageSwitch("artist_info");
+        return false;
+    });
     $(".servers > ul").on("click", "li", function() {
         server_id = $(this).data("id");
-        socket.emit('subscribe', {
-            room: server_id
-        });
+        connect2Server();
         localStorage.setItem("server", server_id);
         PageSwitch("homepage");
         MenuItem($(".menu-browse"));
@@ -137,14 +146,28 @@ $(function() {
         return false;
     });
     $(".music-bar .music-info").on("click", function() {
+        $(".menu-title .current").text("What's Playing");
+        if ($(".queue_list > li").length === 0) {
+            $(".empty-queue").show();
+        } else {
+            $(".empty-queue").hide();
+        }
         PageSwitch("queue");
+        return false;
+    });
+    $(".queue .queue_list").on("click", "li", function() {
+        getArtistInfoSlug($(this).data("artist-id"));
+        PageSwitch("artist_info");
+        return false;
+    });
+    $(".artist_info .bio").on("click", function() {
+        $(this).trigger("destory");
         return false;
     });
     socket.on('new song', function(data) {
         console.log("new song");
         playlist.push(data);
-        
-        $(".queue .queue_list").prepend($("<li />").html($(music_bar).html()));
+        updateUserQueue(data);
         localStorage.setItem("hasVoted", 0);
         if (empty === false) {
             console.log("new song empty");
@@ -153,7 +176,9 @@ $(function() {
         }
     });
     socket.on('next song', function(data) {
+        $(".queue_list > li:first-child").fadeOut("slow");
         if (playlist.length - 1 > current) {
+            
             current++;
             Player(current);
             empty = false;
@@ -171,19 +196,7 @@ $(function() {
         $(".music-bar .vote-info .downvote").text(parseInt($(this).text(), 10) + 1);
     });
     socket.on('connect', function() {
-        socket.emit('subscribe', {
-            room: server_id
-        }, function(confirm) {
-            joined = confirm.joined;
-        });
-        socket.emit('get playlist', {
-            sid: server_id
-        }, function(confirm) {
-            playlist = confirm;
-            console.log(playlist);
-            Player(current);
-            empty = false;
-        });
+        connect2Server();
     });
     socket.on('disconnect', function() {
         socket.emit('unsubscribe', {
@@ -197,7 +210,24 @@ $(function() {
     } else if (hasVoted === -1) {
         voteAction($('.vote-info i.glyphicon-thumbs-down'));
     }
-
+    function connect2Server() {
+        socket.emit('subscribe', {
+            room: server_id
+        }, function(confirm) {
+            joined = confirm.joined;
+        });
+        socket.emit('get playlist', {
+            sid: server_id
+        }, function(confirm) {
+            playlist = confirm;
+            console.log(playlist);
+            Player(current);
+            empty = false;
+            $.each(playlist, function(k, v) {
+                updateUserQueue(v);
+            });
+        });
+    }
     function Player(id) {
         var image = "http://placehold.it/50x50",
             artist = "Tap Here to Add More!",
@@ -219,9 +249,63 @@ $(function() {
     }
 
     function PageSwitch(page) {
-        $("ul#pages").children("li.active").removeClass("active").end().children("li." + page).addClass("active");
+        $("ul#pages").children("li.active").removeClass("active").end().children("li." + page).addClass("active").animate({
+            scrollTop: 0
+        }, 0);
+        if (page !== "search-page") {
+            removeSearch();
+        }
     }
 
+    function getArtistInfoSlug(artist_slug) {
+        $.ajax({
+            type: "GET",
+            crossDomain: true,
+            async: false,
+            url: remote_server + "music/search",
+            data: {
+                e: artist_slug
+            }
+        }).done(function(data) {
+            console.log(data.results[0].id);
+            getArtistInfo(data.results[0].id);
+        });
+    }
+
+    function getArtistInfo(artist_id) {
+        $.ajax({
+            type: "GET",
+            crossDomain: true,
+            async: false,
+            url: remote_server + "music/artist",
+            data: {
+                e: artist_id
+            }
+        }).done(function(data) {
+            $(".menu-title .current").text((data.name !== null) ? data.name : convertSlug(data.slug));
+            $(".artist_info").find(".img-thumbnail").prop("src", data.image).end().find(".bio").trigger("update").show().end().find(".videography, .featured").html("");
+            loadVideos("videography", data.artist_videos.videos);
+            loadVideos("featured", data.featured_artist_videos.videos);
+
+            function loadVideos(section, videos) {
+                $.each(videos, function(k, v) {
+                    $(".artist_info ." + section).append($("<div />", {
+                        class: "col-md-6 video"
+                    }).append($("<img />", {
+                        src: v.image.l
+                    })).append($("<div />", {
+                        class: "video_info"
+                    }).append($("<h3 />").text(v.song_title)).append($("<p />").text(v.artists[0].name))));
+                });
+            }
+        });
+    }
+    function updateUserQueue(data) {
+        $(music_bar).find(".album-cover img").prop("src", data.image).end().find(".music-info h3").text(data.track).end().find(".music-info p").text(data.artist).end().find(".vote-info span.upvote").text(data.upvote).end().find(".vote-info span.downvote").text(data.downvote);
+        $(".queue .queue_list").append($("<li />", {
+            "data-artist-id": data.imvdbartist_id
+        }).html($(music_bar).html()));
+    }
     function search() {
         var s = $("input.search").val(),
             artist = [];
@@ -233,7 +317,7 @@ $(function() {
                 v: s
             }
         }).done(function(data) {
-            $(".search-tracks, #search-artist").html("");
+            $("#search-tracks, #search-artist").html("");
             $.each(data.results, function(k, v) {
                 $("#search-tracks ").append($("<li />", {
                     "data-id": v.id
@@ -242,23 +326,37 @@ $(function() {
                 })).append($("<div />", {
                     "class": "track-wrapper"
                 }).append($("<h5 />").text(v.artists[0].name)).append($("<p />").text(v.song_title))));
-                if (!isInArray(v.artists[0].name, artist)) {
-                    $("#search-artist").append($("<li />", {
-                        "data-id": v.id
-                    }).append($("<img />", {
-                        src: v.image.b
-                    })).append($("<div />", {
-                        "class": "track-wrapper"
-                    }).append($("<h5 />").text(v.artists[0].name))));
-                    artist.push(v.artists[0].name);
-                }
-                console.log(artist);
             });
 
-            function isInArray(value, array) {
-                return array.indexOf(value) > -1;
-            }
+            $.ajax({
+                type: "GET",
+                crossDomain: true,
+                url: remote_server + "music/search",
+                data: {
+                    e: s
+                }
+            }).done(function(data) {
+                $.each(data.results, function(k, v) {
+                    $("#search-artist ").append($("<li />", {
+                        "data-id": v.id
+                    }).append($("<img />", {
+                        src: checkImage(v.image)
+                    })).append($("<div />", {
+                        "class": "artist-wrapper"
+                    }).append($("<h5 />").text((v.name !== null) ? v.name : convertSlug(v.slug)))));
+                });
+            });
         });
+    }
+
+    function convertSlug(slug) {
+        return slug.replace("-", " ").replace("-", " & ").replace(/\w\S*/g, function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+    }
+
+    function checkImage(img) {
+        return (img.slice(-3) === "jpg") ? img : "http://placehold.it/125x70";
     }
 
     function toggleSlidr() {
@@ -288,7 +386,7 @@ $(function() {
                 }
             });
             $('#best_new_music').carousel(0);
-            $("li.queue").fadeIn("slow", function() {
+            $("li.homepage").fadeIn("slow", function() {
                 $(this).addClass("active").removeAttr("style");
             });
         });

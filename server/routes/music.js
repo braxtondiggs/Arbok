@@ -14,11 +14,11 @@ router.get('/', function(req, res) {
 router.get('/search', function(req, res) {
     var e = req.query['e'] || null,
         v = req.query['v'] || null,
-        action = (e)?"entities":"videos";
+        action = (e) ? "entities" : "videos";
 
     if (action) {
         request({
-            url: "http://imvdb.com/api/v1/search/"+action+"?q=" + ((e)?e:v),
+            url: "http://imvdb.com/api/v1/search/" + action + "?q=" + ((e) ? e : v) + ((e) ? "&per_page=5" : ""),
             json: true
         }, function(error, response, body) {
             if (!error && response.statusCode === 200) {
@@ -29,8 +29,27 @@ router.get('/search', function(req, res) {
             }
             res.end();
         });
-    }else{
+    } else {
         //show404
+    }
+});
+router.get('/artist', function(req, res) {
+    var e = req.query['e'] || null;
+    if (e) {
+        request({
+            url: "http://imvdb.com/api/v1/entity/" + e + "?include=artist_videos,featured_videos",
+            json: true
+        }, function(error, response, body) {
+            if (!error && response.statusCode === 200) {
+                res.setHeader('Content-Type', 'application/json');
+                res.write(JSON.stringify(body));
+            } else {
+                //show 404 page
+            }
+            res.end();
+        });
+    } else {
+        //show 404
     }
 });
 

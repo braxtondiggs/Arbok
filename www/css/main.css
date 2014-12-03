@@ -16,51 +16,67 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 * {
-    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
 a, a:hover {
     text-decoration: none!important;
-    color:#FFF;
+    color: #FFF;
 }
 ul {
     list-style: none;
-    padding:0;
-    margin:0;
+    padding: 0;
+    margin: 0;
 }
-::-webkit-input-placeholder { /* WebKit browsers */
-    color:    #FFF;
+::-webkit-input-placeholder {
+    /* WebKit browsers */
+    
+    color: #FFF;
 }
-:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-   color:    #FFF;
-   opacity:  1;
+:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    
+    color: #FFF;
+    opacity: 1;
 }
-::-moz-placeholder { /* Mozilla Firefox 19+ */
-   color:    #FFF;
-   opacity:  1;
+::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    
+    color: #FFF;
+    opacity: 1;
 }
-:-ms-input-placeholder { /* Internet Explorer 10+ */
-   color:    #FFF;
+:-ms-input-placeholder {
+    /* Internet Explorer 10+ */
+    
+    color: #FFF;
 }
 body {
-    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
-    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
-    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
-    background-color:#000!important;
-    color:#FFF!important;
-    background-attachment:fixed;
-    font-size:12px;
-    height:100%;
-    margin:0px;
-    padding:0px;
-    width:100%;
+    -webkit-touch-callout: none;
+    /* prevent callout to copy image, etc when tap to hold */
+    
+    -webkit-text-size-adjust: none;
+    /* prevent webkit from resizing text to fit */
+    
+    -webkit-user-select: none;
+    /* prevent copy paste, to allow, change 'none' to 'text' */
+    
+    background-color: #000!important;
+    color: #FFF!important;
+    background-attachment: fixed;
+    font-size: 12px;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
 }
 header {
-    background-color:#333;
-    position:fixed;
+    background-color: #333;
+    position: fixed;
     top: 0;
     left: 0;
-    width:100%;
+    width: 100%;
     z-index: 1000;
     overflow: hidden;
     backface-visibility: hidden;
@@ -79,7 +95,7 @@ header .toggle {
     height: 24px;
     padding: 3px 25px 0;
     z-index: 1000;
-    display:inline-block;
+    display: inline-block;
     background-position: 50% 50%;
     background-repeat: no-repeat;
     -webkit-transition: all 0.6s cubic-bezier(0.7, 0.01, 0.3, 1);
@@ -118,27 +134,23 @@ header .toggle .patty:before {
 header .toggle .patty:after {
     top: 8px;
 }
-
-header h1.menu-title{
+header h1.menu-title {
     display: inline-block;
-    font-size:26px;
-    margin:0 0 0 15px;
+    font-size: 26px;
+    margin: 0 0 0 15px;
     text-decoration: none;
-    color:#FFF;
-    
+    color: #FFF;
 }
-header .closing .current,
-header .opening .logo {
-    display:none;
+header .closing .current, header .opening .logo {
+    display: none;
 }
-header .opening .current,
-header .closing .logo {
-    display:inline;
+header .opening .current, header .closing .logo {
+    display: inline;
 }
 header .closing .patty {
-    background:none!important;
+    background: none!important;
 }
-header .closing .patty:after{
+header .closing .patty:after {
     top: 0 !important;
     -webkit-transform: rotate(-45deg);
     -moz-transform: rotate(-45deg);
@@ -154,14 +166,13 @@ header .closing .patty:before {
     -o-transform: rotate(45deg);
     transform: rotate(45deg);
 }
-header #header-search,
-header.search h1.menu-title{
-    display:none;    
+header #header-search, header.search h1.menu-title {
+    display: none;
 }
 header.search #header-search {
-    display:inline-block;
+    display: inline-block;
     position: relative;
-    font-size:16px;
+    font-size: 16px;
     vertical-align: top;
     margin-top: 12px;
 }
@@ -172,13 +183,13 @@ header.search #header-search {
 }
 #header-search input {
     height: 24px;
-    color:#FFF;
+    color: #FFF;
     background-color: transparent;
-    border:none;
+    border: none;
     background: bottom left linear-gradient(#ec008c, #ec008c) no-repeat, bottom center linear-gradient(#ec008c, #ec008c) repeat-x, bottom right linear-gradient(#ec008c, #ec008c) no-repeat;
     background-size: 1px 6px, 1px 1px, 1px 6px;
     padding-left: 30px;
-    outline:none;
+    outline: none;
     line-height: 19px;
 }
 #header-search .clear-search {
@@ -213,23 +224,23 @@ header.search #header-search {
     height: 100%;
 }
 .slidr .slidr-menu li {
-    font-size:22px;
-    padding: 15px 25px;
-    color:#CCC;
+    font-size: 22px;
+    padding: 15px 20px;
+    color: #CCC;
 }
 .slidr .slidr-menu li i {
-    margin-right:25px
+    margin-right: 20px
 }
 .slidr .slidr-menu li.active {
-    border-left:5px #ec008c solid;
-    padding-left:20px;
-    color:#FFF;
+    border-left: 5px #ec008c solid;
+    padding-left: 20px;
+    color: #FFF;
 }
 .slidr .slidr-menu .slidr-footer {
     position: absolute;
-    bottom:0;
-    left:0;
-    width:100%;
+    bottom: 0;
+    left: 0;
+    width: 100%;
 }
 .slidr .overlay {
     position: fixed;
@@ -241,13 +252,13 @@ header.search #header-search {
     text-align: center;
     border-bottom: 2px #AAA solid;
 }
-.profile img{
+.profile img {
     height: 110px;
     width: 110px;
 }
 .profile h2 {
     font-size: 24px;
-    color:#ec008c;
+    color: #ec008c;
 }
 .music-bar {
     position: fixed;
@@ -256,83 +267,85 @@ header.search #header-search {
     width: 100%;
     z-index: 10;
 }
-.album-cover,
-.music-info{
-    display:inline-block;
+.album-cover, .music-info {
+    display: inline-block;
     vertical-align: middle;
 }
 .album-cover img {
-    height:50px;
-    width:50px;
+    height: 50px;
+    width: 50px;
 }
 .vote-info {
-    display:inline-block;
+    display: inline-block;
     vertical-align: bottom;
     margin-bottom: -4px;
 }
 .music-bar .vote-info {
-    display:none;
+    display: none;
 }
-.vote-info .glyphicon-thumbs-up{
-    color:#485A48;
+.vote-info .glyphicon-thumbs-up {
+    color: #485A48;
     font-size: 26px;
-    display:block;
+    display: block;
 }
-.vote-info .glyphicon-thumbs-down{
-    color:#5F4A4A;
+.vote-info .glyphicon-thumbs-down {
+    color: #5F4A4A;
     font-size: 26px;
-    display:block;
+    display: block;
     transform: rotateY(180deg);
 }
-.vote-info .glyphicon-thumbs-down.selected{
-    color:red;
+.vote-info .glyphicon-thumbs-down.selected {
+    color: red;
 }
-.vote-info .glyphicon-thumbs-up.selected{
-    color:green;
+.vote-info .glyphicon-thumbs-up.selected {
+    color: green;
 }
 .vote-info .vote-data {
-    display:inline-block;
+    display: inline-block;
 }
 .music-bar .vote-info .vote-data:first-child {
-    margin-right:4px;
+    margin-right: 4px;
 }
-.vote-info .vote-data  span{
+.vote-info .vote-data span {
     text-align: center;
     display: block;
-    margin-top:5px;
+    margin-top: 5px;
 }
 .music-info {
     margin: 0 5px;
     width: calc(100% - 127px);
 }
-.music-info h3{
-    margin:3px 0 0 0;
-    font-size:22px;
+.music-info h3 {
+    margin: 3px 0 0 0;
+    font-size: 22px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 .music-info p {
-    margin:0;
+    margin: 0;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 .search-results, .servers {
-    margin-top:20px;
+    margin-top: 20px;
 }
-.search-results > h4, .servers > h4 {
+.artist_info > h3, .search-results > h4, .servers > h4 {
     color: #AAA;
-    margin:0;
+    margin: 0;
     padding-bottom: 5px;
     border-bottom: 1px solid #AAA;
-    font-size:24px;
+    font-size: 24px;
+}
+.artist_info > h3 {
+    margin: 10px 0;
 }
 .search-results li, .servers li {
     border-bottom: 1px solid #AAA;
-    padding:5px 0;
+    padding: 5px 0;
     position: relative;
-    background-color:#222;
+    background-color: #222;
 }
 .servers li a.join-server {
     position: absolute;
@@ -345,27 +358,26 @@ header.search #header-search {
     bottom: 5px;
 }
 .search-results li:last-child, .servers li:last-child {
-    border:none;
+    border: none;
 }
 .search-results p, .servers p {
-    margin:2px 0 10px 0;
+    margin: 2px 0 10px 0;
 }
-.search-results h5, .servers h5{
+.search-results h5, .servers h5 {
     margin: 10px 0 0 0;
     font-size: 16px;
 }
-.search-results img, .servers img{
-    height:70px;
-    width:125px;
-    margin-right:15px;
+.search-results img, .servers img {
+    height: 70px;
+    width: 125px;
+    margin-right: 15px;
     vertical-align: top;
-    background-color:#000;
+    background-color: #000;
 }
-.search-results .track-wrapper, .servers .server-wrapper{
-    display:inline-block;
+.search-results .track-wrapper, .search-results .artist-wrapper, .servers .server-wrapper {
+    display: inline-block;
 }
-.search-results .track-wrapper:after,
-.search-results .artist-wrapper:after {
+.search-results .track-wrapper:after, .search-results .artist-wrapper:after {
     content: "\e029";
     font-family: 'Glyphicons Halflings';
     font-style: normal;
@@ -376,42 +388,49 @@ header.search #header-search {
     position: absolute;
     right: 10px;
     top: 25%;
-    color:#ec008c;
+    color: #ec008c;
+}
+.search-results .artist-wrapper:after {
+    content: "\e008";
+    border: 5px solid;
+    border-radius: 14px;
+    font-size: 8px;
+    padding: 3px 4px;
 }
 .search-results h4:not(:first-child) {
-    margin-top:40px
+    margin-top: 40px
 }
 .container > ul#pages > li {
-    display:none;
+    display: none;
 }
 .container > ul#pages > li.active {
-    display:block;
+    display: block;
 }
 .carousel-inner>.item>img {
-    width:100%;
+    width: 100%;
 }
 .homepage .carousel > h3 {
-    margin:0;
+    margin: 0;
 }
-.homepage .carousel-caption {
+.homepage .carousel-caption, .artist_info .video_info {
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     left: 0;
-    bottom:0;
-    padding:0;
-    color:#ec008c;
+    bottom: 0;
+    padding: 0;
+    color: #ec008c;
 }
 .homepage .carousel-caption h3 {
-    margin:0;
-    font-size:20px;
+    margin: 0;
+    font-size: 20px;
 }
 .homepage .carousel-caption p {
-    margin:0;
+    margin: 0;
 }
 .queue .queue_list {
-    counter-reset:li;
+    counter-reset: li;
     list-style: none;
-    padding:0;
+    padding: 0;
     position: relative;
 }
 .queue .queue_list li {
@@ -419,37 +438,74 @@ header.search #header-search {
     padding: 0 0 5px 40px;
     margin-bottom: 10px;
 }
-.queue .queue_list li:before{
-    content: counter(li) ").";
-    counter-increment:li;
+.queue .queue_list li:before {
+    content: counter(li)").";
+    counter-increment: li;
     position: absolute;
     font-size: 34px;
     color: #ec008c;
     left: 0;
 }
+.artist_info img.img-thumbnail {
+    width: 100%;
+    background-color: #333;
+    border-color: #333;
+}
+.artist_info .bio {
+    color: #FFF;
+    opacity: .5;
+    margin: 10px 5px 0;
+    display: none;
+}
+.artist_info .video {
+    position: relative;
+}
+.artist_info .video img {
+    width: 100%;
+}
+.artist_info .video_info {
+    position: absolute;
+    ;
+    text-align: center;
+}
 @keyframes fade {
-    from { opacity: 1.0; }
-    50% { opacity: 0.4; }
-    to { opacity: 1.0; }
+    from {
+        opacity: 1.0;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    to {
+        opacity: 1.0;
+    }
 }
- 
 @-webkit-keyframes fade {
-    from { opacity: 1.0; }
-    50% { opacity: 0.4; }
-    to { opacity: 1.0; }
-
-
-@-webkit-keyframes slide {
-    100% { left: 0; }
-}
-
-@keyframes slide {
-    100% { left: 0; }
-}
-@-webkit-keyframes slideback {
-    100% { left: -999px; }
-}
-
-@keyframes slideback {
-    100% { left: -999px; }
-}
+    from {
+        opacity: 1.0;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    to {
+        opacity: 1.0;
+    }
+    @-webkit-keyframes slide {
+        100% {
+            left: 0;
+        }
+    }
+    @keyframes slide {
+        100% {
+            left: 0;
+        }
+    }
+    @-webkit-keyframes slideback {
+        100% {
+            left: -999px;
+        }
+    }
+    @keyframes slideback {
+        100% {
+            left: -999px;
+        }
+    }

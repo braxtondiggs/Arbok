@@ -18,7 +18,7 @@ $(function() {
 var socket = io.connect();
 socket.on('connect', function() {
     if (current === 0) {
-        //emptyQueue();
+        emptyQueue();
     }
 });
 socket.on('playlist', function(data) {
@@ -47,7 +47,8 @@ function onYouTubeIframeAPIReady() {
         width: $(window).width(),
         events: {
             'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
+            'onStateChange': onPlayerStateChange,
+            'onError': onPlayerError
         },
         playerVars: {
             'controls': 0,
@@ -73,6 +74,12 @@ function onPlayerStateChange(event) {
             tid: tid
         });
     }
+}
+function onPlayerError(event) {
+    socket.emit('song ended', {
+        sid: sid,
+        tid: tid
+    });
 }
 
 function stopVideo() {

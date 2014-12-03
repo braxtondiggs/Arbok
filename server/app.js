@@ -164,30 +164,54 @@ io.on('connection', function(socket) {
             if (error) {
                 console.log(error, response);
             } else {
-                artist = response.artists[Math.floor(Math.random() * 15)].name;
 
-                request({
-                    url: "http://imvdb.com/api/v1/search/entities?q=" + artist,
-                    json: true
-                }, function(error, response, body) {
-                    if (!error && response.statusCode === 200) {
-                        var artist_id = body.results[0].id;
-
-                        request({
-                            url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
-                            json: true
-                        }, function(error, response, body) {
-                            if (!error && response.statusCode === 200) {
-                                var videos = body.artist_videos.videos;
-                                var track_id = body.artist_videos.videos[Math.floor(Math.random() * videos.length)].id;
-                                newSong(track_id, jukebox_id);
+                var breakLoop = false;
+                console.log(response.artists);
+                for (var v in response.artists) {
+                    if (breakLoop) {return;}
+                    console.log("loop" + v);
+                    console.log(breakLoop);
+                    artist = response.artists[Math.floor(Math.random() * response.artists.length)].name;
+                    request({
+                        url: "http://imvdb.com/api/v1/search/entities?q=" + artist,
+                        json: true
+                    }, function(error, response, body) {
+                        if (breakLoop) {return;}
+                        if (!error && response.statusCode === 200) {
+                            var artist_id = body.results[0].id;
+                            if (artist_id) {
+                                request({
+                                    url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
+                                    json: true
+                                }, function(error, response, body) {
+                                    if (breakLoop) {return;}
+                                    if (!error && response.statusCode === 200) {
+                                        if (body.artist_videos.total_videos !== 0) {
+                                            var videos = body.artist_videos.videos;
+                                            console.log(body.artist_videos);
+                                            console.log(videos.length);
+                                            console.log(Math.random() * videos.length);
+                                            var track_id = body.artist_videos.videos[Math.floor(Math.random() * (videos.length - 1))].id;
+                                            breakLoop = true;
+                                            newSong(track_id, jukebox_id);
+                                            if (breakLoop) {return;}
+                                        } else {
+                                            return false;
+                                        }
+                                    }
+                                });
+                            } else {
+                                return false;
                             }
-                        });
-                    }
-                });
+                        }
+                    });                }
             }
         });
     });
+
+    function searchArtist(artist) {
+
+    }
 
     socket.on("add song", function(msg) {
         console.log("add song");
@@ -232,7 +256,7 @@ io.on('connection', function(socket) {
                         artist: body.artists[0].name,
                         track: body.song_title,
                         image: body.image.o,
-                        year: body.year,
+                        year: body.year || 2014,
                         jukebox_id: jukebox_id,
                         upvote: 0,
                         downvote: 0
@@ -242,7 +266,7 @@ io.on('connection', function(socket) {
                     };
                 connection.query("SELECT youtube_id FROM jukebox_songs WHERE ?", where_post, function(err, rows, results) {
                     if (err) throw err;
-                    if (rows.affectedRows) {
+                    if (rows.length === 0) {
                         connection.query("INSERT INTO jukebox_songs SET ?", post, function(err, rows, results) {
                             if (err) throw err;
                             io.emit("new song", {

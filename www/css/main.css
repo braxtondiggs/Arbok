@@ -256,60 +256,63 @@ header.search #header-search {
     width: 100%;
     z-index: 10;
 }
-.music-bar .album-cover,
-.music-bar .music-info{
+.album-cover,
+.music-info{
     display:inline-block;
     vertical-align: middle;
 }
-.music-bar .album-cover img {
+.album-cover img {
     height:50px;
     width:50px;
 }
-.music-bar .vote-info {
-    display: none;
+.vote-info {
+    display:inline-block;
     vertical-align: bottom;
     margin-bottom: -4px;
 }
-.music-bar .vote-info .glyphicon-thumbs-up{
+.music-bar .vote-info {
+    display:none;
+}
+.vote-info .glyphicon-thumbs-up{
     color:#485A48;
     font-size: 26px;
     display:block;
 }
-.music-bar .vote-info .glyphicon-thumbs-down{
+.vote-info .glyphicon-thumbs-down{
     color:#5F4A4A;
     font-size: 26px;
     display:block;
     transform: rotateY(180deg);
 }
-.music-bar .vote-info .glyphicon-thumbs-down.selected{
+.vote-info .glyphicon-thumbs-down.selected{
     color:red;
 }
-.music-bar .vote-info .glyphicon-thumbs-up.selected{
+.vote-info .glyphicon-thumbs-up.selected{
     color:green;
 }
-.music-bar .vote-info .vote-data {
+.vote-info .vote-data {
     display:inline-block;
 }
 .music-bar .vote-info .vote-data:first-child {
     margin-right:4px;
 }
-.music-bar .vote-info .vote-data  span{
+.vote-info .vote-data  span{
     text-align: center;
     display: block;
     margin-top:5px;
 }
-.music-bar .music-info {
+.music-info {
     margin: 0 5px;
     width: calc(100% - 127px);
 }
-.music-bar .music-info h3{
+.music-info h3{
     margin:3px 0 0 0;
     font-size:22px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.music-bar .music-info p {
+.music-info p {
     margin:0;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -404,6 +407,25 @@ header.search #header-search {
 }
 .homepage .carousel-caption p {
     margin:0;
+}
+.queue .queue_list {
+    counter-reset:li;
+    list-style: none;
+    padding:0;
+    position: relative;
+}
+.queue .queue_list li {
+    border-bottom: 1px solid #333;
+    padding: 0 0 5px 40px;
+    margin-bottom: 10px;
+}
+.queue .queue_list li:before{
+    content: counter(li) ").";
+    counter-increment:li;
+    position: absolute;
+    font-size: 34px;
+    color: #ec008c;
+    left: 0;
 }
 @keyframes fade {
     from { opacity: 1.0; }

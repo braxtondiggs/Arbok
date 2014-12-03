@@ -11,7 +11,8 @@ $(function() {
         current = 0,
         joind = false,
         hasVoted = parseInt(localStorage.getItem("hasVoted"), 10) || 0,
-        empty = true;
+        empty = true,
+        music_bar = $(".music-bar").clone();
     $(".menu-button").on("click", function() {
         $(this).toggleClass("closing opening").css({
             'background-color': '#666'
@@ -117,6 +118,7 @@ $(function() {
         } else {
             alert("You Have Already Voted!");
         }
+        return false;
     });
     $(".vote-data .glyphicon-thumbs-down").on("click", function() {
         if (hasVoted >= 0) {
@@ -132,13 +134,17 @@ $(function() {
         } else {
             alert("You Have Already Voted!");
         }
+        return false;
     });
-    socket.on("playlist", function(data) {
-        console.log(data);
+    $(".music-bar .music-info").on("click", function() {
+        PageSwitch("queue");
+        return false;
     });
     socket.on('new song', function(data) {
         console.log("new song");
         playlist.push(data);
+        
+        $(".queue .queue_list").prepend($("<li />").html($(music_bar).html()));
         localStorage.setItem("hasVoted", 0);
         if (empty === false) {
             console.log("new song empty");
@@ -153,8 +159,8 @@ $(function() {
             empty = false;
         } else {
             empty = true;
-            playlist = [];
-            current = 0;
+            //playlist = [];
+            //current = 0;
             Player(current);
         }
     });
@@ -282,7 +288,7 @@ $(function() {
                 }
             });
             $('#best_new_music').carousel(0);
-            $(".artist_info").fadeIn("slow", function() {
+            $("li.queue").fadeIn("slow", function() {
                 $(this).addClass("active").removeAttr("style");
             });
         });

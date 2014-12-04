@@ -16,7 +16,6 @@ var express = require('express'),
     time = require('time'),
     echonest = require('echonest');
 
-
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'X-Requested-With');
@@ -160,81 +159,51 @@ io.on('connection', function(socket) {
         myNest.artist.similar({
             name: lastArtist
         }, function(error, response) {
+            var found = false;
             if (error) {
                 console.log(error, response);
             } else {
-                var breakLoop = false;
-                var shit = null;
-                for (var i=0; i < response.artists.length; i++) {
-                    /*if (breakLoop) {
-                        console.log("hi");
-                        break;
-                        console.log("kill me");
-                        return;
-                        console.log("still alive");
-                        return false;
-                        console.log("I never die");
-                    } else {
-                        console.log("alive");
-                    }*/
-                    var ran = Math.floor(Math.random() * response.artists.length);
-                    //console.log(ran);
-                    artist = response.artists[ran].name;
-                    //console.log(response.artists[ran].name);
-                    shit = request({
-                        url: "http://imvdb.com/api/v1/search/entities?q=" + artist + "&per_page=1",
-                        json: true
-                    }, callbackAfterLoad);
-                    console.log(shit);
-
-
-                }
-
+                callAPIs(response.artists);
             }
 
-            //function 
-            function callbackAfterLoad(error, response, body) {
-                bodyy = body;
-                return body
-                //fn();
-                        /*if (breakLoop) {
-                            return;
-                        }
-                        console.log(body);
+            function callAPIs(APIs) {
+                if (APIs.length) {
+                    var ran = Math.floor(Math.random() * APIs.length);
+                    artist = APIs[ran].name;
+                    request.get({
+                        url: "http://imvdb.com/api/v1/search/entities?q=" + artist + "&per_page=1",
+                        json: true
+                    }, function(error, response, body) {
                         if (!error && response.statusCode === 200) {
                             if (body.results[0]) {
                                 var artist_id = body.results[0].id;
                                 if (artist_id) {
-                                    request({
+                                    request.get({
                                         url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
                                         json: true
                                     }, function(error, response, body) {
-                                        if (breakLoop) {
-                                            return;
-                                        }
                                         if (!error && response.statusCode === 200) {
                                             if (body.artist_videos.total_videos !== 0) {
                                                 var videos = body.artist_videos.videos;
                                                 var track_id = body.artist_videos.videos[Math.floor(Math.random() * (videos.length))].id; //Needs to search Featured Artist Also --- Could combine the two arrays and picks from that
-                                                breakLoop = true;
-                                                console.log(artist_id);
+                                                //console.log(artist_id);
+                                                found = true;
                                                 newSong(track_id, jukebox_id);
-                                                if (breakLoop) {
-                                                    return;
-                                                }
-                                            } else {
-                                                return false;
                                             }
                                         }
+                                        if (!found) {
+                                            APIs.splice(ran, 1);
+                                            callAPIs(APIs);
+                                        }
                                     });
-                                } else {
-                                    return false;
                                 }
-                            } else {
-                                return false;
                             }
-                        }*/
-                    }
+                        }
+                    });
+
+                }
+            }
+
         });
     });
 

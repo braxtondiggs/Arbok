@@ -56,16 +56,16 @@ function onYouTubeIframeAPIReady() {
             'onError': onPlayerError
         },
         playerVars: {
-            //'controls': 0,
+            'controls': 0,
             'disablekb': 0,
             'showinfo': 0,
-            'rel': 0
+            'rel': 0,
+            'iv_load_policy':3
         }
     });
 }
 
 function onPlayerReady(event) {
-    //event.target.playVideo();
     getLocation();
 }
 
@@ -83,7 +83,8 @@ function onPlayerStateChange(event) {
 }
 
 function onPlayerError(event) {
-    console.log(event);
+    console.log('error');
+    current++;
     socket.emit('song ended', {
         sid: sid,
         tid: tid

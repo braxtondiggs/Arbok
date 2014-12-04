@@ -164,60 +164,79 @@ io.on('connection', function(socket) {
                 console.log(error, response);
             } else {
                 var breakLoop = false;
-                console.log(response.artists);
-                for (var v in response.artists) {
-                    if (breakLoop) {
+                var shit = null;
+                for (var i=0; i < response.artists.length; i++) {
+                    /*if (breakLoop) {
+                        console.log("hi");
+                        break;
+                        console.log("kill me");
                         return;
-                    }
-                    artist = response.artists[Math.floor(Math.random() * response.artists.length)].name;
-                    request({
-                        url: "http://imvdb.com/api/v1/search/entities?q=" + artist,
+                        console.log("still alive");
+                        return false;
+                        console.log("I never die");
+                    } else {
+                        console.log("alive");
+                    }*/
+                    var ran = Math.floor(Math.random() * response.artists.length);
+                    //console.log(ran);
+                    artist = response.artists[ran].name;
+                    //console.log(response.artists[ran].name);
+                    shit = request({
+                        url: "http://imvdb.com/api/v1/search/entities?q=" + artist + "&per_page=1",
                         json: true
-                    }, requestPage);
+                    }, callbackAfterLoad);
+                    console.log(shit);
+
+
                 }
 
             }
 
-            function requestPage(error, response, body) {
-                if (breakLoop) {
-                    return;
-                }
-                if (!error && response.statusCode === 200) {
-                    var artist_id = body.results[0].id;
-                    if (artist_id) {
-                        request({
-                            url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
-                            json: true
-                        }, function(error, response, body) {
-                            if (breakLoop) {
-                                return;
-                            }
-                            if (!error && response.statusCode === 200) {
-                                if (body.artist_videos.total_videos !== 0) {
-                                    var videos = body.artist_videos.videos;
-                                    var track_id = body.artist_videos.videos[Math.floor(Math.random() * (videos.length - 1))].id; //Needs to search Featured Artist Also --- Could combine the two arrays and picks from that
-                                    breakLoop = true;
-                                    newSong(track_id, jukebox_id);
-                                    if (breakLoop) {
-                                        return;
-                                    }
+            //function 
+            function callbackAfterLoad(error, response, body) {
+                bodyy = body;
+                return body
+                //fn();
+                        /*if (breakLoop) {
+                            return;
+                        }
+                        console.log(body);
+                        if (!error && response.statusCode === 200) {
+                            if (body.results[0]) {
+                                var artist_id = body.results[0].id;
+                                if (artist_id) {
+                                    request({
+                                        url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
+                                        json: true
+                                    }, function(error, response, body) {
+                                        if (breakLoop) {
+                                            return;
+                                        }
+                                        if (!error && response.statusCode === 200) {
+                                            if (body.artist_videos.total_videos !== 0) {
+                                                var videos = body.artist_videos.videos;
+                                                var track_id = body.artist_videos.videos[Math.floor(Math.random() * (videos.length))].id; //Needs to search Featured Artist Also --- Could combine the two arrays and picks from that
+                                                breakLoop = true;
+                                                console.log(artist_id);
+                                                newSong(track_id, jukebox_id);
+                                                if (breakLoop) {
+                                                    return;
+                                                }
+                                            } else {
+                                                return false;
+                                            }
+                                        }
+                                    });
                                 } else {
                                     return false;
                                 }
+                            } else {
+                                return false;
                             }
-                        });
-                    } else {
-                        return false;
+                        }*/
                     }
-                }
-            }
         });
     });
-
-    function searchArtist(artist) {
-
-    }
-
 
     socket.on("add song", function(msg) {
         console.log("add song");
@@ -255,7 +274,7 @@ io.on('connection', function(socket) {
             json: true
         }, function(error, response, body) {
             if (!error && response.statusCode === 200) {
-                var sources = body.sources[0].source_data,
+                var sources = body.sources,
                     YT_Key = 0;
                 for (var key in sources) {
                     if (sources[key].source === "youtube") {
@@ -270,9 +289,9 @@ io.on('connection', function(socket) {
                     post = {
                         track_id: customtrack_id,
                         imvdbtrack_id: body.id,
-                        imvdbartist_id: body.artists[YT_Key].slug,
+                        imvdbartist_id: body.artists[0].slug,
                         youtube_id: body.sources[YT_Key].source_data,
-                        artist: body.artists[YT_Key].name,
+                        artist: body.artists[0].name,
                         track: body.song_title,
                         image: body.image.o,
                         year: body.year || 2014,
@@ -290,12 +309,12 @@ io.on('connection', function(socket) {
                             if (err) throw err;
                             io.emit("new song", {
                                 youtube_id: body.sources[YT_Key].source_data,
-                                artist: body.artists[YT_Key].name,
+                                artist: body.artists[0].name,
                                 track: body.song_title,
                                 image: body.image.o,
                                 track_id: customtrack_id,
                                 imvdbtrack_id: body.id,
-                                imvdbartist_id: body.artists[YT_Key].slug,
+                                imvdbartist_id: body.artists[0].slug,
                                 upvote: 0,
                                 downvote: 0
                             });

@@ -11,7 +11,6 @@ $(function() {
         current = 0,
         joind = false,
         hasVoted = parseInt(localStorage.getItem("hasVoted"), 10) || 0,
-        empty = true,
         music_bar = $(".music-bar").clone();
     $(".artist_info .bio").dotdotdot({
         watch: true,
@@ -75,30 +74,10 @@ $(function() {
         return false;
     });
     $("#search-tracks").on("click", "li", function() {
-        if (server_id) {
-            track_id = $(this).data("id");
-            socket.emit('add song', {
-                server_id: server_id,
-                track_id: track_id
-            }, function(confirm) {
-                if (confirm.status) {
-                    alert("Your song is now in the queue! Sit back and jam.");
-                } else {
-                    alert("This song is already in the queue! Try a diffrent song.");
-                }
-            });
-        } else {
-            alert("You Need to First Select a MVPlayer");
-            var position = {
-                coords: {
-                    latitude: 38.903274,
-                    longitude: -77.021602
-                }
-            };
-            onSuccess(position);
-            PageSwitch("servers");
-        }
-        return false;
+        playSong($(this).data("id"));
+    });
+    $(".artist_info .videography, .artist_info .featured").on("click", "div.video", function() {
+        playSong($(this).data("id"));
     });
     $("#search-artist").on("click", "li", function() {
         getArtistInfo($(this).data("id"));
@@ -168,25 +147,17 @@ $(function() {
         console.log("new song");
         playlist.push(data);
         updateUserQueue(data);
+        Player(current);
         localStorage.setItem("hasVoted", 0);
-        if (empty === false) {
-            console.log("new song empty");
-            Player(current);
-            current++;
-        }
     });
     socket.on('next song', function(data) {
-        $(".queue_list > li:first-child").fadeOut("slow");
+        $(".queue_list > li:first-child").fadeOut("slow", function() {$(this).remove();});
         if (playlist.length - 1 > current) {
-            
             current++;
             Player(current);
-            empty = false;
         } else {
-            empty = true;
-            //playlist = [];
-            //current = 0;
-            Player(current);
+            current++;
+            Player(current, true);
         }
     });
     socket.on('upvote', function(data) {
@@ -221,21 +192,24 @@ $(function() {
         }, function(confirm) {
             playlist = confirm;
             console.log(playlist);
+            current = 0;
             Player(current);
-            empty = false;
+            $(".queue .queue_list").html("");
             $.each(playlist, function(k, v) {
                 updateUserQueue(v);
             });
         });
     }
-    function Player(id) {
+    function Player(id, empty) {
         var image = "http://placehold.it/50x50",
             artist = "Tap Here to Add More!",
             track = "No Songs Currently Playing",
             upvote = 0,
             downvote = 0;
+        empty = empty || false;
         $(".music-bar .vote-info").hide();
-        if (playlist[id]) {
+        console.log(playlist[id]+ "&&"+ !empty+ " "+id);
+        if (playlist[id] && !empty) {
             image = playlist[id].image;
             track = unescape(playlist[id].track);
             artist = unescape(playlist[id].artist);
@@ -256,7 +230,31 @@ $(function() {
             removeSearch();
         }
     }
-
+    function playSong(_track_id) {
+        if (server_id) {
+            socket.emit('add song', {
+                server_id: server_id,
+                track_id: _track_id
+            }, function(confirm) {
+                if (confirm.status) {
+                    alert("Your song is now in the queue! Sit back and jam.");
+                } else {
+                    alert("This song is already in the queue! Try a diffrent song.");
+                }
+            });
+        } else {
+            alert("You Need to First Select a MVPlayer");
+            var position = {
+                coords: {
+                    latitude: 38.903274,
+                    longitude: -77.021602
+                }
+            };
+            onSuccess(position);
+            PageSwitch("servers");
+        }
+        return false;
+    }
     function getArtistInfoSlug(artist_slug) {
         $.ajax({
             type: "GET",
@@ -283,14 +281,15 @@ $(function() {
             }
         }).done(function(data) {
             $(".menu-title .current").text((data.name !== null) ? data.name : convertSlug(data.slug));
-            $(".artist_info").find(".img-thumbnail").prop("src", data.image).end().find(".bio").trigger("update").show().end().find(".videography, .featured").html("");
+            $(".artist_info").find(".img-thumbnail").prop("src", checkImage(data.image)).end().find(".bio").trigger("update").show().end().find(".videography, .featured").html("");
             loadVideos("videography", data.artist_videos.videos);
             loadVideos("featured", data.featured_artist_videos.videos);
 
             function loadVideos(section, videos) {
                 $.each(videos, function(k, v) {
                     $(".artist_info ." + section).append($("<div />", {
-                        class: "col-md-6 video"
+                        class: "col-md-6 video",
+                        "data-id": v.id
                     }).append($("<img />", {
                         src: v.image.l
                     })).append($("<div />", {
@@ -350,7 +349,7 @@ $(function() {
     }
 
     function convertSlug(slug) {
-        return slug.replace("-", " ").replace("-", " & ").replace(/\w\S*/g, function(txt) {
+        return slug.replace("-", " ").replace("-", " ").replace(/\w\S*/g, function(txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
     }
@@ -434,6 +433,9 @@ $(function() {
                     class: "join-server"
                 }).text("Join"))));
             });
+            if($(".servers > ul > li").length) {
+                $(".servers > ul").text("Currently no MVPlayer servers available");
+            }
         });
     }
 

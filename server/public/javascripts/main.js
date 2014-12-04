@@ -22,7 +22,8 @@ socket.on('connect', function() {
     }, function(confirm) {
         playlist = confirm;
         console.log(playlist);
-        if (playlist.length - 1 > current) {
+        current = 0;
+        if (playlist.length === 0) {
             emptyQueue();
         }
     });
@@ -55,7 +56,7 @@ function onYouTubeIframeAPIReady() {
             'onError': onPlayerError
         },
         playerVars: {
-            'controls': 0,
+            //'controls': 0,
             'disablekb': 0,
             'showinfo': 0,
             'rel': 0
@@ -77,15 +78,18 @@ function onPlayerStateChange(event) {
             sid: sid,
             tid: tid
         });
+        console.log("ended");
     }
 }
 
 function onPlayerError(event) {
+    console.log(event);
     socket.emit('song ended', {
         sid: sid,
         tid: tid
+    }, function() {
+        //window.location.reload();
     });
-    player.playVideo();
 }
 
 function stopVideo() {

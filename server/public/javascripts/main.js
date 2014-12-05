@@ -89,8 +89,9 @@ function onPlayerError(event) {
         sid: sid,
         tid: tid
     }, function() {
-        //window.location.reload();
+        window.location.reload();
     });
+    window.location.reload();
 }
 
 function stopVideo() {
@@ -138,6 +139,8 @@ function PlaySong(id) {
         tid = playlist[id].track_id;
         localStorage.setItem("lastArtist", playlist[id].artist);
         player.playVideo();
+        $("#currentlyPlaying").find(".album-cover img").prop("src", playlist[id].image).end().find(".music-info h3").text(playlist[id].track).end().find(".music-info p").text(playlist[id].artist).end().addClass("active");
+        setInterval(function () {$("#currentlyPlaying").removeClass("active");}, 60000);
     }
 }
 

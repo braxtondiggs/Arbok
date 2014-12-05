@@ -5,3 +5,44 @@ body {
 a {
     color: #00B7FF;
 }
+#currentlyPlaying {
+	opacity:.8;
+	position:absolute;
+	visibility: hidden;
+	left: -430px;
+    transition: 1s;
+	top: calc(85% - 150px);
+	background-color: black;
+	padding: 20px;
+	-webkit-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,0.35);
+	-moz-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,0.35);
+	box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,0.35);
+}
+#currentlyPlaying.active {
+    transition: 1s;
+    left:0;
+    visibility:visible;
+}
+#currentlyPlaying .album-cover {
+	display: inline-block;
+}
+#currentlyPlaying .album-cover img{
+	width: 150px;
+}
+#currentlyPlaying .music-info {
+	display: inline-block;
+	color: #ec008c;
+	vertical-align: top;
+	margin: 25px 0 20px 10px;
+	text-align: center;
+}
+#currentlyPlaying .music-info  h3 {
+	font-size: 30px;
+	white-space: nowrap;
+	margin: 0;
+}
+#currentlyPlaying .music-info  p {
+	font-size: 20px;
+	white-space: nowrap;
+	margin: 0;
+}

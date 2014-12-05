@@ -149,9 +149,11 @@ io.on('connection', function(socket) {
     });
     socket.on('subscribe', function(data) {
         socket.join(data.room);
+        console.log(Object.keys(io.nsps["/"].adapter.rooms[data.room]).length);
     });
     socket.on('unsubscribe', function(data) {
         socket.leave(data.room);
+        console.log("what");
     });
     socket.on('empty queue', function(msg, fn) {
         var lastArtist = msg.lastArtist,
@@ -186,9 +188,10 @@ io.on('connection', function(socket) {
                                             if (body.artist_videos.total_videos !== 0) {
                                                 var videos = body.artist_videos.videos;
                                                 var track_id = body.artist_videos.videos[Math.floor(Math.random() * (videos.length))].id; //Needs to search Featured Artist Also --- Could combine the two arrays and picks from that
-                                                //console.log(artist_id);
                                                 found = true;
-                                                newSong(track_id, jukebox_id);
+                                                newSong(track_id, jukebox_id, function() {
+                                                    return;
+                                                });
                                             }
                                         }
                                         if (!found) {
@@ -207,11 +210,13 @@ io.on('connection', function(socket) {
         });
     });
 
-    socket.on("add song", function(msg) {
+    socket.on("add song", function(msg, fn) {
         console.log("add song");
         var track_id = msg.track_id,
             jukebox_id = msg.server_id;
-        newSong(track_id, jukebox_id);
+        var status = newSong(track_id, jukebox_id, fn);
+        console.log(status);
+
     });
     socket.on('song ended', function(msg, fn) {
         var sid = msg.sid,
@@ -224,19 +229,49 @@ io.on('connection', function(socket) {
         }
     });
     socket.on("vote", function(msg, fn) {
+        console.log(msg.sid);
         var sid = msg.sid,
             tid = msg.tid,
-            clients = io.sockets.clients(sid),
+            uid = msg.uid,
+            clients = Object.keys(io.nsps["/"].adapter.rooms[sid]).length,
             vote = msg.vote,
-            action = (vote) ? "upvote" : "downvote";
+            upvote = (vote) ? 1 : 0,
+            downvote = (vote) ? 0 : 1,
+            upvoteNum = 0,
+            downvoteNum = 0;
         console.log("Number of Clients: " + clients);
-        connection.query("UPDATE jukebox_songs SET " + action + " = " + action + "+1 WHERE jukebox_id = '" + sid + "' AND track_id = '" + tid + "' LIMIT 1;", function(err, rows, results) {
+        connection.query("INSERT INTO jukebox_votes (server_id, user_id, track_id, upvote, downvote) VALUES ('" + sid + "', " + uid + ", '" + tid + "', " + upvote + ", " + downvote + ") ON DUPLICATE KEY UPDATE server_id='" + sid + "', user_id=" + uid + ", track_id='" + tid + "', upvote=" + upvote + ", downvote=" + downvote + ";", function(err, rows, results) {
             if (err) throw err;
+            var post = {
+                track_id: tid
+            };
+            connection.query("SELECT * FROM jukebox_votes WHERE ?;", post, function(err, rows, results) {
+                for (var i = 0; i < rows.length; i++) {
+                    if (rows[i].upvote) {
+                        upvoteNum++;
+                    } else if (rows[i].downvote) {
+                        downvoteNum++;
+                    }
+                }
+                io.emit("vote info", {
+                    success: true,
+                    track_id: tid,
+                    upvote: upvoteNum,
+                    downvote: downvoteNum
+                });
+                var post2 = {
+                    upvote: upvoteNum,
+                    downvote: downvoteNum
+                }
+                connection.query("UPDATE jukebox_songs SET ? WHERE track_id = '"+tid+"';", post2, function(err, rows, results) {
+                    if (err) throw err;
+                });
+            });
         });
-        io.emit(action);
+
     });
 
-    function newSong(track_id, jukebox_id) {
+    function newSong(track_id, jukebox_id, fn) {
         console.log("new song");
         request({
             url: "http://imvdb.com/api/v1/video/" + track_id + "?include=sources",
@@ -244,13 +279,18 @@ io.on('connection', function(socket) {
         }, function(error, response, body) {
             if (!error && response.statusCode === 200) {
                 var sources = body.sources,
-                    YT_Key = 0;
+                    YT_Key = 0,
+                    noMatch = true;
                 for (var key in sources) {
+                    console.log(sources[key].source);
+                    console.log(sources);
                     if (sources[key].source === "youtube") {
                         YT_Key = key;
-                        break;
-                    } else {
-                        //Needs to Alert The user if video does exist
+                        noMatch = false;
+                    }
+                    if (noMatch) {
+                        returnData(2);
+                        return false;
                     }
                 }
                 console.log(body);
@@ -269,13 +309,19 @@ io.on('connection', function(socket) {
                         downvote: 0
                     },
                     where_post = {
-                        youtube_id: body.sources[0].source_data
+                        youtube_id: body.sources[YT_Key].source_data
                     };
                 connection.query("SELECT youtube_id FROM jukebox_songs WHERE ?", where_post, function(err, rows, results) {
-                    if (err) throw err;
+                    if (err) {
+                        returnData(2);
+                        throw err;
+                    }
                     if (rows.length === 0) {
                         connection.query("INSERT INTO jukebox_songs SET ?", post, function(err, rows, results) {
-                            if (err) throw err;
+                            if (err) {
+                                returnData(2);
+                                throw err;
+                            }
                             io.emit("new song", {
                                 youtube_id: body.sources[YT_Key].source_data,
                                 artist: body.artists[0].name,
@@ -287,15 +333,25 @@ io.on('connection', function(socket) {
                                 upvote: 0,
                                 downvote: 0
                             });
-                            return true;
+                            returnData(1);
+
                         });
                     } else {
-                        return false;
+                        returnData(0);
                     }
+
                 });
                 //socket.broadcast.to(sid).emit("new song", {youtube_id: body.sources[0].source_data, artist: body.artists[0].name, track: body.song_title, image: body.image.o});
+            } else {
+                returnData(2);
             }
         });
+
+        function returnData(status) {
+            fn({
+                status: status
+            });
+        }
     }
 });
 var IMVDBurls = {

@@ -1,5 +1,16 @@
 extends layout
 
 block content
-  #ytapiplayer
-      | You need Flash player 8+ and JavaScript enabled to view this video.
+	#ytapiplayer
+		| You need Flash player 8+ and JavaScript enabled to view this video.
+	#popUps
+		#currentlyPlaying
+			.album-cover
+				img(alt='', src='#')
+			.music-info
+				h3
+				p
+		#newSong
+			<h3></h3>
+			<p>
+

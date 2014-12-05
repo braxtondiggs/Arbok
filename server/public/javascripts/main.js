@@ -6,6 +6,7 @@ var coords = {
     tid = null,
     playlist = [],
     current = 0,
+    votedOff = false,
     player;
 
 $(function() {
@@ -17,6 +18,64 @@ $(function() {
 });
 var socket = io.connect();
 socket.on('connect', function() {
+    connect2server();
+});
+
+socket.on('new song', function(data) {
+    playlist.push(data);
+    if (player.getPlayerState() == YT.PlayerState.ENDED || player.getPlayerState == YT.PlayerState.UNSTARTED || votedOff) {
+        current++;
+        votedOff = false;
+        PlaySong(current);
+    }
+});
+socket.on('next song', function(data) {
+    nextSong();
+});
+socket.on('vote info', function(data) {
+    console.log(data);
+    if (data.upvote) {
+        console.log("fuck");
+        $("#voteInfo").find("i").addClass("upvote").removeClass("downvote").end().show();
+    } else if (data.downvote) {
+        $("#voteInfo").find("i").addClass("downvote").removeClass("upvote").end().show();
+    }
+    setTimeout(function() {
+        $("#voteInfo").hide();
+    }, 10000);
+});
+socket.on('vote off', function(data) {
+    var count = 10;
+    if (data.track_id === tid) {
+        $("#voteOff").addClass("active center").removeClass("bottom");
+        var countdown = setInterval(function() {
+            count--;
+            $("#voteOff span").text(count);
+        }, 1000);
+        setTimeout(function() {
+            $("#voteOff").removeClass("center").addClass("top");
+            clearInterval(countdown);
+            setTimeout(function() {//reset
+                $("#voteOff").removeClass("top active").addClass("bottom").find("span").text(10);
+            }, 5000);
+            votedOff = true;
+            nextSong(current);
+        }, 10000);
+    }else {
+        connect2server();
+    }
+});
+function nextSong() {
+    $("#voteInfo").hide();
+    console.log(playlist.length - 1 + "==" + current);
+    if (playlist.length - 1 > current) {
+        current++;
+        PlaySong(current);
+    } else {
+        emptyQueue();
+    }
+}
+function connect2server() {
     socket.emit('get playlist', {
         sid: sid
     }, function(confirm) {
@@ -27,25 +86,7 @@ socket.on('connect', function() {
             emptyQueue();
         }
     });
-});
-
-socket.on('new song', function(data) {
-    playlist.push(data);
-    if (player.getPlayerState() == YT.PlayerState.ENDED || player.getPlayerState == YT.PlayerState.UNSTARTED) {
-        current++;
-        PlaySong(current);
-    }
-});
-socket.on('next song', function(data) {
-    console.log(playlist.length - 1 + "==" + current);
-    if (playlist.length - 1 > current) {
-        current++;
-        PlaySong(current);
-    } else {
-        emptyQueue();
-    }
-});
-
+}
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('ytapiplayer', {
         height: $(window).height(),
@@ -60,7 +101,7 @@ function onYouTubeIframeAPIReady() {
             'disablekb': 0,
             'showinfo': 0,
             'rel': 0,
-            'iv_load_policy':3
+            'iv_load_policy': 3
         }
     });
 }
@@ -140,7 +181,9 @@ function PlaySong(id) {
         localStorage.setItem("lastArtist", playlist[id].artist);
         player.playVideo();
         $("#currentlyPlaying").find(".album-cover img").prop("src", playlist[id].image).end().find(".music-info h3").text(playlist[id].track).end().find(".music-info p").text(playlist[id].artist).end().addClass("active");
-        setInterval(function () {$("#currentlyPlaying").removeClass("active");}, 60000);
+        setTimeout(function() {
+            $("#currentlyPlaying").removeClass("active");
+        }, 60000);
     }
 }
 

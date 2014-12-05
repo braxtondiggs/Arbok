@@ -94,11 +94,11 @@ $(function() {
         MenuItem($(".menu-browse"));
         return false;
     });
-    $(".vote-info").on("click", ".vote-data", function() {
+    $(".vote-info, .queue_list").on("click", ".vote-data", function() {
         socket.emit('vote', {
             uid: uid,
             sid: server_id,
-            tid: customtrack_id,
+            tid: $(this).parents(".music-bar, li").data("id"),
             vote: $(this).data("vote")
         });
         localStorage.setItem("hasVoted", ($(this).data("vote")) ? 1 : -1);
@@ -132,16 +132,7 @@ $(function() {
         localStorage.setItem("hasVoted", 0);
     });
     socket.on('next song', function(data) {
-        $(".queue_list > li:first-child").fadeOut("slow", function() {
-            $(this).remove();
-        });
-        if (playlist.length - 1 > current) {
-            current++;
-            Player(current);
-        } else {
-            current++;
-            Player(current, true);
-        }
+        nextSong();
     });
     socket.on('vote info', function(data) {
         if (data.success) {
@@ -154,22 +145,37 @@ $(function() {
             });
         }
     });
+    socket.on('vote off', function(data) {
+        if (data.track_id !== track_id) {
+            connect2Server();
+        }else {
+            setTimeout(function() {
+                nextSong();
+            }, 11000);
+        }
+    });
     socket.on('connect', function() {
         connect2Server();
     });
-    /*socket.on('disconnect', function() {
-        socket.emit('unsubscribe', {
-            room: server_id
-        });
-
-    });*/
     updateMusic();
     if (hasVoted === 1) {
         voteAction($('.vote-info i.glyphicon-thumbs-up'));
     } else if (hasVoted === -1) {
         voteAction($('.vote-info i.glyphicon-thumbs-down'));
     }
-
+    function nextSong() {
+        $('.music-bar .vote-info i.selected').removeClass("selected");
+        $(".queue_list > li:first-child").fadeOut("slow", function() {
+            $(this).remove();
+        });
+        if (playlist.length - 1 > current) {
+            current++;
+            Player(current);
+        } else {
+            current++;
+            Player(current, true);
+        }
+    }
     function connect2Server() {
         socket.emit('subscribe', {
             room: server_id
@@ -301,9 +307,10 @@ $(function() {
     }
 
     function updateUserQueue(data) {
-        $(music_bar).data("id", data.track_id).find(".album-cover img").prop("src", data.image).end().find(".music-info h3").text(data.track).end().find(".music-info p").text(data.artist).end().find(".vote-info span.upvote").text(data.upvote).end().find(".vote-info span.downvote").text(data.downvote);
+        $(music_bar).find(".album-cover img").prop("src", data.image).end().find(".music-info h3").text(data.track).end().find(".music-info p").text(data.artist).end().find(".vote-info span.upvote").text(data.upvote).end().find(".vote-info span.downvote").text(data.downvote);
         $(".queue .queue_list").append($("<li />", {
-            "data-artist-id": data.imvdbartist_id
+            "data-artist-id": data.imvdbartist_id,
+            "data-id": data.track_id
         }).html($(music_bar).html()));
     }
 
@@ -427,8 +434,10 @@ $(function() {
     }
 
     function voteAction(_this) {
-        $('.vote-info i.selected').removeClass("selected");
-        $(_this).addClass("selected");
+        if (_this !== null) {
+            $('.vote-info i.selected').removeClass("selected");
+            $(_this).addClass("selected");
+        }
     }
 
     function onSuccess(position) {

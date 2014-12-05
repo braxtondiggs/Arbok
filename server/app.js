@@ -238,7 +238,8 @@ io.on('connection', function(socket) {
             upvote = (vote) ? 1 : 0,
             downvote = (vote) ? 0 : 1,
             upvoteNum = 0,
-            downvoteNum = 0;
+            downvoteNum = 0,
+            num_votes = 0;
         console.log("Number of Clients: " + clients);
         connection.query("INSERT INTO jukebox_votes (server_id, user_id, track_id, upvote, downvote) VALUES ('" + sid + "', " + uid + ", '" + tid + "', " + upvote + ", " + downvote + ") ON DUPLICATE KEY UPDATE server_id='" + sid + "', user_id=" + uid + ", track_id='" + tid + "', upvote=" + upvote + ", downvote=" + downvote + ";", function(err, rows, results) {
             if (err) throw err;
@@ -252,16 +253,31 @@ io.on('connection', function(socket) {
                     } else if (rows[i].downvote) {
                         downvoteNum++;
                     }
+                    num_votes++;
                 }
                 io.emit("vote info", {
                     success: true,
                     track_id: tid,
                     upvote: upvoteNum,
-                    downvote: downvoteNum
+                    downvote: downvoteNum,
+                    num_votes: num_votes
                 });
                 var post2 = {
                     upvote: upvoteNum,
                     downvote: downvoteNum
+                };
+                console.log(num_votes);
+                console.log(downvoteNum/num_votes);
+                if(downvoteNum/num_votes >= 0.53 && num_votes >= 2) {
+                    io.emit("vote off", {
+                        track_id: tid
+                    });
+                    var post3 = {
+                        track_id: tid
+                    };
+                    connection.query("DELETE FROM jukebox_songs WHERE ?;", post3, function(err, rows, results) {
+                        if (err) throw err;
+                    });
                 }
                 connection.query("UPDATE jukebox_songs SET ? WHERE track_id = '"+tid+"';", post2, function(err, rows, results) {
                     if (err) throw err;

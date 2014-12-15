@@ -76,20 +76,21 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-/*var db_config = {
+var db_config = {
     host: 'us-cdbr-iron-east-01.cleardb.net',
     user: 'b3b9b17a92408d',
     password: 'a0f39082',
-    database: 'heroku_d16dd5404e8d931'
-};*/
-var db_config = {
+    database: 'heroku_d16dd5404e8d931',
+    multipleStatements: true
+};
+/*var db_config = {
     host: 'localhost',
     port: 8889,
     user: 'root',
     password: 'root',
     database: 'cymbitco_quilava',
     multipleStatements: true
-};
+};*/
 var myNest = new echonest.Echonest({
     api_key: '0NPSO7NBLICGX3CWQ'
 });

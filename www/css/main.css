@@ -222,6 +222,7 @@ header.search #header-search {
     z-index: 2000;
     width: 70%;
     height: 100%;
+    max-width: 290px;
 }
 .slidr .slidr-menu li {
     font-size: 22px;

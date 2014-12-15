@@ -14,6 +14,12 @@
                             "xml": "false",
                             "count": 1
                         }
+                    ],
+                    "AudioToolbox.framework": [
+                        {
+                            "xml": "true",
+                            "count": 1
+                        }
                     ]
                 }
             },
@@ -22,6 +28,10 @@
                     "/*": [
                         {
                             "xml": "<feature name=\"Geolocation\"><param name=\"ios-package\" value=\"CDVLocation\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Notification\"><param name=\"ios-package\" value=\"CDVNotification\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -44,6 +54,9 @@
             "PACKAGE_NAME": "com.cymbit.qbox"
         },
         "com.ququplay.websocket.WebSocket": {
+            "PACKAGE_NAME": "com.cymbit.qbox"
+        },
+        "org.apache.cordova.dialogs": {
             "PACKAGE_NAME": "com.cymbit.qbox"
         }
     },

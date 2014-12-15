@@ -32,13 +32,24 @@
             </form>
         </div>
     </header>
+    <style>
+        .carousel-inner .active.left { left: -20%;}
+.carousel-inner .next        { left:  20%; }
+.carousel-control.left,.carousel-control.right {background-image:none;}
+.col-lg-2 {
+    width: 20%;
+float: left;
+}
+    </style>
     <div class="container">
         <ul id="pages">
             <li class="homepage">
-                <div id="best_new_music" class="carousel slide" data-ride="carousel">
+                <!--<div class="col-lg-6 col-md-offset-3">
                     <h3>Best New Music Video</h3>
-                    <div class="carousel-inner" role="listbox">
-                    </div>
+                <div id="best_new_music" class="carousel slide" data-ride="carousel">
+                    
+                    <div class="carousel-inner" role="listbox"></div>
+                    
                     <a class="left carousel-control" href="#best_new_music" role="button" data-slide="prev">
                         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                         <span class="sr-only">Previous</span>
@@ -47,8 +58,9 @@
                         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                         <span class="sr-only">Next</span>
                     </a>
-                </div>
-                <div id="top_week_music" class="carousel slide" data-ride="carousel">
+            </div>
+        </div>
+                <div id="top_week_music" class="carousel slide" data-ride="carousel" data-interval="false">
                     <h3>Top Music Video of The Week</h3>
                     <div class="carousel-inner" role="listbox">
                     </div>
@@ -86,7 +98,7 @@
                         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                         <span class="sr-only">Next</span>
                     </a>
-                </div>
+                </div>-->
             </li>
             <li class="artist_info">
                 <img class="img-thumbnail" src="#" alt="" />
@@ -123,11 +135,11 @@
             <p>&nbsp;</p>
         </div>
         <div class="vote-info">
-            <div class="vote-data">
+            <div class="vote-data" data-vote="true">
                 <i class="glyphicon glyphicon-thumbs-up"></i>
                 <span class="upvote">&nbsp;</span>
             </div>
-            <div class="vote-data">
+            <div class="vote-data" data-vote="false">
                 <i class="glyphicon glyphicon-thumbs-down"></i>
                 <span class="downvote">&nbsp;</span>
             </div>

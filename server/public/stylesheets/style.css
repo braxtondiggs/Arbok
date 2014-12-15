@@ -1,7 +1,147 @@
+@font-face {
+    font-family: 'helvetica_neue_lt_pro45_light';
+    src: url('../fonts/helveticaneueltpro-lt-webfont.eot');
+    src: url('../fonts/helveticaneueltpro-lt-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/helveticaneueltpro-lt-webfont.woff') format('woff'),
+         url('../fonts/helveticaneueltpro-lt-webfont.ttf') format('truetype'),
+         url('../fonts/helveticaneueltpro-lt-webfont.svg#helvetica_neue_lt_pro45_light') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'helvetica_neue_lt_pro47LtCn';
+    src: url('../fonts/helveticaneueltpro-ltcn-webfont.eot');
+    src: url('../fonts/helveticaneueltpro-ltcn-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/helveticaneueltpro-ltcn-webfont.woff') format('woff'),
+         url('../fonts/helveticaneueltpro-ltcn-webfont.ttf') format('truetype'),
+         url('../fonts/helveticaneueltpro-ltcn-webfont.svg#helvetica_neue_lt_pro47LtCn') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'helvetica_neue_lt_27ultraLtCn';
+    src: url('../fonts/helveticaneueltpro-ultltcn-webfont.eot');
+    src: url('../fonts/helveticaneueltpro-ultltcn-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/helveticaneueltpro-ultltcn-webfont.woff') format('woff'),
+         url('../fonts/helveticaneueltpro-ultltcn-webfont.ttf') format('truetype'),
+         url('../fonts/helveticaneueltpro-ultltcn-webfont.svg#helvetica_neue_lt_27ultraLtCn') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
 body {
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-size: 14px;
     margin:0;
+	font-family: "helvetica_neue_lt_pro45_light";
 }
 a {
     color: #00B7FF;
+}
+#currentlyPlaying {
+	opacity:.8;
+	position:absolute;
+	visibility: hidden;
+	left: -430px;
+    transition: 1s;
+	top: calc(85% - 150px);
+	background-color: black;
+	padding: 20px;
+	-webkit-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,0.35);
+	-moz-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,0.35);
+	box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,0.35);
+}
+#currentlyPlaying.active {
+    transition: 1s;
+    left:0;
+    visibility:visible;
+}
+#currentlyPlaying .album-cover {
+	display: inline-block;
+}
+#currentlyPlaying .album-cover img{
+	width: 150px;
+}
+#currentlyPlaying .music-info {
+	display: inline-block;
+	color: #ec008c;
+	vertical-align: top;
+	margin: 25px 0 20px 10px;
+	text-align: center;
+}
+#currentlyPlaying .music-info  h3 {
+	font-size: 30px;
+	white-space: nowrap;
+	margin: 0;
+}
+#currentlyPlaying .music-info  p {
+	font-size: 20px;
+	white-space: nowrap;
+	margin: 0;
+}
+#voteInfo {
+	display:none;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	opacity: .5;
+	width: 150px;
+}
+#voteInfo img {
+	height: 110px;
+	width: 110px;
+	opacity: .5;
+	border-radius: 50%;
+	-webkit-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,1);
+	-moz-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,1);
+	box-shadow: 3px 3px 5px 0px rgba(236, 0, 140,1);
+}
+#voteInfo h3.title {
+	position: absolute;
+	z-index: 1;
+	bottom: 25%;
+	color: #ec008c;
+	margin: 0;
+	left: -15px;
+	text-align: center;
+	width: 150px;
+}
+#voteInfo .thumb {
+	position: absolute;
+	bottom: 25%;
+	text-align: center;
+	width: 110px;
+	z-index: 2;
+}
+#voteInfo .thumb i.upvote:before {
+	content: "\f164";
+	color:green;
+}
+#voteInfo .thumb i.downvote:before {
+	content: "\f165";
+	color:red;
+}
+#voteOff {
+	position: absolute;
+	width: 100%;
+	background-color: black;
+	color: white;
+	left: 0;
+	right: 0;
+	opacity: .7;
+	text-align: center;
+	padding: 10px 0;
+	font-size: 20px;
+	transition: 1s;
+	display:none;
+}
+#voteOff.active {
+	display:block;
+	top:40%;
+}
+#voteOff.bottom {
+	top:120%;
+}
+#voteOff.top {
+	top:-100px;
 }

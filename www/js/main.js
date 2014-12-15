@@ -11,7 +11,8 @@ $(function() {
         current = 0,
         joind = false,
         hasVoted = parseInt(localStorage.getItem("hasVoted"), 10) || 0,
-        music_bar = $(".music-bar").clone();
+        music_bar = $(".music-bar").clone(),
+        uid = Math.floor(Math.random() * 100);
     $(".artist_info .bio").dotdotdot({
         watch: true,
         height: 75,
@@ -93,35 +94,15 @@ $(function() {
         MenuItem($(".menu-browse"));
         return false;
     });
-    $(".vote-data .glyphicon-thumbs-up").on("click", function() {
-        if (hasVoted <= 0) {
-            socket.emit('vote', {
-                sid: server_id,
-                tid: customtrack_id,
-                vote: true,
-                dup: (hasVoted === 0) ? false : true
-            });
-            voteAction($(this));
-            localStorage.setItem("hasVoted", 1);
-        } else {
-            alert("You Have Already Voted!");
-        }
-        return false;
-    });
-    $(".vote-data .glyphicon-thumbs-down").on("click", function() {
-        if (hasVoted >= 0) {
-            socket.emit('vote', {
-                sid: server_id,
-                tid: customtrack_id,
-                vote: false,
-                dup: (hasVoted === 0) ? false : true
-            });
-            voteAction($(this));
-            localStorage.setItem("hasVoted", -1);
-            hasVoted = -1;
-        } else {
-            alert("You Have Already Voted!");
-        }
+    $(".vote-info, .queue_list").on("click", ".vote-data", function() {
+        socket.emit('vote', {
+            uid: uid,
+            sid: server_id,
+            tid: $(this).parents(".music-bar, li").data("id"),
+            vote: $(this).data("vote")
+        });
+        localStorage.setItem("hasVoted", ($(this).data("vote")) ? 1 : -1);
+        voteAction($(this).children('i'));
         return false;
     });
     $(".music-bar .music-info").on("click", function() {
@@ -134,8 +115,8 @@ $(function() {
         PageSwitch("queue");
         return false;
     });
-    $(".queue .queue_list").on("click", "li", function() {
-        getArtistInfoSlug($(this).data("artist-id"));
+    $(".queue .queue_list").on("click", "li .music-info, li.album-cover", function() {
+        getArtistInfoSlug($(this).parent("li").data("artist-id"));
         PageSwitch("artist_info");
         return false;
     });
@@ -151,7 +132,42 @@ $(function() {
         localStorage.setItem("hasVoted", 0);
     });
     socket.on('next song', function(data) {
-        $(".queue_list > li:first-child").fadeOut("slow", function() {$(this).remove();});
+        nextSong();
+    });
+    socket.on('vote info', function(data) {
+        if (data.success) {
+            $(".vote-info").parents(".music-bar, li").each(function() {
+                if ($(this).data('id')) {
+                    if ($(this).data('id') == data.track_id) {
+                        $(this).find(".vote-info .upvote").text(data.upvote).end().find(".vote-info .downvote").text(data.downvote);
+                    }
+                }
+            });
+        }
+    });
+    socket.on('vote off', function(data) {
+        if (data.track_id !== track_id) {
+            connect2Server();
+        }else {
+            setTimeout(function() {
+                nextSong();
+            }, 11000);
+        }
+    });
+    socket.on('connect', function() {
+        connect2Server();
+    });
+    updateMusic();
+    if (hasVoted === 1) {
+        voteAction($('.vote-info i.glyphicon-thumbs-up'));
+    } else if (hasVoted === -1) {
+        voteAction($('.vote-info i.glyphicon-thumbs-down'));
+    }
+    function nextSong() {
+        $('.music-bar .vote-info i.selected').removeClass("selected");
+        $(".queue_list > li:first-child").fadeOut("slow", function() {
+            $(this).remove();
+        });
         if (playlist.length - 1 > current) {
             current++;
             Player(current);
@@ -159,27 +175,6 @@ $(function() {
             current++;
             Player(current, true);
         }
-    });
-    socket.on('upvote', function(data) {
-        $(".music-bar .vote-info .upvote").text(parseInt($(this).text(), 10) + 1);
-    });
-    socket.on('downvote', function(data) {
-        $(".music-bar .vote-info .downvote").text(parseInt($(this).text(), 10) + 1);
-    });
-    socket.on('connect', function() {
-        connect2Server();
-    });
-    socket.on('disconnect', function() {
-        socket.emit('unsubscribe', {
-            room: server_id
-        });
-
-    });
-    updateMusic();
-    if (hasVoted === 1) {
-        voteAction($('.vote-info i.glyphicon-thumbs-up'));
-    } else if (hasVoted === -1) {
-        voteAction($('.vote-info i.glyphicon-thumbs-down'));
     }
     function connect2Server() {
         socket.emit('subscribe', {
@@ -200,6 +195,7 @@ $(function() {
             });
         });
     }
+
     function Player(id, empty) {
         var image = "http://placehold.it/50x50",
             artist = "Tap Here to Add More!",
@@ -208,53 +204,63 @@ $(function() {
             downvote = 0;
         empty = empty || false;
         $(".music-bar .vote-info").hide();
-        console.log(playlist[id]+ "&&"+ !empty+ " "+id);
+        console.log(playlist[id] + "&&" + !empty + " " + id);
         if (playlist[id] && !empty) {
             image = playlist[id].image;
             track = unescape(playlist[id].track);
             artist = unescape(playlist[id].artist);
             upvote = playlist[id].upvote;
             downvote = playlist[id].downvote;
-            customtrack_id = playlist[id].customtrack_id;
+            track_id = playlist[id].track_id;
             $(".music-bar .vote-info").css("display", "inline-block");
         }
-        $(".music-bar").find(".album-cover img").prop("src", image).end().find(".music-info h3").text(track).next("p").text(artist);
+        $(".music-bar").data("id", track_id).find(".album-cover img").prop("src", image).end().find(".music-info h3").text(track).next("p").text(artist);
         $(".vote-info").find(".upvote").text(upvote).end().find(".downvote").text(downvote);
+        customtrack_id =  track_id;
     }
 
     function PageSwitch(page) {
-        $("ul#pages").children("li.active").removeClass("active").end().children("li." + page).addClass("active").animate({
-            scrollTop: 0
-        }, 0);
-        if (page !== "search-page") {
-            removeSearch();
+            $("ul#pages").children("li.active").removeClass("active").end().children("li." + page).addClass("active").animate({
+                scrollTop: 0
+            }, 0);
+            if (page !== "search-page") {
+                removeSearch();
+            }
         }
-    }
+        //alert("hi");
+        //console.log("hello");
+
     function playSong(_track_id) {
-        if (server_id) {
-            socket.emit('add song', {
-                server_id: server_id,
-                track_id: _track_id
-            }, function(confirm) {
-                if (confirm.status) {
-                    alert("Your song is now in the queue! Sit back and jam.");
-                } else {
-                    alert("This song is already in the queue! Try a diffrent song.");
-                }
-            });
-        } else {
-            alert("You Need to First Select a MVPlayer");
-            var position = {
-                coords: {
-                    latitude: 38.903274,
-                    longitude: -77.021602
-                }
-            };
-            onSuccess(position);
-            PageSwitch("servers");
+        if (confirm("Add this song?")) {
+            if (server_id) {
+                socket.emit('add song', {
+                    server_id: server_id,
+                    track_id: _track_id
+                }, function(confirm) {
+                    console.log(confirm);
+                    if (confirm.status === 0) {
+                        alert("This song is already in the queue! Try a diffrent song.");
+                    } else if (confirm.status === 1) {
+                        alert("Your song is now in the queue! Sit back and jam.");
+                    } else {
+                        alert("A Serious Error Occured, Sorry Bro!");
+                    }
+                });
+            } else {
+                alert("You Need to First Select a MVPlayer");
+                var position = {
+                    coords: {
+                        latitude: 38.903274,
+                        longitude: -77.021602
+                    }
+                };
+                onSuccess(position);
+                PageSwitch("servers");
+            }
         }
         return false;
     }
+
     function getArtistInfoSlug(artist_slug) {
         $.ajax({
             type: "GET",
@@ -299,12 +305,15 @@ $(function() {
             }
         });
     }
+
     function updateUserQueue(data) {
         $(music_bar).find(".album-cover img").prop("src", data.image).end().find(".music-info h3").text(data.track).end().find(".music-info p").text(data.artist).end().find(".vote-info span.upvote").text(data.upvote).end().find(".vote-info span.downvote").text(data.downvote);
         $(".queue .queue_list").append($("<li />", {
-            "data-artist-id": data.imvdbartist_id
+            "data-artist-id": data.imvdbartist_id,
+            "data-id": data.track_id
         }).html($(music_bar).html()));
     }
+
     function search() {
         var s = $("input.search").val(),
             artist = [];
@@ -377,14 +386,37 @@ $(function() {
                 if (len <= 10) {
                     $("#" + sections[v.section] + " .carousel-inner").append($("<div />", {
                         "class": "item" + ((len === 0) ? " active" : "")
-                    }).append($("<img />", {
-                        src: v.artist_image
-                    })).append($("<div />", {
-                        "class": "carousel-caption"
-                    }).append($("<h3 />").text((len + 1) + "). " + v.artist_title)).append($("<p />").text(v.artist_name))));
+                    }).append($("<div />", {
+                        class: "col-lg-2"
+                    }).append($("<a />", {
+                            href: "#"
+                        }).append($("<img />", {
+                            src: v.artist_image,
+                            class: "img-responsive"
+                        }))
+                        /*.append($("<div />", {
+                                                "class": "carousel-caption"
+                                            }).append($("<h3 />").text((len + 1) + "). " + v.artist_title)).append($("<p />").text(v.artist_name)))*/
+                    )));
                 }
             });
-            $('#best_new_music').carousel(0);
+            $('#best_new_music').carousel('pause');
+            $('.carousel .item').each(function() {
+                var next = $(this).next();
+                if (!next.length) {
+                    next = $(this).siblings(':first');
+                }
+                next.children(':first-child').clone().appendTo($(this));
+
+                for (var i = 0; i < 2; i++) {
+                    next = next.next();
+                    if (!next.length) {
+                        next = $(this).siblings(':first');
+                    }
+
+                    next.children(':first-child').clone().appendTo($(this));
+                }
+            });
             $("li.homepage").fadeIn("slow", function() {
                 $(this).addClass("active").removeAttr("style");
             });
@@ -402,8 +434,10 @@ $(function() {
     }
 
     function voteAction(_this) {
-        $('.vote-info i.selected').removeClass("selected");
-        $(_this).addClass("selected");
+        if (_this !== null) {
+            $('.vote-info i.selected').removeClass("selected");
+            $(_this).addClass("selected");
+        }
     }
 
     function onSuccess(position) {
@@ -433,7 +467,7 @@ $(function() {
                     class: "join-server"
                 }).text("Join"))));
             });
-            if($(".servers > ul > li").length) {
+            if ($(".servers > ul > li").length) {
                 $(".servers > ul").text("Currently no MVPlayer servers available");
             }
         });

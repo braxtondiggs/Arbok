@@ -1,11 +1,22 @@
 node_modules
-dist
+www
 .tmp
 .sass-cache
+app/lib
+coverage
+platforms
+plugins
+*.swp
+*.swo
+*.log
+*.DS_Store
+server/node_modules
+app/scripts/config.js
+
+dist
 .svn/
 bower_components
 
 platforms/**/
-www
 !www/config.xml
 !www/res

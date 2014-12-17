@@ -1,3 +1,3 @@
 # view AndroidManifest.xml #generated:6
--keep class com.cymbit.qbox.QBox { <init>(...); }
+-keep class com.cymbit.quilava.CordovaApp { <init>(...); }
 

@@ -1,4 +1,11 @@
-**/.DS_Store
-www/js/.DS_Store
+node_modules
+dist
+.tmp
+.sass-cache
+.svn/
+bower_components
 
-www/.DS_Store
+platforms/**/
+www
+!www/config.xml
+!www/res

@@ -1,19 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.cymbit.qbox" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.cymbit.quilava" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <preference name="loglevel" value="DEBUG" />
-    <preference name="AndroidLaunchMode" value="singleTop" />
-    <feature name="App">
-        <param name="android-package" value="org.apache.cordova.App" />
-    </feature>
-    <feature name="WebSocket">
-        <param name="android-package" value="com.ququplay.websocket.WebSocket" />
-    </feature>
-    <name>QBox</name>
+    <name>Quilava</name>
     <description>
         Hello World sample application that responds to the deviceready event.
     </description>
-    <author email="braxtondiggs@gmail.com" href="http://cymbit.com">
-        Cymbit Creative Team
+    <author email="support@phonegap.com" href="http://phonegap.com">
+        PhoneGap Team
     </author>
     <preference name="permissions" value="none" />
     <preference name="phonegap-version" value="3.5.0" />
@@ -75,7 +68,4 @@
     <gap:splash gap:platform="ios" height="768" src="www/res/screen/ios/screen-ipad-landscape.png" width="1024" />
     <gap:splash gap:platform="winphone" src="www/res/screen/windows-phone/screen-portrait.jpg" />
     <access origin="*" />
-    <feature name="Notification">
-        <param name="android-package" value="org.apache.cordova.dialogs.Notification" />
-    </feature>
 </widget>

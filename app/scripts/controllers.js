@@ -31,7 +31,7 @@ angular.module('Quilava.controllers', [])
     $timeout(function() {
       $scope.closeLogin();
     }, 1000);
-  }
+  };
 })
 
 .controller('PlaylistsCtrl', function($scope) {
@@ -44,6 +44,18 @@ angular.module('Quilava.controllers', [])
     { title: 'Cowbell', id: 6 }
   ];
 })
-
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+.controller('PlaylistCtrl', function() {
+})
+.controller('ChatCtrl', function($scope, $ionicScrollDelegate) {
+  $scope.msg = [
+    { from: 'JODY HiGHROLLER', body: 'Yeah, neato. I beat up the block like Steven Seagal', self: true, img:'http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg', timestamp: 'Today 7:26PM'},
+    { from: 'Andy Milonakis', body: 'What\'s up, sonny? Que pasa mijo,  Chillin\' with Rihanna out in Puerto Rico', img: 'http://gagorder.me/wp-content/uploads/2013/02/Three-Loco-ft.-Diplo-We-Are-Farmers-Andy-milonakis.jpeg', timestamp: 'Today 7:29PM'},
+    { from: 'Andy Milonakis', body: 'She ate my coconut, cause she thought it was a Zico', img: 'http://gagorder.me/wp-content/uploads/2013/02/Three-Loco-ft.-Diplo-We-Are-Farmers-Andy-milonakis.jpeg', timestamp: 'Today 7:46PM'},
+    { from: 'Dirty Nasty', body: 'Neato, still whip it like Devo Cause my dick short and fat like Danny DeVito', img: 'http://i.ytimg.com/vi/b01Bnr1aXt8/maxresdefault.jpg', timestamp: 'Today 7:47PM'},
+    { from: 'Andy Milonakis', body: 'I keep it underground, you\'re commercial like Vevo', img: 'http://gagorder.me/wp-content/uploads/2013/02/Three-Loco-ft.-Diplo-We-Are-Farmers-Andy-milonakis.jpeg', timestamp: 'Today 7:52PM'},
+    { from: 'JODY HiGHROLLER', body: 'You got a low self-esteem? You can rent my ego', self:true, img: 'http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg', timestamp: 'Today 7:59PM'}
+  ];
+  $scope.scrollBottom = function() {
+    $ionicScrollDelegate.scrollBottom();
+  };
 });

@@ -67,6 +67,31 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
           controller: 'PlaylistCtrl'
         }
       }
+    })
+    .state('app.chat', {
+      url: '/chat',
+      views: {
+        'menuContent' :{
+          templateUrl: 'templates/chat.html',
+          controller: 'ChatCtrl'
+        }
+      }
+    })
+    .state('app.music', {
+      url: '/music',
+      views: {
+        'menuContent' :{
+          templateUrl: 'templates/music.html'
+        }
+      }
+    })
+    .state('app.settings', {
+      url: '/settings',
+      views: {
+        'menuContent' :{
+          templateUrl: 'templates/settings.html'
+        }
+      }
     });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/playlists');

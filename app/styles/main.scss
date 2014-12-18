@@ -1,1 +1,170 @@
-// Your application styles go here
+.menu {
+	.bar .title {
+		left:43px;
+	}
+	.profile .img-circle {
+		height: 34px;
+		width: 34px;
+		margin-left:10px;
+	}
+	.item-content {
+		font-size:18px;
+		i {
+			margin-right:15px;
+			font-size:20px;
+		}
+	}
+}
+.center {
+	text-align: center;
+}
+.img-circle {
+	border-radius: 50%;
+}
+.bar {
+	.row {
+		padding:0;
+		.col {
+			padding:0;
+			&:last-child {
+				text-align: right;
+				padding-right:10px;
+			}
+		}
+	}
+	height: 50px;
+	padding:0;
+	img {
+		height:50px;
+	}
+	h2,
+	p  {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	h2 {
+		font-size: 18px;
+		margin:5px 0 0 0;
+	}
+	p {
+		font-size: 12px;
+	}
+	
+	.vote-info {
+		vertical-align: bottom;
+		margin-bottom: -4px;
+		.vote-data{
+			display: inline-block;
+			&:first-child {
+				margin-right: 4px;
+			}
+			.ion-thumbsup {
+				color: #485A48;
+				font-size: 32px;
+				display: block;
+				&.selected {
+					color: green;
+				}
+			}
+			.ion-thumbsdown {
+				@extend .ion-thumbsup;
+				color: #5F4A4A;
+				&.selected {
+					color: red;
+				}
+			}
+			span {
+				text-align: center;
+				display: block;
+			}
+		}
+	}
+}
+.chat {
+	.chat-convo {
+		margin:0;
+		.chat-item {
+			.chat-img {
+				display:inline-block;
+				img {
+					width:50px;
+					height:50px;
+					border:3px solid #DDD;
+				}
+			}
+			.chat-bubble {
+				position: relative;
+				display: inline-block;
+				vertical-align: top;
+				background: #DDD;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 4px;
+				padding: 10px;
+				margin: 0 10px 0 20px;
+				width: calc(100% - 75px);
+				&:after {
+					content: '';
+					position: absolute;
+					border-style: solid;
+					border-width: 9px 14px 9px 0;
+					border-color: transparent #DDD;
+					display: block;
+					width: 0;
+					z-index: 1;
+					left: -14px;
+					top: 8px;
+				}
+				p {
+					white-space: initial;
+				}
+			}
+			.chat-timestamp {
+				text-align: right;
+				margin-top:5px;
+				p {
+					font-size:12px;
+				}
+			}
+			&.isSelf {
+				.chat-img {
+					float:right;
+				}
+				.chat-bubble{
+					text-align: right;
+					margin:0 10px 0 0;
+					&:after {
+						border-width: 9px 0 9px 14px;
+						left: initial;
+						right:-14px;
+					}
+				}
+				.chat-timestamp {
+					text-align: left;
+				}
+			}
+		}
+	}
+	.chat-write {
+		padding:10px 10px 15px;
+		.item {
+			border:none;
+			padding:0;
+			input[type="text"] {
+				font-size:18px;
+				height:40px;
+			}
+			.button {
+				background-color:transparent;
+				height:40px;
+				width:40px;
+			}
+		}
+	}
+
+}
+.nothing-here {
+	width:100%;
+	margin-top:50px;
+}

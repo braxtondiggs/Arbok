@@ -1,29 +1,45 @@
 <ion-side-menus>
 
-  <ion-pane ion-side-menu-content>
+  <ion-pane ion-side-menu-content>Hey
     <ion-nav-bar class="bar-stable">
       <ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>
     </ion-nav-bar>
     <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+    <div ng-include="'templates/footer.html'"></div>
   </ion-pane>
 
   <ion-side-menu side="left">
     <header class="bar bar-header bar-stable">
-      <h1 class="title">Left</h1>
+      <div class="profile">
+        <img class="img-circle" alt="" src="http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg" />
+        <h1 class="title">JODY HiGHROLLER</h1>
+      </div>
     </header>
     <ion-content class="has-header">
       <ion-list>
-        <ion-item nav-clear menu-close ng-click="login()">
-          Login
-        </ion-item>
         <ion-item nav-clear menu-close href="#/app/search">
-          Search
+          <i class="ion-search"></i>Search
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/browse">
-          Browse
+          <i class="ion-folder"></i>Browse
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/playlists">
-          Playlists
+        <ion-item nav-clear menu-close href="#/app/player">
+          <i class="ion-radio-waves"></i>Find a MVPlayer
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/chat">
+          <i class="ion-chatbubbles"></i>Chat
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/music">
+          <i class="ion-headphone"></i>Your Music
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/settings">
+          <i class="ion-gear-b"></i>Settings
+        </ion-item>
+        <ion-item nav-clear menu-close ng-click="login()" ng-Hide="true">
+          <i class="ion-person-stalker"></i>Login
+        </ion-item>
+        <ion-item nav-clear menu-close ng-click="logout()" ng-Hide="true">
+          <i class="ion-person-stalker"></i>Logout
         </ion-item>
       </ion-list>
     </ion-content>

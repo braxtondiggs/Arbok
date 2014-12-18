@@ -18,14 +18,13 @@ $(function() {
 });
 var socket = io.connect();
 socket.on('connect', function() {
-    connect2server();
+    getLocation();
 });
 
 socket.on('new song', function(data) {
     playlist.push(data);
     if (player.getPlayerState() == YT.PlayerState.ENDED || player.getPlayerState == YT.PlayerState.UNSTARTED || votedOff) {
         current++;
-        votedOff = false;
         PlaySong(current);
     }
 });
@@ -42,7 +41,7 @@ socket.on('vote info', function(data) {
     }
     setTimeout(function() {
         $("#voteInfo").hide();
-    }, 10000);
+    }, 5000);
 });
 socket.on('vote off', function(data) {
     var count = 10;
@@ -84,6 +83,8 @@ function connect2server() {
         current = 0;
         if (playlist.length === 0) {
             emptyQueue();
+        }else {
+            PlaySong(current);
         }
     });
 }
@@ -107,7 +108,7 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady(event) {
-    getLocation();
+    //getLocation();
 }
 
 function onPlayerStateChange(event) {
@@ -164,18 +165,13 @@ function displayPosition(position) {
             playlist = confirm.playlist;
         });
     } else {
-        socket.emit('get playlist', {
-            sid: sid
-        }, function(confirm) {
-            localStorage.setItem("QBox Playlist", JSON.stringify(confirm));
-            playlist = confirm;
-            PlaySong(current);
-        });
+        connect2server();
     }
 }
 
 function PlaySong(id) {
     if (playlist[id] && player) {
+        votedOff = false;
         player.loadVideoById(playlist[id].youtube_id);
         tid = playlist[id].track_id;
         localStorage.setItem("lastArtist", playlist[id].artist);

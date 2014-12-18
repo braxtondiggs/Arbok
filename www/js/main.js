@@ -455,6 +455,7 @@ $(function() {
                 distance: 75
             }
         }).done(function(data) {
+            console.log(data);
             $.each(data, function(k, v) {
                 $(".servers > ul").append($("<li />", {
                     "data-id": v.sid
@@ -467,7 +468,7 @@ $(function() {
                     class: "join-server"
                 }).text("Join"))));
             });
-            if ($(".servers > ul > li").length) {
+            if (!$(".servers > ul > li").length) {
                 $(".servers > ul").text("Currently no MVPlayer servers available");
             }
         });

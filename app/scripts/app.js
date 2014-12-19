@@ -68,6 +68,33 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
         }
       }
     })
+    .state('app.artist', {
+      url: '/artist/:artistId',
+      views: {
+        'menuContent' :{
+          templateUrl: 'templates/artist.html',
+          controller: 'ArtistCtrl'
+        }
+      }
+    })
+    .state('app.queue', {
+      url: '/queue',
+      views: {
+        'menuContent' :{
+          templateUrl: 'templates/queue.html',
+          controller: 'QueueCtrl'
+        }
+      }
+    })
+    .state('app.player', {
+      url: '/player',
+      views: {
+        'menuContent' :{
+          templateUrl: 'templates/player.html',
+          controller: 'PlayerCtrl'
+        }
+      }
+    })
     .state('app.chat', {
       url: '/chat',
       views: {

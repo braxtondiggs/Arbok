@@ -1,0 +1,21 @@
+<ion-view title="Find A MVPlayer">
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content class="has-header has-footer">
+        <div class="list card player" ng-repeat="player in players" ng-show="players.length">
+            <div class="item item-avatar">
+                <img src="{{player.avatar_img}}">
+                <h2>{{player.location_title}}&nbsp;<span>(~{{player.distance}} miles)</span></h2>
+                <p>{{player.address}}</p>
+            </div>
+            <div class="item item-image">
+                <img src="{{player.playing_img}}">
+            </div>
+            <a class="item item-icon-left assertive" href="#">
+                <i class="icon ion-music-note"></i> Join The Party
+            </a>
+        </div>
+        <p class="empty-list" ng-show="!players.length">It looks there isn't any MVPlayers in your area. <i class="ion-sad"></i></p>
+    </ion-content>
+</ion-view>

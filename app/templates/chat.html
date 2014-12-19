@@ -2,7 +2,7 @@
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
-    <ion-content class="has-header has-footer chat">
+    <ion-content class="has-header has-footer chat" ng-Class="{'isEmpty': !msg.length}">
         <div class="list chat-convo">
             <div class="item chat-item" ng-repeat="msgs in msg" my-post-repeat-directive ng-class="{'isSelf' : msgs.self}">
                 <div class="chat-img">
@@ -16,6 +16,7 @@
                     <p><i class="ion-clock">&nbsp;</i>{{msgs.timestamp}}</p>
                 </div>
             </div>
+            <p ng-show="!msg.length" class="empty-list">No one has started to chat. Be the first!</p>
         </div>
         <div class="list chat-write" ng-init="scrollBottom()">
             <div class="item item-input-inset">

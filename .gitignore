@@ -12,6 +12,7 @@ plugins
 *.DS_Store
 server/node_modules
 app/scripts/config.js
+resources
 
 dist
 .svn/

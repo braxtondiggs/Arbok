@@ -2,7 +2,7 @@
 Parse.initialize("GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k", "WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE");
 angular.module('Quilava.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, socket) {
     // Form data for the login modal
     $scope.isSearch = false;
     $scope.loginData = {};
@@ -16,6 +16,12 @@ angular.module('Quilava.controllers', [])
             window.location = "#/app/search";
         }
     }
+
+    socket.on('init', function (data) {
+        $scope.name = data.name;
+        $scope.users = data.users;
+        console.log('ggg');
+      });
 
     // Create the login modal that we will use later
     $ionicModal.fromTemplateUrl('templates/login.html', {

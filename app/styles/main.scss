@@ -1,7 +1,7 @@
 .nav-bar {
     #header-search {
         position: absolute;
-        top: 0;
+        bottom: -5px;
         right: 0;
         left: 0;
         z-index: 0;
@@ -252,6 +252,16 @@ input[type="password"] {
     	p {
     		margin:0;
     	}
+    }
+}
+.search {
+    .ion-chevron-right,
+    .ion-play {
+        float: right;
+        margin-top: 10px;
+    }
+    .item-thumbnail-left {
+        min-height:75px;
     }
 }
 .artist {

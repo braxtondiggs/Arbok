@@ -5,14 +5,14 @@
     <ion-content class="has-header has-footer">
         <div class="list card player" ng-repeat="player in players" ng-show="players.length">
             <div class="item item-avatar">
-                <img src="{{player.avatar_img}}">
-                <h2>{{player.location_title}}&nbsp;<span>(~{{player.distance}} miles)</span></h2>
-                <p>{{player.address}}</p>
+                <img src="{{player.attributes.image._url}}">
+                <h2>{{player.attributes.name}}&nbsp;<span>(~{{getDistance(player.attributes.latlng._latitude, player.attributes.latlng._longitude, lnglat.lat, lnglat.lng, 'm')}} miles)</span></h2>
+                <p>{{player.attributes.address}}</p>
             </div>
             <div class="item item-image">
-                <img src="{{player.playing_img}}">
+                <img src="{{player.attributes.playingImg._url}}">
             </div>
-            <a class="item item-icon-left assertive" href="#">
+            <a class="item item-icon-left assertive" ng-click="joinServer(player.id)">
                 <i class="icon ion-music-note"></i> Join The Party
             </a>
         </div>

@@ -1,8 +1,28 @@
 <ion-view title="Search">
-  <ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
-  <ion-content class="has-header has-footer">
-    <h1>Search</h1>
-  </ion-content>
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content class="has-header has-footer">
+        <div class="list card" ng-show="search.tracks.length">
+            <div class="item item-divider">
+                Tracks
+            </div>
+            <a class="item item-thumbnail-left" href="#" ng-repeat="track in search.tracks">
+                <img src="{{track.img}}">
+                <h2>{{track.artist}}</h2>
+                <p>{{track.title}}</p>
+            </a>
+        </div>
+        <div class="list card" ng-show="search.artists.length">
+            <div class="item item-divider">
+                Artist
+            </div>
+            <a class="item item-thumbnail-left" href="#"  ng-repeat="artist in search.artists">
+                <img src="{{artist.img}}">
+                <h2>{{artist.artist}}</h2>
+                <p>{{artist.title}}</p>
+            </a>
+        </div>
+       	<p class="empty-list" ng-show="!search.tracks.length && !search.artists.length">We didn't find anything. Try reprashing your search.</p>
+    </ion-content>
 </ion-view>

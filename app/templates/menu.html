@@ -1,47 +1,52 @@
 <ion-side-menus>
 
-  <ion-pane ion-side-menu-content>Hey
-    <ion-nav-bar class="bar-stable">
-      <ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>
-    </ion-nav-bar>
-    <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
-    <div ng-include="'templates/footer.html'"></div>
-  </ion-pane>
+    <ion-pane ion-side-menu-content>
+        <ion-nav-bar class="bar-stable" ng-class="{'search-bar': isSearch}">
+            <!--<ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>-->
+            <form id="header-search" ng-submit="search()">
+              <i class="ion-search"></i>
+              <input class="search" id="search" type="text" placeholder="Search">
+              <a href="#" class="ion-close-round clear-search hide"></a>
+            </form>
+        </ion-nav-bar>
+        <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+        <div ng-include="'templates/footer.html'"></div>
+    </ion-pane>
 
-  <ion-side-menu side="left">
-    <header class="bar bar-header bar-stable">
-      <div class="profile">
-        <img class="img-circle" alt="" src="http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg" />
-        <h1 class="title">JODY HiGHROLLER</h1>
-      </div>
-    </header>
-    <ion-content class="has-header">
-      <ion-list>
-        <ion-item nav-clear menu-close href="#/app/search">
-          <i class="ion-search"></i>Search
-        </ion-item>
-        <ion-item nav-clear menu-close href="#/app/browse">
-          <i class="ion-folder"></i>Browse
-        </ion-item>
-        <ion-item nav-clear menu-close href="#/app/player">
-          <i class="ion-radio-waves"></i>Find a MVPlayer
-        </ion-item>
-        <ion-item nav-clear menu-close href="#/app/chat">
-          <i class="ion-chatbubbles"></i>Chat
-        </ion-item>
-        <ion-item nav-clear menu-close href="#/app/music">
-          <i class="ion-headphone"></i>Your Music
-        </ion-item>
-        <ion-item nav-clear menu-close href="#/app/settings">
-          <i class="ion-gear-b"></i>Settings
-        </ion-item>
-        <ion-item nav-clear menu-close ng-click="login()" ng-Hide="true">
-          <i class="ion-person-stalker"></i>Login
-        </ion-item>
-        <ion-item nav-clear menu-close ng-click="logout()" ng-Hide="true">
-          <i class="ion-person-stalker"></i>Logout
-        </ion-item>
-      </ion-list>
-    </ion-content>
-  </ion-side-menu>
+    <ion-side-menu side="left">
+        <header class="bar bar-header bar-stable">
+            <div class="profile" ng-show="currentUser._serverData">
+                <img class="img-circle" alt="" src="http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg" />
+                <h1 class="title">{{currentUser.get('username')}}</h1>
+            </div>
+        </header>
+        <ion-content class="has-header">
+            <ion-list>
+                <ion-item nav-clear menu-close ng-click="login();setSearchBar(false);" href="#" ng-show="!currentUser._serverData">
+                    <i class="ion-person-stalker"></i>Login
+                </ion-item>
+                <ion-item nav-clear menu-close href="#" ng-click="setSearchBar(true)">
+                    <i class="ion-search"></i>Search
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/browse" ng-click="setSearchBar(false)">
+                    <i class="ion-folder"></i>Browse
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/player" ng-click="setSearchBar(false)">
+                    <i class="ion-radio-waves"></i>Find a MVPlayer
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/chat" ng-click="setSearchBar(false)">
+                    <i class="ion-chatbubbles"></i>Chat
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/music" ng-click="setSearchBar(false)">
+                    <i class="ion-headphone"></i>Your Music
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/settings" ng-click="setSearchBar(false)">
+                    <i class="ion-gear-b"></i>Settings
+                </ion-item>
+                <ion-item nav-clear menu-close href="#" ng-click="logout()" ng-show="currentUser._serverData" ng-click="setSearchBar(false)">
+                    <i class="ion-person-stalker"></i>Logout
+                </ion-item>
+            </ion-list>
+        </ion-content>
+    </ion-side-menu>
 </ion-side-menus>

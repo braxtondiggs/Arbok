@@ -1,3 +1,52 @@
+.nav-bar {
+    #header-search {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 0;
+        margin: 0 auto;
+        height: 43px;
+        text-align: center;
+        font-size: 17px;
+
+        display: none;
+        vertical-align: top;
+        width:200px;
+        .ion-search {
+            position: absolute;
+            top: 4px;
+            left: 5px;
+        }
+    }
+    &.search-bar {
+        #header-search {
+            display:inline-block;
+        }
+        .title {
+            display:none;
+        }
+    }
+}
+input[type="text"],
+input[type="password"] {
+    height: 24px;
+    color: #444;
+    background-color: transparent;
+    border: none;
+    background: bottom left linear-gradient(#ec008c, #ec008c) no-repeat, bottom center linear-gradient(#ec008c, #ec008c) repeat-x, bottom right linear-gradient(#ec008c, #ec008c) no-repeat;
+    background-size: 1px 6px, 1px 1px, 1px 6px;
+    padding-left: 30px;
+    outline: none;
+    line-height: 19px;
+    &::-webkit-input-placeholder {
+       color: #444;
+       font-weight:500;
+    }
+}
+.input-label {
+    width: initial;
+}
 .menu {
     .bar .title {
         left: 48px;

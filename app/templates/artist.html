@@ -9,14 +9,16 @@
                 <p class="bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas suscipit sit amet augue at auctor. Integer facilisis dignissim sodales.<i class="ion-chevron-down readmore"></i>
                 </p>
             </div>
-            <div class="videography">
+            {{videography.length}}
+            <p class="empty-list" ng-show="!artist.videography.length && !artist.featured.length">It looks like we don't have any playable music for this artist.</p>
+            <div class="videgraphy" ng-show="artist.videography.length">
                 <h3 class="title">Videography</h3>
-                <div class="list card">
+                <div class="list card" ng-repeat="video in artist.videography">
                     <div class="item item-divider">
-                        Pretty Hate Machine - Nine Inch Nails
+                        {{video.title}}
                     </div>
                     <div class="item item-image">
-                        <img src="cover.jpg">
+                        <img src="{{video.album_img}}">
                     </div>
                     <a class="item item-icon-left assertive" href="#">
                         <i class="icon ion-music-note"></i> Start Listening
@@ -24,14 +26,14 @@
 
                 </div>
             </div>
-            <div class="featured">
+            <div class="featured" ng-show="artist.featured.length">
                 <h3 class="title">Featured Artist</h3>
-                <div class="list card">
+                <div class="list card" ng-repeat="video in artist.featured">
                     <div class="item item-divider">
-                        Pretty Hate Machine - Nine Inch Nails
+                        {{video.title}}
                     </div>
                     <div class="item item-image">
-                        <img src="cover.jpg">
+                        <img src="{{video.album_img}}">
                     </div>
                     <a class="item item-icon-left assertive" href="#">
                         <i class="icon ion-music-note"></i> Start Listening

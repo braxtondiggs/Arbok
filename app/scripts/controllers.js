@@ -1,9 +1,21 @@
 'use strict';
+Parse.initialize("GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k", "WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE");
 angular.module('Quilava.controllers', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
     // Form data for the login modal
+    $scope.isSearch = false;
     $scope.loginData = {};
+    $scope.currentUser = Parse.User.current();
+    console.log($scope.currentUser);
+    $scope.setSearchBar = function(val) {
+        $scope.isSearch = val;
+    }
+    $scope.search = function() {
+        if ($scope.search) {
+            window.location = "#/app/search";
+        }
+    }
 
     // Create the login modal that we will use later
     $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -22,15 +34,44 @@ angular.module('Quilava.controllers', [])
             $scope.modal.show();
         };
 
-    // Perform the login action when the user submits the login form
-    $scope.doLogin = function() {
-        console.log('Doing login', $scope.loginData);
-
-        // Simulate a login delay. Remove this and replace with your login
-        // code if using a login system
-        $timeout(function() {
-            $scope.closeLogin();
-        }, 1000);
+        // Perform the login action when the user submits the login form
+    $scope.logout = function() {
+        Parse.User.logOut();
+        $scope.currentUser = null;
+    }
+    $scope.doLogin = function(isValid) {
+        if (isValid) {
+            console.log('Doing login', $scope.loginData);
+            var user = new Parse.User();
+            var loginData = $scope.loginData;
+            user.set("username", loginData.username); // in my app, email==username
+            user.set("password", loginData.password);
+            if (loginData.type === "signup") {
+                user.signUp(null, {
+                    success: function(user) {
+                        $scope.currentUser = user;
+                        $scope.$apply(); // Notify AngularJS to sync currentUser
+                        $scope.closeLogin();
+                    },
+                    error: function(user, error) {
+                        alert("Unable to sign up:  " + error.code + " " + error.message);
+                    }
+                });
+            } else {
+                var user = new Parse.User({username:loginData.username, password:loginData.password});
+                user.logIn({
+                    success: function(user) {
+                        //console.log(user);
+                        $scope.currentUser = user;
+                        $scope.$apply();
+                        $scope.closeLogin();
+                    },
+                    error: function(user, error) {
+                        alert("Unable to log in: " + error.code + " " + error.message);
+                    }
+                });
+            }
+        }
     };
 })
 
@@ -57,7 +98,7 @@ angular.module('Quilava.controllers', [])
     })
     .controller('PlaylistCtrl', function() {})
     .controller('ArtistCtrl', function($scope) {
-        $scope.artist ={
+        $scope.artist = {
             name: 'Weezer',
             img: 'http://imvdb.com/assets/img/n/weezer-music-videos.jpg'
         };

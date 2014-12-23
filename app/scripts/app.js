@@ -47,8 +47,6 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
 
   })
   .factory("UserService", function() {
-    var users = ["Peter", "Daniel", "Nina"];
-
     return {
       checkImage: function(img) {
         return (img.slice(-3) === "jpg") ? img : "http://placehold.it/125x70";

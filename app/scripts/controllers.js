@@ -19,7 +19,42 @@ angular.module('Quilava.controllers', [])
             return UserService.convertSlug(name, slug);
         };
         $scope.addSong = function(id) {
-            UserService.addSong(id);
+            if ($scope.currentUser && $scope.room) {
+                var confirmPopup = $ionicPopup.confirm({
+                    title: 'MVPlayer',
+                    template: 'Are you sure you want add this song?'
+                });
+                confirmPopup.then(function(res) {
+                    if (res) {
+                        //if ($scope.queue_list.indexOf("Apple")) Need to search array for existing--- create a a loop function
+                        socket.emit('song:new', {
+                            server_id: $scope.room,
+                            track_id: id
+                        }, function(confirm) {
+                            if (confirm.status === 1) {
+                                $ionicPopup.alert({
+                                    title: 'MVPlayer',
+                                    template: "Your song is now in the queue! Sit back and jam."
+                                });
+                            } else {
+                                $ionicPopup.alert({
+                                    title: 'MVPlayer',
+                                    template: "A Serious Error Occured, Sorry Bro!"
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                var body = ($scope.currentUser) ? 'You have not connected to a MVPlayer yet.' : 'You need to be logged inorder to suggest a song',
+                    location = ($scope.currentUser) ? '#/app/player' : '#/app/login';
+                $ionicPopup.alert({
+                    title: 'MVPlayer - Error',
+                    template: body
+                }).then(function(res) {
+                    window.location = location;
+                });
+            }
         }
         $scope.doSearch = function(term) {
             if (term) {

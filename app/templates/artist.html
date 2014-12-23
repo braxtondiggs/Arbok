@@ -1,12 +1,12 @@
-<ion-view title="{{artist.name}}">
+<ion-view title="{{convertSlug(artist.name, artist.slug)}}">
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-content class="has-header has-footer">
         <div class="artist">
-            <img class="img-thumbnail" src="{{artist.img}}" alt="">
+            <img class="img-thumbnail" src="{{checkImage(artist.img)}}" alt="">
             <div class="row">
-                <p class="bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas suscipit sit amet augue at auctor. Integer facilisis dignissim sodales.<i class="ion-chevron-down readmore"></i>
+                <p class="bio">{{firstUser(artist.img)}} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas suscipit sit amet augue at auctor. Integer facilisis dignissim sodales.<i class="ion-chevron-down readmore"></i>
                 </p>
             </div>
             {{videography.length}}
@@ -20,7 +20,7 @@
                     <div class="item item-image">
                         <img src="{{video.image.l}}">
                     </div>
-                    <a class="item item-icon-left assertive" href="#" ng-click="somefunction(video.id)">
+                    <a class="item item-icon-left assertive" ng-click="addSong(video.id)">
                         <i class="icon ion-music-note"></i> Start Listening
                     </a>
 
@@ -35,7 +35,7 @@
                     <div class="item item-image">
                         <img src="{{video.image.l}}">
                     </div>
-                    <a class="item item-icon-left assertive" href="#">
+                    <a class="item item-icon-left assertive" ng-click="addSong(video.id)">
                         <i class="icon ion-music-note"></i> Start Listening
                     </a>
                 </div>

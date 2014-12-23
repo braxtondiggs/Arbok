@@ -18,7 +18,7 @@
             <div class="item item-divider">
                 Artist
             </div>
-            <a class="item item-thumbnail-left" href="#/app/artist/{{artist.id}}"  ng-repeat="artist in search.artists">
+            <a class="item item-thumbnail-left" href="#/app/artist/{{artist.id}}"  ng-repeat="artist in search.artists" ng-click="setSearchBar(false)">
                 <img src="{{checkImage(artist.image)}}">
                 <i class="icon ion-chevron-right icon-accessory"></i>
                 <h2>{{convertSlug(artist.name, artist.slug)}}</h2>

@@ -6,48 +6,65 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
+
 angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
+    if (window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
-    if(window.StatusBar) {
+    if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
   });
 })
-.factory('socket', function($rootScope) {
-  var socket = io.connect('http://localhost:9000');
-  return {
-    on: function (eventName, callback) {
-      socket.on(eventName, function () {
-        var args = arguments;
-        $rootScope.$apply(function () {
-          callback.apply(socket, args);
-        });
-      });
-    },
-    emit: function (eventName, data, callback) {
-      socket.emit(eventName, data, function () {
-        var args = arguments;
-        $rootScope.$apply(function () {
-          if (callback) {
+  .factory('socket', function($rootScope) {
+    var socket = io.connect('http://localhost:9000');
+    return {
+      on: function(eventName, callback) {
+        socket.on(eventName, function() {
+          var args = arguments;
+          $rootScope.$apply(function() {
             callback.apply(socket, args);
-          }
+          });
         });
-      });
-    }
-  };
+      },
+      emit: function(eventName, data, callback) {
+        socket.emit(eventName, data, function() {
+          var args = arguments;
+          $rootScope.$apply(function() {
+            if (callback) {
+              callback.apply(socket, args);
+            }
+          });
+        });
+      }
+    };
 
-})
+  })
+  .factory("UserService", function() {
+    return {
+      checkImage: function(img) {
+        return (img.slice(-3) === "jpg") ? img : "http://placehold.it/125x70";
+      },
+      convertSlug: function(name, slug) {
+        if (name !== null) {
+          return name;
+        } else {
+          return slug.replace("-", " ").replace("-", " ").replace(/\w\S*/g, function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          });
+        }
+      }
 
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+    };
+  })
+  .config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
 
     .state('app', {
       url: '/app',

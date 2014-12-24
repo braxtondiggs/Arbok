@@ -13,6 +13,8 @@ router.get('/', function(req, res) {
 console.log("me");
 });
 router.get('/search', function(req, res) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
     var e = req.query['e'] || null,
         v = req.query['v'] || null,
         action = (e) ? "entities" : "videos";
@@ -35,6 +37,8 @@ router.get('/search', function(req, res) {
     }
 });
 router.get('/artist', function(req, res) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
     var e = req.query['e'] || null;
     if (e) {
         request({

@@ -16,6 +16,7 @@ var io = require('socket.io').listen(server);
 var Kaiseki = require('kaiseki');
 var request = require('request');
 var cheerio = require('cheerio');
+var echonest = require('echonest');
 var trim = require('trim');
 require('./config/express')(app);
 require('./routes')(app);
@@ -29,19 +30,38 @@ var APP_ID = 'GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k';
 var REST_API_KEY = '3lVlmpc7FZg1EVL9Lg6Hfo68xEP4yMnurm9zT38z';
 
 var kaiseki = new Kaiseki(APP_ID, REST_API_KEY);
+var myNest = new echonest.Echonest({
+    api_key: '0NPSO7NBLICGX3CWQ'
+});
 
 io.sockets.on('connection', function(socket) {
     console.log('connected!');
     socket.on('user:init', function(msg, fn) {
         socket.join(msg.room);
-        kaiseki.getObjects('Playlist', {where: {playerId: msg.room}, order: 'createdAt'}, function(err, res, body, success) {
+        kaiseki.getObjects('Playlist', {
+            where: {
+                playerId: msg.room
+            },
+            order: 'createdAt'
+        }, function(err, res, body, success) {
             fn(body);
         });
     })
     socket.on('server:init', function(msg, fn) {
         socket.join(msg.room);
-        kaiseki.getObjects('Playlist', {where: {playerId: msg.room}}, function(err, res, body, success) {
-            fn(body);
+        kaiseki.getObjects('Playlist', {
+            where: {
+                playerId: msg.room
+            },
+            order: 'createdAt',
+            count: true
+        }, function(err, res, body, success) {
+            console.log(body.results);
+            if (body.count > 0) {
+                fn(body.results);
+            } else {
+                emptyQueue('Taylor Swift', msg.room);
+            }
         });
     });
     socket.on('unsubscribe', function(msg) {
@@ -55,16 +75,80 @@ io.sockets.on('connection', function(socket) {
         var status = newSong(user_id, track_id, jukebox_id, fn);
 
     });
-    socket.on('song ended', function(msg, fn) {
-        var sid = msg.sid,
-            tid = msg.tid;
-        if (sid !== null && tid !== null) {
-            /*connection.query("DELETE FROM jukebox_songs WHERE jukebox_id = '" + sid + "' AND track_id = '" + tid + "' LIMIT 1;", function(err, rows, results) {
-                if (err) throw err;
-            });
-            io.emit("next song");*/
-        }
+    socket.on('song:ended', function(msg, fn) {
+        var room = msg.room,
+            trackId = msg.trackId,
+            artistInfo = msg.artistInfo;
+        kaiseki.deleteObject('Playlist', trackId, function(err, res, body, success) {
+            if (success) {
+                kaiseki.getObjects('Playlist', {
+                    where: {
+                        playerId: msg.room
+                    },
+                    order: 'createdAt',
+                    count: true
+                }, function(err, res, body, success) {
+                    if (success) {
+                        if (body.count > 0) {
+                            io.sockets.in(msg.room).emit("playlist:change", body.results);
+                        } else {
+                            emptyQueue(artistInfo, msg.room);
+                        }
+                    }
+                });
+            }
+        });
+
     });
+
+    function emptyQueue(artistInfo, jukebox_id) {
+        myNest.artist.similar({
+            name: artistInfo
+        }, function(error, response) {
+            var found = false;
+            callAPIs(response.artists);
+
+            function callAPIs(APIs) {
+                if (APIs.length) {
+                    var ran = Math.floor(Math.random() * APIs.length),
+                        artist = APIs[ran].name;
+                    request.get({
+                        url: "http://imvdb.com/api/v1/search/entities?q=" + artist + "&per_page=1",
+                        json: true
+                    }, function(error, response, body) {
+                        if (!error && response.statusCode === 200) {
+                            if (body.results[0]) {
+                                var artist_id = body.results[0].id;
+                                if (artist_id) {
+                                    request.get({
+                                        url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
+                                        json: true
+                                    }, function(error, response, body) {
+                                        if (!error && response.statusCode === 200) {
+                                            if (body.artist_videos.total_videos !== 0) {
+                                                var videos = body.artist_videos.videos;
+                                                var track_id = body.artist_videos.videos[Math.floor(Math.random() * (videos.length))].id; //Needs to search Featured Artist Also --- Could combine the two arrays and picks from that
+                                                found = true;
+                                                newSong('emptyQueue', track_id, jukebox_id, function() {
+                                                    return;
+                                                });
+                                            }
+                                        }
+                                        if (!found) {
+                                            APIs.splice(ran, 1);
+                                            callAPIs(APIs);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+
+                }
+            }
+
+        });
+    }
 
     function newSong(user_id, track_id, jukebox_id, fn) {
         request({
@@ -103,14 +187,15 @@ io.sockets.on('connection', function(socket) {
                             playerId: jukebox_id
                         }
                     };
-                    kaiseki.createObject('Playlist', post, function(err, res, body, success) {
-                         kaiseki.getObjects('Playlist', params, function(err, res, body, success) {
-                            socket.broadcast.to(jukebox_id).emit("playlist:change", body);
-                            returnData(1);
-                        });
+                kaiseki.createObject('Playlist', post, function(err, res, body, success) {
+                    kaiseki.getObjects('Playlist', params, function(err, res, body, success) {
+                        io.sockets.in(jukebox_id).emit("playlist:change", body);
+                        returnData(1);
                     });
+                });
             }
         });
+
         function returnData(status) {
             fn({
                 status: status

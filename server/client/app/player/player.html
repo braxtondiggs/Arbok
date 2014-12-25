@@ -1,12 +1,12 @@
-<div id="ytapiplayer">
-    You need Flash player 8+ and JavaScript enabled to view this video.{{message}}</div>
+ <youtube width="{{yt.width}}" height="{{yt.height}}" videoid="{{yt.videoid}}"></youtube>
 <div id="popUps">
     <div id="currentlyPlaying">
-        <div class="album-cover"><img alt="" src="#" />
+        <div class="album-cover">
+            <img alt="" src="{{queueList[0].imagePreview}}" />
         </div>
         <div class="music-info">
-            <h3></h3>
-            <p></p>
+            <h3>{{queueList[0].artistInfo}}</h3>
+            <p>{{queueList[0].trackInfo}}</p>
         </div>
     </div>
     <div id="newSong">

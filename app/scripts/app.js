@@ -10,18 +10,18 @@
 angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
 
 .run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-  });
-})
+    $ionicPlatform.ready(function() {
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
+      if (window.cordova && window.cordova.plugins.Keyboard) {
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+      }
+      if (window.StatusBar) {
+        // org.apache.cordova.statusbar required
+        StatusBar.styleDefault();
+      }
+    });
+  })
   .factory('socket', function($rootScope) {
     var socket = io.connect('http://localhost:9000');
     return {
@@ -49,7 +49,11 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
   .factory("UserService", function() {
     return {
       checkImage: function(img) {
-        return (img.slice(-3) === "jpg") ? img : "http://placehold.it/125x70";
+        if (img) {
+          return (img.slice(-3) === "jpg") ? img : 'http://placehold.it/125x70';
+        } else {
+          return;
+        }
       },
       convertSlug: function(name, slug) {
         if (name !== null) {
@@ -66,7 +70,7 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
 
-    .state('app', {
+      .state('app', {
       url: '/app',
       abstract: true,
       templateUrl: 'templates/menu.html',
@@ -76,73 +80,72 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
     .state('app.search', {
       url: '/search',
       views: {
-        'menuContent' :{
+        'menuContent': {
           templateUrl: 'templates/search.html'
         }
       }
     })
 
     .state('app.browse', {
-      url: '/browse',
-      views: {
-        'menuContent' :{
-          templateUrl: 'templates/browse.html'
+        url: '/browse',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/browse.html'
+          }
         }
-      }
-    })
-    .state('app.artist', {
-      url: '/artist/:artistId',
-      views: {
-        'menuContent' :{
-          templateUrl: 'templates/artist.html',
-          controller: 'ArtistCtrl'
+      })
+      .state('app.artist', {
+        url: '/artist/:artistId',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/artist.html',
+            controller: 'ArtistCtrl'
+          }
         }
-      }
-    })
-    .state('app.queue', {
-      url: '/queue',
-      views: {
-        'menuContent' :{
-          templateUrl: 'templates/queue.html',
-          controller: 'QueueCtrl'
+      })
+      .state('app.queue', {
+        url: '/queue',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/queue.html',
+            controller: 'QueueCtrl'
+          }
         }
-      }
-    })
-    .state('app.player', {
-      url: '/player',
-      views: {
-        'menuContent' :{
-          templateUrl: 'templates/player.html',
-          controller: 'PlayerCtrl'
+      })
+      .state('app.player', {
+        url: '/player',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/player.html',
+            controller: 'PlayerCtrl'
+          }
         }
-      }
-    })
-    .state('app.chat', {
-      url: '/chat',
-      views: {
-        'menuContent' :{
-          templateUrl: 'templates/chat.html',
-          controller: 'ChatCtrl'
+      })
+      .state('app.chat', {
+        url: '/chat',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/chat.html',
+            controller: 'ChatCtrl'
+          }
         }
-      }
-    })
-    .state('app.music', {
-      url: '/music',
-      views: {
-        'menuContent' :{
-          templateUrl: 'templates/music.html'
+      })
+      .state('app.music', {
+        url: '/music',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/music.html'
+          }
         }
-      }
-    })
-    .state('app.settings', {
-      url: '/settings',
-      views: {
-        'menuContent' :{
-          templateUrl: 'templates/settings.html'
+      })
+      .state('app.settings', {
+        url: '/settings',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/settings.html'
+          }
         }
-      }
-    });
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/browse');
-});
-
+      });
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/app/browse');
+  });

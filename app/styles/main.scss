@@ -36,13 +36,15 @@ input[type="password"] {
     border: none;
     background: bottom left linear-gradient(#ec008c, #ec008c) no-repeat, bottom center linear-gradient(#ec008c, #ec008c) repeat-x, bottom right linear-gradient(#ec008c, #ec008c) no-repeat;
     background-size: 1px 6px, 1px 1px, 1px 6px;
-    padding-left: 30px;
     outline: none;
     line-height: 19px;
     &::-webkit-input-placeholder {
        color: #444;
        font-weight:500;
     }
+}
+.browse-item {
+    color:#444;
 }
 .input-label {
     width: initial;
@@ -255,6 +257,7 @@ input[type="password"] {
     }
 }
 .search {
+    padding-left: 30px!important;
     .ion-chevron-right,
     .ion-play {
         float: right;

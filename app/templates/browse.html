@@ -7,9 +7,9 @@
             <div class="item item-divider">
     			<i class="ion-trophy"></i>&nbsp;Charts
  			</div>
-            <div class="item">
-                Raiders of the Lost Ark
-            </div>
+            <a href="#/app/more/{{$index}}" class="item browse-item" ng-repeat="section in browse.sections">
+                {{section.title}}
+            </a>
         </div>
     </ion-content>
 </ion-view>

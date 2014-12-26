@@ -9,14 +9,18 @@ angular.module('Quilava.controllers', [])
         $scope.search = {};
         $scope.currentUser = Parse.User.current() || null;
         $scope.room = window.localStorage['room'] || null;
+
         $scope.setSearchBar = function(val) {
             $scope.isSearch = val;
         };
-        $scope.checkImage =  function(img) {
+        $scope.checkImage = function(img) {
             return UserService.checkImage(img);
         };
         $scope.convertSlug = function(name, slug) {
             return UserService.convertSlug(name, slug);
+        };
+        $scope.testFunction = function() {
+            return UserService.testFunction();
         };
         $scope.addSong = function(id) {
             if ($scope.currentUser && $scope.room) {
@@ -25,24 +29,47 @@ angular.module('Quilava.controllers', [])
                     template: 'Are you sure you want add this song?'
                 });
                 confirmPopup.then(function(res) {
-                    if(res) {
-                        socket.emit('song:new', {
-                            server_id: $scope.room,
-                            track_id: id
-                        }, function(confirm) {
-                            console.log('confirmed');
-                        });
+                    if (res) {
+                        var found = false;
+                        for (var i = 0; i < $scope.queue_list.length; i++) {
+                            if ($scope.queue_list[i].IMVDBtrackId === id) {
+                                found = true;
+                            }
+                        }
+                        if (!found) {
+                            socket.emit('song:new', {
+                                server_id: $scope.room,
+                                track_id: id
+                            }, function(confirm) {
+                                if (confirm.status === 1) {
+                                    $ionicPopup.alert({
+                                        title: 'MVPlayer',
+                                        template: "Your song is now in the queue! Sit back and jam."
+                                    });
+                                } else {
+                                    $ionicPopup.alert({
+                                        title: 'MVPlayer',
+                                        template: "A Serious Error Occured, Sorry Bro!"
+                                    });
+                                }
+                            });
+                        } else {
+                            $ionicPopup.alert({
+                                title: 'MVPlayer - Error',
+                                template: 'Looks like this song is already in the Queue.'
+                            });
+                        }
                     }
                 });
-            }else {
-                var body = ($scope.currentUser)?'You have not connected to a MVPlayer yet.':'You need to be logged inorder to suggest a song',
-                    location = ($scope.currentUser)?'#/app/player':'#/app/login';
+            } else {
+                var body = ($scope.currentUser) ? 'You have not connected to a MVPlayer yet.' : 'You need to be logged inorder to suggest a song',
+                    location = ($scope.currentUser) ? '#/app/player' : '#/app/login';
                 $ionicPopup.alert({
                     title: 'MVPlayer - Error',
                     template: body
                 }).then(function(res) {
                     window.location = location;
-                });    
+                });
             }
         }
         $scope.doSearch = function(term) {
@@ -50,6 +77,7 @@ angular.module('Quilava.controllers', [])
                 $http.get(
                     domain + 'music/search?v=' + term
                 ).success(function(data) {
+                    console.log(data.results);
                     $scope.search.tracks = {};
                     $scope.search.tracks = data.results;
                 });
@@ -66,7 +94,6 @@ angular.module('Quilava.controllers', [])
             socket.emit('user:init', {
                 room: $scope.room
             }, function(confirm) {
-                console.log(confirm);
                 $scope.queue_list = confirm;
             });
         }
@@ -134,64 +161,67 @@ angular.module('Quilava.controllers', [])
             }
         };
     })
+    .controller('BrowseCtrl', function($scope, $stateParams) {
+        $scope.browse = {};
+        $scope.browse.id = $stateParams.browseId;
+        $scope.browse.sections = [{
+            title: 'Best New Music Video'
+        }, {
+            title: 'Brand New Music Videos'
+        }, {
+            title: 'Top Music Video of The Week'
+        }, {
+            title: 'Top Music Video of The Month'
+        }, {
+            title: 'Top Music Video of All Time'
+        }];
+        if ($stateParams.browseId) {
+            var Browse = Parse.Object.extend("Browse");
+            var query = new Parse.Query(Browse);
+            query.equalTo("section", parseInt($stateParams.browseId, 10));
+            query.ascending("artistOrder");
+            query.find({
+                success: function(results) {
+                    $scope.browse.music = results;
+                },
+                error: function(error) {
+                    alert("Error: " + error.code + " " + error.message);
+                }
+            });
+        }
+    })
     .controller('ArtistCtrl', function($scope, $stateParams, $http, $ionicPopup, socket, UserService) {
-        var param = $stateParams;
-        if (param && param.artistId) {
+        function getArtistInfo(id) {
             $http.get(
-                domain + 'music/artist?e=' + param.artistId
+                domain + 'music/artist?e=' + id
             ).success(function(data) {
                 $scope.artist = {};
                 $scope.artist.name = data.name;
-                $scope.artist.slug = data.slug; 
+                $scope.artist.slug = data.slug;
                 $scope.artist.img = data.image;
                 $scope.artist.videography = data.artist_videos.videos;
                 $scope.artist.featured = data.featured_artist_videos.videos;
             });
         }
-        $scope.checkImage =  function(img) {
+        var param = $stateParams;
+        if (param && param.artistId && param.action) {
+            if (param.action === 'id') {
+                getArtistInfo(param.artistId);
+            } else if (param.action === 'slug') {
+                $http.get(
+                    domain + 'music/search?e=' + param.artistId
+                ).success(function(data) {
+                    console.log(data.results[0].id);
+                    getArtistInfo(data.results[0].id);
+                });
+            }
+        }
+        $scope.checkImage = function(img) {
             return UserService.checkImage(img);
         };
         $scope.convertSlug = function(name, slug) {
             return UserService.convertSlug(name, slug);
         };
-        $scope.addSong = function(id) {
-            if ($scope.currentUser && $scope.room) {
-                var confirmPopup = $ionicPopup.confirm({
-                    title: 'MVPlayer',
-                    template: 'Are you sure you want add this song?'
-                });
-                confirmPopup.then(function(res) {
-                    if (res) {
-                        //if ($scope.queue_list.indexOf("Apple")) Need to search array for existing--- create a a loop function
-                        socket.emit('song:new', {
-                            server_id: $scope.room,
-                            track_id: id
-                        }, function(confirm) {
-                            if (confirm.status === 1) {
-                                $ionicPopup.alert({
-                                    title: 'MVPlayer',
-                                    template: "Your song is now in the queue! Sit back and jam."
-                                });
-                            } else {
-                                $ionicPopup.alert({
-                                    title: 'MVPlayer',
-                                    template: "A Serious Error Occured, Sorry Bro!"
-                                });
-                            }
-                        });
-                    }
-                });
-            } else {
-                var body = ($scope.currentUser) ? 'You have not connected to a MVPlayer yet.' : 'You need to be logged inorder to suggest a song',
-                    location = ($scope.currentUser) ? '#/app/player' : '#/app/login';
-                $ionicPopup.alert({
-                    title: 'MVPlayer - Error',
-                    template: body
-                }).then(function(res) {
-                    window.location = location;
-                });
-            }
-        }
     })
     .controller('QueueCtrl', function($scope) {})
     .controller('PlayerCtrl', function($scope, socket, $ionicPopup) {
@@ -238,6 +268,7 @@ angular.module('Quilava.controllers', [])
             }, function(confirm) {
                 window.localStorage['room'] = id;
                 $scope.room = id;
+                $scope.queue_list = confirm;
                 $ionicPopup.alert({
                     title: 'MVPlayer',
                     template: 'You are now joined to this player!'

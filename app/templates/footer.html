@@ -4,8 +4,8 @@
   		<img src="{{queue_list[0].imagePreview}}" />
   	</a>
   	<a href="#/app/queue" class="col-50 col" ng-click="setSearchBar(false)">
-  		<h2>{{queue_list[0].artistInfo}}</h2>
-      <p>{{queue_list[0].trackInfo}}</p>
+  		<h2>{{(!queue_list.length)?'No Songs Currently Playing':queue_list[0].artistInfo}}</h2>
+      <p>{{(!queue_list.length)?'Tap Here to Add More!':queue_list[0].trackInfo}}</p>
   	</a>
   	<div class="col-30 col">
   		<div class="vote-info">

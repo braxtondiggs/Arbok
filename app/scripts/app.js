@@ -64,7 +64,6 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
           });
         }
       }
-
     };
   })
   .config(function($stateProvider, $urlRouterProvider) {
@@ -90,12 +89,22 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
         url: '/browse',
         views: {
           'menuContent': {
-            templateUrl: 'templates/browse.html'
+            templateUrl: 'templates/browse.html',
+            controller: 'BrowseCtrl'
+          }
+        }
+      })
+    .state('app.more', {
+        url: '/more/:browseId',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/more.html',
+            controller: 'BrowseCtrl'
           }
         }
       })
       .state('app.artist', {
-        url: '/artist/:artistId',
+        url: '/artist/:action/:artistId',
         views: {
           'menuContent': {
             templateUrl: 'templates/artist.html',

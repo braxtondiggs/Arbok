@@ -13,12 +13,6 @@ var methodOverride = require('method-override');
 var cookieParser = require('cookie-parser');
 var errorHandler = require('errorhandler');
 var path = require('path');
-var request = require("request");
-var cheerio = require('cheerio');
-var trim = require('trim');
-var CronJob = require('cron').CronJob;
-var time = require('time');
-var echonest = require('echonest');
 var config = require('./environment');
 
 module.exports = function(app) {
@@ -32,10 +26,6 @@ module.exports = function(app) {
   app.use(bodyParser.json());
   app.use(methodOverride());
   app.use(cookieParser());
-
-  var myNest = new echonest.Echonest({
-    api_key: '0NPSO7NBLICGX3CWQ'
-  });
   
   if ('production' === env) {
     app.use(favicon(path.join(config.root, 'public', 'favicon.ico')));

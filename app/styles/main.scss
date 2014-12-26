@@ -40,7 +40,6 @@ input[type="password"] {
     line-height: 19px;
     &::-webkit-input-placeholder {
        color: #444;
-       font-weight:500;
     }
 }
 .browse-item {
@@ -216,6 +215,9 @@ input[type="password"] {
             input[type="text"] {
                 font-size: 18px;
                 height: 40px;
+                &::-webkit-input-placeholder {
+                   color: #444;
+                }
             }
             .button {
                 background-color: transparent;

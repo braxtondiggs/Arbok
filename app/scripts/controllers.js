@@ -7,20 +7,23 @@ angular.module('Quilava.controllers', [])
         $scope.isSearch = false;
         $scope.loginData = {};
         $scope.search = {};
+        $scope.chats = [];
         $scope.currentUser = Parse.User.current() || null;
         $scope.room = window.localStorage['room'] || null;
 
         $scope.setSearchBar = function(val) {
             $scope.isSearch = val;
+            if (val) {
+                setTimeout(function() {
+                    document.getElementById('search').focus();
+                }, 500);
+            }
         };
         $scope.checkImage = function(img) {
             return UserService.checkImage(img);
         };
         $scope.convertSlug = function(name, slug) {
             return UserService.convertSlug(name, slug);
-        };
-        $scope.testFunction = function() {
-            return UserService.testFunction();
         };
         $scope.addSong = function(id) {
             if ($scope.currentUser && $scope.room) {
@@ -183,9 +186,6 @@ angular.module('Quilava.controllers', [])
             query.find({
                 success: function(results) {
                     $scope.browse.music = results;
-                },
-                error: function(error) {
-                    alert("Error: " + error.code + " " + error.message);
                 }
             });
         }
@@ -279,40 +279,41 @@ angular.module('Quilava.controllers', [])
         };
 
     })
-    .controller('ChatCtrl', function($scope, $ionicScrollDelegate) {
-        $scope.msg = [{
-            from: 'JODY HiGHROLLER',
-            body: 'Yeah, neato. I beat up the block like Steven Seagal',
-            self: true,
-            img: 'http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg',
-            timestamp: 'Today 7:26PM'
-        }, {
-            from: 'Andy Milonakis',
-            body: 'What\'s up, sonny? Que pasa mijo,  Chillin\' with Rihanna out in Puerto Rico',
-            img: 'http://gagorder.me/wp-content/uploads/2013/02/Three-Loco-ft.-Diplo-We-Are-Farmers-Andy-milonakis.jpeg',
-            timestamp: 'Today 7:29PM'
-        }, {
-            from: 'Andy Milonakis',
-            body: 'She ate my coconut, cause she thought it was a Zico',
-            img: 'http://gagorder.me/wp-content/uploads/2013/02/Three-Loco-ft.-Diplo-We-Are-Farmers-Andy-milonakis.jpeg',
-            timestamp: 'Today 7:46PM'
-        }, {
-            from: 'Dirty Nasty',
-            body: 'Neato, still whip it like Devo Cause my dick short and fat like Danny DeVito',
-            img: 'http://i.ytimg.com/vi/b01Bnr1aXt8/maxresdefault.jpg',
-            timestamp: 'Today 7:47PM'
-        }, {
-            from: 'Andy Milonakis',
-            body: 'I keep it underground, you\'re commercial like Vevo',
-            img: 'http://gagorder.me/wp-content/uploads/2013/02/Three-Loco-ft.-Diplo-We-Are-Farmers-Andy-milonakis.jpeg',
-            timestamp: 'Today 7:52PM'
-        }, {
-            from: 'JODY HiGHROLLER',
-            body: 'You got a low self-esteem? You can rent my ego',
-            self: true,
-            img: 'http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg',
-            timestamp: 'Today 7:59PM'
-        }];
+    .controller('ChatCtrl', function($scope, $ionicScrollDelegate, socket) {
+        var Chat = Parse.Object.extend("Chat");
+        var query = new Parse.Query(Chat);
+        query.equalTo("room", $scope.room);
+        query.ascending("createdAt");
+        query.find({
+            success: function(results) {
+                var result = [];
+                for (var i = 0; i < results.length; i++) {
+                    results[i]._serverData.self = (results[i]._serverData.userId === $scope.currentUser.id)?true:false;
+                    results[i]._serverData.createdAt = moment(results[i].createdAt).format("dddd, MMMM Do YYYY, h:mm:ss a");
+                    result.push(results[i]._serverData);
+                }
+                $scope.chats = result;
+                $ionicScrollDelegate.scrollBottom();
+            }
+        });
+        $scope.sendChat = function(msg) {
+            var img = ($scope.currentUser._serverData.image) ? $scope.currentUser._serverData.image._url : null;
+            document.getElementById('chat-input').value = '';
+            socket.emit('chat', {
+                'room': $scope.room,
+                'from': $scope.currentUser._serverData.username,
+                'userId': $scope.currentUser.id,
+                'img': img,
+                'body': msg.chatMsg
+            });
+        }
+
+        socket.on('chat:new', function(data) {
+            data.self = (data.userId === $scope.currentUser.id)?true:false;
+            data.createdAt = moment().format("dddd, MMMM Do YYYY, h:mm:ss a");
+            $scope.chats.push(data);
+            $ionicScrollDelegate.scrollBottom();
+        });
         $scope.scrollBottom = function() {
             $ionicScrollDelegate.scrollBottom();
         };

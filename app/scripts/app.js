@@ -94,7 +94,7 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
           }
         }
       })
-    .state('app.more', {
+      .state('app.more', {
         url: '/more/:browseId',
         views: {
           'menuContent': {

@@ -72,6 +72,16 @@ io.sockets.on('connection', function(socket) {
     socket.on('unsubscribe', function(msg) {
         socket.leave(msg.room);
     });
+    socket.on('chat', function(msg) {
+        var room = msg.room,
+            from = msg.from,
+            img = msg.img,
+            _body = msg.body,
+            userId = msg.userId;
+        kaiseki.createObject('Chat', {room: room, from: from, image: img, body:_body, userId:userId}, function(err, res, body, success) {
+            io.sockets.in(room).emit("chat:new", {from: from, image: img, body:_body, userId:userId});
+        });
+    });
     socket.on("song:new", function(msg, fn) {
         console.log("add song");
         var track_id = msg.track_id,

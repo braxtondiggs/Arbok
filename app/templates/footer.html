@@ -10,12 +10,12 @@
   	<div class="col-30 col">
   		<div class="vote-info">
             <div class="vote-data">
-                <i class="ion-thumbsup"></i>
-                <span class="upvote">&nbsp;</span>
+                <i class="ion-thumbsup" ng-class="{ 'selected': 2 == vote.selectedIndex }"></i>
+                <span class="upvote" ng-click="voteClicked(2)">{{vote.upvote}}</span>
             </div>
             <div class="vote-data">
-                <i class="ion-thumbsdown"></i>
-                <span class="downvote">&nbsp;</span>
+                <i class="ion-thumbsdown" ng-class="{ 'selected': 1 == vote.selectedIndex }"></i>
+                <span class="downvote" ng-click="voteClicked(1)">{{vote.downvote}}</span>
             </div>
         </div>
   	</div>

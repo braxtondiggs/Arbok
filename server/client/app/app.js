@@ -5,7 +5,8 @@ angular.module('serverApp', [
   'ngResource',
   'ngSanitize',
   'ngRoute',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'youtubePlayer'
 ])
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider

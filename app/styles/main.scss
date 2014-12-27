@@ -42,6 +42,9 @@ input[type="password"] {
        color: #444;
     }
 }
+.item-thumbnail-left {
+    min-height:initial;
+}
 .browse-item {
     color:#444;
 }
@@ -74,15 +77,16 @@ input[type="password"] {
 }
 .vote-info {
     vertical-align: bottom;
-    margin-bottom: -4px;
+    margin-top:2px;
     .vote-data {
         display: inline-block;
+        position:relative;
         &:first-child {
             margin-right: 4px;
         }
         .ion-thumbsup {
             color: #485A48;
-            font-size: 32px;
+            font-size: 44px;
             display: block;
             &.selected {
                 color: green;
@@ -98,6 +102,11 @@ input[type="password"] {
         span {
             text-align: center;
             display: block;
+            position: absolute;
+            bottom: 0;
+            top: 9px;
+            right: 0;
+            left: 0;
         }
     }
 }
@@ -250,7 +259,7 @@ input[type="password"] {
 .queue {
     .ion-chevron-right {
         float: right;
-        margin-top: 25px;
+        margin-top: 15px;
     }
     .item {
     	p {

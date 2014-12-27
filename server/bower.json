@@ -15,7 +15,8 @@
     "angular-bootstrap": "~0.11.0",
     "font-awesome": ">=4.1.0",
     "lodash": "~2.4.1",
-    "jquery.gritter": "~1.7.4"
+    "jquery.gritter": "~1.7.4",
+    "angular-youtube-player": "~1.0.0"
   },
   "devDependencies": {
     "angular-mocks": ">=1.2.*",

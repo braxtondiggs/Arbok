@@ -25,6 +25,19 @@ angular.module('Quilava.controllers', [])
         $scope.convertSlug = function(name, slug) {
             return UserService.convertSlug(name, slug);
         };
+        $scope.voteClicked = function(index) {
+            if ($scope.vote.selectedIndex !== index) {
+                $scope.vote = {};
+                $scope.vote.selectedIndex = index;
+
+                socket.emit('vote:client', {
+                    server_id: $scope.room,
+                    track_id: $scope.queue_list[0].objectId,
+                    vote: $scope.vote.selectedIndex,
+                    userId: $scope.currentUser.id
+                });
+            }
+        }
         $scope.addSong = function(id) {
             if ($scope.currentUser && $scope.room) {
                 var confirmPopup = $ionicPopup.confirm({
@@ -42,7 +55,8 @@ angular.module('Quilava.controllers', [])
                         if (!found) {
                             socket.emit('song:new', {
                                 server_id: $scope.room,
-                                track_id: id
+                                track_id: id,
+                                userId: $scope.currentUser.id
                             }, function(confirm) {
                                 if (confirm.status === 1) {
                                     $ionicPopup.alert({
@@ -93,6 +107,22 @@ angular.module('Quilava.controllers', [])
                 window.location = '#/app/search';
             }
         };
+        $scope.joinServer = function(id) {
+            $scope.queue_list = {};
+            socket.emit('user:init', {
+                room: id
+            }, function(confirm) {
+                window.localStorage['room'] = id;
+                $scope.room = id;
+                $scope.queue_list = confirm;
+                $ionicPopup.alert({
+                    title: 'MVPlayer',
+                    template: 'You are now joined to this player!'
+                }).then(function(res) {
+                    window.location = '#/app/browse';
+                });
+            });
+        };
         if ($scope.room) {
             socket.emit('user:init', {
                 room: $scope.room
@@ -100,8 +130,15 @@ angular.module('Quilava.controllers', [])
                 $scope.queue_list = confirm;
             });
         }
+        socket.on('playlist:playingImg', function(data) {
+            $scope.player.attributes.playingImg = data;//not going to work needs to update per player
+        });
         socket.on('playlist:change', function(data) {
             $scope.queue_list = data;
+        });
+        socket.on('vote:change', function(data) {
+            $scope.vote.upvote = data.upvote;
+            $scope.vote.downvote = data.downvote;
         });
 
         // Create the login modal that we will use later
@@ -170,8 +207,6 @@ angular.module('Quilava.controllers', [])
         $scope.browse.sections = [{
             title: 'Best New Music Video'
         }, {
-            title: 'Brand New Music Videos'
-        }, {
             title: 'Top Music Video of The Week'
         }, {
             title: 'Top Music Video of The Month'
@@ -211,7 +246,6 @@ angular.module('Quilava.controllers', [])
                 $http.get(
                     domain + 'music/search?e=' + param.artistId
                 ).success(function(data) {
-                    console.log(data.results[0].id);
                     getArtistInfo(data.results[0].id);
                 });
             }
@@ -229,13 +263,22 @@ angular.module('Quilava.controllers', [])
             lat: 39.935080,
             lng: -78.0216020
         };
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        function onSuccess(position) {
+            $scope.lnglat = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            }
+        }
+        function onError(error) {
+            console.log(error);
+        }
         var Player = Parse.Object.extend("Player");
         var query = new Parse.Query(Player);
         var point = new Parse.GeoPoint($scope.lnglat.lat, $scope.lnglat.lng);
         query.withinMiles("latlng", point, 25);
         query.find({
             success: function(playerObjects) {
-                console.log(playerObjects);
                 $scope.players = playerObjects;
                 $scope.$apply();
             },
@@ -262,24 +305,8 @@ angular.module('Quilava.controllers', [])
             }
             return Math.round(dist * 100) / 100;
         };
-        $scope.joinServer = function(id) {
-            socket.emit('user:init', {
-                room: id
-            }, function(confirm) {
-                window.localStorage['room'] = id;
-                $scope.room = id;
-                $scope.queue_list = confirm;
-                $ionicPopup.alert({
-                    title: 'MVPlayer',
-                    template: 'You are now joined to this player!'
-                }).then(function(res) {
-                    window.location = '#/app/browse';
-                });
-            });
-        };
-
     })
-    .controller('ChatCtrl', function($scope, $ionicScrollDelegate, socket) {
+    .controller('ChatCtrl', function($scope, $ionicScrollDelegate, socket, $ionicPopup) {
         var Chat = Parse.Object.extend("Chat");
         var query = new Parse.Query(Chat);
         query.equalTo("room", $scope.room);
@@ -297,15 +324,37 @@ angular.module('Quilava.controllers', [])
             }
         });
         $scope.sendChat = function(msg) {
-            var img = ($scope.currentUser._serverData.image) ? $scope.currentUser._serverData.image._url : null;
-            document.getElementById('chat-input').value = '';
-            socket.emit('chat', {
-                'room': $scope.room,
-                'from': $scope.currentUser._serverData.username,
-                'userId': $scope.currentUser.id,
-                'img': img,
-                'body': msg.chatMsg
-            });
+            var title = 'MVPlayer - Error',
+                body = null;
+            if (msg.chatMsg !== "") {
+                if ($scope.room) {
+                    if ($scope.currentUser) {
+                        var img = ($scope.currentUser._serverData.image) ? $scope.currentUser._serverData.image._url : null;
+                        document.getElementById('chat-input').value = '';
+                        socket.emit('chat', {
+                            'room': $scope.room,
+                            'from': $scope.currentUser._serverData.username,
+                            'userId': $scope.currentUser.id,
+                            'img': img,
+                            'body': msg.chatMsg
+                        });
+                    }else {
+                         body = 'You have not connected to a MVPlayer yet.';
+                         location = '#/app/player';
+                    }
+                }else {
+                     body = 'You need to be logged inorder to suggest a song';
+                     location = '#/app/login';
+                }
+                if (body == null) {
+                    $ionicPopup.alert({
+                        title: title,
+                        template: body
+                    }).then(function(res) {
+                        window.location = location;
+                    });
+                }
+            }
         }
 
         socket.on('chat:new', function(data) {

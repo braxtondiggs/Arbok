@@ -61,11 +61,10 @@ io.sockets.on('connection', function(socket) {
             order: 'createdAt',
             count: true
         }, function(err, res, body, success) {
-            console.log(body.results);
             if (body.count > 0) {
                 fn(body.results);
             } else {
-                emptyQueue('Taylor Swift', msg.room);
+                emptyQueue('Drake', msg.room);
             }
         });
     });
@@ -78,15 +77,37 @@ io.sockets.on('connection', function(socket) {
             img = msg.img,
             _body = msg.body,
             userId = msg.userId;
-        kaiseki.createObject('Chat', {room: room, from: from, image: img, body:_body, userId:userId}, function(err, res, body, success) {
-            io.sockets.in(room).emit("chat:new", {from: from, image: img, body:_body, userId:userId});
+        kaiseki.createObject('Chat', {
+            room: room,
+            from: from,
+            image: img,
+            body: _body,
+            userId: userId
+        }, function(err, res, body, success) {
+            io.sockets.in(room).emit("chat:new", {
+                from: from,
+                image: img,
+                body: _body,
+                userId: userId
+            });
+        });
+    });
+    socket.on("vote:client", function(msg, fn) {
+        var room = msg.server_id,
+            trackId = msg.track_id,
+            userId = msg.userId,
+            vote = msg.vote;
+        /*kaiseki.createObject('Vote', {:room, :trackId, :userId, }, function(err, res, body, success) {
+            kaiseki.getObjects('Playlist', params, function(err, res, body, success) {*/
+        io.sockets.in(room).emit("vote:change", {
+
         });
     });
     socket.on("song:new", function(msg, fn) {
         console.log("add song");
         var track_id = msg.track_id,
             jukebox_id = msg.server_id,
-            user_id = msg.user_id;
+            user_id = msg.userId;
         var status = newSong(user_id, track_id, jukebox_id, fn);
 
     });
@@ -106,13 +127,12 @@ io.sockets.on('connection', function(socket) {
                     if (success) {
                         if (body.count > 0) {
                             io.sockets.in(msg.room).emit("playlist:change", body.results);
-                            console.log(body.results[0].imagePreview);
-                            kaiseki.updateObject('Playlist', msg.room, {
-                                    playingImg: body.results[0].imagePreview
-                                },
-                                function(err, res, body, success) {
-                                    
-                                });
+                            kaiseki.updateObject('Player', msg.room, {
+                                playingImg: body.results[0].imagePreview
+                            }, function(err, res, body, success) {
+                                console.log(err);
+                                io.sockets.in(msg.room).emit("playlist:playingImg", body.results[0].imagePreview);
+                            });
                         } else {
                             emptyQueue(artistInfo, msg.room);
                         }
@@ -159,6 +179,8 @@ io.sockets.on('connection', function(socket) {
                                         if (!found) {
                                             APIs.splice(ran, 1);
                                             callAPIs(APIs);
+                                        } else {
+                                            return false;
                                         }
                                     });
                                 }
@@ -213,8 +235,15 @@ io.sockets.on('connection', function(socket) {
                 kaiseki.createObject('Playlist', post, function(err, res, body, success) {
                     kaiseki.getObjects('Playlist', params, function(err, res, body, success) {
                         io.sockets.in(jukebox_id).emit("playlist:change", body);
-                        console.log(body);
-                        returnData(1);
+                        kaiseki.updateObject('Player', jukebox_id, {
+                            playingImg: post.imagePreview
+                        }, function(err, res, body, success) {
+                            console.log(err);
+                            io.sockets.in(jukebox_id).emit("playlist:playingImg", post.imagePreview);
+                        });
+                        if (user_id !== 'emptyQueue') {
+                            returnData(1);
+                        }
                     });
                 });
             }
@@ -226,69 +255,71 @@ io.sockets.on('connection', function(socket) {
             });
         }
     }
+});
 
-    function getIMVDB(id, url) {
-        request(url, function(error, response, html) {
-            if (!error && response.statusCode === 200) {
-                var $ = cheerio.load(html),
-                    i = 0;
-                $("table.imvdb-chart-table tr").each(function(i, element) {
-                    var params = {
-                        section: parseInt(id, 10),
-                        artistOrder: parseInt(i, 10),
-                        artistName: trim(($(this).find(".artist_line").next("p").text() || '')),
-                        artistTitle: trim(($(this).find(".artist_line a").attr("title") || '')),
-                        artistImage: trim(($(this).find("img").attr("src") || ''))
-                    };
-                    kaiseki.createObject('Browse', params, function(err, res, body, success) {
-                        i++;
-                    });
+function getIMVDB(id, url) {
+    request(url, function(error, response, html) {
+        if (!error && response.statusCode === 200) {
+            var $ = cheerio.load(html),
+                i = 0;
+            $("table.imvdb-chart-table tr").each(function(i, element) {
+                var params = {
+                    section: parseInt(id, 10),
+                    artistOrder: parseInt(i, 10),
+                    artistName: trim(($(this).find(".artist_line").next("p").text() || '')),
+                    artistTitle: trim(($(this).find(".artist_line a").attr("title") || '')),
+                    artistImage: trim(($(this).find("img").attr("src") || ''))
+                };
+                kaiseki.createObject('Browse', params, function(err, res, body, success) {
+                    i++;
                 });
+            });
+        }
+    });
+}
+
+function genID(length) {
+    var text = "",
+        possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < length; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}
+
+var job = new CronJob('00 00 12 * * *', function() {
+        var IMVDBurls = {
+            0: {
+                url: "http://imvdb.com/charts/new",
+                title: "Best New Music Video"
+            },
+            1: {
+                url: "http://imvdb.com/charts/week",
+                title: "Top Music Video of The Week"
+            },
+            2: {
+                url: "http://imvdb.com/charts/month",
+                title: "Top Music Video of The Month"
+            },
+            3: {
+                url: "http://imvdb.com/charts/all",
+                title: "Top Music Video of All Time"
             }
-        });
-    }
-
-    function genID(length) {
-        var text = "",
-            possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        for (var i = 0; i < length; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        return text;
-    }
-
-    var job = new CronJob('00 00 12 * * *', function() {
-            var IMVDBurls = {
-                0: {
-                    url: "http://imvdb.com/charts/new",
-                    title: "Best New Music Video"
-                },
-                1: {
-                    url: "http://imvdb.com/charts/week",
-                    title: "Top Music Video of The Week"
-                },
-                2: {
-                    url: "http://imvdb.com/charts/month",
-                    title: "Top Music Video of The Month"
-                },
-                3: {
-                    url: "http://imvdb.com/charts/all",
-                    title: "Top Music Video of All Time"
-                }
-            };
-            Parse.deleteAll('Browse', function(err) {
+        };
+        Parse.deleteAll('Browse', function(err) {
+            if (!err) {
                 for (var key in IMVDBurls) {
                     getIMVDB(key, IMVDBurls[key].url);
                     console.log("Song Update");
                 }
-            });
-        }, function() {
-            // This function is executed when the job stops
-        },
-        true /* Start the job right now  */ ,
-        "America/New_York"
-    );
-});
+            }
+        });
+    }, function() {
+        // This function is executed when the job stops
+    },
+    true /* Start the job right now */ ,
+    "America/New_York"
+);
 
 // Expose app
 exports = module.exports = app;

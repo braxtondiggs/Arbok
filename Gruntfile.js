@@ -41,7 +41,7 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'development',
-            apiEndpoint: 'http://localhost:9000/'
+            apiEndpoint: 'http://localhost:5000/'
           }
         }
       },
@@ -49,7 +49,7 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'production',
-            apiEndpoint: 'http://mvplayer.herokuapp.com/'
+            apiEndpoint: 'http://mvplayer.herokuapp.com:80/'
           }
         }
       }

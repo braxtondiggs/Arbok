@@ -1,9 +1,9 @@
 'use strict';
 Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
-var domain = 'http://localhost:9000/';
 
 angular.module('Quilava.controllers', [])
-    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService) {
+    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService, ENV) {
+        $scope.domain = ENV.apiEndpoint;
         $scope.isSearch = false;
         $scope.loginData = {};
         $scope.search = {};
@@ -96,14 +96,14 @@ angular.module('Quilava.controllers', [])
         $scope.doSearch = function(term) {
             if (term) {
                 $http.get(
-                    domain + 'music/search?v=' + term
+                    $scope.domain + 'music/search?v=' + term
                 ).success(function(data) {
                     console.log(data.results);
                     $scope.search.tracks = {};
                     $scope.search.tracks = data.results;
                 });
                 $http.get(
-                    domain + 'music/search?e=' + term
+                    $scope.domain + 'music/search?e=' + term
                 ).success(function(data) {
                     $scope.search.artists = {};
                     $scope.search.artists = data.results;
@@ -232,7 +232,7 @@ angular.module('Quilava.controllers', [])
     .controller('ArtistCtrl', function($scope, $stateParams, $http, $ionicPopup, socket, UserService) {
         function getArtistInfo(id) {
             $http.get(
-                domain + 'music/artist?e=' + id
+                $scope.domain + 'music/artist?e=' + id
             ).success(function(data) {
                 $scope.artist = {};
                 $scope.artist.name = data.name;
@@ -248,7 +248,7 @@ angular.module('Quilava.controllers', [])
                 getArtistInfo(param.artistId);
             } else if (param.action === 'slug') {
                 $http.get(
-                    domain + 'music/search?e=' + param.artistId
+                    $scope.domain + 'music/search?e=' + param.artistId
                 ).success(function(data) {
                     getArtistInfo(data.results[0].id);
                 });

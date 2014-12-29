@@ -7,7 +7,7 @@
             <div class="item item-divider">
                 Tracks
             </div>
-            <a class="item item-thumbnail-left" ng-repeat="track in search.tracks" ng-click="addSong(track.id)">
+            <a class="item item-thumbnail-left" ng-repeat="track in search.tracks" ng-click="addSong(track.id, track.artists[0].name, track.song_title, track.image.o)">
                 <img src="{{track.image.o}}">
                 <i class="icon ion-play icon-accessory"></i>
                 <h2>{{track.artists[0].name}}</h2>

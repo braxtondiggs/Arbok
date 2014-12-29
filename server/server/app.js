@@ -108,7 +108,10 @@ io.sockets.on('connection', function(socket) {
         var track_id = msg.track_id,
             jukebox_id = msg.server_id,
             user_id = msg.userId;
+            console.log(msg);
+        io.sockets.in(jukebox_id).emit('song:new:server', {userName: msg.userName, artistTitle: msg.trackTitle, artistName: msg.artistName, artistImage: msg.artistImage});
         var status = newSong(user_id, track_id, jukebox_id, fn);
+        //io.sockets.in(jukebox_id).emit('song:new:server', {hi:'hi'});
 
     });
     socket.on('song:ended', function(msg, fn) {
@@ -126,12 +129,13 @@ io.sockets.on('connection', function(socket) {
                 }, function(err, res, body, success) {
                     if (success) {
                         if (body.count > 0) {
+                            console.log(body.results);
                             io.sockets.in(msg.room).emit("playlist:change", body.results);
+                            var preview = body.results[0].imagePreview;
                             kaiseki.updateObject('Player', msg.room, {
-                                playingImg: body.results[0].imagePreview
+                                playingImg: preview
                             }, function(err, res, body, success) {
-                                console.log(err);
-                                io.sockets.in(msg.room).emit("playlist:playingImg", body.results[0].imagePreview);
+                                io.sockets.in(msg.room).emit("playlist:playingImg", preview);
                             });
                         } else {
                             emptyQueue(artistInfo, msg.room);
@@ -208,10 +212,10 @@ io.sockets.on('connection', function(socket) {
                         YT_Key = key;
                         noMatch = false;
                     }
-                    if (noMatch) {
-                        returnData(2);
-                        return false;
-                    }
+                }
+                if (noMatch) {
+                    returnData(2);
+                    return false;
                 }
                 var post = {
                         IMVDBtrackId: body.id,

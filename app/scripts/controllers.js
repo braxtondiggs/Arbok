@@ -38,7 +38,7 @@ angular.module('Quilava.controllers', [])
                 });
             }
         }
-        $scope.addSong = function(id) {
+        $scope.addSong = function(id, name, title, image) {
             if ($scope.currentUser && $scope.room) {
                 var confirmPopup = $ionicPopup.confirm({
                     title: 'MVPlayer',
@@ -56,7 +56,11 @@ angular.module('Quilava.controllers', [])
                             socket.emit('song:new', {
                                 server_id: $scope.room,
                                 track_id: id,
-                                userId: $scope.currentUser.id
+                                userId: $scope.currentUser.id,
+                                userName: $scope.currentUser._serverData.username,
+                                trackTitle: title,
+                                artistName: name,
+                                artistImage: image
                             }, function(confirm) {
                                 if (confirm.status === 1) {
                                     $ionicPopup.alert({
@@ -131,7 +135,7 @@ angular.module('Quilava.controllers', [])
             });
         }
         socket.on('playlist:playingImg', function(data) {
-            $scope.player.attributes.playingImg = data;//not going to work needs to update per player
+            //$scope.player.attributes.playingImg = data;//not going to work needs to update per player
         });
         socket.on('playlist:change', function(data) {
             $scope.queue_list = data;
@@ -346,7 +350,7 @@ angular.module('Quilava.controllers', [])
                      body = 'You need to be logged inorder to suggest a song';
                      location = '#/app/login';
                 }
-                if (body == null) {
+                if (body !== null) {
                     $ionicPopup.alert({
                         title: title,
                         template: body

@@ -57,19 +57,36 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 			autoplay: 0
 		}
 	};
-	socket.on('playlist:change', function(msg) {
-		var player = $scope.event.target,
-			event = $scope.event;
-		$scope.queueList = msg;
-		if (youtubeURL(player.getVideoUrl()) !== $scope.queueList[0].youtubeId) {
-			player.loadVideoById($scope.queueList[0].youtubeId);
-			$('#currentlyPlaying').addClass('active');
-			activateBar();
-		}else {
-			if (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.PAUSED) {
-				player.playVideo();
+	socket.on('connect', function() {
+		socket.on('playlist:change', function(msg) {
+			var player = $scope.event.target,
+				event = $scope.event;
+			$scope.queueList = msg;
+			console.log(msg);
+			if (youtubeURL(player.getVideoUrl()) !== $scope.queueList[0].youtubeId) {
+				player.loadVideoById($scope.queueList[0].youtubeId);
+				$('#currentlyPlaying').addClass('active');
+				activateBar();
+			}else {
+				if (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.PAUSED) {
+					player.playVideo();
+				}
 			}
-		}
+		});
+		socket.on('chat:new', function(msg) {
+			$.gritter.add({
+				title: msg.from,
+				text: msg.body,
+				image: msg.image
+			});
+		});
+		socket.on('song:new:server', function(msg) {
+			$.gritter.add({
+				title: String(msg.userName) + ', just added a new song!',
+				text: String(msg.artistTitle) + ' - ' + String(msg.artistName),
+				image: String(msg.artistImage)
+			});
+		});
 	});
 
 	function youtubeURL(url) {

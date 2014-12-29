@@ -22,8 +22,8 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
       }
     });
   })
-  .factory('socket', function($rootScope) {
-    var socket = io.connect('http://localhost:9000');
+  .factory('socket', function($rootScope, ENV) {
+    var socket = io.connect(ENV.apiEndpoint);
     return {
       on: function(eventName, callback) {
         socket.on(eventName, function() {
@@ -46,7 +46,7 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
     };
 
   })
-  .factory("UserService", function() {
+  .factory('UserService', function() {
     return {
       checkImage: function(img) {
         if (img) {

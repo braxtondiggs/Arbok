@@ -10,7 +10,6 @@ angular.module('Quilava.controllers', [])
         $scope.chats = [];
         $scope.currentUser = Parse.User.current() || null;
         $scope.room = window.localStorage['room'] || null;
-
         $scope.setSearchBar = function(val) {
             $scope.isSearch = val;
             if (val) {

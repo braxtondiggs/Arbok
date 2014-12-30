@@ -10,6 +10,8 @@ angular.module('Quilava.controllers', [])
         $scope.chats = [];
         $scope.currentUser = Parse.User.current() || null;
         $scope.room = window.localStorage['room'] || null;
+        $scope.hasVoted = window.localStorage['hasVoted'] || false;
+        $scope.$watch('hasVoted', function () { window.localStorage['hasVoted'] = $scope.hasVoted;});
         $scope.setSearchBar = function(val) {
             $scope.isSearch = val;
             if (val) {
@@ -25,16 +27,18 @@ angular.module('Quilava.controllers', [])
             return UserService.convertSlug(name, slug);
         };
         $scope.voteClicked = function(index) {
+            $scope.vote = {};
             if ($scope.vote.selectedIndex !== index) {
-                $scope.vote = {};
                 $scope.vote.selectedIndex = index;
-
                 socket.emit('vote:client', {
                     server_id: $scope.room,
                     track_id: $scope.queue_list[0].objectId,
-                    vote: $scope.vote.selectedIndex,
-                    userId: $scope.currentUser.id
+                    upVote: ($scope.vote.selectedIndex === 2)?true:false,
+                    downVote: ($scope.vote.selectedIndex === 1)?true:false,
+                    userId: $scope.currentUser.id,
+                    hasVoted: $scope.hasVoted
                 });
+                $scope.hasVoted = true;
             }
         }
         $scope.addSong = function(id, name, title, image) {
@@ -137,6 +141,7 @@ angular.module('Quilava.controllers', [])
             //$scope.player.attributes.playingImg = data;//not going to work needs to update per player
         });
         socket.on('playlist:change', function(data) {
+            if (data[0].objectId !== $scope.queue_list[0].objectId) $scope.hasVoted = false;
             $scope.queue_list = data;
         });
         socket.on('vote:change', function(data) {

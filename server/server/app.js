@@ -32,6 +32,7 @@ server.listen(config.port, config.ip, function() {
 var APP_ID = 'GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k';
 var MASTER_KEY = 'zksioMSekJ2a6vctzq6LvFhptRCc0Dn64Qpsv1GJ';
 var REST_API_KEY = '3lVlmpc7FZg1EVL9Lg6Hfo68xEP4yMnurm9zT38z';
+var JAVASCRIPT_KEY = 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE';
 
 var kaiseki = new Kaiseki(APP_ID, REST_API_KEY);
 var Parse = new ParseAPI(APP_ID, MASTER_KEY);
@@ -96,23 +97,41 @@ io.sockets.on('connection', function(socket) {
         var room = msg.server_id,
             trackId = msg.track_id,
             userId = msg.userId,
-            vote = msg.vote;
+            vote = msg.vote,
+            hasVoted = msg.hasVoted,
+            upVote = msg.upVote,
+            downVote = msg.downVote,
+            numVotes = {};
+        //console.log(msg);
+        var params = {playerId:room, trackId:trackId, userId:userId, upVote: upVote, downVote:downVote};
+        console.log(room);
+        //if (hasVoted) {
+            
+        //}else {
+            //kaiseki.createObject('Vote', params, function(err, res, body, success) {
+                kaiseki.getObjects('Vote', {where: {upVote: true, playerId: room}, count: true}, function(err, res, body, success) {
+                    numVotes.upvotes = body.count;
+                    console.log(body);
+                });
+                kaiseki.getObjects('Vote', {where: {downVote: true, playerId: room}, count: true}, function(err, res, body, success) {
+                    numVotes.downvotes = body.count;
+                });
+
+            //});
+        //}
         /*kaiseki.createObject('Vote', {:room, :trackId, :userId, }, function(err, res, body, success) {
             kaiseki.getObjects('Playlist', params, function(err, res, body, success) {*/
-        io.sockets.in(room).emit("vote:change", {
+        //io.sockets.in(room).emit("vote:change", {
 
-        });
+        //});
     });
     socket.on("song:new", function(msg, fn) {
         console.log("add song");
         var track_id = msg.track_id,
             jukebox_id = msg.server_id,
             user_id = msg.userId;
-            console.log(msg);
         io.sockets.in(jukebox_id).emit('song:new:server', {userName: msg.userName, artistTitle: msg.trackTitle, artistName: msg.artistName, artistImage: msg.artistImage});
         var status = newSong(user_id, track_id, jukebox_id, fn);
-        //io.sockets.in(jukebox_id).emit('song:new:server', {hi:'hi'});
-
     });
     socket.on('song:ended', function(msg, fn) {
         var room = msg.room,
@@ -120,6 +139,9 @@ io.sockets.on('connection', function(socket) {
             artistInfo = msg.artistInfo;
         kaiseki.deleteObject('Playlist', trackId, function(err, res, body, success) {
             if (success) {
+                Parse.deleteAll('Vote', function () {
+                  // nothing to see here
+                });
                 kaiseki.getObjects('Playlist', {
                     where: {
                         playerId: msg.room
@@ -129,13 +151,12 @@ io.sockets.on('connection', function(socket) {
                 }, function(err, res, body, success) {
                     if (success) {
                         if (body.count > 0) {
-                            console.log(body.results);
                             io.sockets.in(msg.room).emit("playlist:change", body.results);
                             var preview = body.results[0].imagePreview;
                             kaiseki.updateObject('Player', msg.room, {
                                 playingImg: preview
                             }, function(err, res, body, success) {
-                                io.sockets.in(msg.room).emit("playlist:playingImg", preview);
+                                io.sockets.emit("playlist:playingImg", {preview: preview, room:msg.room});
                             });
                         } else {
                             emptyQueue(artistInfo, msg.room);
@@ -242,8 +263,7 @@ io.sockets.on('connection', function(socket) {
                         kaiseki.updateObject('Player', jukebox_id, {
                             playingImg: post.imagePreview
                         }, function(err, res, body, success) {
-                            console.log(err);
-                            io.sockets.in(jukebox_id).emit("playlist:playingImg", post.imagePreview);
+                            io.sockets.emit("playlist:playingImg", {preview: post.imagePreview, room: jukebox_id});
                         });
                         if (user_id !== 'emptyQueue') {
                             returnData(1);

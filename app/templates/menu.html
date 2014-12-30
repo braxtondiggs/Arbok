@@ -3,10 +3,10 @@
     <ion-pane ion-side-menu-content>
         <ion-nav-bar class="bar-stable" ng-class="{'search-bar': isSearch}">
             <!--<ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>-->
-            <form id="header-search" ng-submit="doSearch(search.term)">
+            <form id="header-search" ng-submit="doSearch(search.term)" name="searchForm">
               <i class="ion-search"></i>
-              <input class="search" id="search" type="text" placeholder="Search" ng-model="search.term">
-              <a href="#" class="ion-close-round clear-search hide"></a>
+              <input class="search" name="search" id="search" type="text" placeholder="Search" ng-model="search.term" ng-minlength="1">
+              <a class="ion-close clear-search" ng-show="search.term.length" ng-click="search.term = ''"></a>
             </form>
         </ion-nav-bar>
         <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>

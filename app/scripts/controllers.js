@@ -7,11 +7,18 @@ angular.module('Quilava.controllers', [])
         $scope.isSearch = false;
         $scope.loginData = {};
         $scope.search = {};
+        $scope.vote = {};
         $scope.chats = [];
         $scope.currentUser = Parse.User.current() || null;
         $scope.room = window.localStorage['room'] || null;
         $scope.hasVoted = window.localStorage['hasVoted'] || false;
-        $scope.$watch('hasVoted', function () { window.localStorage['hasVoted'] = $scope.hasVoted;});
+        $scope.vote.voteId = window.localStorage['voteId'] || null;
+        $scope.$watch('hasVoted', function() {
+            window.localStorage['hasVoted'] = $scope.hasVoted;
+        });
+        $scope.$watch('vote.voteId', function() {
+            window.localStorage['voteId'] = $scope.vote.voteId;
+        });
         $scope.setSearchBar = function(val) {
             $scope.isSearch = val;
             if (val) {
@@ -27,16 +34,17 @@ angular.module('Quilava.controllers', [])
             return UserService.convertSlug(name, slug);
         };
         $scope.voteClicked = function(index) {
-            $scope.vote = {};
+            console.log($scope);
             if ($scope.vote.selectedIndex !== index) {
                 $scope.vote.selectedIndex = index;
                 socket.emit('vote:client', {
                     server_id: $scope.room,
                     track_id: $scope.queue_list[0].objectId,
-                    upVote: ($scope.vote.selectedIndex === 2)?true:false,
-                    downVote: ($scope.vote.selectedIndex === 1)?true:false,
+                    upVote: ($scope.vote.selectedIndex === 2) ? true : false,
+                    downVote: ($scope.vote.selectedIndex === 1) ? true : false,
                     userId: $scope.currentUser.id,
-                    hasVoted: $scope.hasVoted
+                    hasVoted: $scope.hasVoted,
+                    voteId: $scope.vote.voteId
                 });
                 $scope.hasVoted = true;
             }
@@ -129,12 +137,20 @@ angular.module('Quilava.controllers', [])
                     window.location = '#/app/browse';
                 });
             });
+            socket.emit('chat:init', {
+                room: id
+            }, function(confirm) {
+                $scope.chats = confirm;
+            });
         };
         if ($scope.room) {
             socket.emit('user:init', {
                 room: $scope.room
             }, function(confirm) {
                 $scope.queue_list = confirm;
+                $scope.vote = {};
+                $scope.vote.upvote = confirm[0].upvoteNum;
+                $scope.vote.downvote = confirm[0].downvoteNum;
             });
         }
         socket.on('playlist:playingImg', function(data) {
@@ -147,6 +163,8 @@ angular.module('Quilava.controllers', [])
         socket.on('vote:change', function(data) {
             $scope.vote.upvote = data.upvote;
             $scope.vote.downvote = data.downvote;
+            $scope.vote.voteId = data.voteId;
+            console.log($scope);
         });
 
         // Create the login modal that we will use later
@@ -272,12 +290,14 @@ angular.module('Quilava.controllers', [])
             lng: -78.0216020
         };
         navigator.geolocation.getCurrentPosition(onSuccess, onError);
+
         function onSuccess(position) {
             $scope.lnglat = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             }
         }
+
         function onError(error) {
             console.log(error);
         }
@@ -323,7 +343,7 @@ angular.module('Quilava.controllers', [])
             success: function(results) {
                 var result = [];
                 for (var i = 0; i < results.length; i++) {
-                    results[i]._serverData.self = (results[i]._serverData.userId === $scope.currentUser.id)?true:false;
+                    results[i]._serverData.self = (results[i]._serverData.userId === $scope.currentUser.id) ? true : false;
                     results[i]._serverData.createdAt = moment(results[i].createdAt).format("dddd, MMMM Do YYYY, h:mm:ss a");
                     result.push(results[i]._serverData);
                 }
@@ -346,13 +366,13 @@ angular.module('Quilava.controllers', [])
                             'img': img,
                             'body': msg.chatMsg
                         });
-                    }else {
-                         body = 'You have not connected to a MVPlayer yet.';
-                         location = '#/app/player';
+                    } else {
+                        body = 'You have not connected to a MVPlayer yet.';
+                        location = '#/app/player';
                     }
-                }else {
-                     body = 'You need to be logged inorder to suggest a song';
-                     location = '#/app/login';
+                } else {
+                    body = 'You need to be logged inorder to suggest a song';
+                    location = '#/app/login';
                 }
                 if (body !== null) {
                     $ionicPopup.alert({
@@ -366,7 +386,7 @@ angular.module('Quilava.controllers', [])
         }
 
         socket.on('chat:new', function(data) {
-            data.self = (data.userId === $scope.currentUser.id)?true:false;
+            data.self = (data.userId === $scope.currentUser.id) ? true : false;
             data.createdAt = moment().format("dddd, MMMM Do YYYY, h:mm:ss a");
             $scope.chats.push(data);
             $ionicScrollDelegate.scrollBottom();

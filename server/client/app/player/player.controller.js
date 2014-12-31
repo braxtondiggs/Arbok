@@ -49,7 +49,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 		height: $(window).height(),
 		videoId: 'i9MHigUZKEM',
 		playerVars: {
-			//controls: 0,
+			controls: 0,
 			disablekb: 0,
 			showinfo: 0,
 			rel: 0,

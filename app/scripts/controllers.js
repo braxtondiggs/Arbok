@@ -151,13 +151,16 @@ angular.module('Quilava.controllers', [])
                 $scope.vote = {};
                 $scope.vote.upvote = confirm[0].upvoteNum;
                 $scope.vote.downvote = confirm[0].downvoteNum;
+                if ($scope.hasVoted) {
+                    $scope.vote.selectedIndex = 1;///Needs to store what I voted on last
+                } 
             });
         }
         socket.on('playlist:playingImg', function(data) {
             //$scope.player.attributes.playingImg = data;//not going to work needs to update per player
         });
         socket.on('playlist:change', function(data) {
-            if (data[0].objectId !== $scope.queue_list[0].objectId) $scope.hasVoted = false;
+            if (data[0].objectId !== $scope.queue_list[0].objectId) {$scope.hasVoted = false;$scope.vote.selectedIndex = 0;}
             $scope.queue_list = data;
         });
         socket.on('vote:change', function(data) {

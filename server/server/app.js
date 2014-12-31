@@ -111,7 +111,8 @@ io.sockets.on('connection', function(socket) {
             hasVoted = msg.hasVoted,
             upVote = msg.upVote,
             downVote = msg.downVote,
-            voteId = msg.voteId;
+            voteId = msg.voteId,
+            voteChoice = (upVote)?"upvote":"downvote";
         var params = {
             playerId: room,
             trackId: trackId,
@@ -155,7 +156,8 @@ io.sockets.on('connection', function(socket) {
                     io.sockets.in(room).emit("vote:change", {
                         upvote: upvoteNum,
                         downvote: downvoteNum,
-                        voteId: id
+                        voteId: id,
+                        voteChoice: voteChoice
                     });
                 });
             });

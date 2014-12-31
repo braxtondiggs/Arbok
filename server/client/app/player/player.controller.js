@@ -87,6 +87,12 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 				image: String(msg.artistImage)
 			});
 		});
+		socket.on('vote:change', function(msg) {
+			$.gritter.add({
+				title: String(msg.userName) + ' '+ ((String(msg.voteChoice) === 'upvote')?'liked':'disliked') + ' this song!',
+				image: '<i class="fa fa-camera-retro fa-5x"></i>'
+			});
+		});
 	});
 
 	function youtubeURL(url) {

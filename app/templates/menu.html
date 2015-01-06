@@ -1,0 +1,52 @@
+<ion-side-menus>
+
+    <ion-pane ion-side-menu-content>
+        <ion-nav-bar class="bar-stable" ng-class="{'search-bar': isSearch}">
+            <!--<ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>-->
+            <form id="header-search" ng-submit="doSearch(search.term)" name="searchForm">
+              <i class="ion-search"></i>
+              <input class="search" name="search" id="search" type="text" placeholder="Search" ng-model="search.term" ng-minlength="1">
+              <a class="ion-close clear-search" ng-show="search.term.length" ng-click="search.term = ''"></a>
+            </form>
+        </ion-nav-bar>
+        <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+        <div ng-include="'templates/footer.html'"></div>
+    </ion-pane>
+
+    <ion-side-menu side="left">
+        <header class="bar bar-header bar-stable">
+            <div class="profile" ng-show="currentUser._serverData">
+                <img class="img-circle" alt="" src="{{currentUser.get('image')._url}}" />
+                <h1 class="title">{{currentUser.get('username')}}</h1>
+            </div>
+        </header>
+        <ion-content class="has-header">
+            <ion-list>
+                <ion-item nav-clear menu-close ng-click="login();setSearchBar(false);" href="#" ng-show="!currentUser._serverData">
+                    <i class="ion-person-stalker"></i>Login
+                </ion-item>
+                <ion-item nav-clear menu-close href="#" ng-click="setSearchBar(true)">
+                    <i class="ion-search"></i>Search
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/browse" ng-click="setSearchBar(false)">
+                    <i class="ion-folder"></i>Browse
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/player" ng-click="setSearchBar(false)">
+                    <i class="ion-radio-waves"></i>Find a MVPlayer
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/chat" ng-click="setSearchBar(false)">
+                    <i class="ion-chatbubbles"></i>Chat
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/music" ng-click="setSearchBar(false)">
+                    <i class="ion-headphone"></i>Your Music
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/settings" ng-click="setSearchBar(false)">
+                    <i class="ion-gear-b"></i>Settings
+                </ion-item>
+                <ion-item nav-clear menu-close href="#" ng-click="logout()" ng-show="currentUser._serverData" ng-click="setSearchBar(false)">
+                    <i class="ion-person-stalker"></i>Logout
+                </ion-item>
+            </ion-list>
+        </ion-content>
+    </ion-side-menu>
+</ion-side-menus>

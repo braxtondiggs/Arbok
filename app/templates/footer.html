@@ -1,0 +1,23 @@
+<ion-footer-bar align-title="left" class="bar-dark">
+  <div class="row">
+  	<a href="#/app/queue" class="col-20 col" ng-click="setSearchBar(false)">
+  		<img src="{{queue_list[0].imagePreview}}" />
+  	</a>
+  	<a href="#/app/queue" class="col-50 col" ng-click="setSearchBar(false)">
+  		<h2>{{(!queue_list.length)?'No Songs Currently Playing':queue_list[0].artistInfo}}</h2>
+      <p>{{(!queue_list.length)?'Tap Here to Add More!':queue_list[0].trackInfo}}</p>
+  	</a>
+  	<div class="col-30 col">
+  		<div class="vote-info">
+            <div class="vote-data">
+                <i class="ion-thumbsup" ng-class="{ 'selected': 2 == vote.selectedIndex }"></i>
+                <span class="upvote" ng-click="voteClicked(2)">{{vote.upvote}}</span>
+            </div>
+            <div class="vote-data">
+                <i class="ion-thumbsdown" ng-class="{ 'selected': 1 == vote.selectedIndex }"></i>
+                <span class="downvote" ng-click="voteClicked(1)">{{vote.downvote}}</span>
+            </div>
+        </div>
+  	</div>
+  </div>
+</ion-footer-bar>

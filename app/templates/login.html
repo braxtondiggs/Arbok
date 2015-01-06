@@ -1,0 +1,33 @@
+<div class="modal">
+  <ion-header-bar>
+    <h1 class="title">Login</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeLogin()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form id="loginForm" name="loginForm" ng-submit="doLogin(loginForm.$valid)" novalidate>
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Username: </span>
+          <input type="text" name="username" ng-model="loginData.username" ng-required="true" ng-minlength="4" ng-maxlength="16">
+          <p ng-show="loginData.username.$error.minlength" class="help-block">Username is too short.</p>
+          <p ng-show="loginData.username.$error.maxlength" class="help-block">Username is too long.</p>
+          <p ng-show="loginData.username.$invalid && !loginData.username.$pristine" class="help-block">You name is required.</p>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Password: </span>
+          <input type="password" name="password" ng-model="loginData.password" ng-required="true" ng-minlength="6">
+          <p ng-show="loginData.password.$invalid && !loginData.password.$pristine" class="help-block">You name is required.</p>
+          <p ng-show="loginData.password.$error.minlength" class="help-block">Username is too short.</p>
+        </label>
+        <div class="padding">
+          <button class="button button-block button-positive" type="submit" ng-click="loginData.type = 'login'">Log In</button>
+        
+          -----Or ---
+          <button class="button button-block button-positive" type="submit" ng-click="loginData.type = 'signup'">Sign Up</button>
+        </div>
+      </div>
+    </form>
+  </ion-content>
+</div>

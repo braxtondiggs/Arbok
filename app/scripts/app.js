@@ -7,7 +7,7 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 
-angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
+angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar'])
 
 .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -50,7 +50,7 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
     return {
       checkImage: function(img) {
         if (img) {
-          return (img.slice(-3) === "jpg") ? img : 'http://placehold.it/125x70';
+          return (img.slice(-3) === 'jpg') ? img : 'http://placehold.it/125x70';
         } else {
           return;
         }
@@ -59,10 +59,26 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers'])
         if (name !== null) {
           return name;
         } else {
-          return slug.replace("-", " ").replace("-", " ").replace(/\w\S*/g, function(txt) {
+          return slug.replace('-', ' ').replace('-', ' ').replace(/\w\S*/g, function(txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
           });
         }
+      }
+    };
+  })
+  .factory('LoadingService', function(cfpLoadingBar, $ionicLoading) {
+    return {
+      showLoading: function() {
+        cfpLoadingBar.start();
+        cfpLoadingBar.inc();
+        $ionicLoading.show({
+          animation: 'fade-in',
+          showBackdrop: false
+        });
+      },
+      hideLoading: function() {
+        $ionicLoading.hide();
+        //cfpLoadingBar.complete();
       }
     };
   })

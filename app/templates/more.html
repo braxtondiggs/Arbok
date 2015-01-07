@@ -10,6 +10,6 @@
                 <p>{{music._serverData.artistTitle}}</p>
             </a>
         </div>
-        <p class="empty-list" ng-show="!browse.music.length">It looks like we don't have any music for this section. Check back later!</p>
+        <p class="empty-list" ng-show="!browse.music.length && browse.loaded">It looks like we don't have any music for this section. Check back later!</p>
     </ion-content>
 </ion-view>

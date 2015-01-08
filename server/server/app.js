@@ -14,7 +14,7 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 var Kaiseki = require('kaiseki');
-var ParseAPI = require('node-parse-api').Parse;
+var Parse = require('parse').Parse;
 var request = require('request');
 var cheerio = require('cheerio');
 var echonest = require('echonest');
@@ -30,15 +30,14 @@ server.listen(config.port, config.ip, function() {
 });
 
 var APP_ID = 'GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k';
-var MASTER_KEY = 'zksioMSekJ2a6vctzq6LvFhptRCc0Dn64Qpsv1GJ';
 var REST_API_KEY = '3lVlmpc7FZg1EVL9Lg6Hfo68xEP4yMnurm9zT38z';
 var JAVASCRIPT_KEY = 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE';
 
 var kaiseki = new Kaiseki(APP_ID, REST_API_KEY);
-var Parse = new ParseAPI(APP_ID, MASTER_KEY);
 var myNest = new echonest.Echonest({
     api_key: '0NPSO7NBLICGX3CWQ'
 });
+Parse.initialize(APP_ID, JAVASCRIPT_KEY);
 
 io.sockets.on('connection', function(socket) {
     console.log('connected!');
@@ -112,7 +111,9 @@ io.sockets.on('connection', function(socket) {
             upVote = msg.upVote,
             downVote = msg.downVote,
             voteId = msg.voteId,
-            voteChoice = (upVote)?"upvote":"downvote";
+            userName = msg.userName,
+            voteChoice = (upVote)?"upvote":"downvote",
+            clients = Object.keys(io.nsps["/"].adapter.rooms[room]).length;
         var params = {
             playerId: room,
             trackId: trackId,
@@ -157,7 +158,9 @@ io.sockets.on('connection', function(socket) {
                         upvote: upvoteNum,
                         downvote: downvoteNum,
                         voteId: id,
-                        voteChoice: voteChoice
+                        voteChoice: voteChoice,
+                        userName: userName,
+                        clients: clients
                     });
                 });
             });
@@ -182,8 +185,16 @@ io.sockets.on('connection', function(socket) {
             artistInfo = msg.artistInfo;
         kaiseki.deleteObject('Playlist', trackId, function(err, res, body, success) {
             if (success) {
-                Parse.deleteAll('Vote', function() {
-                    // nothing to see here
+                var query = new Parse.Query("Vote");
+                query.find({
+                    success: function(result) {
+                        function deleteResult(result) {
+                            result.destroy();
+                        }
+                        for(var i=0; i<result.length; i++) {
+                            deleteResult(result[i]);
+                        }
+                    }
                 });
                 kaiseki.getObjects('Playlist', {
                     where: {
@@ -245,7 +256,11 @@ io.sockets.on('connection', function(socket) {
                                                 newSong('emptyQueue', track_id, jukebox_id, function() {
                                                     return;
                                                 });
+                                            }else {
+                                                emptyQueue(artistInfo, jukebox_id);
                                             }
+                                        }else{
+                                            emptyQueue(artistInfo, jukebox_id);
                                         }
                                         if (!found) {
                                             APIs.splice(ran, 1);
@@ -257,7 +272,11 @@ io.sockets.on('connection', function(socket) {
                                 } else {
                                     emptyQueue(artistInfo, jukebox_id);
                                 }
+                            }else {
+                                emptyQueue(artistInfo, jukebox_id);
                             }
+                        }else {
+                            emptyQueue(artistInfo, jukebox_id);
                         }
                     });
 
@@ -383,11 +402,17 @@ var job = new CronJob('00 00 12 * * *', function() {
                 title: "Top Music Video of All Time"
             }
         };
-        Parse.deleteAll('Browse', function(err) {
-            if (!err) {
+        var query = new Parse.Query("Browse");
+        query.find({
+            success: function(result) {
+                function deleteResult(result) {
+                    result.destroy();
+                }
+                for(var i=0; i<result.length; i++) {
+                    deleteResult(result[i]);
+                }
                 for (var key in IMVDBurls) {
                     getIMVDB(key, IMVDBurls[key].url);
-                    console.log("Song Update");
                 }
             }
         });

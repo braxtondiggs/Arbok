@@ -78,7 +78,7 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-lo
       },
       hideLoading: function() {
         $ionicLoading.hide();
-        //cfpLoadingBar.complete();
+        cfpLoadingBar.complete();
       }
     };
   })

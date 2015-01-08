@@ -5,7 +5,7 @@
     <ion-content class="has-header has-footer">
         <div class="list queue" ng-show="queue_list.length">
             <a class="item item-thumbnail-left" href="#/app/artist/slug/{{queue.IMVDBartistId}}" ng-repeat="queue in queue_list">
-                <img src="{{queue.imagePreview}}">
+                <img ng-src="{{queue.imagePreview}}">
                 <i class="icon ion-chevron-right icon-accessory"></i>
                 <h2>{{queue.artistInfo}}</h2>
                 <p>{{queue.trackInfo}}</p>

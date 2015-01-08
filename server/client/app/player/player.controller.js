@@ -4,6 +4,9 @@ var serverApp = angular.module('serverApp');
 serverApp.controller('PlayerCtrl', function($scope, socket) {
 	$scope.room = 'R1BwluUoNs';
 	$scope.event = {};
+	$scope.voteoff = {};
+	$scope.voteoff.bannerLocation = "bottom";
+	$scope.detonate = null;
 	$scope.onReady = function(event) {
 		var player = event.target;
 		$scope.event = event;
@@ -18,14 +21,24 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 		});
 	};
 	$scope.onStateChange = function(event) {
-		if (event.data === YT.PlayerState.ENDED) {
+		function songEnded() {
 			socket.emit('song:ended', {
 				room: $scope.room,
 				trackId: $scope.queueList[0].objectId,
 				artistInfo: $scope.queueList[0].artistInfo
 			});
-
-			//set Time out to check if video is playing, if not force bad new music
+		}
+		if (event.data === YT.PlayerState.ENDED) {
+			songEnded();
+			$scope.detonate = setTimeout(function() {
+				console.log("nothif");
+				songEnded();
+			}, 5000);
+		}else if(event.data === YT.PlayerState.PLAYING) {
+			if ($scope.detonate !== null) {
+				window.clearTimeout($scope.detonate);
+				$scope.detonate = null;
+			}
 		}
 	};
 	$scope.onError = function() {
@@ -43,6 +56,9 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 	};
 	$scope.onApiLoadingFailure = function(controller) {
 		controller.reload(); // try load youtube api again
+	};
+	$scope.voteOffBanner = function() {
+		return 
 	};
 	$scope.player = {
 		width: $(window).width(),
@@ -88,10 +104,32 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 			});
 		});
 		socket.on('vote:change', function(msg) {
+			var downvote = parseInt(msg.downvote, 10),
+				voteNum = parseInt(msg.upvote, 10) + downvote;
 			$.gritter.add({
 				title: String(msg.userName) + ' '+ ((String(msg.voteChoice) === 'upvote')?'liked':'disliked') + ' this song!',
-				image: '<i class="fa fa-camera-retro fa-5x"></i>'
+				image: '/assets/images/thumbs-' + ((String(msg.voteChoice) === 'upvote')?'up':'down')+'.png'
 			});
+			if(downvote/voteNum >= 0.53 && voteNum >= 2) {
+				$scope.voteoff = {};
+				$scope.voteoff.count = 10;
+				$scope.voteoff.bannerLocation = "active center";
+		        var countdown = setInterval(function() {
+		            $scope.voteoff.count--;
+		        }, 1000);
+		        setTimeout(function() {
+		        	$scope.voteoff.bannerLocation = "active top";
+		            clearInterval(countdown);
+		            setTimeout(function() {
+		            	$scope.voteoff.bannerLocation = "bottom";
+		            }, 5000);
+		            socket.emit('song:ended', {
+						room: $scope.room,
+						trackId: $scope.queueList[0].objectId,
+						artistInfo: $scope.queueList[0].artistInfo
+					});
+		        }, 10000);
+			}
 		});
 	});
 

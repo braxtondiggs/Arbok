@@ -7,8 +7,8 @@
             <div class="item item-divider">
                 Tracks
             </div>
-            <a class="item item-thumbnail-left" ng-repeat="track in search.tracks" ng-click="addSong(track.id, track.artists[0].name, track.song_title, track.image.o)">
-                <img src="{{track.image.o}}">
+            <a class="item item-thumbnail-left animated" ng-repeat="track in search.tracks" ng-click="addSong(track.id, track.artists[0].name, track.song_title, track.image.o)"ng-class="{'fadeIn': search.loaded}">
+                <img ng-src="{{track.image.o}}">
                 <i class="icon ion-play icon-accessory"></i>
                 <h2>{{track.artists[0].name}}</h2>
                 <p>{{track.song_title}}</p>
@@ -18,8 +18,8 @@
             <div class="item item-divider">
                 Artist
             </div>
-            <a class="item item-thumbnail-left" href="#/app/artist/id/{{artist.id}}"  ng-repeat="artist in search.artists" ng-click="setSearchBar(false)">
-                <img src="{{checkImage(artist.image)}}">
+            <a class="item item-thumbnail-left animated" href="#/app/artist/id/{{artist.id}}"  ng-repeat="artist in search.artists" ng-click="setSearchBar(false)" ng-class="{'fadeIn': search.loaded}">
+                <img ng-src="{{checkImage(artist.image)}}">
                 <i class="icon ion-chevron-right icon-accessory"></i>
                 <h2>{{convertSlug(artist.name, artist.slug)}}</h2>
             </a>

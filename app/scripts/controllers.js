@@ -2,7 +2,7 @@
 Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
 
 angular.module('Quilava.controllers', [])
-    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService, ENV) {
+    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate) {
         $scope.domain = ENV.apiEndpoint;
         $scope.isSearch = false;
         $scope.loginData = {};
@@ -13,11 +13,15 @@ angular.module('Quilava.controllers', [])
         $scope.room = window.localStorage['room'] || null;
         $scope.hasVoted = window.localStorage['hasVoted'] || false;
         $scope.vote.voteId = window.localStorage['voteId'] || null;
+        $scope.vote.selectedIndex = window.localStorage['voteselectedIndex'] || null;
         $scope.$watch('hasVoted', function() {
             window.localStorage['hasVoted'] = $scope.hasVoted;
         });
         $scope.$watch('vote.voteId', function() {
             window.localStorage['voteId'] = $scope.vote.voteId;
+        });
+        $scope.$watch('vote.selectedIndex', function() {
+            window.localStorage['voteselectedIndex'] = $scope.vote.selectedIndex;
         });
         $scope.setSearchBar = function(val) {
             $scope.isSearch = val;
@@ -42,12 +46,20 @@ angular.module('Quilava.controllers', [])
                     upVote: ($scope.vote.selectedIndex === 2) ? true : false,
                     downVote: ($scope.vote.selectedIndex === 1) ? true : false,
                     userId: $scope.currentUser.id,
+                    userName: $scope.currentUser._serverData.username,
                     hasVoted: $scope.hasVoted,
                     voteId: $scope.vote.voteId
                 });
                 $scope.hasVoted = true;
             }
         }
+        $scope.findSong = function(artist, title, image) {
+            $http.get(
+                $scope.domain + 'music/search?v=' + artist + ' ' + title
+            ).success(function(data) {
+                $scope.addSong(data.results[0].id, artist, title, image);
+            });
+        };
         $scope.addSong = function(id, name, title, image) {
             if ($scope.currentUser && $scope.room) {
                 var confirmPopup = $ionicPopup.confirm({
@@ -110,7 +122,6 @@ angular.module('Quilava.controllers', [])
                 $http.get(
                     $scope.domain + 'music/search?v=' + term
                 ).success(function(data) {
-                    console.log(data.results);
                     $scope.search.tracks = {};
                     $scope.search.tracks = data.results;
                 });
@@ -150,18 +161,15 @@ angular.module('Quilava.controllers', [])
                 room: $scope.room
             }, function(confirm) {
                 $scope.queue_list = confirm;
-                $scope.vote = {};
                 $scope.vote.upvote = confirm[0].upvoteNum;
                 $scope.vote.downvote = confirm[0].downvoteNum;
-                if ($scope.hasVoted) {
-                    $scope.vote.selectedIndex = 1;///Needs to store what I voted on last
-                } 
             });
         }
         socket.on('playlist:playingImg', function(data) {
             //$scope.player.attributes.playingImg = data;//not going to work needs to update per player
         });
         socket.on('playlist:change', function(data) {
+            console.log(data[0].objectId +"!=="+ $scope.queue_list[0].objectId);
             if (data[0].objectId !== $scope.queue_list[0].objectId) {$scope.hasVoted = false;$scope.vote.selectedIndex = 0;}
             $scope.queue_list = data;
         });
@@ -169,7 +177,6 @@ angular.module('Quilava.controllers', [])
             $scope.vote.upvote = data.upvote;
             $scope.vote.downvote = data.downvote;
             $scope.vote.voteId = data.voteId;
-            console.log($scope);
         });
 
         // Create the login modal that we will use later
@@ -191,12 +198,20 @@ angular.module('Quilava.controllers', [])
 
         // Perform the login action when the user submits the login form
         $scope.logout = function() {
-            Parse.User.logOut();
-            $scope.currentUser = null;
+            $ionicPopup.confirm({
+                title: 'MVPlayer',
+                template: 'Are you sure you want to logout?'
+            }).then(function(res) {
+                if (res) {
+                    if ($ionicSideMenuDelegate.isOpenLeft() == true) $ionicSideMenuDelegate.toggleLeft();
+                    Parse.User.logOut();
+                    $scope.currentUser = null;
+                    $scope.loginData = null;
+                }
+            });
         };
         $scope.doLogin = function(isValid) {
             if (isValid) {
-                console.log('Doing login', $scope.loginData);
                 var user = new Parse.User();
                 var loginData = $scope.loginData;
                 user.set('username', loginData.username); // in my app, email==username
@@ -219,7 +234,6 @@ angular.module('Quilava.controllers', [])
                     });
                     user.logIn({
                         success: function(user) {
-                            //console.log(user);
                             $scope.currentUser = user;
                             $scope.$apply();
                             $scope.closeLogin();
@@ -261,11 +275,13 @@ angular.module('Quilava.controllers', [])
         }
     })
     .controller('ArtistCtrl', function($scope, $stateParams, $http, $ionicPopup, socket, UserService) {
+        $scope.artist = {};
+        $scope.artist.loaded = false;
         function getArtistInfo(id) {
             $http.get(
                 $scope.domain + 'music/artist?e=' + id
             ).success(function(data) {
-                $scope.artist = {};
+                $scope.artist.loaded = true;
                 $scope.artist.name = data.name;
                 $scope.artist.slug = data.slug;
                 $scope.artist.img = data.image;
@@ -299,6 +315,7 @@ angular.module('Quilava.controllers', [])
             lat: 39.935080,
             lng: -78.0216020
         };
+        $scope.loaded = false;
         navigator.geolocation.getCurrentPosition(onSuccess, onError);
 
         function onSuccess(position) {
@@ -320,6 +337,8 @@ angular.module('Quilava.controllers', [])
                 $scope.players = playerObjects;
                 $scope.$apply();
                 LoadingService.hideLoading();
+                $scope.loaded = true;
+
             },
             error: function(error) {
                 alert("Error: " + error.code + " " + error.message);
@@ -351,6 +370,7 @@ angular.module('Quilava.controllers', [])
         LoadingService.showLoading();
         query.equalTo("room", $scope.room);
         query.ascending("createdAt");
+        $scope.loaded = false;
         query.find({
             success: function(results) {
                 var result = [];
@@ -362,6 +382,7 @@ angular.module('Quilava.controllers', [])
                 $scope.chats = result;
                 $ionicScrollDelegate.scrollBottom();
                 LoadingService.hideLoading();
+                $scope.loaded = true;
             }
         });
         $scope.sendChat = function(msg) {

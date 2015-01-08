@@ -16,7 +16,7 @@
     <ion-side-menu side="left">
         <header class="bar bar-header bar-stable">
             <div class="profile" ng-show="currentUser._serverData">
-                <img class="img-circle" alt="" src="{{currentUser.get('image')._url}}" />
+                <img class="img-circle" alt="" ng-src="{{currentUser.get('image')._url}}" />
                 <h1 class="title">{{currentUser.get('username')}}</h1>
             </div>
         </header>
@@ -43,7 +43,7 @@
                 <ion-item nav-clear menu-close href="#/app/settings" ng-click="setSearchBar(false)">
                     <i class="ion-gear-b"></i>Settings
                 </ion-item>
-                <ion-item nav-clear menu-close href="#" ng-click="logout()" ng-show="currentUser._serverData" ng-click="setSearchBar(false)">
+                <ion-item nav-clear href="#" ng-click="logout();setSearchBar(false)" ng-show="currentUser._serverData">
                     <i class="ion-person-stalker"></i>Logout
                 </ion-item>
             </ion-list>

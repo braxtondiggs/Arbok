@@ -1,11 +1,9 @@
 'use strict';
 
 angular.module('serverApp', [
-  'ngCookies',
-  'ngResource',
   'ngSanitize',
   'ngRoute',
-  'ui.bootstrap',
+  'ngDialog',
   'youtubePlayer'
 ])
   .config(function ($routeProvider, $locationProvider) {

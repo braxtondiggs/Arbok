@@ -156,21 +156,22 @@ angular.module('Quilava.controllers', [])
                 $scope.chats = confirm;
             });
         };
-        if ($scope.room) {
-            socket.emit('user:init', {
-                room: $scope.room
-            }, function(confirm) {
-                $scope.queue_list = confirm;
-                $scope.vote.upvote = confirm[0].upvoteNum;
-                $scope.vote.downvote = confirm[0].downvoteNum;
-            });
-        }
+        socket.on('connect', function() {
+            if ($scope.room) {
+                socket.emit('user:init', {
+                    room: $scope.room
+                }, function(confirm) {
+                    $scope.queue_list = confirm;
+                    $scope.vote.upvote = confirm[0].upvoteNum;
+                    $scope.vote.downvote = confirm[0].downvoteNum;
+                });
+            }
+        });
         socket.on('playlist:playingImg', function(data) {
             //$scope.player.attributes.playingImg = data;//not going to work needs to update per player
         });
         socket.on('playlist:change', function(data) {
-            console.log(data[0].objectId +"!=="+ $scope.queue_list[0].objectId);
-            if (data[0].objectId !== $scope.queue_list[0].objectId) {$scope.hasVoted = false;$scope.vote.selectedIndex = 0;}
+            if (data[0].objectId !== $scope.queue_list[0].objectId) {$scope.hasVoted = false;$scope.vote.selectedIndex = 0;$scope.vote.upvote = 0;$scope.vote.downvote=0;}
             $scope.queue_list = data;
         });
         socket.on('vote:change', function(data) {
@@ -206,7 +207,8 @@ angular.module('Quilava.controllers', [])
                     if ($ionicSideMenuDelegate.isOpenLeft() == true) $ionicSideMenuDelegate.toggleLeft();
                     Parse.User.logOut();
                     $scope.currentUser = null;
-                    $scope.loginData = null;
+                    $scope.loginData = {};
+                    $scope.vote.selectedIndex = 0;
                 }
             });
         };
@@ -375,7 +377,7 @@ angular.module('Quilava.controllers', [])
             success: function(results) {
                 var result = [];
                 for (var i = 0; i < results.length; i++) {
-                    results[i]._serverData.self = (results[i]._serverData.userId === $scope.currentUser.id) ? true : false;
+                    results[i]._serverData.self = ($scope.currentUser !== null && results[i]._serverData.userId === $scope.currentUser.id) ? true : false;
                     results[i]._serverData.createdAt = moment(results[i].createdAt).format("dddd, MMMM Do YYYY, h:mm:ss a");
                     result.push(results[i]._serverData);
                 }

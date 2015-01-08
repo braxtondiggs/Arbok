@@ -112,8 +112,7 @@ io.sockets.on('connection', function(socket) {
             downVote = msg.downVote,
             voteId = msg.voteId,
             userName = msg.userName,
-            voteChoice = (upVote)?"upvote":"downvote",
-            clients = Object.keys(io.nsps["/"].adapter.rooms[room]).length;
+            voteChoice = (upVote)?"upvote":"downvote";
         var params = {
             playerId: room,
             trackId: trackId,
@@ -121,7 +120,7 @@ io.sockets.on('connection', function(socket) {
             upVote: upVote,
             downVote: downVote
         };
-        if (hasVoted) {
+        if (String(hasVoted) === 'true') {//needs it, can't type cast
             kaiseki.updateObject('Vote', voteId, {
                 upVote: upVote,
                 downVote: downVote
@@ -153,21 +152,18 @@ io.sockets.on('connection', function(socket) {
                     upvoteNum: upvoteNum,
                     downvoteNum: downvoteNum
                 }, function(err, res, body, success) {
-                    console.log(body);
                     io.sockets.in(room).emit("vote:change", {
                         upvote: upvoteNum,
                         downvote: downvoteNum,
                         voteId: id,
                         voteChoice: voteChoice,
-                        userName: userName,
-                        clients: clients
+                        userName: userName
                     });
                 });
             });
         }
     });
     socket.on("song:new", function(msg, fn) {
-        console.log("add song");
         var track_id = msg.track_id,
             jukebox_id = msg.server_id,
             user_id = msg.userId;
@@ -188,11 +184,8 @@ io.sockets.on('connection', function(socket) {
                 var query = new Parse.Query("Vote");
                 query.find({
                     success: function(result) {
-                        function deleteResult(result) {
-                            result.destroy();
-                        }
                         for(var i=0; i<result.length; i++) {
-                            deleteResult(result[i]);
+                            result[i].destroy();
                         }
                     }
                 });
@@ -237,51 +230,21 @@ io.sockets.on('connection', function(socket) {
                     var ran = Math.floor(Math.random() * APIs.length),
                         artist = APIs[ran].name;
                     request.get({
-                        url: "http://imvdb.com/api/v1/search/entities?q=" + artist + "&per_page=1",
+                        url: "http://imvdb.com/api/v1/search/videos?q=" + encodeURI(artist),
                         json: true
                     }, function(error, response, body) {
                         if (!error && response.statusCode === 200) {
-                            if (body.results[0]) {
-                                var artist_id = body.results[0].id;
-                                if (artist_id) {
-                                    request.get({
-                                        url: "http://imvdb.com/api/v1/entity/" + artist_id + "?include=artist_videos,featured_videos", //distinctpos,credits - Used to get Apperances
-                                        json: true
-                                    }, function(error, response, body) {
-                                        if (!error && response.statusCode === 200) {
-                                            if (body.artist_videos.total_videos !== 0) {
-                                                var videos = body.artist_videos.videos;
-                                                var track_id = body.artist_videos.videos[Math.floor(Math.random() * (videos.length))].id; //Needs to search Featured Artist Also --- Could combine the two arrays and picks from that
-                                                found = true;
-                                                newSong('emptyQueue', track_id, jukebox_id, function() {
-                                                    return;
-                                                });
-                                            }else {
-                                                emptyQueue(artistInfo, jukebox_id);
-                                            }
-                                        }else{
-                                            emptyQueue(artistInfo, jukebox_id);
-                                        }
-                                        if (!found) {
-                                            APIs.splice(ran, 1);
-                                            callAPIs(APIs);
-                                        } else {
-                                            return false;
-                                        }
-                                    });
-                                } else {
-                                    emptyQueue(artistInfo, jukebox_id);
-                                }
+                            if (body.total_results !== 0) {
+                                var track_id = body.results[0].id;
+                                found = true;
+                                newSong('emptyQueue', track_id, jukebox_id, function() {
+                                    return;
+                                });
                             }else {
                                 emptyQueue(artistInfo, jukebox_id);
                             }
-                        }else {
-                            emptyQueue(artistInfo, jukebox_id);
                         }
                     });
-
-                } else {
-                    emptyQueue(artistInfo, jukebox_id);
                 }
             }
 
@@ -405,11 +368,8 @@ var job = new CronJob('00 00 12 * * *', function() {
         var query = new Parse.Query("Browse");
         query.find({
             success: function(result) {
-                function deleteResult(result) {
-                    result.destroy();
-                }
                 for(var i=0; i<result.length; i++) {
-                    deleteResult(result[i]);
+                    result[i].destroy();
                 }
                 for (var key in IMVDBurls) {
                     getIMVDB(key, IMVDBurls[key].url);

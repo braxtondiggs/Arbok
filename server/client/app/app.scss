@@ -1,9 +1,3 @@
-$icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
-$fa-font-path: "/bower_components/font-awesome/fonts";
-
-@import 'bootstrap-sass-official/vendor/assets/stylesheets/bootstrap';
-@import 'font-awesome/scss/font-awesome';
-
 /**
  * App-wide Styles
  */
@@ -19,5 +13,4 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
 // injector
 @import 'main/main.scss';
 @import 'player/player.scss';
-@import 'modal/modal.scss';
 // endinjector

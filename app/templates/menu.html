@@ -43,7 +43,7 @@
                 <ion-item nav-clear menu-close href="#/app/settings" ng-click="setSearchBar(false)">
                     <i class="ion-gear-b"></i>Settings
                 </ion-item>
-                <ion-item nav-clear href="#" ng-click="logout();setSearchBar(false)" ng-show="currentUser._serverData">
+                <ion-item nav-clear ng-click="logout();setSearchBar(false)" ng-show="currentUser._serverData">
                     <i class="ion-person-stalker"></i>Logout
                 </ion-item>
             </ion-list>

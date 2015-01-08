@@ -1,48 +1,27 @@
-<div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)"></div>
+<!--<div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)"></div>-->
 <div id="popUps">
     <div id="currentlyPlaying">
         <div class="album-cover">
-            <img alt="" src="{{queueList[0].imagePreview}}" />
+            <img alt="" ng-src="{{queueList[0].imagePreview}}" />
         </div>
         <div class="music-info">
             <h3>{{queueList[0].artistInfo}}</h3>
             <p>{{queueList[0].trackInfo}}</p>
         </div>
     </div>
-    <div id="newSong">
-        <h3></h3>
-        <p></p>
-    </div>
-    <div id="voteInfo"><img alt="" src="http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg" />
-        <h3 class="title">JODY HiGHROLLER</h3>
-        <div class="thumb"><i class="fa fa-4x"></i>
-        </div>
-    </div>
-    <div id="voteOff" ng-class="voteoff.bannerLocation">I guess nobody liked this song! Song Changing in <span class="countdown">{{voteoff.count}}</span>
+    <div id="voteOff" ng-class="voteoff.bannerLocation">
+        I guess nobody liked this song! Song Changing in <span class="countdown">{{voteoff.count}}</span>
     </div>
 </div>
-<!--
-<div ng-controller="ModalDemoCtrl">
-    <script type="text/ng-template" id="myModalContent.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Im a modal!</h3>
-        </div>
-        <div class="modal-body">
-            <ul>
-                <li ng-repeat="item in items">
-                    <a ng-click="selected.item = item">{{ item }}</a>
-                </li>
-            </ul>
-            Selected: <b>{{ selected.item }}</b>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
 
-    <button class="btn btn-default" ng-click="open()">Open me!</button>
-    <button class="btn btn-default" ng-click="open('lg')">Large modal</button>
-    <button class="btn btn-default" ng-click="open('sm')">Small modal</button>
-    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
-</div>-->
+<script type="text/ng-template" id="popupTmpl">
+    <h1>Template heading</h1>
+    <p>Content goes here</p>
+    <button ng-click="confirm()" class="ngdialog-button ngdialog-button-primary">Confirm</button>
+    <button type="button" ng-click="next()" ng-dialog="templateId" ng-dialog-close-previous>button</button>
+</script>
+<script type="text/ng-template" id="templateId">
+    <h1>Template2 heading</h1>
+    <p>Content2 goes here</p>
+    <button ng-click="confirm()" class="ngdialog-button ngdialog-button-primary">Confirm</button>
+</script>

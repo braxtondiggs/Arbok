@@ -1,11 +1,11 @@
 'use strict';
 
 var serverApp = angular.module('serverApp');
-serverApp.controller('PlayerCtrl', function($scope, socket) {
+serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog) {
 	$scope.room = 'R1BwluUoNs';
 	$scope.event = {};
 	$scope.voteoff = {};
-	$scope.voteoff.bannerLocation = "bottom";
+	$scope.voteoff.bannerLocation = 'bottom';
 	$scope.detonate = null;
 	$scope.onReady = function(event) {
 		var player = event.target;
@@ -19,6 +19,8 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 				activateBar();
 			}
 		});
+
+		
 	};
 	$scope.onStateChange = function(event) {
 		function songEnded() {
@@ -28,12 +30,16 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 				artistInfo: $scope.queueList[0].artistInfo
 			});
 		}
+		function detonate() {
+			$scope.detonate = setTimeout(function() {
+				console.log('nothing');
+				songEnded();
+				detonate();
+			}, 5000);
+		}
 		if (event.data === YT.PlayerState.ENDED) {
 			songEnded();
-			$scope.detonate = setTimeout(function() {
-				console.log("nothif");
-				songEnded();
-			}, 5000);
+			detonate();
 		}else if(event.data === YT.PlayerState.PLAYING) {
 			if ($scope.detonate !== null) {
 				window.clearTimeout($scope.detonate);
@@ -52,13 +58,10 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 		//console.log(event);
 	};
 	$scope.onControllerReady = function() {
-		//console.log(event);
+		
 	};
 	$scope.onApiLoadingFailure = function(controller) {
 		controller.reload(); // try load youtube api again
-	};
-	$scope.voteOffBanner = function() {
-		return 
 	};
 	$scope.player = {
 		width: $(window).width(),
@@ -74,6 +77,13 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 		}
 	};
 	socket.on('connect', function() {
+		ngDialog.open({ 
+			template: 'popupTmpl',
+			controller: 'ModalCtrl',
+			showClose:false,
+			closeByEscape:false,
+			closeByDocument:false
+		});
 		socket.on('playlist:change', function(msg) {
 			var player = $scope.event.target,
 				event = $scope.event;
@@ -113,15 +123,16 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 			if(downvote/voteNum >= 0.53 && voteNum >= 2) {
 				$scope.voteoff = {};
 				$scope.voteoff.count = 10;
-				$scope.voteoff.bannerLocation = "active center";
+				$scope.voteoff.bannerLocation = 'active center';
+				console.log('vote off');
 		        var countdown = setInterval(function() {
-		            $scope.voteoff.count--;
+		            $scope.voteoff.count = $scope.voteoff.count--;
 		        }, 1000);
 		        setTimeout(function() {
-		        	$scope.voteoff.bannerLocation = "active top";
+		        	$scope.voteoff.bannerLocation = 'active top';
 		            clearInterval(countdown);
 		            setTimeout(function() {
-		            	$scope.voteoff.bannerLocation = "bottom";
+		            	$scope.voteoff.bannerLocation = 'bottom';
 		            }, 5000);
 		            socket.emit('song:ended', {
 						room: $scope.room,
@@ -151,4 +162,8 @@ serverApp.controller('PlayerCtrl', function($scope, socket) {
 		}, 60000);
 	}
 
+}).controller('ModalCtrl', function($scope, ngDialog) {
+	$scope.startPlayer = function () {
+		ngDialog.close();
+	};
 });

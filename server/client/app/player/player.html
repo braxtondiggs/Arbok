@@ -1,4 +1,4 @@
-<!--<div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)"></div>-->
+<div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)"></div>
 <div id="popUps">
     <div id="currentlyPlaying">
         <div class="album-cover">
@@ -19,9 +19,4 @@
     <p>Content goes here</p>
     <button ng-click="confirm()" class="ngdialog-button ngdialog-button-primary">Confirm</button>
     <button type="button" ng-click="next()" ng-dialog="templateId" ng-dialog-close-previous>button</button>
-</script>
-<script type="text/ng-template" id="templateId">
-    <h1>Template2 heading</h1>
-    <p>Content2 goes here</p>
-    <button ng-click="confirm()" class="ngdialog-button ngdialog-button-primary">Confirm</button>
 </script>

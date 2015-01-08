@@ -21,6 +21,7 @@ var echonest = require('echonest');
 var trim = require('trim');
 var CronJob = require('cron').CronJob;
 var time = require('time');
+var async = require('async');
 require('./config/express')(app);
 require('./routes')(app);
 
@@ -368,12 +369,17 @@ var job = new CronJob('00 00 12 * * *', function() {
         var query = new Parse.Query("Browse");
         query.find({
             success: function(result) {
-                for(var i=0; i<result.length; i++) {
-                    result[i].destroy();
-                }
-                for (var key in IMVDBurls) {
-                    getIMVDB(key, IMVDBurls[key].url);
-                }
+                async.series([
+                    function(){
+                        for(var i=0; i<result.length; i++) {
+                            result[i].destroy();
+                        }
+                    },
+                    function() {
+                        for (var key in IMVDBurls) {
+                            getIMVDB(key, IMVDBurls[key].url);
+                        }
+                    });
             }
         });
     }, function() {

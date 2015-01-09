@@ -77,13 +77,13 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog) {
 		}
 	};
 	socket.on('connect', function() {
-		ngDialog.open({ 
+		/*ngDialog.open({ 
 			template: 'popupTmpl',
 			controller: 'ModalCtrl',
 			showClose:false,
 			closeByEscape:false,
 			closeByDocument:false
-		});
+		});*/
 		socket.on('playlist:change', function(msg) {
 			var player = $scope.event.target,
 				event = $scope.event;

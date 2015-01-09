@@ -13,7 +13,12 @@
         I guess nobody liked this song! Song Changing in <span class="countdown">{{voteoff.count}}</span>
     </div>
 </div>
-
+<script type="text/ng-template" id="loginTmpl">
+    <h1>Template heading</h1>
+    <p>Content goes here</p>
+    <button ng-click="confirm()" class="ngdialog-button ngdialog-button-primary">Confirm</button>
+    <button type="button" ng-click="next()" ng-dialog="templateId" ng-dialog-close-previous>button</button>
+</script>
 <script type="text/ng-template" id="popupTmpl">
     <h1>Template heading</h1>
     <p>Content goes here</p>

@@ -379,7 +379,8 @@ var job = new CronJob('00 00 12 * * *', function() {
                         for (var key in IMVDBurls) {
                             getIMVDB(key, IMVDBurls[key].url);
                         }
-                    });
+                    }
+                ]);
             }
         });
     }, function() {

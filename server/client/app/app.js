@@ -2,6 +2,7 @@
 
 angular.module('serverApp', [
   'ngSanitize',
+  'ngCookies',
   'ngRoute',
   'ngDialog',
   'youtubePlayer'

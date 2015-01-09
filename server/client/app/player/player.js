@@ -6,6 +6,14 @@ angular.module('serverApp')
 			.when('/player', {
 				templateUrl: 'app/player/player.html',
 				controller: 'PlayerCtrl'
+			})
+			.when('/player/debug', {
+				templateUrl: 'app/player/player.html',
+				controller: 'PlayerCtrl'
+			})
+			.when('/player/box', {
+				templateUrl: 'app/player/player.html',
+				controller: 'PlayerCtrl'
 			});
 	})
 	.factory('socket', function($rootScope) {

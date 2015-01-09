@@ -1,8 +1,10 @@
 'use strict';
 
 var serverApp = angular.module('serverApp');
-serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog) {
-	$scope.room = 'R1BwluUoNs';
+serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location, $cookies) {
+	Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
+	$scope.currentUser = Parse.User.current() || null;
+	$scope.room = ($location.path().indexOf("debug") > -1)?'R1BwluUoNs':$cookies.room;
 	$scope.event = {};
 	$scope.voteoff = {};
 	$scope.voteoff.bannerLocation = 'bottom';
@@ -10,17 +12,28 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog) {
 	$scope.onReady = function(event) {
 		var player = event.target;
 		$scope.event = event;
-		socket.emit('server:init', {
-			room: $scope.room
-		}, function(confirm) {
-			$scope.queueList = confirm;
-			if (youtubeURL(player.getVideoUrl()) !== $scope.queueList[0].youtubeId) {
-				player.loadVideoById($scope.queueList[0].youtubeId);
-				activateBar();
-			}
-		});
-
-		
+		console.log($scope.currentUser);
+		if (!$scope.currentUser) {
+			/*ngDialog.open({ 
+				template: 'loginTmpl',
+				controller: 'UserCtrl',
+				className: 'ngdialog-theme-login ngdialog-theme-default',
+				showClose:false,
+				closeByEscape:false,
+				closeByDocument:false
+			});*/
+		}
+		if ($scope.room !== null && $scope.room !== undefined) {
+			initPlayer(player);
+		}else {
+			ngDialog.open({ 
+				template: 'playerSetupTmpl',
+				controller: 'SetupCtrl',
+				showClose:false,
+				closeByEscape:false,
+				closeByDocument:false
+			});
+		}
 	};
 	$scope.onStateChange = function(event) {
 		function songEnded() {
@@ -66,7 +79,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog) {
 	$scope.player = {
 		width: $(window).width(),
 		height: $(window).height(),
-		videoId: 'i9MHigUZKEM',
+		videoId: 'UpRssA0CQ0E',
 		playerVars: {
 			controls: 0,
 			disablekb: 0,
@@ -77,13 +90,6 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog) {
 		}
 	};
 	socket.on('connect', function() {
-		/*ngDialog.open({ 
-			template: 'popupTmpl',
-			controller: 'ModalCtrl',
-			showClose:false,
-			closeByEscape:false,
-			closeByDocument:false
-		});*/
 		socket.on('playlist:change', function(msg) {
 			var player = $scope.event.target,
 				event = $scope.event;
@@ -155,6 +161,17 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog) {
 			return false;
 		}
 	}
+	function initPlayer(player) {
+		socket.emit('server:init', {
+			room: $scope.room
+		}, function(confirm) {
+			$scope.queueList = confirm;
+			if (youtubeURL(player.getVideoUrl()) !== $scope.queueList[0].youtubeId) {
+				player.loadVideoById($scope.queueList[0].youtubeId);
+				activateBar();
+			}
+		});
+	}
 
 	function activateBar() {
 		setTimeout(function() {
@@ -162,8 +179,25 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog) {
 		}, 60000);
 	}
 
-}).controller('ModalCtrl', function($scope, ngDialog) {
+}).controller('SetupCtrl', function($scope, ngDialog) {
 	$scope.startPlayer = function () {
 		ngDialog.close();
 	};
+})
+.controller('UserCtrl', function($scope, ngDialog) {
+	$scope.doLogin = function () {
+		$scope.currentUser = null;
+	};
+
+	$scope.switchModal = function(modal) {
+		console.log($scope);
+		ngDialog.closeAll();
+		ngDialog.open({
+			template: modal,
+			className: 'ngdialog-theme-login ngdialog-theme-default',
+			showClose:false,
+			closeByEscape:false,
+			closeByDocument:false
+		});
+	}
 });

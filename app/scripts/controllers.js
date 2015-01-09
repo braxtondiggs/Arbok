@@ -143,6 +143,8 @@ angular.module('Quilava.controllers', [])
                 window.localStorage['room'] = id;
                 $scope.room = id;
                 $scope.queue_list = confirm;
+                $scope.vote.upvote = confirm[0].upvoteNum;
+                $scope.vote.downvote = confirm[0].downvoteNum;
                 $ionicPopup.alert({
                     title: 'MVPlayer',
                     template: 'You are now joined to this player!'
@@ -164,6 +166,11 @@ angular.module('Quilava.controllers', [])
                     $scope.queue_list = confirm;
                     $scope.vote.upvote = confirm[0].upvoteNum;
                     $scope.vote.downvote = confirm[0].downvoteNum;
+                });
+                socket.emit('chat:init', {
+                    room: $scope.room
+                }, function(confirm) {
+                    $scope.chats = confirm;
                 });
             }
         });

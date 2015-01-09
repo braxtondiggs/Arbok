@@ -367,26 +367,30 @@ var job = new CronJob('00 00 12 * * *', function() {
             }
         };
         var query = new Parse.Query("Browse");
+        query.limit(200);
         query.find({
             success: function(result) {
-                async.series([
-                    function(){
+                async.series({
+                    destroy: function(callback){
+                        console.log(result.length);
                         for(var i=0; i<result.length; i++) {
                             result[i].destroy();
                         }
+                        callback();
                     },
-                    function() {
+                    create: function(callback) {
                         for (var key in IMVDBurls) {
                             getIMVDB(key, IMVDBurls[key].url);
                         }
+                        callback();
                     }
-                ]);
+                });
             }
         });
     }, function() {
         // This function is executed when the job stops
     },
-    true /* Start the job right now */ ,
+    true /* Start the job right now  */,
     "America/New_York"
 );
 

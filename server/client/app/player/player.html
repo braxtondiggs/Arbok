@@ -45,38 +45,31 @@
         <a class="login-link" ng-click="lostPassword()">Lost your password?</a>
     </div>
 </script>
+<script type="text/ng-template" id="boxSetupTmpl">
+    <h3>Lets get setup...</h3>
+    <p>Please goto http://{{domain}}/player/code and enter the code below:</p>
+    <h2 class="boxCode">{{boxCode}}<h2>
+</script>
 <script type="text/ng-template" id="playerSetupTmpl">
     <form id="theForm" class="simform" autocomplete="off">
         <div class="simform-inner">
             <ol class="questions">
                 <li>
-                    <span><label for="q1">What&#39;s your favorite movie?</label></span>
-                    <input id="q1" name="q1" type="text"/>
+                    <span><label for="name">What&#39;s the name of your player?</label></span>
+                    <input id="name" name="name" type="text"/>
                 </li>
                 <li>
-                    <span><label for="q2">Where do you live?</label></span>
-                    <input id="q2" name="q2" type="text"/>
+                    <span><label for="address">Where is this player located?</label></span>
+                    <input id="address" name="address" type="text"/>
                 </li>
-                <li>
-                    <span><label for="q3">What time do you got to work?</label></span>
-                    <input id="q3" name="q3" type="text"/>
-                </li>
-                <li>
-                    <span><label for="q4">How do you like your veggies?</label></span>
-                    <input id="q4" name="q4" type="text"/>
-                </li>
-                <li>
-                    <span><label for="q5">What book inspires you?</label></span>
-                    <input id="q5" name="q5" type="text"/>
-                </li>
-                <li>
-                    <span><label for="q6">What&#39;s your profession?</label></span>
-                    <input id="q6" name="q6" type="text"/>
+                <li ng-if="isCode==true">
+                    <span><label for="name">What is the player code provided?</label></span>
+                    <input id="code" name="code" type="text"/>
                 </li>
             </ol><!-- /questions -->
             <button class="submit" type="submit">Send answers</button>
             <div class="controls">
-                <button class="next"></button>
+                <button class="fa fa-arrow-right next"></button>
                 <div class="progress"></div>
                 <span class="number">
                     <span class="number-current"></span>
@@ -88,26 +81,6 @@
         <span class="final-message"></span>
     </form><!-- /simform -->
 </script>
+<script src="assets/javascript/modernizr.custom.js"></script>
 <script src="assets/javascript/classie.js"></script>
 <script src="assets/javascript/stepsForm.js"></script>
-<script>
-            var theForm = document.getElementById( 'theForm' );
-
-            new stepsForm( theForm, {
-                onSubmit : function( form ) {
-                    // hide form
-                    classie.addClass( theForm.querySelector( '.simform-inner' ), 'hide' );
-
-                    /*
-                    form.submit()
-                    or
-                    AJAX request (maybe show loading indicator while we don't have an answer..)
-                    */
-
-                    // let's just simulate something...
-                    var messageEl = theForm.querySelector( '.final-message' );
-                    messageEl.innerHTML = 'Thank you! We\'ll be in touch.';
-                    classie.addClass( messageEl, 'show' );
-                }
-            } );
-        </script>

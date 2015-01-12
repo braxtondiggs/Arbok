@@ -39,7 +39,8 @@
 	}
 
 	stepsForm.prototype.options = {
-		onSubmit : function() { return false; }
+		onSubmit : function() { return false; },
+		onNext : function() { return false; }
 	};
 
 	stepsForm.prototype._init = function() {
@@ -174,6 +175,7 @@
 		else {
 			onEndTransitionFn();
 		}
+		this.options.onNext( this.el );
 	}
 
 	// updates the progress bar by setting its width

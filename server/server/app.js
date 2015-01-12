@@ -42,6 +42,32 @@ Parse.initialize(APP_ID, JAVASCRIPT_KEY);
 
 io.sockets.on('connection', function(socket) {
     console.log('connected!');
+    var toDestroy = [],
+        destroyTimeout;
+    socket.on('disconnect', function() {
+        destroyTimeout = setTimeout(function() {
+            var query = new Parse.Query("Playlist");
+            query.equalTo("playerId", socket.room);
+            query.find({
+                success: function(result) {
+                    for(var i=0; i<result.length; i++) {
+                        result[i].destroy();
+                    }
+                }
+            });
+            query = new Parse.Query("Player");
+            query.equalTo("objectId", socket.room);
+            query.find({
+                success: function(result) {
+                    for(var i=0; i<result.length; i++) {
+                        result[i].destroy();
+                    }
+                }
+            });
+            console.log("destroy");
+        }, 300000);//5mins*/
+        toDestroy.push(socket.room);
+    });
     socket.on('user:init', function(msg, fn) {
         socket.join(msg.room);
         kaiseki.getObjects('Playlist', {
@@ -55,6 +81,12 @@ io.sockets.on('connection', function(socket) {
     })
     socket.on('server:init', function(msg, fn) {
         socket.join(msg.room);
+        socket.room = msg.room;
+        if (toDestroy.indexOf(msg.room) > -1) {
+            window.clearTimeout(destroyTimeout);
+            delete toDestroy[toDestroy.indexOf(msg.room)];
+            console.log("cleared");
+        }
         kaiseki.getObjects('Playlist', {
             where: {
                 playerId: msg.room
@@ -163,6 +195,9 @@ io.sockets.on('connection', function(socket) {
                 });
             });
         }
+    });
+    socket.on("player:update", function(msg, fn) {
+        io.sockets.emit("player:init", {room: msg.room, boxCode: msg.boxCode});
     });
     socket.on("song:new", function(msg, fn) {
         var track_id = msg.track_id,

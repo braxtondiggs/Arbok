@@ -5,6 +5,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
 		Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
 		$scope.currentUser = Parse.User.current() || null;
 		$scope.room = ($location.path().indexOf('debug') > -1) ? 'R1BwluUoNs' : $cookies.room;
+		$scope.isDebug = ($location.path().indexOf('debug') > -1) ? true : false;
 		$scope.isBox = ($location.path().indexOf('box') > -1) ? true : false;
 		$scope.isCode = ($location.path().indexOf('code') > -1) ? true : false;
 		console.log($scope.isCode);
@@ -17,7 +18,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
 		$scope.onReady = function(event) {
 			var player = event.target;
 			$scope.event = event;
-			if (!$scope.currentUser) {
+			if (!$scope.currentUser && !$scope.isBox && !$scope.isDebug) {
 				ngDialog.open({ 
 					template: 'loginTmpl',
 					controller: 'UserCtrl',
@@ -30,16 +31,18 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
 			if ($scope.room !== null && $scope.room !== undefined && !$scope.isCode) {
 				initPlayer(player);
 			} else {
-				if (!$scope.isBox && $scope.currentUser) {
-					ngDialog.open({
-						template: 'playerSetupTmpl',
-						controller: 'SetupCtrl',
-						showClose: false,
-						closeByEscape: false,
-						closeByDocument: false,
-						scope: $scope,
-						className: 'ngdialog-theme-player ngdialog-theme-default'
-					});
+				if (!$scope.isBox) {
+					if ($scope.currentUser) {
+						ngDialog.open({
+							template: 'playerSetupTmpl',
+							controller: 'SetupCtrl',
+							showClose: false,
+							closeByEscape: false,
+							closeByDocument: false,
+							scope: $scope,
+							className: 'ngdialog-theme-player ngdialog-theme-default'
+						});
+					}
 				}else {
 					ngDialog.open({
 						template: 'boxSetupTmpl',

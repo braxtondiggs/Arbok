@@ -123,6 +123,10 @@ a {
 }
 .login-form {
     padding:0;
+    display:none;
+    &.active {
+      display:block;
+    }
     h3{
         text-align: center;
         margin-top: 15px;

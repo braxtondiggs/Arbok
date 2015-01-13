@@ -13,7 +13,7 @@
         <div ng-include="'templates/footer.html'"></div>
     </ion-pane>
 
-    <ion-side-menu side="left">
+    <ion-side-menu side="left" enable-menu-with-back-views="false">
         <header class="bar bar-header bar-stable">
             <div class="profile" ng-show="currentUser._serverData">
                 <img class="img-circle" alt="" ng-src="{{currentUser.get('image')._url}}" />

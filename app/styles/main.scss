@@ -168,14 +168,6 @@ input[type="password"] {
     }
 }
 .chat {
-    &.isEmpty {
-        .scroll {
-            height: 100%;
-            .chat-convo {
-                height: 89%;
-            }
-        }
-    }
     .chat-convo {
         margin: 0;
         .chat-item {

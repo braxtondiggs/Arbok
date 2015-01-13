@@ -45,28 +45,30 @@ io.sockets.on('connection', function(socket) {
     var toDestroy = [],
         destroyTimeout;
     socket.on('disconnect', function() {
-        destroyTimeout = setTimeout(function() {
-            var query = new Parse.Query("Playlist");
-            query.equalTo("playerId", socket.room);
-            query.find({
-                success: function(result) {
-                    for(var i=0; i<result.length; i++) {
-                        result[i].destroy();
+        if (socket.room !== 'R1BwluUoNs') {
+            destroyTimeout = setTimeout(function() {
+                var query = new Parse.Query("Playlist");
+                query.equalTo("playerId", socket.room);
+                query.find({
+                    success: function(result) {
+                        for(var i=0; i<result.length; i++) {
+                            //result[i].destroy();
+                        }
                     }
-                }
-            });
-            query = new Parse.Query("Player");
-            query.equalTo("objectId", socket.room);
-            query.find({
-                success: function(result) {
-                    for(var i=0; i<result.length; i++) {
-                        result[i].destroy();
+                });
+                query = new Parse.Query("Player");
+                query.equalTo("objectId", socket.room);
+                query.find({
+                    success: function(result) {
+                        for(var i=0; i<result.length; i++) {
+                            //result[i].destroy();
+                        }
                     }
-                }
-            });
-            console.log("destroy");
-        }, 300000);//5mins*/
-        toDestroy.push(socket.room);
+                });
+                console.log("destroy");
+            }, 300000);//5mins*/
+            toDestroy.push(socket.room);
+        }
     });
     socket.on('user:init', function(msg, fn) {
         socket.join(msg.room);

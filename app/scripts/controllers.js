@@ -142,9 +142,11 @@ angular.module('Quilava.controllers', [])
             }, function(confirm) {
                 window.localStorage['room'] = id;
                 $scope.room = id;
-                $scope.queue_list = confirm;
-                $scope.vote.upvote = confirm[0].upvoteNum;
-                $scope.vote.downvote = confirm[0].downvoteNum;
+                if (confirm.length > 0) {
+                    $scope.queue_list = confirm;
+                    $scope.vote.upvote = confirm[0].upvoteNum;
+                    $scope.vote.downvote = confirm[0].downvoteNum;
+                }
                 $ionicPopup.alert({
                     title: 'MVPlayer',
                     template: 'You are now joined to this player!'
@@ -163,9 +165,11 @@ angular.module('Quilava.controllers', [])
                 socket.emit('user:init', {
                     room: $scope.room
                 }, function(confirm) {
-                    $scope.queue_list = confirm;
-                    $scope.vote.upvote = confirm[0].upvoteNum;
-                    $scope.vote.downvote = confirm[0].downvoteNum;
+                    if (confirm.length > 0) {
+                        $scope.queue_list = confirm;
+                        $scope.vote.upvote = confirm[0].upvoteNum;
+                        $scope.vote.downvote = confirm[0].downvoteNum;
+                    }
                 });
                 socket.emit('chat:init', {
                     room: $scope.room
@@ -332,26 +336,29 @@ angular.module('Quilava.controllers', [])
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             }
+            $scope.$apply();
         }
 
         function onError(error) {
             console.log(error);
         }
-        var Player = Parse.Object.extend("Player");
-        var query = new Parse.Query(Player);
-        var point = new Parse.GeoPoint($scope.lnglat.lat, $scope.lnglat.lng);
-        query.withinMiles("latlng", point, 25);
-        query.find({
-            success: function(playerObjects) {
-                $scope.players = playerObjects;
-                $scope.$apply();
-                LoadingService.hideLoading();
-                $scope.loaded = true;
+        $scope.$watch('lnglat', function() {
+            var Player = Parse.Object.extend("Player");
+            var query = new Parse.Query(Player);
+            var point = new Parse.GeoPoint($scope.lnglat.lat, $scope.lnglat.lng);
+            query.withinMiles("latlng", point, 25);
+            query.find({
+                success: function(playerObjects) {
+                    $scope.players = playerObjects;
+                    $scope.$apply();
+                    LoadingService.hideLoading();
+                    $scope.loaded = true;
 
-            },
-            error: function(error) {
-                alert("Error: " + error.code + " " + error.message);
-            }
+                },
+                error: function(error) {
+                    alert("Error: " + error.code + " " + error.message);
+                }
+            });
         });
         $scope.getDistance = function(lat1, lon1, lat2, lon2, unit) {
             var radlat1 = Math.PI * lat1 / 180
@@ -373,12 +380,14 @@ angular.module('Quilava.controllers', [])
             return Math.round(dist * 100) / 100;
         };
     })
-    .controller('ChatCtrl', function($scope, $ionicScrollDelegate, socket, $ionicPopup, LoadingService) {
+    .controller('ChatCtrl', function($scope, $ionicScrollDelegate, socket, $ionicPopup, LoadingService, $window) {
         var Chat = Parse.Object.extend("Chat");
         var query = new Parse.Query(Chat);
         LoadingService.showLoading();
         query.equalTo("room", $scope.room);
         query.ascending("createdAt");
+        console.log($window.innerHeight);
+        $scope.windowHeight = parseInt($window.innerHeight) - 150;
         $scope.loaded = false;
         query.find({
             success: function(results) {

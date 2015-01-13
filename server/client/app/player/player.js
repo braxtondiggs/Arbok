@@ -21,8 +21,9 @@ angular.module('serverApp')
             });
     })
     .run(function($rootScope, $cookies, ngDialog) {
-        $rootScope.$on('ngDialog.opened', function() {
+        $rootScope.$on('ngDialog.opened', function(e, dialog) {
             Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
+            //if($('ol.questions > li').length) {} //Check oto see if exist
             var theForm = document.getElementById('theForm');
             setTimeout(function() {
                 new stepsForm(theForm, {
@@ -50,6 +51,7 @@ angular.module('serverApp')
                                 var messageEl = theForm.querySelector('.final-message');
                                 messageEl.innerHTML = 'The player will start now. Enjoy!';
                                 classie.addClass(messageEl, 'show');
+                                $cookies.room = object.id;
                                 var socket = io.connect();
                                 socket.emit('player:update', {
                                     room: object.id,

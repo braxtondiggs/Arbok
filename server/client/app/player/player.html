@@ -14,34 +14,32 @@
     </div>
 </div>
 <script type="text/ng-template" id="loginTmpl">
-    <div class="login-form">
+    <div class="login-form login-form-login active">
         <h3>Login</h3>
         <div class="form-group">
-            <input type="text" class="form-control login-field" value="" placeholder="Enter your name" id="login-name">
-            <label class="login-field-icon fui-user" for="login-name"></label>
+            <input type="text" class="form-control login-field" value="" placeholder="Enter your Username" id="login-username">
+            <label class="login-field-icon fui-user" for="login-username"></label>
         </div>
         <div class="form-group">
             <input type="password" class="form-control login-field" value="" placeholder="Password" id="login-pass">
             <label class="login-field-icon fui-lock" for="login-pass"></label>
         </div>
         <a class="btn btn-primary btn-lg btn-block" ng-click="doLogin()">Log In</a>
-        <p class="modalSwitch">Don&#39;t have an account yet? <a ng-click="switchModal('signupTmpl')">Sign Up Here</a>!</p>
+        <p class="modalSwitch">Don&#39;t have an account yet? <a ng-click="switchModal('signup-form');">Sign Up Here</a>!</p>
         <a class="login-link" ng-click="lostPassword()">Lost your password?</a>
     </div>
-</script>
-<script type="text/ng-template" id="signupTmpl">
-    <div class="login-form">
+    <div class="signup-form login-form">
         <h3>Sign Up</h3>
         <div class="form-group">
-            <input type="text" class="form-control login-field" value="" placeholder="Enter your name" id="login-name">
-            <label class="login-field-icon fui-user" for="login-name"></label>
+            <input type="text" class="form-control login-field" value="" placeholder="Enter your Username" id="signup-username">
+            <label class="login-field-icon fui-user" for="signup-username"></label>
         </div>
         <div class="form-group">
-            <input type="password" class="form-control login-field" value="" placeholder="Password" id="login-pass">
-            <label class="login-field-icon fui-lock" for="login-pass"></label>
+            <input type="password" class="form-control login-field" value="" placeholder="Password" id="signup-pass">
+            <label class="login-field-icon fui-lock" for="signup-pass"></label>
         </div>
         <a class="btn btn-primary btn-lg btn-block" ng-click="doSignup()">Sign Up</a>
-        <p class="modalSwitch">Already have an account? <a ng-click="switchModal('loginTmpl')">Login Here</a>!</p>
+        <p class="modalSwitch">Already have an account? <a ng-click="switchModal('login-form-login');">Login Here</a>!</p>
         <a class="login-link" ng-click="lostPassword()">Lost your password?</a>
     </div>
 </script>

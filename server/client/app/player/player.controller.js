@@ -56,8 +56,8 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
             }
 
             function detonate() {
+                window.clearTimeout($scope.detonate);
                 $scope.detonate = setTimeout(function() {
-                    console.log('nothing');
                     songEnded();
                     detonate();
                 }, 5000);
@@ -106,7 +106,6 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
                 var player = $scope.event.target,
                     event = $scope.event;
                 $scope.queueList = msg;
-                console.log(msg);
                 if (youtubeURL(player.getVideoUrl()) !== $scope.queueList[0].youtubeId) {
                     player.loadVideoById($scope.queueList[0].youtubeId);
                     $('#currentlyPlaying').addClass('active');

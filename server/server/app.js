@@ -217,16 +217,14 @@ io.sockets.on('connection', function(socket) {
         var room = msg.room,
             trackId = msg.trackId,
             artistInfo = msg.artistInfo;
-        kaiseki.deleteObject('Playlist', trackId, function(err, res, body, success) {
-            if (success) {
-                var query = new Parse.Query("Vote");
-                query.find({
-                    success: function(result) {
-                        for(var i=0; i<result.length; i++) {
-                            result[i].destroy();
-                        }
-                    }
+
+        async.series({
+            deletePlaylist: function(callback){
+                kaiseki.deleteObject('Playlist', trackId, function(err, res, body, success) {
+                    callback();
                 });
+            },
+            getPlaylist: function(callback) {
                 kaiseki.getObjects('Playlist', {
                     where: {
                         playerId: msg.room
@@ -234,8 +232,8 @@ io.sockets.on('connection', function(socket) {
                     order: 'createdAt',
                     count: true
                 }, function(err, res, body, success) {
-                    if (success) {
-                        if (body.count > 0) {
+                    if (body.count > 0 && body.results.length) {
+                        if (body.results[0].objectId !== trackId) {
                             io.sockets.in(msg.room).emit("playlist:change", body.results);
                             var preview = body.results[0].imagePreview;
                             kaiseki.updateObject('Player', msg.room, {
@@ -245,10 +243,26 @@ io.sockets.on('connection', function(socket) {
                                     preview: preview,
                                     room: msg.room
                                 });
+                                callback();
                             });
-                        } else {
+                        }else {
                             emptyQueue(artistInfo, msg.room);
+                            callback();
                         }
+                    } else {
+                        emptyQueue(artistInfo, msg.room);
+                        callback();
+                    }
+                });
+            },
+            deleteVotes: function(callback) {
+                var query = new Parse.Query("Vote");
+                query.find({
+                    success: function(result) {
+                        for(var i=0; i<result.length; i++) {
+                            result[i].destroy();
+                        }
+                        callback();
                     }
                 });
             }
@@ -281,8 +295,12 @@ io.sockets.on('connection', function(socket) {
                             }else {
                                 emptyQueue(artistInfo, jukebox_id);
                             }
+                        }else {
+                            emptyQueue(artistInfo, jukebox_id);
                         }
                     });
+                }else {
+                    emptyQueue('Drake', jukebox_id);
                 }
             }
 
@@ -409,7 +427,6 @@ var job = new CronJob('00 00 12 * * *', function() {
             success: function(result) {
                 async.series({
                     destroy: function(callback){
-                        console.log(result.length);
                         for(var i=0; i<result.length; i++) {
                             result[i].destroy();
                         }

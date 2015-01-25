@@ -287,7 +287,7 @@ io.sockets.on('connection', function(socket) {
                     }, function(error, response, body) {
                         if (!error && response.statusCode === 200) {
                             if (body.total_results !== 0) {
-                                var track_id = body.results[0].id;
+                                var track_id = body.results[body.results.length - 1].id;
                                 found = true;
                                 newSong('emptyQueue', track_id, jukebox_id, function() {
                                     return;

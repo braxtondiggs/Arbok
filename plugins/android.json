@@ -13,7 +13,7 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"StatusBar\"><param name=\"android-package\" value=\"org.apache.cordova.statusbar.StatusBar\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -42,10 +42,10 @@
         "org.apache.cordova.console": {
             "PACKAGE_NAME": "com.cymbit.Quilava"
         },
-        "org.apache.cordova.geolocation": {
+        "org.apache.cordova.device": {
             "PACKAGE_NAME": "com.cymbit.Quilava"
         },
-        "org.apache.cordova.statusbar": {
+        "org.apache.cordova.geolocation": {
             "PACKAGE_NAME": "com.cymbit.Quilava"
         }
     },

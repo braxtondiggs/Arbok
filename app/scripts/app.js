@@ -17,7 +17,6 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-lo
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       }
       if (window.StatusBar) {
-        // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
     });

@@ -1,6 +1,7 @@
 node_modules
 www
 .tmp
+.temp
 .sass-cache
 app/lib
 coverage

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar'])
+angular.module('Quilava', ['ionic', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'ngFx'])
 
 .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {

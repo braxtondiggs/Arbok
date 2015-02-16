@@ -1,7 +1,7 @@
 <ion-view view-title="What's Playing">
     <ion-content>
         <div class="list queue" ng-show="queue_list.length">
-            <a class="item item-thumbnail-left" href="#/app/artist/slug/{{queue.IMVDBartistId}}" ng-repeat="queue in queue_list">
+            <a class="item item-thumbnail-left fx-easing-bounce" href="#/app/artist/slug/{{queue.IMVDBartistId}}" ng-repeat="queue in queue_list">
                 <img ng-src="{{queue.imagePreview}}">
                 <i class="icon ion-chevron-right icon-accessory"></i>
                 <h2>{{queue.artistInfo}}</h2>

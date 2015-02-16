@@ -1,5 +1,87 @@
-.view-container {
-    top:0;
+@font-face {
+    font-family: 'helvetica_neue_lt_pro45_light';
+    src: url('../fonts/helveticaneueltpro-lt-webfont.eot');
+    src: url('../fonts/helveticaneueltpro-lt-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/helveticaneueltpro-lt-webfont.woff') format('woff'),
+         url('../fonts/helveticaneueltpro-lt-webfont.ttf') format('truetype'),
+         url('../fonts/helveticaneueltpro-lt-webfont.svg#helvetica_neue_lt_pro45_light') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'helvetica_neue_lt_pro47LtCn';
+    src: url('../fonts/helveticaneueltpro-ltcn-webfont.eot');
+    src: url('../fonts/helveticaneueltpro-ltcn-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/helveticaneueltpro-ltcn-webfont.woff') format('woff'),
+         url('../fonts/helveticaneueltpro-ltcn-webfont.ttf') format('truetype'),
+         url('../fonts/helveticaneueltpro-ltcn-webfont.svg#helvetica_neue_lt_pro47LtCn') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'helvetica_neue_lt_27ultraLtCn';
+    src: url('../fonts/helveticaneueltpro-ultltcn-webfont.eot');
+    src: url('../fonts/helveticaneueltpro-ultltcn-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/helveticaneueltpro-ultltcn-webfont.woff') format('woff'),
+         url('../fonts/helveticaneueltpro-ultltcn-webfont.ttf') format('truetype'),
+         url('../fonts/helveticaneueltpro-ultltcn-webfont.svg#helvetica_neue_lt_27ultraLtCn') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+$darkBG: #2f3238;
+$coloredLinks: #cc6055;
+$textColor: rgba(255, 255, 255, 0.5);
+$topBG: #403E45;
+$topBorder: #202227;
+body {
+    background-color: $darkBG;
+    color: $textColor;
+}
+body,
+h1 {
+    font-family: 'helvetica_neue_lt_pro47LtCn';
+}
+
+.bar.bar-stable .title {
+    color: $textColor;
+    font-family: helvetica_neue_lt_pro45_light;
+    font-weight:400;
+    font-size: 20px;
+    i {
+        margin-right:10px;
+        color: $coloredLinks;
+    }
+}
+.bar-stable .button.button-clear {
+    color: $coloredLinks;
+}
+.bar.bar-stable,
+.bar-footer {
+    background-color: $darkBG;
+    background-image: linear-gradient(0deg, $topBorder, $topBorder 50%, transparent 50%);
+    background-size: 100% 3px;
+}
+.dark-list {
+    background: rgba(0,0,0,0.01);
+    .list-title {
+        background: rgba(0,0,0,0.2);
+        color: $coloredLinks;
+        border-color: $topBorder;
+        font-size: 20px;
+    }
+    .browse-item {
+        background: transparent;
+        border-color: $topBorder;
+    }
+}
+.dark-menu {
+    background-color: $darkBG;
+    .item  {
+        background: transparent;
+        border-color: $topBorder;
+    }
 }
 .search-bar {
     #header-search {
@@ -39,6 +121,19 @@
             display:none;
         }
     }
+}
+
+#loading-bar .bar {
+    height: 2px!important;
+    padding: 0;
+}
+
+.pane {
+    background-color: $darkBG;
+}
+
+.view-container {
+    top: 0;
 }
 #loading-bar-spinner {
     top: 16px!important;
@@ -327,9 +422,10 @@ input[type="password"] {
 	}
 }
 .empty-list {
-    margin-top: 50px;
+    margin: 0 10px;
     text-align: center;
     font-size: 20px;
+    padding-top:50px;
 }
 .nothing-here {
     width: 100%;

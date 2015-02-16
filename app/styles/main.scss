@@ -1,7 +1,10 @@
-.nav-bar {
+.view-container {
+    top:0;
+}
+.search-bar {
     #header-search {
         position: absolute;
-        bottom: -5px;
+        top: 12px;
         right: 0;
         left: 0;
         z-index: 0;
@@ -12,6 +15,7 @@
         display: none;
         vertical-align: top;
         width:200px;
+        z-index: 100;
         .ion-search {
             position: absolute;
             top: 4px;
@@ -134,7 +138,7 @@ input[type="password"] {
         }
     }
 }
-.bar {
+.footer-bar {
     .row {
         padding: 0;
         .col {
@@ -350,3 +354,5 @@ input[type="password"] {
     -webkit-animation-name: fadeIn; 
     animation-name: fadeIn; 
 }
+@import 'chat';
+@import 'browse';

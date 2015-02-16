@@ -1,19 +1,21 @@
-<ion-side-menus>
-
-    <ion-pane ion-side-menu-content>
+<ion-side-menus enable-menu-with-back-views="false">
+  <ion-side-menu-content>
         <ion-nav-bar class="bar-stable" ng-class="{'search-bar': isSearch}">
-            <!--<ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>-->
+            <ion-nav-back-button></ion-nav-back-button>
+            <ion-nav-buttons side="left">
+                <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+            </ion-nav-buttons>
             <form id="header-search" ng-submit="doSearch(search.term)" name="searchForm">
               <i class="ion-search"></i>
               <input class="search" name="search" id="search" type="text" placeholder="Search" ng-model="search.term" ng-minlength="1">
               <a class="ion-close clear-search" ng-show="search.term.length" ng-click="search.term = ''"></a>
             </form>
         </ion-nav-bar>
-        <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+        <ion-nav-view name="menuContent"></ion-nav-view>
         <div ng-include="'templates/footer.html'"></div>
-    </ion-pane>
+    </ion-side-menu-content>
 
-    <ion-side-menu side="left" enable-menu-with-back-views="false">
+    <ion-side-menu side="left">
         <header class="bar bar-header bar-stable">
             <div class="profile" ng-show="currentUser._serverData">
                 <img class="img-circle" alt="" ng-src="{{currentUser.get('image')._url}}" />

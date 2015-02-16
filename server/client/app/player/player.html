@@ -1,48 +1,84 @@
-<div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)"></div>
+<div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)" ng-hide="!queueList.length"></div>
 <div id="popUps">
     <div id="currentlyPlaying">
         <div class="album-cover">
-            <img alt="" src="{{queueList[0].imagePreview}}" />
+            <img alt="" ng-src="{{queueList[0].imagePreview}}" />
         </div>
         <div class="music-info">
             <h3>{{queueList[0].artistInfo}}</h3>
             <p>{{queueList[0].trackInfo}}</p>
         </div>
     </div>
-    <div id="newSong">
-        <h3></h3>
-        <p></p>
-    </div>
-    <div id="voteInfo"><img alt="" src="http://blogs.villagevoice.com/music/assets_c/2014/01/RiffRaffTweets-thumb-560x439.jpg" />
-        <h3 class="title">JODY HiGHROLLER</h3>
-        <div class="thumb"><i class="fa fa-4x"></i>
-        </div>
-    </div>
-    <div id="voteOff" class="bottom">I guess nobody liked this song! Song Changing in <span class="countdown">10</span>
+    <div id="voteOff" ng-class="voteoff.bannerLocation">
+        I guess nobody liked this song! Song Changing in <span class="countdown">{{voteoff.count}}</span>
     </div>
 </div>
-<!--
-<div ng-controller="ModalDemoCtrl">
-    <script type="text/ng-template" id="myModalContent.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Im a modal!</h3>
+<script type="text/ng-template" id="loginTmpl">
+    <div class="login-form login-form-login active">
+        <h3>Login</h3>
+        <div class="form-group">
+            <input type="text" class="form-control login-field" value="" placeholder="Enter your Username" id="login-username">
+            <label class="login-field-icon fui-user" for="login-username"></label>
         </div>
-        <div class="modal-body">
-            <ul>
-                <li ng-repeat="item in items">
-                    <a ng-click="selected.item = item">{{ item }}</a>
+        <div class="form-group">
+            <input type="password" class="form-control login-field" value="" placeholder="Password" id="login-pass">
+            <label class="login-field-icon fui-lock" for="login-pass"></label>
+        </div>
+        <a class="btn btn-primary btn-lg btn-block" ng-click="doLogin()">Log In</a>
+        <p class="modalSwitch">Don&#39;t have an account yet? <a ng-click="switchModal('signup-form');">Sign Up Here</a>!</p>
+        <a class="login-link" ng-click="lostPassword()">Lost your password?</a>
+    </div>
+    <div class="signup-form login-form">
+        <h3>Sign Up</h3>
+        <div class="form-group">
+            <input type="text" class="form-control login-field" value="" placeholder="Enter your Username" id="signup-username">
+            <label class="login-field-icon fui-user" for="signup-username"></label>
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control login-field" value="" placeholder="Password" id="signup-pass">
+            <label class="login-field-icon fui-lock" for="signup-pass"></label>
+        </div>
+        <a class="btn btn-primary btn-lg btn-block" ng-click="doSignup()">Sign Up</a>
+        <p class="modalSwitch">Already have an account? <a ng-click="switchModal('login-form-login');">Login Here</a>!</p>
+        <a class="login-link" ng-click="lostPassword()">Lost your password?</a>
+    </div>
+</script>
+<script type="text/ng-template" id="boxSetupTmpl">
+    <h3>Lets get setup...</h3>
+    <p>Please goto http://{{domain}}/player/code and enter the code below:</p>
+    <h2 class="boxCode">{{boxCode}}<h2>
+</script>
+<script type="text/ng-template" id="playerSetupTmpl">
+    <form id="theForm" class="simform" autocomplete="off">
+        <div class="simform-inner">
+            <ol class="questions">
+                <li>
+                    <span><label for="name">What&#39;s the name of your player?</label></span>
+                    <input id="name" name="name" type="text"/>
                 </li>
-            </ul>
-            Selected: <b>{{ selected.item }}</b>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
-
-    <button class="btn btn-default" ng-click="open()">Open me!</button>
-    <button class="btn btn-default" ng-click="open('lg')">Large modal</button>
-    <button class="btn btn-default" ng-click="open('sm')">Small modal</button>
-    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
-</div>-->
+                <li>
+                    <span><label for="address">Where is this player located?</label></span>
+                    <input id="address" name="address" type="text"/>
+                </li>
+                <li ng-if="isCode==true">
+                    <span><label for="name">What is the player code provided?</label></span>
+                    <input id="code" name="code" type="text"/>
+                </li>
+            </ol><!-- /questions -->
+            <button class="submit" type="submit">Send answers</button>
+            <div class="controls">
+                <button class="fa fa-arrow-right next"></button>
+                <div class="progress"></div>
+                <span class="number">
+                    <span class="number-current"></span>
+                    <span class="number-total"></span>
+                </span>
+                <span class="error-message"></span>
+            </div><!-- / controls -->
+        </div><!-- /simform-inner -->
+        <span class="final-message"></span>
+    </form><!-- /simform -->
+</script>
+<script src="assets/javascript/modernizr.custom.js"></script>
+<script src="assets/javascript/classie.js"></script>
+<script src="assets/javascript/stepsForm.js"></script>

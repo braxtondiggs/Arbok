@@ -3,8 +3,8 @@
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-content class="has-header has-footer">
-        <div class="artist">
-            <img class="img-thumbnail" src="{{checkImage(artist.img)}}" alt="">
+        <div class="artist animated" ng-class="{'fadeIn': artist.loaded}" ng-show="artist.loaded">
+            <img class="img-thumbnail" ng-src="{{checkImage(artist.img)}}" alt="">
             <div class="row">
                 <p class="bio">{{firstUser(artist.img)}} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas suscipit sit amet augue at auctor. Integer facilisis dignissim sodales.<i class="ion-chevron-down readmore"></i>
                 </p>
@@ -18,7 +18,7 @@
                         {{video.song_title}}
                     </div>
                     <div class="item item-image">
-                        <img src="{{video.image.l}}">
+                        <img ng-src="{{video.image.l}}">
                     </div>
                     <a class="item item-icon-left assertive" ng-click="addSong(video.id, artist.slug, video.song_title, video.image.l)">
                         <i class="icon ion-music-note"></i> Start Listening
@@ -33,7 +33,7 @@
                         {{video.song_title}}
                     </div>
                     <div class="item item-image">
-                        <img src="{{video.image.l}}">
+                        <img ng-src="{{video.image.l}}">
                     </div>
                     <a class="item item-icon-left assertive" ng-click="addSong(video.id, artist.slug, video.song_title, video.image.l)">
                         <i class="icon ion-music-note"></i> Start Listening

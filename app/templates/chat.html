@@ -3,10 +3,10 @@
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-content class="has-header has-footer chat" ng-Class="{'isEmpty': !chats.length}">
-        <div class="list chat-convo">
-            <div class="item chat-item" ng-repeat="chat in chats" my-post-repeat-directive ng-class="{'isSelf' : chat.self}">
+        <div class="list chat-convo" style="min-height:{{windowHeight}}px">
+            <div class="item chat-item animated" ng-repeat="chat in chats" my-post-repeat-directive ng-class="{'isSelf' : chat.self, 'fadeIn': loaded}">
                 <div class="chat-img">
-                    <img class="img-circle img-border" src="{{chat.image}}" />
+                    <img class="img-circle img-border" ng-src="{{chat.image}}" />
                 </div>
                 <div class="chat-bubble">
                     <h2>{{chat.from}}</h2>
@@ -16,7 +16,7 @@
                     <p><i class="ion-clock">&nbsp;</i>{{chat.createdAt}}</p>
                 </div>
             </div>
-            <p ng-show="!chats.length" class="empty-list">No one has started to chat. Be the first!</p>
+            <p ng-show="!chats.length && loaded" class="empty-list">No one has started to chat. Be the first!</p>
         </div>
         <div class="list chat-write" ng-init="scrollBottom()">
             <div class="item item-input-inset">

@@ -20,15 +20,15 @@
             <div class="profile" ng-show="currentUser._serverData">
                 <img class="img-circle" alt="" ng-src="{{currentUser.get('image')._url}}" ng-if="currentUser.get('image')._url"/>
                 <div class="img-circle no-image" ng-if="!currentUser.get('image')._url">
-                    <span>{{firstLetters(currentUser.get('username'))}}</span>
+                    <span>{{firstLetters(currentUser.get('name'))}}</span>
                 </div>
-                <h1 class="title">{{currentUser.get('username')}}</h1>
+                <h1 class="title">{{currentUser.get('name')}}</h1>
             </div>
         </header>
         <ion-content class="has-header">
             <ion-list>
                 <ion-item nav-clear menu-close ng-click="login();" href="#" ng-if="!currentUser._serverData">
-                    <i class="ion-person-stalker"></i>Login
+                    <i class="ion-person-stalker"></i>Log-in / Sign-up
                 </ion-item>
                 <ion-item menu-close href="#app/search/" ng-click="setSearchBar(true)">
                     <i class="ion-search"></i>Search

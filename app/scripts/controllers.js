@@ -7,10 +7,11 @@ angular.module('Quilava.controllers', [])
         $rootScope.controllerClass = toState.className;
       });
     })
-    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout) {
+    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate) {
         $scope.domain = ENV.apiEndpoint;
         $scope.isSearch = false;
         $scope.loginData = {};
+        $scope.signupData = {};
         $scope.search = {};
         $scope.vote = {};
         $scope.chats = [];
@@ -61,7 +62,7 @@ angular.module('Quilava.controllers', [])
                     upVote: ($scope.vote.selectedIndex === 2) ? true : false,
                     downVote: ($scope.vote.selectedIndex === 1) ? true : false,
                     userId: $scope.currentUser.id,
-                    userName: $scope.currentUser._serverData.username,
+                    userName: $scope.currentUser._serverData.name,
                     hasVoted: $scope.hasVoted,
                     voteId: $scope.vote.voteId
                 });
@@ -97,7 +98,7 @@ angular.module('Quilava.controllers', [])
                                 server_id: $scope.room,
                                 track_id: id,
                                 userId: $scope.currentUser.id,
-                                userName: $scope.currentUser._serverData.username,
+                                userName: $scope.currentUser._serverData.name,
                                 trackTitle: title,
                                 artistName: name,
                                 artistImage: image
@@ -105,7 +106,7 @@ angular.module('Quilava.controllers', [])
                                 if (confirm.status === 1) {
                                     $ionicPopup.alert({
                                         title: 'MVPlayer',
-                                        template: "Your song is now in the queue! Sit back and jam."
+                                        template: "Your song is now in the queue! Sit back and be the <span class=\"special\">MVP</span> you are."
                                     });
                                 } else {
                                     $ionicPopup.alert({
@@ -124,12 +125,16 @@ angular.module('Quilava.controllers', [])
                 });
             } else {
                 var body = ($scope.currentUser) ? 'You have not connected to a MVPlayer yet.' : 'You need to be logged inorder to suggest a song',
-                    location = ($scope.currentUser) ? '#/app/player' : '#/app/login';
+                    location = ($scope.currentUser) ? '#/app/player' : null;
                 $ionicPopup.alert({
                     title: 'MVPlayer - Error',
                     template: body
                 }).then(function(res) {
-                    window.location = location;
+                    if (location !== null) {
+                        window.location = location;
+                    }else {
+                        $scope.login();
+                    }
                 });
             }
         }
@@ -193,7 +198,6 @@ angular.module('Quilava.controllers', [])
                         $scope.queue_list = confirm;
                         $scope.vote.upvote = confirm[0].upvoteNum;
                         $scope.vote.downvote = confirm[0].downvoteNum;
-                        console.log($scope.queue_list);
                     }
                 });
                 socket.emit('chat:init', {
@@ -226,13 +230,36 @@ angular.module('Quilava.controllers', [])
         });
 
         // Triggered in the login modal to close it
-        $scope.closeLogin = function() {
-                $scope.modal.hide();
+        $scope.closeLogin = function(alert) {
+                $scope.modal.hide().then( function(){
+                    if (alert) {
+                        $ionicPopup.alert({
+                            title: 'MVPlayer',
+                            template: 'Welcome, you are currently logged in! You can now chat and suggest songs!'
+                        });
+                    }
+                });
             },
 
             // Open the login modal
             $scope.login = function() {
                 $scope.modal.show();
+                $ionicSlideBoxDelegate.update();
+                $ionicSlideBoxDelegate.enableSlide(false);
+                $scope.login.title = 'MVPlayer';
+            },
+            $scope.loginPage = function() {
+                $scope.login.title = 'Login';
+                $ionicSlideBoxDelegate.slide(2);
+            },
+            $scope.signupPage = function() {
+                $scope.login.title = 'Signup';
+                $ionicSlideBoxDelegate.slide(0);
+            },
+            $scope.homePage = function() {
+                $scope.login.title = 'MVPlayer';
+                $ionicSlideBoxDelegate.slide(1);
+                return false;
             };
 
         // Perform the login action when the user submits the login form
@@ -246,7 +273,12 @@ angular.module('Quilava.controllers', [])
                     Parse.User.logOut();
                     $scope.currentUser = null;
                     $scope.loginData = {};
+                    $scope.signupData = {};
                     $scope.vote.selectedIndex = 0;
+                    $ionicPopup.alert({
+                        title: 'MVPlayer',
+                        template: 'You have been successfully logged out'
+                    })
                 }
             });
         };
@@ -254,35 +286,42 @@ angular.module('Quilava.controllers', [])
             if (isValid) {
                 var user = new Parse.User();
                 var loginData = $scope.loginData;
-                user.set('username', loginData.username); // in my app, email==username
+                user.set('username', loginData.email); // in my app, email==username
                 user.set('password', loginData.password);
-                if (loginData.type === 'signup') {
-                    user.signUp(null, {
-                        success: function(user) {
-                            $scope.currentUser = user;
-                            $scope.$apply(); // Notify AngularJS to sync currentUser
-                            $scope.closeLogin();
-                        },
-                        error: function(user, error) {
-                            alert('Unable to sign up:  ' + error.code + ' ' + error.message);
-                        }
-                    });
-                } else {
-                    var user = new Parse.User({
-                        username: loginData.username,
-                        password: loginData.password
-                    });
-                    user.logIn({
-                        success: function(user) {
-                            $scope.currentUser = user;
-                            $scope.$apply();
-                            $scope.closeLogin();
-                        },
-                        error: function(user, error) {
-                            alert('Unable to log in: ' + error.code + ' ' + error.message);
-                        }
-                    });
-                }
+                var user = new Parse.User({
+                    username: loginData.email,
+                    password: loginData.password
+                });
+                user.logIn({
+                    success: function(user) {
+                        $scope.currentUser = user;
+                        $scope.$apply();
+                        $scope.closeLogin(true);
+                    },
+                    error: function(user, error) {
+                        alert('Unable to log in: ' + error.code + ' ' + error.message);
+                    }
+                });
+            }
+        };
+        $scope.doSignup = function(isValid) {
+            if (isValid) {
+                var user = new Parse.User();
+                var signupData = $scope.signupData;
+                user.set('name', signupData.name); // in my app, email==username
+                user.set('email', signupData.email); // in my app, email==username
+                user.set('username', signupData.email);
+                user.set('password', signupData.password);
+                user.signUp(null, {
+                    success: function(user) {
+                        $scope.currentUser = user;
+                        $scope.$apply(); // Notify AngularJS to sync currentUser
+                        $scope.closeLogin(true);
+                    },
+                    error: function(user, error) {
+                        alert('Unable to sign up:  ' + error.code + ' ' + error.message);
+                    }
+                });
             }
         };
         $scope.deleteSong = function(item) {
@@ -374,7 +413,12 @@ angular.module('Quilava.controllers', [])
                 $http.get(
                     $scope.domain + 'music/search?e=' + param.artistId
                 ).success(function(data) {
-                    getArtistInfo(data.results[0].id);
+                    if (data.results.length) {
+                        getArtistInfo(data.results[0].id);
+                    }else {
+                        $rootScope.artist.loaded = true;
+                        $rootScope.artist.convertedSlug = $scope.convertSlug(null, param.artistId);
+                    }
                 });
             }
         }
@@ -501,7 +545,7 @@ angular.module('Quilava.controllers', [])
                         document.getElementById('chat-input').value = '';
                         socket.emit('chat', {
                             'room': $scope.room,
-                            'from': $scope.currentUser._serverData.username,
+                            'from': $scope.currentUser._serverData.name,
                             'userId': $scope.currentUser.id,
                             'img': img,
                             'body': msg.chatMsg
@@ -512,14 +556,18 @@ angular.module('Quilava.controllers', [])
                     }
                 } else {
                     body = 'You need to be logged inorder to suggest a song';
-                    location = '#/app/login';
+                    location = null;
                 }
                 if (body !== null) {
                     $ionicPopup.alert({
                         title: title,
                         template: body
                     }).then(function(res) {
-                        window.location = location;
+                        if (location !== null){
+                            window.location = location;
+                        }else {
+                            $scope.login();
+                        }
                     });
                 }
             }

@@ -1,33 +1,76 @@
-<div class="modal">
+<div class="modal login">
   <ion-header-bar>
-    <h1 class="title">Login</h1>
+    <div class="buttons" ng-show="login.title !== 'MVPlayer'" ng-click="homePage();">
+      <button class="button button-clear"><i class="ion-arrow-left-c"></i>&nbsp;Back</button>
+    </div>
+    <h1 class="title">{{login.title}}</h1>
     <div class="buttons">
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
     </div>
   </ion-header-bar>
   <ion-content>
-    <!--<form id="loginForm" name="loginForm" ng-submit="doLogin(loginForm.$valid)" novalidate>
-      <div class="list">
-        <label class="item item-input">
-          <span class="input-label">Username: </span>
-          <input type="text" name="username" ng-model="loginData.username" ng-required="true" ng-minlength="4" ng-maxlength="16">
-          <p ng-show="loginData.username.$error.minlength" class="help-block">Username is too short.</p>
-          <p ng-show="loginData.username.$error.maxlength" class="help-block">Username is too long.</p>
-          <p ng-show="loginData.username.$invalid && !loginData.username.$pristine" class="help-block">You name is required.</p>
-        </label>
-        <label class="item item-input">
-          <span class="input-label">Password: </span>
-          <input type="password" name="password" ng-model="loginData.password" ng-required="true" ng-minlength="6">
-          <p ng-show="loginData.password.$invalid && !loginData.password.$pristine" class="help-block">You name is required.</p>
-          <p ng-show="loginData.password.$error.minlength" class="help-block">Username is too short.</p>
-        </label>
-        <div class="padding">
-          <button class="button button-block button-positive" type="submit" ng-click="loginData.type = 'login'">Log In</button>
-        
-          -----Or ---
-          <button class="button button-block button-positive" type="submit" ng-click="loginData.type = 'signup'">Sign Up</button>
+    <ion-slide-box show-pager="false" active-slide="1">
+      <ion-slide>
+        <div class="box padding">
+          <h1>MVPlayer</h1>
+          <p>Signup or use Facebook for a quicker access!</p>
+          <form id="signupForm" name="signupForm" ng-submit="doSignup(signupForm.$valid)" novalidate>
+          <span class="input input--jiro">
+                <input class="input__field input__field--jiro" type="text" name="signup-name" id="signup-name" ng-model="signupData.name" ng-minlength="3" ng-required="true">
+                <label class="input__label input__label--jiro" for="signup-name">
+                    <span class="input__label-content input__label-content--jiro">Name</span>
+                </label>
+            </span>
+            <span class="input input--jiro">
+                <input class="input__field input__field--jiro" type="email" name="signup-email" id="signup-email" ng-model="signupData.email" ng-minlength="3" ng-required="true">
+                <label class="input__label input__label--jiro" for="signup-email">
+                    <span class="input__label-content input__label-content--jiro">Email</span>
+                </label>
+            </span>
+            <span class="input input--jiro">
+                <input class="input__field input__field--jiro" type="password" name="signup-password "id="signup-password" ng-model="signupData.password" ng-minlength="6" ng-required="true">
+                <label class="input__label input__label--jiro" for="signup-password">
+                    <span class="input__label-content input__label-content--jiro">Password</span>
+                </label>
+            </span>
+            <button class="button button-outline dark-button" type="submit">Sign Up</button>
+          </form>
+          <p>Already have an account?</p>
+          <a ng-click="loginPage()">Login In</a>
         </div>
-      </div>
-    </form>-->
+      </ion-slide>
+      <ion-slide>
+        <div class="box padding">
+          <h1 class="login-title">Do you have an account with <span>MVPlayer</span>?</h1>
+          <div class="buttons-login">
+            <button class="button button-outline" ng-click="loginPage()">Yes</button>
+            <button class="button button-outline dark-button" ng-click="signupPage()">No</button>
+          </div>
+        </div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box padding">
+          <h1>MVPlayer</h1>
+          <p>Login to your MVPlayer account or use Facebook for a quicker login!</p>
+          <form id="loginForm" name="loginForm" ng-submit="doLogin(loginForm.$valid)" novalidate>
+            <span class="input input--jiro">
+                <input class="input__field input__field--jiro" type="email" name="login-email" id="login-email" ng-model="loginData.email" ng-minlength="3" ng-required="true">
+                <label class="input__label input__label--jiro" for="login-email">
+                    <span class="input__label-content input__label-content--jiro">Email</span>
+                </label>
+            </span>
+            <span class="input input--jiro">
+                <input class="input__field input__field--jiro" type="password" name="login-password "id="login-password" ng-model="loginData.password" ng-minlength="6" ng-required="true">
+                <label class="input__label input__label--jiro" for="login-password">
+                    <span class="input__label-content input__label-content--jiro">Password</span>
+                </label>
+            </span>
+            <button class="button button-outline dark-button" type="submit">Log In</button>
+          </form>
+          <p>Don't have an account?</p>
+          <a ng-click="signupPage()">Sign Up</a>
+        </div>
+      </ion-slide>
+    </ion-slide-box>
   </ion-content>
 </div>

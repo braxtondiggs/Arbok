@@ -339,6 +339,8 @@ body.search{
             margin-top: 5px;
             margin-left: -2px;
             line-height:15px;
+            word-spacing: -7px;
+            padding-left: 8px;
         }
     }
 }
@@ -391,19 +393,22 @@ body.search{
     }
 }
 .footer-bar {
+    padding:0;
     .row {
         padding: 0;
         .col {
             padding: 0;
+            overflow:hidden;
             &:last-child {
                 text-align: right;
                 padding-right: 10px;
             }
         }
     }
-    padding:0;
     img {
         height: 44px;
+        padding-right: 5px;
+        width: 100%;
     }
     h2, p {
         overflow: hidden;
@@ -578,7 +583,8 @@ body.search{
             color: $coloredLinks;
         }
         &:focus,
-        &.input--filled {
+        &.input--filled,
+        &.ng-valid {
             opacity: 1;
             -webkit-transition-delay: 0.3s;
             transition-delay: 0.3s;
@@ -683,7 +689,61 @@ body.search{
     }
     .item-thumbnail-left {
         min-height:75px;
+        img {
+            top:5px;
+        }
     }
+}
+.login {
+    .box{
+        padding-top: 35px;
+        h1 {
+            color: $coloredLinks;
+            text-align: center;
+            &.login-title {
+                color: $textColor;
+                span {
+                    color: $coloredLinks;
+                    border-bottom: 2px solid $coloredLinks;
+                }
+            }
+        }
+        p {
+            text-align: center;
+        }
+        a {
+            text-align:center;
+            color: $coloredLinks;
+            display:block;
+        }
+        form {
+            span.input {
+                margin-top:40px;
+            }
+            .button {
+                margin:20px auto;
+                width:90%;
+            }
+        }
+        .buttons-login {
+            margin-top:25px;
+            text-align: center;
+            button {
+                display: inline-block!important;
+                width:150px;
+                &:first-child {
+                    margin-right:10px;
+                }
+            }
+        }
+    }
+}
+span.special {
+    color: $coloredLinks;
+}
+.button.activated.dark-button {
+    background-color: $coloredLinksActivated;
+    color: #FFF;
 }
 .artist {
 	.img-thumbnail {

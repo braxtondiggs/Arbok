@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava', ['ionic', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'ngFx'])
+angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate'])
 
 .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -47,12 +47,18 @@ angular.module('Quilava', ['ionic', 'config', 'filter', 'Quilava.controllers', '
         }
       },
       convertSlug: function(name, slug) {
-        if (name !== null) {
+        if (name !== null && name !== undefined && name !== '') {
           return name;
+        } else if(slug !== null && slug !== undefined && slug !== '') {
+          if (isNaN(slug)){
+            return slug.replace('-', ' ').replace('-', ' ').replace(/\w\S*/g, function(txt) {
+              return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+          }else {
+            return slug;
+          }
         } else {
-          return slug.replace('-', ' ').replace('-', ' ').replace(/\w\S*/g, function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-          });
+          return '';
         }
       }
     };
@@ -73,6 +79,9 @@ angular.module('Quilava', ['ionic', 'config', 'filter', 'Quilava.controllers', '
       }
     };
   })
+  .config(['EchonestProvider', function(EchonestProvider) {
+    EchonestProvider.setApiKey('0NPSO7NBLICGX3CWQ');
+  }])
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
 
@@ -84,10 +93,15 @@ angular.module('Quilava', ['ionic', 'config', 'filter', 'Quilava.controllers', '
     })
 
     .state('app.search', {
-      url: '/search',
+      url: '/search/{searchId}/',
+      className: 'search',
+      params: {
+        searchId: {value: null, squash: true}
+      },
       views: {
         'menuContent': {
-          templateUrl: 'templates/search.html'
+          templateUrl: 'templates/search.html',
+          controller: 'SearchCtrl',
         }
       }
     })
@@ -130,6 +144,7 @@ angular.module('Quilava', ['ionic', 'config', 'filter', 'Quilava.controllers', '
       })
       .state('app.player', {
         url: '/player',
+        className: 'player',
         views: {
           'menuContent': {
             templateUrl: 'templates/player.html',
@@ -139,6 +154,7 @@ angular.module('Quilava', ['ionic', 'config', 'filter', 'Quilava.controllers', '
       })
       .state('app.chat', {
         url: '/chat',
+        className: 'chat',
         views: {
           'menuContent': {
             templateUrl: 'templates/chat.html',

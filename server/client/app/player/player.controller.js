@@ -60,7 +60,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
                 $scope.detonate = setTimeout(function() {
                     songEnded();
                     detonate();
-                }, 5000);
+                }, 10000);
             }
             if (event.data === YT.PlayerState.ENDED) {
                 songEnded();

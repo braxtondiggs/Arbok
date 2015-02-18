@@ -1,17 +1,15 @@
-<ion-view view-title="{{convertSlug(artist.name, artist.slug)}}">
-    <ion-content>
+<ion-view view-title="{{artist.convertedSlug}}">
+    <ion-content ng-class="{'has-footer': room}">
         <div class="artist animated" ng-class="{'fadeIn': artist.loaded}" ng-show="artist.loaded">
             <img class="img-thumbnail" ng-src="{{checkImage(artist.img)}}" alt="">
             <div class="row">
-                <p class="bio">{{firstUser(artist.img)}} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis sem justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas suscipit sit amet augue at auctor. Integer facilisis dignissim sodales.<i class="ion-chevron-down readmore"></i>
-                </p>
+                <p class="bio" ng-text-truncate="artist.biographies" ng-tt-chars-threshold="240" ng-tt-more-label="Show" ng-tt-less-label="Hide"></p>
             </div>
-            {{videography.length}}
             <p class="empty-list" ng-show="!artist.videography.length && !artist.featured.length">It looks like we don't have any playable music for this artist.</p>
             <div class="videgraphy" ng-show="artist.videography.length">
                 <h3 class="title">Videography</h3>
-                <div class="list card" ng-repeat="video in artist.videography">
-                    <div class="item item-divider">
+                <div class="list card dark-list" ng-repeat="video in artist.videography">
+                    <div class="item item-divider list-title">
                         {{video.song_title}}
                     </div>
                     <div class="item item-image">
@@ -25,8 +23,8 @@
             </div>
             <div class="featured" ng-show="artist.featured.length">
                 <h3 class="title">Featured Artist</h3>
-                <div class="list card" ng-repeat="video in artist.featured">
-                    <div class="item item-divider">
+                <div class="list card dark-list" ng-repeat="video in artist.featured">
+                    <div class="item item-divider list-title">
                         {{video.song_title}}
                     </div>
                     <div class="item item-image">

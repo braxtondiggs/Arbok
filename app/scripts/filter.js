@@ -3,7 +3,7 @@
 angular.module('filter', [])
   .filter('unique', function() {
      return function(collection, keyname) {
-        var output = [], 
+        var output = [],
             keys = [];
 
         angular.forEach(collection, function(item) {

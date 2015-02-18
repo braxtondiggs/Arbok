@@ -1,6 +1,6 @@
 <ion-side-menus enable-menu-with-back-views="false">
   <ion-side-menu-content>
-        <ion-nav-bar class="bar-stable" ng-class="{'search-bar': isSearch}">
+        <ion-nav-bar class="bar-stable">
             <ion-nav-back-button></ion-nav-back-button>
             <ion-nav-buttons side="left">
                 <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
@@ -18,34 +18,37 @@
     <ion-side-menu side="left" class="dark-menu">
         <header class="bar bar-header bar-stable">
             <div class="profile" ng-show="currentUser._serverData">
-                <img class="img-circle" alt="" ng-src="{{currentUser.get('image')._url}}" />
+                <img class="img-circle" alt="" ng-src="{{currentUser.get('image')._url}}" ng-if="currentUser.get('image')._url"/>
+                <div class="img-circle no-image" ng-if="!currentUser.get('image')._url">
+                    <span>{{firstLetters(currentUser.get('username'))}}</span>
+                </div>
                 <h1 class="title">{{currentUser.get('username')}}</h1>
             </div>
         </header>
         <ion-content class="has-header">
             <ion-list>
-                <ion-item nav-clear menu-close ng-click="login();setSearchBar(false);" href="#" ng-show="!currentUser._serverData">
+                <ion-item nav-clear menu-close ng-click="login();" href="#" ng-if="!currentUser._serverData">
                     <i class="ion-person-stalker"></i>Login
                 </ion-item>
-                <ion-item nav-clear menu-close href="#" ng-click="setSearchBar(true)">
+                <ion-item menu-close href="#app/search/" ng-click="setSearchBar(true)">
                     <i class="ion-search"></i>Search
                 </ion-item>
-                <ion-item nav-clear menu-close href="#/app/browse" ng-click="setSearchBar(false)">
+                <ion-item nav-clear menu-close href="#/app/browse">
                     <i class="ion-folder"></i>Browse
                 </ion-item>
-                <ion-item nav-clear menu-close href="#/app/player" ng-click="setSearchBar(false)">
+                <ion-item nav-clear menu-close href="#/app/player">
                     <i class="ion-radio-waves"></i>Find a MVPlayer
                 </ion-item>
-                <ion-item nav-clear menu-close href="#/app/chat" ng-click="setSearchBar(false)">
+                <ion-item nav-clear menu-close href="#/app/chat">
                     <i class="ion-chatbubbles"></i>Chat
                 </ion-item>
-                <ion-item nav-clear menu-close href="#/app/music" ng-click="setSearchBar(false)">
+                <ion-item nav-clear menu-close href="#/app/music">
                     <i class="ion-headphone"></i>Your Music
                 </ion-item>
-                <ion-item nav-clear menu-close href="#/app/settings" ng-click="setSearchBar(false)">
+                <ion-item nav-clear menu-close href="#/app/settings">
                     <i class="ion-gear-b"></i>Settings
                 </ion-item>
-                <ion-item nav-clear ng-click="logout();setSearchBar(false)" ng-show="currentUser._serverData">
+                <ion-item nav-clear ng-click="logout();" ng-if="currentUser._serverData">
                     <i class="ion-person-stalker"></i>Logout
                 </ion-item>
             </ion-list>
@@ -56,12 +59,16 @@
             <h1 class="title"><i class="ion-music-note"></i>What's Playing</h1>
         </header>
         <ion-content class="has-header">
-            <a class="item item-thumbnail-left" href="#/app/artist/slug/{{queue.IMVDBartistId}}" ng-repeat="queue in queue_list">
-                <img ng-src="{{queue.imagePreview}}">
-                <i class="icon ion-chevron-right icon-accessory"></i>
-                <h2>{{queue.artistInfo}}</h2>
-                <p>{{queue.trackInfo}}</p>
-            </a>
+            <ion-list class="list queue dark-list" ng-show="queue_list.length">
+                <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{queue.IMVDBartistId}}" menu-close ng-repeat="queue in queue_list">
+                    <img ng-src="{{queue.imagePreview}}">
+                    <i class="icon ion-chevron-right icon-accessory"></i>
+                    <h2>{{queue.artistInfo}}</h2>
+                    <p>{{queue.trackInfo}}</p>
+                    <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong(queue);$event.stopPropagation();" ng-if="queue.userId === currentUser.id"></ion-option-button>
+                </ion-item>
+            </ion-list>
+            <p ng-show="!queue_list.length" class="empty-list">Is it quiet in here? No music is playing. Be the first!</p>
         </ion-content>
     </ion-side-menu>
 </ion-side-menus>

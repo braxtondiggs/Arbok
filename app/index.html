@@ -18,7 +18,7 @@
     <!-- endbuild -->
   </head>
 
-  <body ng-app="Quilava">
+  <body ng-app="Quilava" ng-class="controllerClass" ng-controller="BodyCtrl">
     <ion-nav-view></ion-nav-view>
 
     <!-- build:js scripts/vendor.js -->
@@ -33,9 +33,11 @@
     <script src="bower_components/parse-js-sdk/lib/parse.js"></script>
     <script src="bower_components/moment/moment.js"></script>
     <script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
-    <script src="bower_components/angular-truncate/src/truncate.js"></script>
     <script src="bower_components/ngCordova/dist/ng-cordova.js"></script>
     <script src="bower_components/ngFx/dist/ngFx.js"></script>
+    <script src="bower_components/ngstorage/ngStorage.js"></script>
+    <script src="bower_components/angular-echonest/build/angular-echonest.js"></script>
+    <script src="bower_components/ng-text-truncate/ng-text-truncate.js"></script>
     <!-- endbower -->
     <script src="bower_components/socket.io-client/socket.io.js"></script>
     <!-- endbuild -->

@@ -1,7 +1,7 @@
-<ion-view view-title="Chat">
-    <ion-content class="chat" ng-Class="{'isEmpty': !chats.length}">
-        <div class="list chat-convo" style="min-height:{{windowHeight}}px">
-            <div class="item chat-item animated" ng-repeat="chat in chats" my-post-repeat-directive ng-class="{'isSelf' : chat.self, 'fadeIn': loaded}">
+<ion-view view-title="Chat" cache-view="false" class="chat">
+    <ion-content class="has-subfooter" ng-class="{'isEmpty': !chats.length}">
+        <div class="list chat-convo dark-list">
+            <div class="item chat-item animated" ng-repeat="chat in chats" ng-class="{'isSelf' : chat.self, 'fadeIn': loaded}">
                 <div class="chat-img">
                     <img class="img-circle img-border" ng-src="{{chat.image}}" />
                 </div>
@@ -15,15 +15,10 @@
             </div>
             <p ng-show="!chats.length && loaded" class="empty-list">No one has started to chat. Be the first!</p>
         </div>
-        <div class="list chat-write" ng-init="scrollBottom()">
-            <div class="item item-input-inset">
-                <label class="item-input-wrapper">
-                    <input type="text" id="chat-input" placeholder="Tap to write message..." ng-model="chat.chatMsg">
-                </label>
-                <button class="button button-small" ng-click="sendChat(chat)">
-                    Send
-                </button>
-            </div>
-        </div>
+       
     </ion-content>
+    <ion-subfooter-bar align-title="left" class="bar bar-subfooter chat-write">
+        <input type="text" id="chat-input" placeholder="Tap to write message..." ng-model="chat.chatMsg">
+        <button class="button button-small button-outline dark-button" ng-click="sendChat(chat)">Send</button>
+    </ion-subfooter-bar>
 </ion-view>

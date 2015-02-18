@@ -1,7 +1,7 @@
 <ion-view view-title="{{browse.sections[browse.id].title}}">
-    <ion-content>
-        <div class="list more" ng-show="browse.music.length">
-            <a class="item item-thumbnail-left animated" ng-click="findSong(music._serverData.artistName, music._serverData.artistTitle, music._serverData.artistImage)" ng-repeat="music in browse.music | unique: '_serverData.artistImage'" ng-class="{'fadeIn': browse.loaded}">
+    <ion-content ng-class="{'has-footer': room}">
+        <div class="list more dark-list" ng-show="browse.music.length">
+            <a class="item item-thumbnail-left animated" ng-click="findSong(music._serverData.artistName, music._serverData.artistTitle, music._serverData.artistImage)" ng-repeat="music in browse.music" ng-class="{'fadeIn': browse.loaded}">
                 <img ng-src="{{music._serverData.artistImage}}">
                 <i class="icon ion-play icon-accessory"></i>
                 <h2>{{music._serverData.artistName}}</h2>

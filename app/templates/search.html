@@ -1,10 +1,7 @@
-<ion-view title="Search" hide-back-button="true">
-    <ion-nav-buttons side="left">
-        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-    </ion-nav-buttons>
-    <ion-content class="has-header has-footer">
-        <div class="list card search" ng-show="search.tracks.length">
-            <div class="item item-divider">
+<ion-view title="Search">
+    <ion-content ng-class="{'has-footer': room}">
+        <div class="list card search dark-list" ng-show="search.tracks.length">
+            <div class="item item-divider list-title">
                 Tracks
             </div>
             <a class="item item-thumbnail-left animated" ng-repeat="track in search.tracks" ng-click="addSong(track.id, track.artists[0].name, track.song_title, track.image.o)"ng-class="{'fadeIn': search.loaded}">
@@ -14,16 +11,35 @@
                 <p>{{track.song_title}}</p>
             </a>
         </div>
-        <div class="list card search" ng-show="search.artists.length">
-            <div class="item item-divider">
+        <div class="list card search dark-list" ng-show="search.artists.length">
+            <div class="item item-divider list-title">
                 Artist
             </div>
-            <a class="item item-thumbnail-left animated" href="#/app/artist/id/{{artist.id}}"  ng-repeat="artist in search.artists" ng-click="setSearchBar(false)" ng-class="{'fadeIn': search.loaded}">
+            <a class="item item-thumbnail-left animated" href="#/app/artist/id/{{artist.id}}"  ng-title="{{artist.name}}" ng-repeat="artist in search.artists" ng-click="setSearchBar(false)" ng-class="{'fadeIn': search.loaded}">
                 <img ng-src="{{checkImage(artist.image)}}">
                 <i class="icon ion-chevron-right icon-accessory"></i>
                 <h2>{{convertSlug(artist.name, artist.slug)}}</h2>
             </a>
         </div>
-       	<p class="empty-list" ng-show="!search.tracks.length && !search.artists.length && search.loaded">We didn't find anything. Try reprashing your search.</p>
+        <div class="list list-inset dark-list search" ng-show="(!search.artists.length || !search.artists.length) && searchHistory.length">
+            <div class="item item-divider list-title">
+                <i class="ion-heart icon"></i>&nbsp;Previously Searched
+            </div>
+            <a class="item browse-item" href="#/app/search/{{artist}}/"  ng-repeat="artist in searchHistory" ng-click="setSearchBar(false)">
+                <i class="icon ion-search"></i>
+                <i class="icon ion-chevron-right icon-accessory"></i>
+                {{artist}}
+            </a>
+        </div>
+        <div class="list list-inset dark-list search" ng-show="!search.artists.length || !search.artists.length">
+            <div class="item item-divider list-title">
+                <i class="ion-arrow-graph-up-right icon"></i>&nbsp;Trending Searches
+            </div>
+            <a class="item browse-item" href="#/app/search/{{artist}}/"  ng-repeat="artist in ['Ed Sheeran', 'Nicki Minaj', 'Jessie J', 'Calvin Harris', 'Taylor Swift', 'Chris Brown']" ng-click="setSearchBar(false)">
+                <i class="icon ion-person"></i>
+                <i class="icon ion-chevron-right icon-accessory"></i>
+                {{artist}}
+            </a>
+        </div>
     </ion-content>
 </ion-view>

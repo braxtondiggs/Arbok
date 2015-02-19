@@ -4,7 +4,7 @@ var serverApp = angular.module('serverApp');
 serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location, $cookies) {
         Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
         $scope.currentUser = Parse.User.current() || null;
-        $scope.room = ($location.path().indexOf('debug') > -1) ? 'R1BwluUoNs' : $cookies.room;
+        $scope.room = ($location.path().indexOf('debug') > -1) ? 'n0qTfjo7eN' : $cookies.room;
         $scope.isDebug = ($location.path().indexOf('debug') > -1) ? true : false;
         $scope.isBox = ($location.path().indexOf('box') > -1) ? true : false;
         $scope.isCode = ($location.path().indexOf('code') > -1) ? true : false;
@@ -28,7 +28,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
                     scope: $scope
                 });
             }
-            if ($scope.room !== null && $scope.room !== undefined && !$scope.isCode && $scope.currentUser) {
+            if ($scope.room !== null && $scope.room !== undefined && !$scope.isCode && ($scope.currentUser || $scope.isDebug)) {
                 initPlayer(player);
             } else {
                 if (!$scope.isBox) {
@@ -60,7 +60,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
                 $scope.detonate = setTimeout(function() {
                     songEnded();
                     detonate();
-                }, 5000);
+                }, 10000);
             }
             if (event.data === YT.PlayerState.ENDED) {
                 songEnded();
@@ -112,6 +112,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
                     activateBar();
                 } else {
                     if (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.PAUSED) {
+                        player.setPlaybackQuality('small');
                         player.playVideo();
                     }
                 }
@@ -192,6 +193,7 @@ serverApp.controller('PlayerCtrl', function($scope, socket, ngDialog, $location,
                     $scope.queueList = confirm;
                     if (youtubeURL(player.getVideoUrl()) !== $scope.queueList[0].youtubeId) {
                         player.loadVideoById($scope.queueList[0].youtubeId);
+                        player.setPlaybackQuality('small');
                         activateBar();
                     }
                 });

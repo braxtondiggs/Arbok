@@ -8,8 +8,8 @@
     <!-- build:css styles/vendor.css -->
     <!-- <link rel="stylesheet" href="vendor/some.contrib.css"> -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="lib/ionic/release/css/ionic.css" />
-    <link rel="stylesheet" href="lib/angular-loading-bar/build/loading-bar.css" />
+    <link rel="stylesheet" href="bower_components/ionic/release/css/ionic.css" />
+    <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -18,24 +18,28 @@
     <!-- endbuild -->
   </head>
 
-  <body ng-app="Quilava">
+  <body ng-app="Quilava" ng-class="controllerClass" ng-controller="BodyCtrl">
     <ion-nav-view></ion-nav-view>
 
     <!-- build:js scripts/vendor.js -->
     <!-- <script src="vendor/someContribJs.js"></script> -->
     <!-- bower:js -->
-    <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular-animate/angular-animate.js"></script>
-    <script src="lib/angular-sanitize/angular-sanitize.js"></script>
-    <script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="lib/collide/collide.js"></script>
-    <script src="lib/ionic/release/js/ionic.js"></script>
-    <script src="lib/ionic/release/js/ionic-angular.js"></script>
-    <script src="lib/parse-js-sdk/lib/parse.js"></script>
-    <script src="lib/moment/moment.js"></script>
-    <script src="lib/angular-loading-bar/build/loading-bar.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/ionic/release/js/ionic.js"></script>
+    <script src="bower_components/ionic/release/js/ionic-angular.js"></script>
+    <script src="bower_components/parse-js-sdk/lib/parse.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
+    <script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
+    <script src="bower_components/ngCordova/dist/ng-cordova.js"></script>
+    <script src="bower_components/ngFx/dist/ngFx.js"></script>
+    <script src="bower_components/ngstorage/ngStorage.js"></script>
+    <script src="bower_components/angular-echonest/build/angular-echonest.js"></script>
+    <script src="bower_components/ng-text-truncate/ng-text-truncate.js"></script>
     <!-- endbower -->
-    <script src="lib/socket.io-client/socket.io.js"></script>
+    <script src="bower_components/socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
 
     <!-- cordova script (this will be a 404 during development) -->
@@ -43,7 +47,8 @@
     
 
         <!-- build:js scripts/scripts.js -->
-        <script src="scripts/config.js"></script>
+        <script src="scripts/configuration.js"></script>
+        <script src="scripts/filter.js"></script>
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers.js"></script>
         <!-- endbuild -->

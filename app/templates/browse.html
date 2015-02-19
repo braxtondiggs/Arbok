@@ -1,10 +1,7 @@
-<ion-view title="Browse">
-    <ion-nav-buttons side="left">
-        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-    </ion-nav-buttons>
-    <ion-content class="has-header has-footer">
-        <div class="list list-inset">
-            <div class="item item-divider">
+<ion-view view-title="Browse">
+    <ion-content ng-class="{'has-footer': room}">
+        <div class="list list-inset dark-list">
+            <div class="item item-divider list-title">
     			<i class="ion-trophy"></i>&nbsp;Charts
  			</div>
             <a href="#/app/more/{{$index}}" class="item browse-item" ng-repeat="section in browse.sections">

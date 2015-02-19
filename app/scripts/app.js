@@ -1,13 +1,5 @@
 'use strict';
-// Ionic Starter App, v0.9.20
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
-
-angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar'])
+angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate'])
 
 .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -17,7 +9,6 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-lo
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       }
       if (window.StatusBar) {
-        // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
     });
@@ -56,12 +47,18 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-lo
         }
       },
       convertSlug: function(name, slug) {
-        if (name !== null) {
+        if (name !== null && name !== undefined && name !== '') {
           return name;
+        } else if(slug !== null && slug !== undefined && slug !== '') {
+          if (isNaN(slug)){
+            return slug.replace('-', ' ').replace('-', ' ').replace(/\w\S*/g, function(txt) {
+              return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+          }else {
+            return slug;
+          }
         } else {
-          return slug.replace('-', ' ').replace('-', ' ').replace(/\w\S*/g, function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-          });
+          return '';
         }
       }
     };
@@ -82,6 +79,9 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-lo
       }
     };
   })
+  .config(['EchonestProvider', function(EchonestProvider) {
+    EchonestProvider.setApiKey('0NPSO7NBLICGX3CWQ');
+  }])
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
 
@@ -93,10 +93,15 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-lo
     })
 
     .state('app.search', {
-      url: '/search',
+      url: '/search/{searchId}/',
+      className: 'search',
+      params: {
+        searchId: {value: null, squash: true}
+      },
       views: {
         'menuContent': {
-          templateUrl: 'templates/search.html'
+          templateUrl: 'templates/search.html',
+          controller: 'SearchCtrl',
         }
       }
     })
@@ -139,6 +144,7 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-lo
       })
       .state('app.player', {
         url: '/player',
+        className: 'player',
         views: {
           'menuContent': {
             templateUrl: 'templates/player.html',
@@ -148,6 +154,7 @@ angular.module('Quilava', ['ionic', 'config', 'Quilava.controllers', 'angular-lo
       })
       .state('app.chat', {
         url: '/chat',
+        className: 'chat',
         views: {
           'menuContent': {
             templateUrl: 'templates/chat.html',

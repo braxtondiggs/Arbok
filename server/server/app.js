@@ -213,6 +213,29 @@ io.sockets.on('connection', function(socket) {
         });
         var status = newSong(user_id, track_id, jukebox_id, fn);
     });
+    socket.on("song:delete", function(msg, fn) {
+        var track_id = msg.track_id,
+            jukebox_id = msg.player_id;
+        async.series({
+            deletePlaylist: function(callback){
+                kaiseki.deleteObject('Playlist', track_id, function(err, res, body, success) {
+                    callback();
+                });
+            },
+            getPlaylist: function(callback) {
+                kaiseki.getObjects('Playlist', {
+                    where: {
+                        playerId: jukebox_id
+                    },
+                    order: 'createdAt',
+                    count: true
+                }, function(err, res, body, success) {
+                    io.sockets.in(jukebox_id).emit("playlist:change", body.results);
+                });
+                callback();
+            }
+        });
+    });
     socket.on('song:ended', function(msg, fn) {
         var room = msg.room,
             trackId = msg.trackId,

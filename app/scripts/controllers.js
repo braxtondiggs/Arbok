@@ -7,7 +7,7 @@ angular.module('Quilava.controllers', [])
         $rootScope.controllerClass = toState.className;
       });
     })
-    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate) {
+    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate, $window) {
         $scope.domain = ENV.apiEndpoint;
         $scope.isSearch = false;
         $scope.loginData = {};
@@ -161,7 +161,7 @@ angular.module('Quilava.controllers', [])
                         $scope.searchHistory = $scope.searchHistory.slice(0, 5);
                     }
                 }
-                window.location = '#/app/search/'+term+'/';
+                $window.location = '#/app/search/'+term+'/';
             }
         };
         $scope.joinServer = function(id) {

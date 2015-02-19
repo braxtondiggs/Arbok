@@ -7,4 +7,4 @@ How to Release App
 6). ant release
 7). jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ../../keys/release.keystore bin/CordovaApp-release-unsigned.apk RedditTV
 8). jarsigner -verify -verbose -certs bin/CordovaApp-release-unsigned.apk
-9). bin/zipalign -v 4 bin/CordovaApp-release-unsigned.apk bin/MVPlayer.apk
+9). ../../keys/zipalign -v 4 bin/CordovaApp-release-unsigned.apk bin/MVPlayer.apk

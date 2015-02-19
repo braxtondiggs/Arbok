@@ -272,6 +272,11 @@ body.search{
     .bar-header .header-item.title {
         display: none;
     }
+    &.platform-ios {
+        #header-search {
+            top:30px;
+        }
+    }
 }
 #loading-bar .bar {
     height: 2px!important;
@@ -730,7 +735,7 @@ body.search{
             text-align: center;
             button {
                 display: inline-block!important;
-                width:150px;
+                width:40%;
                 &:first-child {
                     margin-right:10px;
                 }

@@ -7,7 +7,7 @@
             </ion-nav-buttons>
             <form id="header-search" ng-submit="doSearch(search.term)" name="searchForm">
               <i class="ion-search"></i>
-              <input class="search" name="search" id="search" type="text" placeholder="Search" ng-model="search.term" ng-minlength="1">
+              <input class="search" name="search" id="search" type="search" placeholder="Search" ng-model="search.term" ng-minlength="1">
               <a class="ion-close clear-search" ng-show="search.term.length" ng-click="search.term = ''"></a>
             </form>
         </ion-nav-bar>

@@ -7,8 +7,8 @@ angular.module('Quilava.controllers', [])
         $rootScope.controllerClass = toState.className;
       });
     })
-    .controller('AppCtrl', function($scope, $ionicModal, socket, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate, $window) {
-        $scope.domain = ENV.apiEndpoint;
+    .controller('AppCtrl', function($scope, $ionicModal, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate, $window) {
+        /*$scope.domain = ENV.apiEndpoint;
         $scope.isSearch = false;
         $scope.loginData = {};
         $scope.signupData = {};
@@ -76,9 +76,9 @@ angular.module('Quilava.controllers', [])
                 $scope.addSong(data.results[0].id, artist, title, image);
             });
         };
-        $scope.firstLetters = function(str) {
-            return ((str)?str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase()}):'');
-        };
+        $scope.firstLetters = function(str) {*/
+            //return ((str)?str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase()}):'');
+        /*};
         $scope.addSong = function(id, name, title, image) {
             if ($scope.currentUser && $scope.room) {
                 var confirmPopup = $ionicPopup.confirm({
@@ -336,10 +336,10 @@ angular.module('Quilava.controllers', [])
                     });
                 }
             });
-        };
+        };*/
     })
     .controller('BrowseCtrl', function($scope, $stateParams, LoadingService) {
-        $scope.browse = {};
+        /*$scope.browse = {};
         $scope.browse.id = $stateParams.browseId;
         $scope.browse.loaded = false;
         $scope.browse.sections = [{
@@ -364,18 +364,18 @@ angular.module('Quilava.controllers', [])
                     LoadingService.hideLoading();
                 }
             });
-        }
+        }*/
     })
     .controller('SearchCtrl', function($scope, $stateParams, LoadingService) {
-        if ($stateParams.searchId) {
+        /*if ($stateParams.searchId) {
             $scope.search.term = $stateParams.searchId;
             $scope.doSearch($scope.search.term);
         }else{
             $scope.search = {};
-        }
+        }*/
     })
-    .controller('ArtistCtrl', function($scope, $rootScope, $stateParams, $http, $ionicPopup, socket, UserService, Echonest) {
-        if (!$rootScope.artist) {
+    .controller('ArtistCtrl', function($scope, $rootScope, $stateParams, $http, $ionicPopup, UserService, Echonest) {
+        /*if (!$rootScope.artist) {
             $rootScope.artist = {};
         }
         function getArtistInfo(id) {
@@ -427,13 +427,13 @@ angular.module('Quilava.controllers', [])
         };
         $scope.convertSlug = function(name, slug) {
             return UserService.convertSlug(name, slug);
-        };
+        };*/
     })
     .controller('QueueCtrl', function() {
         
     })
-    .controller('PlayerCtrl', function($scope, socket, $ionicPopup, LoadingService, $cordovaGeolocation, cfpLoadingBar, $ionicScrollDelegate) {
-        LoadingService.showLoading();
+    .controller('PlayerCtrl', function($scope, $ionicPopup, LoadingService, $cordovaGeolocation, cfpLoadingBar, $ionicScrollDelegate) {
+        /*LoadingService.showLoading();
         cfpLoadingBar.start();
         cfpLoadingBar.inc();
         $scope.loaded = false;
@@ -500,10 +500,10 @@ angular.module('Quilava.controllers', [])
                 dist = dist * 0.8684
             }
             return Math.round(dist * 100) / 100;
-        };
+        };*/
     })
-    .controller('ChatCtrl', function($scope, $ionicScrollDelegate, socket, $ionicPopup, LoadingService, $window) {
-        if ($scope.room !== null) {
+    .controller('ChatCtrl', function($scope, $ionicScrollDelegate, $ionicPopup, LoadingService, $window) {
+        /*if ($scope.room !== null) {
             $scope.chats = null;
             var Chat = Parse.Object.extend("Chat");
             var query = new Parse.Query(Chat);
@@ -581,5 +581,5 @@ angular.module('Quilava.controllers', [])
         });
         $scope.scrollBottom = function() {
             $ionicScrollDelegate.scrollBottom();
-        };
+        };*/
     });

@@ -41,7 +41,8 @@
     "orchestrator": "~0.3.7",
     "ripple-emulator": "~0.9.24",
     "elementtree": "0.1.6",
-    "plist": "1.1.0"
+    "plist": "1.1.0",
+    "win-spawn": "^2.0.0"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -52,14 +53,6 @@
   "cordovaPlugins": [
     "org.apache.cordova.device",
     "org.apache.cordova.console",
-    "com.ionic.keyboard",
-    "org.apache.cordova.device",
-    "org.apache.cordova.console",
-    "com.ionic.keyboard",
-    "org.apache.cordova.console",
-    "org.apache.cordova.device",
-    "org.apache.cordova.device",
-    "com.ionic.keyboard",
     "com.ionic.keyboard"
   ]
 }

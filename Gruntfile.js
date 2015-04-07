@@ -1,4 +1,4 @@
-// Generated on 2015-02-16 using generator-ionic 0.7.0
+// Generated on 2015-04-07 using generator-ionic 0.7.1
 'use strict';
 
 var _ = require('lodash');
@@ -35,7 +35,7 @@ module.exports = function (grunt) {
     ngconstant: {
       options: {
         space: '  ',
-        wrap: '"use strict";\n\n {%= __ngModule %}',
+        wrap: '\'use strict\';\n\n {%= __ngModule %}',
         name: 'config',
         dest: '<%= yeoman.app %>/<%= yeoman.scripts %>/configuration.js'
       },
@@ -226,14 +226,6 @@ module.exports = function (grunt) {
       options: {
         //root: '<%= yeoman.app %>',
         noRebase: true
-      },
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/<%= yeoman.styles %>/main.css': [
-            '.temp/<%= yeoman.styles %>/**/*.css',
-            '<%= yeoman.app %>/<%= yeoman.styles %>/**/*.css'
-          ]
-        }
       }
     },
     htmlmin: {
@@ -524,10 +516,10 @@ module.exports = function (grunt) {
   });
   grunt.registerTask('run', function() {
     grunt.config('concurrent.ionic.tasks', ['ionic:run:' + this.args.join(), 'watch']);
-    return grunt.task.run(['compress', 'concurrent:ionic']);
+    return grunt.task.run(['init', 'concurrent:ionic']);
   });
   grunt.registerTask('build', function() {
-    return grunt.task.run(['compress', 'ionic:build:' + this.args.join()]);
+    return grunt.task.run(['init', 'ionic:build:' + this.args.join()]);
   });
 
   grunt.registerTask('init', [

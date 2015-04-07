@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 angular.module('filter', [])
   .filter('unique', function() {

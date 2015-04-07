@@ -3,26 +3,24 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title>"Quilava"</title>
+    <title>Quilava</title>
 
     <!-- build:css styles/vendor.css -->
-    <!-- <link rel="stylesheet" href="vendor/some.contrib.css"> -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/ionic/release/css/ionic.css" />
     <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
+    <link rel="stylesheet" href="bower_components/animate.css/animate.css" />
+    <link rel="stylesheet" href="bower_components/ionicons/css/ionicons.css" />
     <!-- endbower -->
     <!-- endbuild -->
+    <link href="styles/main.css" rel="stylesheet">
 
-    <!-- build:css({.tmp,app}) styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
-    <!-- endbuild -->
-  </head>
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="styles/ionic.app.css" rel="stylesheet">
+    -->
 
-  <body ng-app="Quilava" ng-class="controllerClass" ng-controller="BodyCtrl">
-    <ion-nav-view></ion-nav-view>
-
+    <!-- ionic/angularjs js -->
     <!-- build:js scripts/vendor.js -->
-    <!-- <script src="vendor/someContribJs.js"></script> -->
     <!-- bower:js -->
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
@@ -30,27 +28,32 @@
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="bower_components/ionic/release/js/ionic.js"></script>
     <script src="bower_components/ionic/release/js/ionic-angular.js"></script>
+    <script src="bower_components/ngCordova/dist/ng-cordova.js"></script>
     <script src="bower_components/parse-js-sdk/lib/parse.js"></script>
     <script src="bower_components/moment/moment.js"></script>
     <script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
-    <script src="bower_components/ngCordova/dist/ng-cordova.js"></script>
     <script src="bower_components/ngFx/dist/ngFx.js"></script>
     <script src="bower_components/ngstorage/ngStorage.js"></script>
     <script src="bower_components/angular-echonest/build/angular-echonest.js"></script>
     <script src="bower_components/ng-text-truncate/ng-text-truncate.js"></script>
+    <script src="bower_components/angular-socket-io/socket.js"></script>
+    <script src="bower_components/ng-lodash/build/ng-lodash.js"></script>
     <!-- endbower -->
-    <script src="bower_components/socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
 
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
-    
 
-        <!-- build:js scripts/scripts.js -->
-        <script src="scripts/configuration.js"></script>
-        <script src="scripts/filter.js"></script>
-        <script src="scripts/app.js"></script>
-        <script src="scripts/controllers.js"></script>
-        <!-- endbuild -->
-</body>
+    <!-- your app's js -->
+    <!-- build:js scripts/scripts.js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/controllers.js"></script>
+    <script src="scripts/configuration.js"></script>
+    <script src="scripts/filter.js"></script>
+    <!-- endbuild -->
+  </head>
+
+  <body ng-app="Quilava" ng-class="controllerClass" ng-controller="BodyCtrl">
+    <ion-nav-view></ion-nav-view>
+  </body>
 </html>

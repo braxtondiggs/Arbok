@@ -12,9 +12,9 @@
       "js": true,
       "html": true,
       "sass": true,
-      "ngroute": true,
-      "bootstrap": true,
-      "uibootstrap": true
+      "uirouter": true,
+      "bootstrap": false,
+      "uibootstrap": false
     }
   },
   "generator-ng-component": {

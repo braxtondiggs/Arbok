@@ -1,0 +1,27 @@
+//  * =========================================================== *
+//  <                            StylusHat                          >
+//  * =========================================================== *
+//
+// Made with Energy drinks & Beer in Washington, DC.
+// Handcrafted by Braxton Diggs, braxtondiggs.com
+// Works great with CSS Hat csshat.com
+
+// version: v1.0.0 (2015-04-08)
+
+// TABLE OF MIXINS:
+	// opacity
+	// transition
+
+@mixin sh-opacity($opacity) {
+	zoom: 1;
+  	opacity: $opacity;
+  	$opacity-ie: $opacity * 100;
+  	filter: alpha(opacity=$opacity-ie); //IE8
+ }
+ @mixin sh-transition($args...) {
+ 	-webkit-transition: $args;
+ 	-moz-transition: $args;
+  	-ms-transition: $args;
+  	-o-transition: $args;
+  	transition: $args;
+}

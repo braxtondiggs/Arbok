@@ -8,8 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <base href="/">
     <title></title>
+    <meta name="msapplication-tap-highlight" content="no" />
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="user-scalable=0, width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, minimal-ui" />
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
@@ -27,7 +28,7 @@
     <!-- endbuild -->
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
   </head>
-  <body ng-app="serverApp">
+  <body ng-app="serverApp" class="yo-anim-enabled">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -52,6 +53,7 @@
     <![endif]-->
     <!-- build:js({client,node_modules}) app/vendor.js -->
       <!-- bower:js -->
+      <script src="bower_components/modernizr/modernizr.js"></script>
       <script src="bower_components/jquery/dist/jquery.js"></script>
       <script src="bower_components/angular/angular.js"></script>
       <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
@@ -63,8 +65,15 @@
       <script src="bower_components/parse-js-sdk/lib/parse.js"></script>
       <script src="bower_components/videojs/dist/video-js/video.js"></script>
       <script src="bower_components/flat-ui/dist/js/flat-ui.js"></script>
+      <script src="bower_components/eventEmitter/EventEmitter.js"></script>
+      <script src="bower_components/eventie/eventie.js"></script>
+      <script src="bower_components/imagesloaded/imagesloaded.js"></script>
+      <script src="bower_components/enquire/dist/enquire.js"></script>
+      <script src="bower_components/jquery.transit/jquery.transit.js"></script>
       <!-- endbower -->
     <!-- endbuild -->
+        <script src="bower_components/owl.carousel/dist/owl.carousel.min.js"></script>
+        <script src="assets/javascript/waypoints.min.js"></script>
         <script src="bower_components/jquery-color/jquery.color.js"></script>
         <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
         <script src="bower_components/angular-youtube-player/build/angularYoutubePlayer.js"></script>
@@ -72,10 +81,13 @@
         <!-- build:js({.tmp,client}) app/app.js -->
         <script src="app/app.js"></script>
           <!-- injector:js -->
+          <script src="app/main/jquery.main.js"></script>
           <script src="app/main/main.controller.js"></script>
           <script src="app/main/main.js"></script>
           <script src="app/player/player.controller.js"></script>
           <script src="app/player/player.js"></script>
+          <script src="components/modal/modal.service.js"></script>
+          <script src="components/navbar/navbar.controller.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->
 </body>

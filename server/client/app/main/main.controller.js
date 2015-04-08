@@ -1,11 +1,9 @@
 'use strict';
 
 angular.module('serverApp')
-  .controller('MainCtrl', function ($scope, $http) {
-    $scope.awesomeThings = [];
-
-    $http.get('/api/things').success(function(awesomeThings) {
-      $scope.awesomeThings = awesomeThings;
-    });
+  .controller('MainCtrl', function ($scope, $rootScope) {
+  	$rootScope.$on('$includeContentLoaded', function() {
+  		angularContentLoaded();
+  	});
 
   });

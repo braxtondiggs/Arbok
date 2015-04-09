@@ -1,0 +1,98 @@
+#images {
+	width: 100%;
+	overflow: hidden;
+	height: 100%;
+	padding: 60px 40px;
+	position: relative;
+	@include opacity(0);
+	@include transition(opacity .4);
+	background-color: $bgSecondColor;
+	.item {
+		height: 100%;
+		figure {
+			height: 100%;
+			display: block;
+			position: relative;
+			background-size: contain;
+		}
+	}
+	.owl-stage-outer, .owl-stage, .owl-item {
+		height: 100%;
+	}
+	img {
+		display: block;
+		max-height: 100%;
+		max-width: 100%;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: auto;
+		height: auto;
+	}
+}
+
+
+.screenshot {
+	position: relative;
+	padding-bottom: 100px;
+	a {
+		display: block;
+		width: 25%;
+		float: left;
+		img {
+			width: 100%;
+			height: auto;
+		}
+	}
+}
+.gallery-hover {
+	position: relative;
+	overflow: hidden;
+	@include backface-visibility(hidden);
+	&:hover { 
+		&:after {
+			@include opacity(.95);
+			@include translate(0,0);
+			z-index: 1;
+		}
+		i {
+			@include opacity(1);
+			@include translate(0,0);
+			@include transition(opacity .3s .2s, transform .3s .2s);
+		}
+	}
+	&:after {
+		content: '';
+		width: 100%;
+		height: 100%;
+		display: block;
+		position: absolute;
+		left: 0;
+		top: 0;
+		background: #fff;
+		@include translate(40px, 40px);
+		@include opacity(0);
+		@include transition(opacity .3s, transform .3s .1s);
+		@include backface-visibility(hidden);
+	}
+	img {
+		@include transition(opacity .3s);
+	}
+	i {
+		position: absolute;
+		height: 50px;
+		width: 50px;
+		left: 50%;
+		top: 50%;
+		margin-left: -25px;
+		margin-top: -25px;
+		color: $highlightColor;
+		font-size: 40px;
+		line-height: 50px;
+		z-index: 2;
+		@include opacity(0);
+		@include transition(opacity .3s 0s, transform .3s 0s);
+		@include translate(20px, 20px);
+		text-align: center;
+	}
+}

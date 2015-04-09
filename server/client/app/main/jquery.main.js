@@ -159,15 +159,14 @@ var testimonials = {
 
 var home = {
 	initCarousel: function() {
-
 		var that = this;
-		var owl = $("#home-carousel");	
-		owl.on('onInitAfter',function(e){
+		var owl = $("#home-carousel");
+		owl.on('initialized.owl.carousel',function(e){
 			var controls = owl.find('.owl-controls');
 			controls.prependTo($(".controls-home"));
 		});			
 		
-		owl.on('onInitAfter',function(e){
+		owl.on('initialized.owl.carousel',function(e){
 			var controls = $(that).find('.owl-controls');
 			controls.prependTo($(".controls-home"));
 		});
@@ -177,7 +176,7 @@ var home = {
 			merge: true,
 			slideSpeed: 2000,
 			callbacks: true,
-			navText: ['<i class="arrow-left"></i>', '<i class="arrow-right"></i>'],
+			navText: ['<i class="fa fa-arrow-left"></i>', '<i class="fa fa-arrow-right"></i>'],
 			dots: true,
 			nav: true, 
 			responsiveClass: false,
@@ -303,6 +302,7 @@ var overlay = {
 		});
 	},
 	open: function(url, element) {
+		console.log(1);
 		var that = this;
 		if (url === undefined || url === '')
 			return false;
@@ -388,13 +388,13 @@ var navbar = {
 			}, 500);
 		});
 		
-		if($('#navbar').length === 0) {
+		/*if($('#navbar').length === 0) {
 			console.log('nie ma navbara');
 			$('#mini-navbar').addClass('show-mini-nav');
 			return;
-		}
+		}*/
 		
-		$(window).scroll( function() {
+		$(window).scroll(function() {
 			if($(window).scrollTop() > $('#navbar').height()){
 				$('#navbar').addClass('hide-nav');
 				$('#mini-navbar').addClass('show-mini-nav');
@@ -529,11 +529,8 @@ var mobileNav = {
 };
 
 	function waypoints_init() {
-		//console.log(jQuery.waypoints);
 		if(!ipad && !mobile) {
-			console.log(2);
-			//if(jQuery.waypoints) {
-				console.log(1);
+			if(jQuery.waypoints) {
 				var $obj=$('.yo-anim').each(function(){
 					var delay=$(this).data('animation-delay');
 					$(this).waypoint(function(){
@@ -550,7 +547,7 @@ var mobileNav = {
 						triggerOnce: true
 					});
 				});
-			//}
+			}
 		} else {
 			$('.yo-anim').removeClass('yo-anim');
 		}

@@ -1,21 +1,28 @@
-/**
- * App-wide Styles
- */
+$text-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
+$header-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
 
-.browsehappy {
-    margin: 0.2em 0;
-    background: #ccc;
-    color: #000;
-    padding: 0.2em 0;
-}
 @import '../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 // Component styles are injected through grunt
 // injector
 @import '_animations.scss';
 @import '_colors.scss';
-@import '_lesshat.scss';
 @import 'main/main.scss';
 @import 'player/player.scss';
+@import 'features/features.scss';
+@import 'image_gallery.scss';
+@import 'info_gallery.scss';
 @import 'modal/modal.scss';
 @import 'navbar/navbar.scss';
 // endinjector
+
+html {
+	font-size: 62.5%;
+  	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+body {
+	font-family: $text-font-family;
+  	font-size: 20px;
+  	line-height: 1.42857143;
+  	color: #333333;
+  	background-color: #ffffff;
+}

@@ -2,8 +2,12 @@
 
 angular.module('serverApp')
   .controller('MainCtrl', function ($scope, $rootScope) {
+  	var renderedcount = 0;
   	$rootScope.$on('$includeContentLoaded', function() {
-  		angularContentLoaded();
+  		renderedcount++;
+    	if (renderedcount <= 1) {
+  			angularContentLoaded();
+  		}
   	});
 
   });

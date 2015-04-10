@@ -20,12 +20,6 @@
 	var ipad = $.browser.ipad;
 
 
-$(document).ready(function(){
-	'use strict';
-	if(mobile || ipad) {
-		$('.feature-hover').removeClass('feature-hover');
-	}
-});
 
 function angularContentLoaded() {
 	'use strict';
@@ -55,7 +49,10 @@ function angularContentLoaded() {
 	navbar.show();
 	mobileNav.show();
 	video.init();
-	
+	loadEnquire();
+	if(mobile || ipad) {
+		$('.feature-hover').removeClass('feature-hover');
+	}
 }
 
 
@@ -377,7 +374,7 @@ var navbar = {
 		if (mobile)
 			return;
 		
-		$('#navbar li .home-page, #mini-navbar li .home-page, .footer-nav li .home-page').on('click', function(e) {
+		$('body').on('click', '#navbar li .home-page, #mini-navbar li .home-page, .footer-nav li .home-page', function(e) {
 			e.preventDefault();
 			var that = this; 
 			
@@ -551,43 +548,45 @@ var mobileNav = {
 		}
 	}
 
-enquire.register("screen and (max-width: 767px)", {
+function loadEnquire() {
+	enquire.register("screen and (max-width: 767px)", {
 
-    // OPTIONAL
-    // If supplied, triggered when a media query matches.
-    match : function() {
-		features.init();
-		team.init();
-	},      
-                                
-    // OPTIONAL
-    // If supplied, triggered when the media query transitions 
-    // *from a matched state to an unmatched state*.
-    unmatch : function() {
-		features.destroy();
-		team.destroy()
-	},    
-    
-    // OPTIONAL
-    // If supplied, triggered once, when the handler is registered.
-    setup : function() {
+	    // OPTIONAL
+	    // If supplied, triggered when a media query matches.
+	    match : function() {
+			features.init();
+			team.init();
+		},      
+	                                
+	    // OPTIONAL
+	    // If supplied, triggered when the media query transitions 
+	    // *from a matched state to an unmatched state*.
+	    unmatch : function() {
+			features.destroy();
+			team.destroy()
+		},    
+	    
+	    // OPTIONAL
+	    // If supplied, triggered once, when the handler is registered.
+	    setup : function() {
 
-	},    
-                                
-    // OPTIONAL, defaults to false
-    // If set to true, defers execution of the setup function 
-    // until the first time the media query is matched
-    deferSetup : true,
-                                
-    // OPTIONAL
-    // If supplied, triggered when handler is unregistered. 
-    // Place cleanup code here
-    destroy : function() {}
-      
-});
+		},    
+	                                
+	    // OPTIONAL, defaults to false
+	    // If set to true, defers execution of the setup function 
+	    // until the first time the media query is matched
+	    deferSetup : true,
+	                                
+	    // OPTIONAL
+	    // If supplied, triggered when handler is unregistered. 
+	    // Place cleanup code here
+	    destroy : function() {}
+	      
+	});
+}
 
 var video = {
-	videoUrl : 'http://www.vimeo.com/50297768',
+	videoUrl : 'http://www.vimeo.com/118917181',
 	endpoint : 'http://www.vimeo.com/api/oembed.json',
 	callback : 'video.embedVideo',
 	url : '',

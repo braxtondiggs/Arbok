@@ -1,13 +1,12 @@
 'use strict';
 
 angular.module('serverApp')
-  .controller('MainCtrl', function ($scope, $rootScope) {
-  	var renderedcount = 0;
-  	$rootScope.$on('$includeContentLoaded', function() {
-  		renderedcount++;
-    	if (renderedcount = 10) {
-  			angularContentLoaded();
-  		}
-  	});
-
-  });
+.controller('MainCtrl', ['$scope', function ($scope) {
+	var renderedcount = 0;
+	$scope.$on('$includeContentLoaded', function() {
+		renderedcount++;
+		if (renderedcount === 10) {
+			angularContentLoaded();
+		}
+	});
+}]);

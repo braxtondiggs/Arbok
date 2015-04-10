@@ -29,6 +29,7 @@
 				@include scale(1);
 				@include transition(color 0.3s, opacity .3s, transform .3s .1s);
 				-webkit-backface-visibility: hidden; 
+				white-space: nowrap;
 				&:hover { 
 					color: $textColor;
 					opacity: 0.3;

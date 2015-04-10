@@ -520,7 +520,9 @@ module.exports = function (grunt) {
         files: {
           '<%= yeoman.client %>/app/app.scss': [
             '<%= yeoman.client %>/{app,components}/**/*.{scss,sass}',
-            '!<%= yeoman.client %>/app/app.{scss,sass}'
+            '!<%= yeoman.client %>/app/app.{scss,sass}',
+            '!<%= yeoman.client %>/app/_animations.{scss,sass}',
+            '!<%= yeoman.client %>/app/_responsive.{scss,sass}'
           ]
         }
       },

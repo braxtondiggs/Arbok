@@ -23,7 +23,6 @@
     "owl.carousel": "*",
     "jquery.transit": "~0.9.12",
     "bootstrap-sass": "~3.3.4",
-    "fontello": "~5.2.0",
     "simple-line-icons": "~1.0.0"
   },
   "devDependencies": {

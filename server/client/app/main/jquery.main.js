@@ -216,9 +216,7 @@ var overlay = {
 			
 	initCarousel: function(current) {
 		var owl = $('#images');
-		
-		owl.on('onInitAfter',function(e){
-				
+		owl.on('initialized.owl.carousel',function(e){
 			var controls = $(this).find('.owl-controls');
 			controls.prependTo($(".controls"));
 			if(current !== undefined)
@@ -282,7 +280,7 @@ var overlay = {
 				slideSpeed: 2000,
 				dots: false,
 				callbacks: true,
-				navText: ['<i class="arrow-left"></i>', '<i class="arrow-right"></i>'],
+				navText: ['<i class="fa fa-arrow-left"></i>', '<i class="fa fa-arrow-right"></i>'],
 				responsiveClass: false,
 			});
 		});
@@ -350,7 +348,7 @@ var overlay = {
 		$('.gallery-wrapper').transition({x: -90, opacity: 0}, function() {
 			$(this).removeClass('overlay-active').hide();
 			if($('#images').data('owlCarousel')) {
-				$('#images').data('owlCarousel').destroy();
+				$('#images').remove();
 			} 
 			$(document.documentElement).off('keyup.portfolio');
 			that.isLarge = false;
@@ -358,14 +356,6 @@ var overlay = {
 			$(".gallery-wrapper").removeClass('full-image');
 			$('.gallery-wrapper').removeClass('large-image');
 		});
-	},
-	destroy: function() {
-		var owl = $("#images");
-			//owl.on('onResponsiveAfter.destroy', function(e){
-			owl.data('owlCarousel').destroy();
-			//owl.off('onResponsiveAfter.destroy');
-		//});
-		
 	}
 };
 

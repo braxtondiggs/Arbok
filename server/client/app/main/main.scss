@@ -1,4 +1,3 @@
-@import '../_colors.scss';
 #home {
     position: relative;
     color: $secondHeaderColor;
@@ -99,7 +98,6 @@
         }
     }
 }
-
 .controls-home {
     position: relative;
     z-index: 99;
@@ -117,24 +115,58 @@
         line-height: 50px;
     }
 }
-@-ms-viewport{ width: auto !important }
+@-ms-viewport{
+    width: auto !important
+}
 
-div, section, article, span, li, a, a:focus, a:active, input:focus, textarea:focus, input:active, textarea:active { outline: transparent !important; }
+div, section, article, span, li, a, a:focus, a:active, input:focus, textarea:focus, input:active, textarea:active {
+    outline: transparent !important;
+}
 
-body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden;}
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
 a { 
-  &:hover, &:focus { text-decoration: none; outline: transparent !important;}
+    &:hover, &:focus {
+        text-decoration: none;
+        outline: transparent !important;
+    }
 }
-ul { padding: 0}
-li { list-style-type: none; }
-.section-header { width: 100%; position: relative; top: 0; padding-bottom: 100px;
-  .pull-left, .pull-right { margin-left: -20px; margin-top: -35px; }
-  h1 { font-size: 150px; text-transform: capitalize; color: $headerColor; margin-top: 0px; margin-bottom: 10px; }
+ul {
+    padding: 0;
 }
-.section-header-out { margin-top: -100px; 
-  .section-header { overflow: hidden; padding-bottom: 100px !important;
-    h1 { margin-bottom: -25px; margin-top: -25px;}
-  }
+li {
+    list-style-type: none;
+}
+.section-header {
+    width: 100%;
+    position: relative;
+    top: 0;
+    padding-bottom: 100px;
+    .pull-left, .pull-right {
+        margin-left: -20px;
+        margin-top: -35px;
+    }
+  h1 {
+    font-size: 150px;
+    text-transform: capitalize;
+    color: $headerColor;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+}
+.section-header-out {
+    margin-top: -100px; 
+    .section-header {
+        overflow: hidden;
+        padding-bottom: 100px !important;
+        h1 {
+            margin-bottom: -25px;
+            margin-top: -25px;
+        }
+    }
 }
 h1 { font-size: 48px; margin-top: 45px; margin-bottom: 45px; font-weight: 400; }
 h2 { font-size: 36px; margin-top: 45px; margin-bottom: 45px; font-weight: 400; }
@@ -144,36 +176,322 @@ h5 { font-size: 16px; margin-top: 20px; margin-bottom: 10px; font-weight: 400; }
 h6 { font-size: 14px; margin-top: 20px; margin-bottom: 10px; font-weight: 400; }
 p { font-size: 20px; line-height: 1.5em; }
 
-
-.section-color { background: $bgSecondColor; margin-bottom: 100px; margin-top: -100px; }
-.light-section { margin-bottom: 100px; margin-top: -100px; overflow: hidden; padding-bottom: 100px;}
-.light-header { color: $secondHeaderColor !important}
-//.dark-header { color: desaturate(darken(@bgSecondColor, 5%), 10%) !important}
-
-.home-carousel-wrapper { opacity: 0; }
+.section-color {
+    background: $bgSecondColor;
+    margin-bottom: 100px;
+    margin-top: -100px;
+}
+.light-section {
+    margin-bottom: 100px;
+    margin-top: -100px;
+    overflow: hidden;
+    padding-bottom: 100px;
+}
+.light-header {
+    color: $secondHeaderColor !important;
+}
+.dark-header {
+    color: desaturate(darken($bgSecondColor, 5%), 10%) !important;
+}
+.home-carousel-wrapper {
+    opacity: 0;
+}
 
 //Buttons
 //-----------------------------------------
-/*.btn-radius-none { border-radius: 0 !important}
+.btn-default, .btn-color, .btn-outline-light, .btn-outline-dark, .btn-outline-color {
+    @include transition(background-color .3s, border-color .3s, color .3s);
+}
+.btn-default {
+    color: #ffffff;
+    background-color: #2a2a30;
+    border-color: #2a2a30;
+}
+.btn-lg, .btn-group-lg > .btn {
+    padding: 10px 60px;
+    font-size: 28px;
+    &:hover {
+        color: #ffffff;
+        background-color: #17171a;
+        border-color: #0d0d0f;
+    }
+}
+.btn-radius-none {
+    border-radius: 0 !important;
+}
 
 //Carousel Pagination
 //-----------------------------------------
-.owl-dots { margin-top: 40px;}
-
+.owl-dots {
+    margin-top: 40px;
+}
+.owl-prev, .owl-next {
+    @include opacity(1);
+    @include transition(color 0.3s, opacity 0.3s .1s, transform .3s .1s);
+    color: $textColor2;
+    z-index: 10;
+    @include scale(1);
+    -webkit-backface-visibility: hidden;
+    &:hover {
+        color: $textColor;
+        @include opacity(0.3);
+        @include scale(0.95);
+    }
+}
 //Form
 //-----------------------------------------
-.message-success { position: absolute; top: 50%; margin: 15px; margin-top: -30px; width: 200px; height: 60px; opacity: 0;
-  i { color: #fff; font-size: 30px; display: block; }
-}
-.message-error { border: 2px solid #E43832 !important; 
-//.lh-placeholder(#E43832) !important; background: #fff !important;
-}
-.button-transparent {@include sh-opacity(0) !important}
-.button-submit { position: relative;
-  .button-send { 
-    @include sh-opacity(1); @include sh-transition(opacity .3s);
+.message-success {
+    position: absolute;
+    top: 50%;
+    margin: 15px;
+    margin-top: -30px;
+    width: 200px;
+    height: 60px;
+    opacity: 0;
+    i {
+        color: #fff;
+        font-size: 30px;
+        display: block;
     }
-}*/
+}
+.message-error {
+    border: 2px solid #E43832 !important;
+    @include placeholder(#E43832);
+    background: #fff !important;
+}
+.button-transparent {
+    @include opacity(0);
+}
+.button-submit {
+    position: relative;
+    .button-send {
+        @include opacity(1);
+        @include transition(opacity .3s);
+    }
+}
 
+//Background Figure
+//-----------------------------------------
+.bg-polygon {
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    width: 100%;
+    polygon {
+        fill: $bgSecondColor;
+    }
+}
+#bg-triangle-color-xs {
+    height: 25px;
+    bottom: -23px; 
+    polygon {
+        fill: desaturate(darken($bgSecondColor, 5%), 10%);
+    }
+}
+#bg-triangle-bottom, #bg-triangle-bottom2 {
+    bottom: -49px;
+    z-index: 2
+}
+#bg-triangle-bottom2 polygon {
+    fill: desaturate(darken($bgSecondColor, 5%), 10%);
+    z-index: 2;
+}
+#bg-triangle2 {
+    bottom: -49px;
+}
+#bg-polygon {
+    top: 0;
+    height: 100%;
+    @include transition(height 0.5s);
+}
+#bg-triangle-top { top: -34px; }
+#bg-triangle-top2 { top: -79px; }
+#bg-triangle-top3 { top: -49px; }
+#bg-triangle, #bg-triangle-xs {
+    height: 25px;
+    bottom: -23px;
+    z-index: 1;
+}
+#bg-bottom {
+    bottom: -79px;
+}
 
+//Blockquote
+//-----------------------------------------
+blockquote {
+    border-left: none;
+    font-style: italic;
+    font-size: 20px;
+    padding: 0;
+}
 
+//Highlights
+//-----------------------------------------
+.highlight-color {
+    color: $highlightColor2;
+    font-weight: 400;
+}  
+.highlight-solid {
+    color: $textColor2;
+    background: $bgSecondColor;
+    padding: 0 2px;
+} 
+.highlight-outline {
+    color: $textColor;
+    border: 1px solid $textColor;
+    padding: 0 2px;
+}
+
+//Dropcap
+//-----------------------------------------
+.dropcap {
+    color: $highlightColor;
+    font-size: 2em;
+    float: left;
+    padding: 0 10px 0 0;
+    line-height: 1.5em;
+}
+
+//Tooltip
+//-----------------------------------------
+.tooltip-inner {
+    text-transform: uppercase;
+    border-radius: 0;
+    background: $tooltip-bg;
+    font-weight: 400;
+}
+
+//Notice
+//-----------------------------------------
+.notice {
+    background: transparent;
+    padding: 30px;
+    color: $textColor;
+    border: 1px solid $textColor;
+    overflow: hidden;
+    margin-bottom: 30px; 
+    .header-color {
+        color: $highlightColor;
+    }
+    .header-color2 {
+        color: $highlightColor2;
+    } 
+    h1,h2,h3,h4,h5,h6 {
+        margin-top: 0 !important;
+        color: $textColor;
+    }
+    .text-notice {
+        margin-bottom: 15px;
+    }
+    &.notice-outline-light { 
+        h1,h2,h3,h4,h5,h6 {
+            color: $textColor !important;
+        }
+    }
+     &.notice-align-center {
+        text-align: center;
+    }
+    &.notice-none-border {
+        border: none;
+        background: transparent;
+        box-shadow: initial;
+    }
+    &.notice-color {
+        background: $bgSecondColor;
+        color: $textColor2;
+        overflow: hidden;
+        h1,h2,h3,h4,h5,h6 {
+            color: $textColor2 !important;
+        }
+        .button {
+            float: right;
+        }
+    }
+     &.notice-vertical {
+        display: table;
+        .text-notice {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .button {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 15px;
+        }
+    }
+}
+
+//Spinner
+//-----------------------------------------
+$color: #ffffff;
+$size: 30px;
+$speed: 0.75s;
+$thickness: 8px; // Odd numbers created a "wobble" effect.
+
+@-webkit-keyframes rotate-forever {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@-moz-keyframes rotate-forever {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotate-forever {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner {
+    @include animation-duration($speed);
+    @include animation-iteration-count(infinite);
+    @include animation-name(rotate-forever);
+    @include animation-timing-function(linear);
+    width: $size;
+    height: $size;
+    border: $thickness solid $color;
+    border-right-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+}
+.loading-spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -$size/2 0 0 -$size/2;
+}

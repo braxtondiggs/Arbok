@@ -125,8 +125,7 @@ var testimonials = {
 
 		var that = this;
 		var owl = $("#testimonial-carousel");
-			
-		owl.on('onInitAfter',function(e){
+		owl.on('initialized.owl.carousel',function(e){
 			var controls = $(this).find('.owl-controls');
 			controls.prependTo($(".controls-testimonials"));
 		});
@@ -140,7 +139,7 @@ var testimonials = {
 			slideSpeed: 2000,
 			dots: true,
 			callbacks: true,
-			navText: ['<i class="arrow-left"></i>', '<i class="arrow-right"></i>'],
+			navText: ['<i class="fa fa-arrow-left"></i>', '<i class="fa fa-arrow-right"></i>'],
 			responsiveClass:true,
 			responsive:{
 				0:{
@@ -302,7 +301,6 @@ var overlay = {
 		});
 	},
 	open: function(url, element) {
-		console.log(1);
 		var that = this;
 		if (url === undefined || url === '')
 			return false;
@@ -366,10 +364,10 @@ var overlay = {
 	},
 	destroy: function() {
 		var owl = $("#images");
-			owl.on('onResponsiveAfter.destroy', function(e){
+			//owl.on('onResponsiveAfter.destroy', function(e){
 			owl.data('owlCarousel').destroy();
-			owl.off('onResponsiveAfter.destroy');
-		});
+			//owl.off('onResponsiveAfter.destroy');
+		//});
 		
 	}
 };

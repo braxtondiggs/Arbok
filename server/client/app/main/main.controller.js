@@ -5,7 +5,7 @@ angular.module('serverApp')
   	var renderedcount = 0;
   	$rootScope.$on('$includeContentLoaded', function() {
   		renderedcount++;
-    	if (renderedcount <= 1) {
+    	if (renderedcount = 10) {
   			angularContentLoaded();
   		}
   	});

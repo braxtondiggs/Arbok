@@ -8,11 +8,19 @@ $header-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
 @import '_colors.scss';
 @import 'main/main.scss';
 @import 'player/player.scss';
+@import 'about/about.scss';
+@import 'contact/contact.scss';
 @import 'features/features.scss';
+@import 'footer/footer.scss';
+@import 'gallery/gallery.scss';
 @import 'image_gallery.scss';
-@import 'info_gallery.scss';
 @import 'modal/modal.scss';
 @import 'navbar/navbar.scss';
+@import 'newsletter/newsletter.scss';
+@import 'social-media/social-media.scss';
+@import 'team/team.scss';
+@import 'testimonials/testimonials.scss';
+@import 'video/video.scss';
 // endinjector
 
 html {

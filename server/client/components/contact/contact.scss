@@ -1,0 +1,57 @@
+#contact {
+	margin-bottom: 0 !important;
+}
+#contact-form {
+	overflow: hidden; 
+	.input-wrapper {
+		padding: 15px;
+	}
+	> .input-wrapper {
+		width: 50%;
+		float: left; 
+		input {
+			background: $inputColor;
+			border: 2px solid $inputColor;
+			height: 60px;
+			padding: 15px;
+			@include placeholder($inputTxtColor);
+			font-size: 26px;
+			font-weight: 300;
+			width: 100%;
+			border-radius: 6px;
+		}
+	}
+	input[type=text], textarea {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+	}
+	.message {
+		width: 100%;
+	}
+	textarea {
+		background: $inputColor;
+		border: 2px solid $inputColor;
+		width: 100%;
+		border-radius: 6px; 
+		resize: none;
+		min-height: 190px;
+		padding: 15px;
+		@include placeholder($inputTxtColor);
+		font-size: 26px;
+		font-weight: 300;
+	}
+	.btn-submit {
+		width: 100%;
+		overflow: hidden;
+		text-align: center;
+		.button-send {
+			margin: 15px;
+			font-weight: 100;
+			letter-spacing: 1px;
+		}
+	}
+	.message-success {
+		right: 0;
+	}
+}

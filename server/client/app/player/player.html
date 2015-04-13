@@ -1,6 +1,6 @@
 <div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)" ng-hide="!queueList.length"></div>
 <video autoplay loop id="bgvid" ng-if="isBox">
-    <source src="assets/videos/box-background.mp4" type="video/mp4">
+    <source ng-src="assets/videos/box-background.mp4" type="video/mp4">
 </video>
 <div id="popUps">
     <div id="currentlyPlaying">

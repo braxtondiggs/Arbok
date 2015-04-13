@@ -24,7 +24,8 @@
     "jquery.transit": "~0.9.12",
     "bootstrap-sass": "~3.3.4",
     "ngstorage": "~0.3.0",
-    "angularjs-geolocation": "~0.1.1"
+    "angularjs-geolocation": "~0.1.1",
+    "simple-line-icons": "~1.0.0"
   },
   "devDependencies": {
     "angular-mocks": ">=1.2.*",

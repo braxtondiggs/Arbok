@@ -1,7 +1,11 @@
 $text-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
 $header-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
+$simple-line-font-path: "../bower_components/simple-line-icons/fonts/" !default;
+$fa-font-path: "../bower_components/font-awesome/fonts/" !default;
 
 @import '../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+@import '../bower_components/font-awesome/scss/font-awesome.scss';
+@import '../bower_components/simple-line-icons/scss/simple-line-icons.scss';
 // Component styles are injected through grunt
 // injector
 @import '_colors.scss';

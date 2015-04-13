@@ -496,7 +496,9 @@ p { font-size: 20px; line-height: 1.5em; }
         display: block;
     }
 }
-.message-error {
+.message-error,
+#contact-form input.ng-invalid:not(.ng-untouched), textarea.ng-invalid:not(.ng-untouched),
+#newsletter input.ng-invalid:not(.ng-untouched)  {
     border: 2px solid #E43832 !important;
     @include placeholder(#E43832);
     background: #fff !important;

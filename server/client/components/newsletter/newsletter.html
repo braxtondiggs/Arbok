@@ -5,12 +5,12 @@
 				<header>
 					<h2>Sign up to our newsletter!</h2>
 				</header>
-				<form name="newsletter-form" id="newsletter-form" action="#" method="POST" >
+				<form name="newsletter-form" id="newsletter-form" ng-submit="newsletterAdd()">
 					<div class="inputs">
-						<input type="text"  placeholder="Fill up email" class="pull-right button-send btn-lg button-mail newsletter-form form-email-error" name="newsletter[form-email]" id="form-email"/>
+						<input type="text" placeholder="Enter your email for the latest MVPlayer news" class="pull-right button-send btn-lg button-mail newsletter-form form-email-error" ng-model="newsletter.email" name="email" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" required/>
 						<div class="button-submit">
 							<div class="" style="display: block; position: relative;">
-								<input type="submit" value="Submit" class="btn btn-default pull-right button-send btn-lg"/>
+								<input type="submit" value="Subscribe" class="btn btn-default pull-right button-send btn-lg"/>
 								<div class="message-success alert-success alert hidden"><i class="fa fa-check"></i></div>
 							</div>
 						</div>
@@ -27,3 +27,22 @@
 		<polygon points="0,0 100,0 100,100"></polygon>
 	</svg>
 </section>
+<script type="text/ng-template" id="newsLetterTmpl">
+	<div class="newslettermodal">
+		<h1>Online Player</h1>
+		<p>Easily send any user on any platform dynamic push notifications using our simple API. 
+No more running your own servers or dealing with platform protocols</p>
+		<p><strong>Coming late 2015</strong></p>
+		<form name="newsletter-form" id="newsletter-form" ng-submit="newsletterAdd()">
+			<div class="inputs">
+				<input type="text" placeholder="Enter your email" class="pull-right button-send btn-lg button-mail newsletter-form form-email-error" ng-model="newsletter.email" name="email" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" required/>
+				<div class="button-submit">
+					<div class="" style="display: block; position: relative;">
+						<input type="submit" value="Subscribe" class="btn btn-default pull-right button-send btn-lg"/>
+						<div class="message-success alert-success alert hidden"><i class="fa fa-check"></i></div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</script>

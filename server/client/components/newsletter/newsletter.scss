@@ -5,6 +5,8 @@
 	h2 {
 		color: $secondHeaderColor;
 	}
+}
+#newsletter, .ngdialog-newsletter{
 	#newsletter-form {
 		margin-top: 45px;
 		margin-bottom: 45px;
@@ -57,5 +59,23 @@
 		font-size: 28px;
 		cursor: default;
 		color: $textColor;
+		width:500px;
+		padding:10px;
+	}
+}
+.newslettermodal {
+	text-align: center;
+	h1 {
+		margin:10px 0 40px;
+	}
+	p {
+		font-size: 14px;
+		line-height: normal;
+		margin: 15px 0;
+	}
+	.button-mail,
+	.button-submit {
+		display:block!important;
+		width:98%;
 	}
 }

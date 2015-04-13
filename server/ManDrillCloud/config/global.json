@@ -1,0 +1,14 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "MVPlayer": {
+      "applicationId": "GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k",
+      "masterKey": "zksioMSekJ2a6vctzq6LvFhptRCc0Dn64Qpsv1GJ"
+    },
+    "_default": {
+      "link": "MVPlayer"
+    }
+  }
+}

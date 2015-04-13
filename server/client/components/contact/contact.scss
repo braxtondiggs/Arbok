@@ -20,6 +20,10 @@
 			width: 100%;
 			border-radius: 6px;
 		}
+		&.full-width {
+			width:100%;
+			float:none;
+		}
 	}
 	input[type=text], textarea {
 		-webkit-appearance: none;

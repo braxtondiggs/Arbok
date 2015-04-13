@@ -1,4 +1,7 @@
 <div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)" ng-hide="!queueList.length"></div>
+<video autoplay loop id="bgvid" ng-if="isBox">
+    <source src="assets/videos/box-background.mp4" type="video/mp4">
+</video>
 <div id="popUps">
     <div id="currentlyPlaying">
         <div class="album-cover">
@@ -44,9 +47,9 @@
     </div>
 </script>
 <script type="text/ng-template" id="boxSetupTmpl">
-    <h3>Lets get setup...</h3>
-    <p>Please goto http://{{domain}}/player/code and enter the code below:</p>
-    <h2 class="boxCode">{{boxCode}}<h2>
+    <h1>Lets Get Setup...</h1>
+    <p>Inside your MVPlayer mobile app, goto Settings > Enter New MVPlayer and enter the code below:</p>
+    <h2 class="boxCode">{{$storage.boxCode}}<h2>
 </script>
 <script type="text/ng-template" id="playerSetupTmpl">
     <form id="theForm" class="simform" autocomplete="off">

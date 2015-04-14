@@ -1,0 +1,36 @@
+#video-section {
+	text-align: center;
+	color: $secondHeaderColor;
+	.video-section {
+		padding-bottom: 40px;
+	}
+	.video-content {
+		width: 100%;
+		position: relative;
+	}
+	iframe {
+		width: 100%;
+	}
+	.play {
+		position: absolute;
+		top: -40px;
+		left: 50%;
+		margin-left: -30px;
+		border-top: 40px solid transparent;
+		border-bottom: 40px solid transparent;
+		border-left: 60px solid $textColor;
+		width: 0;
+		height: 0; 
+		&:after {
+			content: '';
+			width: 0;
+			height:  0;
+			position: absolute;
+			top: -32px;
+			left: -56px;
+			border-top: 32px solid transparent;
+			border-bottom: 32px solid transparent;
+			border-left: 49px solid $textColor2;
+		}
+	}
+}

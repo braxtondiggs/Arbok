@@ -1,16 +1,41 @@
-/**
- * App-wide Styles
- */
+$text-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
+$header-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
+$simple-line-font-path: "../bower_components/simple-line-icons/fonts/" !default;
+$fa-font-path: "../bower_components/font-awesome/fonts/" !default;
 
-.browsehappy {
-    margin: 0.2em 0;
-    background: #ccc;
-    color: #000;
-    padding: 0.2em 0;
-}
-
+@import '../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+@import '../bower_components/font-awesome/scss/font-awesome.scss';
+@import '../bower_components/simple-line-icons/scss/simple-line-icons.scss';
 // Component styles are injected through grunt
 // injector
+@import '_colors.scss';
 @import 'main/main.scss';
 @import 'player/player.scss';
+@import 'player/setup.scss';
+@import 'about/about.scss';
+@import 'contact/contact.scss';
+@import 'features/features.scss';
+@import 'footer/footer.scss';
+@import 'gallery/gallery.scss';
+@import 'image_gallery.scss';
+@import 'navbar/navbar.scss';
+@import 'newsletter/newsletter.scss';
+@import 'social-media/social-media.scss';
+@import 'team/team.scss';
+@import 'testimonials/testimonials.scss';
+@import 'video/video.scss';
 // endinjector
+
+html {
+	font-size: 62.5%;
+  	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+body {
+	font-family: $text-font-family;
+  	font-size: 20px;
+  	line-height: 1.42857143;
+  	color: #333333;
+  	background-color: #ffffff;
+}
+@import '_animations.scss';
+@import '_responsive.scss';

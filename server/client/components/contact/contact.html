@@ -1,0 +1,32 @@
+<section id="contact" class="main-section light-section">
+	<header class="section-header clearfix">
+		<h1 class="pull-right dark-header">contact</h1>
+	</header>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1 contact-form">
+				<form name="contact-form" id="contact-form" ng-submit="contactUs()">
+					<div class="input-wrapper">
+						<input class="contact-form form-name-error" type="text" placeholder="name" ng-model="contact.name" name="name" ng-minlength="2" required><!--<div ng-show="myFormNg.name.$invalid">You must enter a valid name.</div>-->
+					</div>
+					<div class="input-wrapper">
+						<input class="contact-form form-subject-error" type="text" placeholder="subject" ng-model="contact.subject" name="subject" ng-minlength="2" required>
+					</div>
+					<div class="clearfix"></div>
+					<div class="input-wrapper full-width">
+						<input class="contact-form form-subject-error" type="email" placeholder="email" ng-model="contact.email "name="email" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" required>
+					</div>
+					<div class="message">
+						<div class="input-wrapper">
+							<textarea class="contact-form form-message-error" placeholder="message" ng-model="contact.msg" name="msg" ng-minlength="2" required></textarea>					
+						</div>
+					</div>
+					<div class="button-submit btn-submit">
+						<input type="submit" value="Send" class="btn btn-default pull-right button-send btn-lg" ng-disabled="contact-form.$invalid">
+						<div class="message-success alert-success alert hidden" style="position: absolute"><i class="fa fa-check"></i></div>
+					</div>	
+				</form>
+			</div>
+		</div>
+	</div>
+</section>

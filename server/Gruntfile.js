@@ -100,10 +100,11 @@ module.exports = function (grunt) {
           '{.tmp,<%= yeoman.client %>}/{app,components}/**/*.js',
           '!{.tmp,<%= yeoman.client %>}{app,components}/**/*.spec.js',
           '!{.tmp,<%= yeoman.client %>}/{app,components}/**/*.mock.js',
-          '<%= yeoman.client %>/assets/images/{,*//*}*.{png,jpg,jpeg,gif,webp,svg}'
+          '<%= yeoman.client %>/assets/images/{,*//*}*.{png,jpg,jpeg,gif,webp,svg}',
+          '<%= yeoman.client %>/assets/videos/{,*//*}*.mp4'
         ],
         options: {
-          livereload: false
+          livereload: true
         }
       },
       express: {
@@ -112,7 +113,7 @@ module.exports = function (grunt) {
         ],
         tasks: ['express:dev', 'wait'],
         options: {
-          livereload: false,
+          livereload: true,
           nospawn: true //Without this option specified express won't be reloaded
         }
       }
@@ -223,7 +224,7 @@ module.exports = function (grunt) {
       target: {
         src: '<%= yeoman.client %>/index.html',
         ignorePath: '<%= yeoman.client %>/',
-        exclude: [/bootstrap-sass-official/, /bootstrap.js/, '/json3/', '/es5-shim/', /bootstrap.css/, /font-awesome.css/ ]
+        exclude: [/bootstrap-sass-official/, /bootstrap.js/, '/json3/', '/es5-shim/', /bootstrap.css/, /font-awesome.css/, /simple-line-icons/ ]
       }
     },
 
@@ -259,7 +260,8 @@ module.exports = function (grunt) {
       options: {
         assetsDirs: [
           '<%= yeoman.dist %>/public',
-          '<%= yeoman.dist %>/public/assets/images'
+          '<%= yeoman.dist %>/public/assets/images',
+          '<%= yeoman.dist %>/public/assets/videos'
         ],
         // This is so we update image references in our ng-templates
         patterns: {
@@ -356,6 +358,7 @@ module.exports = function (grunt) {
             'assets/images/{,*/}*.{webp}',
             'assets/fonts/**/*',
             'assets/javascript/**/*',
+            'assets/videos/**/*',
             'index.html'
           ]
         }, {
@@ -520,7 +523,9 @@ module.exports = function (grunt) {
         files: {
           '<%= yeoman.client %>/app/app.scss': [
             '<%= yeoman.client %>/{app,components}/**/*.{scss,sass}',
-            '!<%= yeoman.client %>/app/app.{scss,sass}'
+            '!<%= yeoman.client %>/app/app.{scss,sass}',
+            '!<%= yeoman.client %>/app/_animations.{scss,sass}',
+            '!<%= yeoman.client %>/app/_responsive.{scss,sass}'
           ]
         }
       },

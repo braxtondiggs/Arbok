@@ -17,12 +17,17 @@
 
     <ion-side-menu side="left" class="dark-menu">
         <header class="bar bar-header bar-stable">
-            <div class="profile" ng-show="currentUser._serverData">
-                <img class="img-circle" alt="" ng-src="{{currentUser.get('image')._url}}" ng-if="currentUser.get('image')._url"/>
-                <div class="img-circle no-image" ng-if="!currentUser.get('image')._url">
-                    <span>{{firstLetters(currentUser.get('name'))}}</span>
+            <a class="settings" nav-clear menu-close href="#/app/settings">
+                <i class="ion-gear-b"></i>
+            </a>
+            <div class="profile" ng-show="currentUser._serverData" ng-click="newImage()">
+                <div class="img-circle">
+                    <img alt="" ng-src="{{currentUser.get('image')._url}}" ng-if="currentUser.get('image')._url"/>
+                    <img alt="" ng-src="/images/missingPerson.jpg" ng-if="!currentUser.get('image')._url"/>
+                    <i class="icon ion-plus-circled"><i>
                 </div>
                 <h1 class="title">{{currentUser.get('name')}}</h1>
+                <h3 class="info">889 Songs | 2 Followers</h3>
             </div>
         </header>
         <ion-content class="has-header">
@@ -32,6 +37,9 @@
                 </ion-item>
                 <ion-item menu-close href="#app/search/" ng-click="setSearchBar(true)">
                     <i class="ion-search"></i>Search
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/dash">
+                    <i class="ion-home"></i>Dashboard
                 </ion-item>
                 <ion-item nav-clear menu-close href="#/app/browse">
                     <i class="ion-folder"></i>Browse
@@ -43,10 +51,7 @@
                     <i class="ion-chatbubbles"></i>Chat
                 </ion-item>
                 <ion-item nav-clear menu-close href="#/app/music">
-                    <i class="ion-headphone"></i>Your Music
-                </ion-item>
-                <ion-item nav-clear menu-close href="#/app/settings">
-                    <i class="ion-gear-b"></i>Settings
+                    <i class="ion-headphone"></i>My Music
                 </ion-item>
                 <ion-item nav-clear ng-click="logout();" ng-if="currentUser._serverData">
                     <i class="ion-person-stalker"></i>Logout

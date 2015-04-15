@@ -17,7 +17,7 @@ resources
 dist
 .svn/
 bower_components
-
+plugins/
 platforms/**/
 !www/config.xml
 !www/res

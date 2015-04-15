@@ -1,13 +1,68 @@
 'use strict';
-Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
 
 angular.module('Quilava.controllers', [])
-    .controller('BodyCtrl', function($scope, $rootScope) {
+    .controller('BodyCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
       $scope.$on('$stateChangeStart', function(event, toState){
         $rootScope.controllerClass = toState.className;
       });
-    })
-    .controller('AppCtrl', function($scope, $ionicModal, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate, $window) {
+    }])
+    .controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup) {//, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate, $window) {
+        $rootScope.currentUser = Parse.User.current() || null;
+        $scope.vote = {};
+        //Login
+        $scope.login = function() {
+            $scope.modal.show();
+            $ionicSlideBoxDelegate.update();
+            $ionicSlideBoxDelegate.enableSlide(false);
+            $scope.login.title = 'MVPlayer';
+        },
+        $scope.loginPage = function() {
+            $scope.login.title = 'Login';
+            $ionicSlideBoxDelegate.slide(2);
+        },
+        $scope.signupPage = function() {
+            $scope.login.title = 'Signup';
+            $ionicSlideBoxDelegate.slide(0);
+        },
+        $scope.homePage = function() {
+            $scope.login.title = 'MVPlayer';
+            $ionicSlideBoxDelegate.slide(1);
+            return false;
+        },
+        $scope.closeLogin = function(alert) {
+            $scope.modal.hide().then( function(){
+                if (alert) {
+                    $ionicPopup.alert({
+                        title: 'MVPlayer',
+                        template: 'Welcome, you are currently logged in! You can now chat and suggest songs!'
+                    });
+                }
+            });
+        },
+        $scope.logout = function() {
+            $ionicPopup.confirm({
+                title: 'MVPlayer',
+                template: 'Are you sure you want to logout?'
+            }).then(function(res) {
+                if (res) {
+                    if ($ionicSideMenuDelegate.isOpenLeft() == true) $ionicSideMenuDelegate.toggleLeft();
+                    Parse.User.logOut();
+                    $scope.loginData = {};
+                    $scope.signupData = {};
+                    $scope.vote.selectedIndex = 0;
+                    $ionicPopup.alert({
+                        title: 'MVPlayer',
+                        template: 'You have been successfully logged out'
+                    })
+                }
+            });
+        };
+        $ionicModal.fromTemplateUrl('templates/login.html', {
+            scope: $scope,
+            controller: 'LoginCtrl'
+        }).then(function(modal) {
+            $scope.modal = modal;
+        });
         /*$scope.domain = ENV.apiEndpoint;
         $scope.isSearch = false;
         $scope.loginData = {};
@@ -337,7 +392,7 @@ angular.module('Quilava.controllers', [])
                 }
             });
         };*/
-    })
+    }])
     .controller('BrowseCtrl', function($scope, $stateParams, LoadingService) {
         /*$scope.browse = {};
         $scope.browse.id = $stateParams.browseId;

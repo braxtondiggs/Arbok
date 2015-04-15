@@ -30,12 +30,9 @@
     font-weight: normal;
     font-style: normal;
 }
-$darkBG: #2f3238;
-$coloredLinks: #cc6055;
-$coloredLinksActivated: #A6483E;
-$textColor: rgba(255, 255, 255, 0.5);
-$topBG: #403E45;
-$topBorder: #202227;
+@import '_colors.scss';
+@import 'login.scss';
+
 body {
     background-color: $darkBG;
     color: $textColor;
@@ -61,9 +58,9 @@ h1 {
         }
         .popup-body {
             font-family: 'helvetica_neue_lt_pro45_light';
-            font-weight: 600;
-            line-height: 22px;
             padding: 10px 20px;
+            font-size: 12px;
+            margin: 20px 0;
         }
         .popup-buttons {
             .button {
@@ -87,6 +84,39 @@ h1 {
                 }
             }
         }
+    }
+}
+.status_dropdown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    z-index: 1;
+    color:#FFF;
+    box-shadow: 5px 7px 5px rgba(0,0,0,.7);
+    i.ion-close,
+    i.ion-checkmark-round{
+        bottom: 10px;
+        position: absolute;
+        right: 10px;
+        font-size:18px;
+    }
+    p {
+        margin-bottom:5px;
+    }
+    h2 {
+        font-size:16px;
+        color:#FFF;
+    }
+    &.error {
+      background-color: #e74c3c;
+    }
+    &.success {
+      background-color: #27ae60;
+      h2 {
+        margin:0;
+      }
     }
 }
 .bar.bar-header .title {
@@ -199,6 +229,9 @@ h1 {
 .dark-menu {
     background-color: $darkBG;
     &.menu-left {
+        .bar-header {
+            height:125px;
+        }
         .list {
             .item-content,
             .item {
@@ -312,11 +345,18 @@ body.search{
         left: 48px;
         text-align: left;
     }
-    .profile .img-circle {
-        margin: auto 10px;
-        width: 34px;
-        background-color: gray;
-        height: 34px;
+    .profile {
+        .img-circle {
+            margin: auto;
+            width: 75px;
+            background-color: gray;
+            height: 75px;
+        }
+        .title {
+            position: relative;
+            left: 0;
+            text-align: center;
+        }
     }
     .item-content,
     .item {
@@ -324,6 +364,14 @@ body.search{
         i {
             margin-right: 15px;
             font-size: 20px;
+        }
+    }
+    .settings {
+        position: absolute;
+        right: 0;
+        i {
+            color: $coloredLinks;
+            font-size: 24px;
         }
     }
 }
@@ -696,50 +744,6 @@ body.search{
         min-height:75px;
         img {
             top:5px;
-        }
-    }
-}
-.login {
-    .box{
-        padding-top: 35px;
-        h1 {
-            color: $coloredLinks;
-            text-align: center;
-            &.login-title {
-                color: $textColor;
-                span {
-                    color: $coloredLinks;
-                    border-bottom: 2px solid $coloredLinks;
-                }
-            }
-        }
-        p {
-            text-align: center;
-        }
-        a {
-            text-align:center;
-            color: $coloredLinks;
-            display:block;
-        }
-        form {
-            span.input {
-                margin-top:40px;
-            }
-            .button {
-                margin:20px auto;
-                width:90%;
-            }
-        }
-        .buttons-login {
-            margin-top:25px;
-            text-align: center;
-            button {
-                display: inline-block!important;
-                width:40%;
-                &:first-child {
-                    margin-right:10px;
-                }
-            }
         }
     }
 }

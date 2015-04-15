@@ -1,0 +1,115 @@
+@import '_colors.scss';
+.login {
+    /*background: url('/images/bgLogin.jpg') no-repeat 97%;
+    background-size: cover;*/
+    .scroll {
+        height:100%;
+        .slider {
+            height:100%;
+            .slider-slides {
+                height: 100%;
+                .slider-slide {
+                    height:100%;
+                }
+            }
+        }
+    }
+    .box{
+        //padding-top: 35px;
+        h1 {
+            color: $coloredLinks;
+            text-align: center;
+            margin-bottom:20px;
+            &.login-title {
+                color: $textColor;
+                margin-bottom: 70px;
+                span {
+                    color: $coloredLinks;
+                    /*border-bottom: 2px solid $coloredLinks;*/
+                }
+            }
+        }
+        p {
+            text-align: center;
+            a {
+                display:inline-block!important;
+            }
+        }
+        a {
+            text-align:center;
+            color: $coloredLinks;
+            display:block;
+        }
+        form {
+            span.input {
+                margin-top:40px;
+            }
+            .button {
+                margin:20px auto;
+                width:90%;
+            }
+            i.password-reset {
+                position:absolute;
+                font-size: 26px;
+                right: 10px;
+                top:12px;
+            }
+        }
+        .buttons-login {
+            margin-top:25px;
+            text-align: center;
+            button {
+                display: inline-block!important;
+                width:40%;
+                &:first-child {
+                    margin-right:10px;
+                }
+                &.lighten {
+                    color: #555;
+                    background-color: rgba(178, 178, 178, 0.6);
+                    &.dark-button {
+                        background-color: rgba(204, 96, 85, 0.6);
+                    }
+                }
+            }
+        }
+        .social-login {
+            position: absolute;
+            bottom: 0;
+            width:100%;
+            left: 0;
+            right: 0;
+            > div {
+                text-align: center;
+                padding:10px 0;
+                color: #EEE;
+                text-align: middle;
+                position: relative;
+                &.twitter {
+                    background-color:$twitter;
+                    > i {
+                        font-size:18px;
+                        margin-left:-8px;
+                    }
+                }
+                &.facebook {
+                    background-color: $facebook;
+                    > i {
+                        font-size:22px;
+                    }
+                }
+                .icon-holder {
+                    position:absolute;
+                    right:0;
+                    top:0;
+                    padding:12px;
+                    background-color: rgba(0, 0, 0, 0.1);
+                    i {
+                        font-size:12px;
+                        margin-left:5px;
+                    }
+                }
+            } 
+        }
+    }
+}

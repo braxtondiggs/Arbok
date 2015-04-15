@@ -8,43 +8,66 @@
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
     </div>
   </ion-header-bar>
-  <ion-content>
+  <ion-content ng-controller="LoginCtrl">
+    <div class="status_dropdown error animated" ng-class="login.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="login.hasErrors">
+      <h2 class="center">Validation Error</h2>
+      <p ng-show="signupForm.name.$invalid" class="help-block">- Enter a valid name.</p>
+      <p ng-show="loginForm.email.$invalid || signupForm.email.$invalid" class="help-block">- Enter a valid email.</p>
+      <p ng-show="loginForm.password.$invalid || signupForm.password.$invalid" class="help-block">- Enter a valid password.</p>
+      <p ng-show="login.error">- {{login.error}}</p>
+      <i class="ion ion-close" ng-click="login = {hasErrors: false, error: null};"></i>
+    </div>
     <ion-slide-box show-pager="false" active-slide="1">
       <ion-slide>
         <div class="box padding">
           <h1>MVPlayer</h1>
           <p>Signup or use Facebook for a quicker access!</p>
-          <form id="signupForm" name="signupForm" ng-submit="doSignup(signupForm.$valid)" novalidate>
+          <form id="signupForm" name="signupForm" ng-submit="doSignup(signupForm.$valid, signupForm.name.$viewValue, signupForm.email.$viewValue, signupForm.password.$viewValue)" novalidate>
           <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="text" name="signup-name" id="signup-name" ng-model="signupData.name" ng-minlength="3" ng-required="true">
-                <label class="input__label input__label--jiro" for="signup-name">
-                    <span class="input__label-content input__label-content--jiro">Name</span>
+                <input class="input__field input__field--jiro" type="text" name="name" id="signup-name" ng-model="name" ng-minlength="3" ng-required="true">
+                <label class="input__label input__label--jiro" for="name">
+                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-person"></i>&nbsp;Name</span>
                 </label>
             </span>
             <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="email" name="signup-email" id="signup-email" ng-model="signupData.email" ng-minlength="3" ng-required="true">
-                <label class="input__label input__label--jiro" for="signup-email">
-                    <span class="input__label-content input__label-content--jiro">Email</span>
+                <input class="input__field input__field--jiro" type="email" name="email" id="signup-email" ng-model="email" ng-required="true" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/">
+                <label class="input__label input__label--jiro" for="email">
+                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-email"></i>&nbsp;Email</span>
                 </label>
             </span>
             <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="password" name="signup-password "id="signup-password" ng-model="signupData.password" ng-minlength="6" ng-required="true">
-                <label class="input__label input__label--jiro" for="signup-password">
-                    <span class="input__label-content input__label-content--jiro">Password</span>
+                <input class="input__field input__field--jiro" type="password" name="password "id="signup-password" ng-model="password" ng-minlength="6" ng-required="true">
+                <label class="input__label input__label--jiro" for="password">
+                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-locked"></i>&nbsp;Password</span>
                 </label>
             </span>
             <button class="button button-outline dark-button" type="submit">Sign Up</button>
           </form>
-          <p>Already have an account?</p>
-          <a ng-click="loginPage()">Login In</a>
+          <p>Already have an account?
+            <a ng-click="loginPage()">Log In</a>
+          </p>
+          <div class="social-login">
+            <div class="facebook" ng-click="facebookLogin()">
+              <i class="icon ion-social-facebook"></i>&nbsp;Sign in with Facebook
+              <div class="icon-holder">
+                <i class="icon ion-chevron-right"></i>
+              </div> 
+            </div>
+            <div class="twitter" ng-click="twitterLogin()">
+              <i class="icon ion-social-twitter"></i>&nbsp;Sign in with Twitter&nbsp;&nbsp;&nbsp;
+              <div class="icon-holder">
+                <i class="icon ion-chevron-right"></i>
+              </div>  
+            </div>
+          </div>
         </div>
       </ion-slide>
       <ion-slide>
         <div class="box padding">
           <h1 class="login-title">Do you have an account with <span>MVPlayer</span>?</h1>
           <div class="buttons-login">
-            <button class="button button-outline" ng-click="loginPage()">Yes</button>
-            <button class="button button-outline dark-button" ng-click="signupPage()">No</button>
+            <button class="button button-outline lighten" ng-click="loginPage()">Yes</button>
+            <button class="button button-outline dark-button lighten" ng-click="signupPage()">No</button>
           </div>
         </div>
       </ion-slide>
@@ -52,23 +75,39 @@
         <div class="box padding">
           <h1>MVPlayer</h1>
           <p>Login to your MVPlayer account or use Facebook for a quicker login!</p>
-          <form id="loginForm" name="loginForm" ng-submit="doLogin(loginForm.$valid)" novalidate>
+          <form id="loginForm" name="loginForm" ng-submit="doLogin(loginForm.$valid, loginForm.email.$viewValue, loginForm.password.$viewValue)" novalidate>
             <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="email" name="login-email" id="login-email" ng-model="loginData.email" ng-minlength="3" ng-required="true">
-                <label class="input__label input__label--jiro" for="login-email">
-                    <span class="input__label-content input__label-content--jiro">Email</span>
+                <input class="input__field input__field--jiro" type="email" name="email" id="login-email" ng-model="email" ng-required="true" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/">
+                <label class="input__label input__label--jiro" for="email">
+                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-email"></i>&nbsp;Email</span>
                 </label>
             </span>
             <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="password" name="login-password "id="login-password" ng-model="loginData.password" ng-minlength="6" ng-required="true">
-                <label class="input__label input__label--jiro" for="login-password">
-                    <span class="input__label-content input__label-content--jiro">Password</span>
+                <input class="input__field input__field--jiro" type="password" name="password "id="login-password" ng-model="password" ng-minlength="6" ng-required="true">
+                <label class="input__label input__label--jiro" for="password">
+                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-locked"></i>&nbsp;Password</span>
                 </label>
+                <i class="icon ion-help-circled password-reset" ng-click="forgotMyPassword(loginForm.email.$viewValue)"></i>
             </span>
             <button class="button button-outline dark-button" type="submit">Log In</button>
           </form>
-          <p>Don't have an account?</p>
-          <a ng-click="signupPage()">Sign Up</a>
+          <p>Don't have an account?
+            <a ng-click="signupPage()">Sign Up</a>
+          </p>
+          <div class="social-login">
+            <div class="facebook" ng-click="facebookLogin()">
+              <i class="icon ion-social-facebook"></i>&nbsp;Sign in with Facebook
+              <div class="icon-holder">
+                <i class="icon ion-chevron-right"></i>
+              </div> 
+            </div>
+            <div class="twitter" ng-click="twitterLogin()">
+              <i class="icon ion-social-twitter"></i>&nbsp;Sign in with Twitter&nbsp;&nbsp;&nbsp;
+              <div class="icon-holder">
+                <i class="icon ion-chevron-right"></i>
+              </div>  
+            </div>
+          </div>
         </div>
       </ion-slide>
     </ion-slide-box>

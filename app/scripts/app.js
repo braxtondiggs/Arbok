@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate'])
+angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -13,6 +13,8 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
       StatusBar.styleDefault();
     }
   });
+  /*global Parse*/
+  Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
 })
 
 /*.factory('socket', function($rootScope, ENV) {

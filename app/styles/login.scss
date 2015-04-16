@@ -1,7 +1,11 @@
 @import '_colors.scss';
 .login {
-    /*background: url('/images/bgLogin.jpg') no-repeat 97%;
-    background-size: cover;*/
+    background: url('/images/bgLogin.jpg') no-repeat 97%;
+    background-size: cover;
+    h1.title {
+        text-align:center!important;
+        right:0!important;
+    }
     .scroll {
         height:100%;
         .slider {
@@ -10,27 +14,28 @@
                 height: 100%;
                 .slider-slide {
                     height:100%;
+                    &:first-child {
+                        background: url("/images/bgLogin.jpg") no-repeat 34%;
+                        background-size: cover;
+                    }
+                    &:nth-child(2) {
+                        background: url("/images/bgLogin.jpg") no-repeat 97%;
+                        background-size: cover;
+                    }
                 }
             }
         }
     }
     .box{
-        //padding-top: 35px;
+        padding-top: 35px;
         h1 {
             color: $coloredLinks;
             text-align: center;
             margin-bottom:20px;
-            &.login-title {
-                color: $textColor;
-                margin-bottom: 70px;
-                span {
-                    color: $coloredLinks;
-                    /*border-bottom: 2px solid $coloredLinks;*/
-                }
-            }
         }
         p {
             text-align: center;
+            margin-bottom:30px;
             a {
                 display:inline-block!important;
             }
@@ -51,8 +56,9 @@
             i.password-reset {
                 position:absolute;
                 font-size: 26px;
-                right: 10px;
+                right: 30px;
                 top:12px;
+                color: #555;
             }
         }
         .buttons-login {
@@ -64,12 +70,54 @@
                 &:first-child {
                     margin-right:10px;
                 }
-                &.lighten {
-                    color: #555;
-                    background-color: rgba(178, 178, 178, 0.6);
-                    &.dark-button {
-                        background-color: rgba(204, 96, 85, 0.6);
-                    }
+            }
+        }
+        div.input {
+            padding: 0 20px;
+            position: relative;
+            .input__label {
+                background-color: rgba(255,255,255,.4);
+                float: left;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-bottom: none;
+                width: 50px;
+                height: 50px;
+                text-align: center;
+                i {
+                    font-size: 26px;
+                    color: $coloredLinks;
+                    margin-top: 5px;
+                    display: block;
+                }
+            }
+            .input__field {
+                font-family: helvetica_neue_lt_pro45_light;
+                letter-spacing: 1px;
+                color: $coloredLinks;
+                font-size: 16px;
+                width: calc(100% - 50px);
+                float: left;
+                height: 50px;
+                background-color: rgba(255, 255, 255, .2);
+                border: 1px solid rgba(255, 255, 255, .2);
+                border-bottom: none;
+                padding-left: 20px;
+                font-weight: 600;
+                &::-webkit-input-placeholder {
+                    color: $coloredLinks;
+                    font-weight: 600;
+                    letter-spacing: 1px;
+                }
+            }
+            &:after {
+                content: '';
+                clear:both;
+                display:block;
+            }
+            &:last-of-type {
+                .input__label,
+                .input__field {
+                    border-bottom: rgba(255, 255, 255, .2);
                 }
             }
         }

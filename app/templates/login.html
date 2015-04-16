@@ -1,9 +1,6 @@
 <div class="modal login">
   <ion-header-bar>
-    <div class="buttons" ng-show="login.title !== 'MVPlayer'" ng-click="homePage();">
-      <button class="button button-clear"><i class="ion-arrow-left-c"></i>&nbsp;Back</button>
-    </div>
-    <h1 class="title">{{login.title}}</h1>
+    <h1 class="title" align-title="center">{{login.title}}</h1>
     <div class="buttons">
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
     </div>
@@ -15,7 +12,7 @@
       <p ng-show="loginForm.email.$invalid || signupForm.email.$invalid" class="help-block">- Enter a valid email.</p>
       <p ng-show="loginForm.password.$invalid || signupForm.password.$invalid" class="help-block">- Enter a valid password.</p>
       <p ng-show="login.error">- {{login.error}}</p>
-      <i class="ion ion-close" ng-click="login = {hasErrors: false, error: null};"></i>
+      <i class="ion ion-close" ng-click="login.hasErrors = false;"></i>
     </div>
     <ion-slide-box show-pager="false" active-slide="1">
       <ion-slide>
@@ -23,24 +20,24 @@
           <h1>MVPlayer</h1>
           <p>Signup or use Facebook for a quicker access!</p>
           <form id="signupForm" name="signupForm" ng-submit="doSignup(signupForm.$valid, signupForm.name.$viewValue, signupForm.email.$viewValue, signupForm.password.$viewValue)" novalidate>
-          <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="text" name="name" id="signup-name" ng-model="name" ng-minlength="3" ng-required="true">
-                <label class="input__label input__label--jiro" for="name">
-                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-person"></i>&nbsp;Name</span>
-                </label>
-            </span>
-            <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="email" name="email" id="signup-email" ng-model="email" ng-required="true" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/">
-                <label class="input__label input__label--jiro" for="email">
-                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-email"></i>&nbsp;Email</span>
-                </label>
-            </span>
-            <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="password" name="password "id="signup-password" ng-model="password" ng-minlength="6" ng-required="true">
-                <label class="input__label input__label--jiro" for="password">
-                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-locked"></i>&nbsp;Password</span>
-                </label>
-            </span>
+            <div class="input">
+              <label class="input__label" for="name">
+                <i class="icon ion-person"></i>
+              </label>
+              <input class="input__field" type="text" placeholder="Name" name="name" id="signup-name" ng-model="name" ng-minlength="3" ng-required="true">
+            </div>
+            <div class="input">
+              <label class="input__label" for="email">
+                <i class="icon ion-email"></i>
+              </label>
+              <input class="input__field" type="email" placeholder="Email" name="email" id="signup-email" ng-model="email" ng-required="true" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/">
+            </div>
+            <div class="input">
+              <label class="input__label" for="password">
+                <i class="icon ion-locked"></i>
+              </label>
+              <input class="input__field" type="password" placeholder="password" name="password "id="signup-password" ng-model="password" ng-minlength="6" ng-required="true">
+            </div>
             <button class="button button-outline dark-button" type="submit">Sign Up</button>
           </form>
           <p>Already have an account?
@@ -64,31 +61,22 @@
       </ion-slide>
       <ion-slide>
         <div class="box padding">
-          <h1 class="login-title">Do you have an account with <span>MVPlayer</span>?</h1>
-          <div class="buttons-login">
-            <button class="button button-outline lighten" ng-click="loginPage()">Yes</button>
-            <button class="button button-outline dark-button lighten" ng-click="signupPage()">No</button>
-          </div>
-        </div>
-      </ion-slide>
-      <ion-slide>
-        <div class="box padding">
           <h1>MVPlayer</h1>
           <p>Login to your MVPlayer account or use Facebook for a quicker login!</p>
           <form id="loginForm" name="loginForm" ng-submit="doLogin(loginForm.$valid, loginForm.email.$viewValue, loginForm.password.$viewValue)" novalidate>
-            <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="email" name="email" id="login-email" ng-model="email" ng-required="true" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/">
-                <label class="input__label input__label--jiro" for="email">
-                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-email"></i>&nbsp;Email</span>
-                </label>
-            </span>
-            <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="password" name="password "id="login-password" ng-model="password" ng-minlength="6" ng-required="true">
-                <label class="input__label input__label--jiro" for="password">
-                    <span class="input__label-content input__label-content--jiro"><i class="icon ion-locked"></i>&nbsp;Password</span>
-                </label>
-                <i class="icon ion-help-circled password-reset" ng-click="forgotMyPassword(loginForm.email.$viewValue)"></i>
-            </span>
+            <div class="input">
+              <label class="input__label" for="email">
+                <i class="icon ion-email"></i>
+              </label>
+              <input class="input__field" type="email" placeholder="Email" name="email" id="login-email" ng-model="email" ng-required="true" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/">
+            </div>
+            <div class="input">
+              <label class="input__label" for="password">
+                <i class="icon ion-locked"></i>
+              </label>
+              <input class="input__field" type="password" placeholder="Password" name="password "id="login-password" ng-model="password" ng-minlength="6" ng-required="true">
+              <i class="icon ion-help-circled password-reset" ng-click="forgotMyPassword(loginForm.email)"></i>
+            </div>
             <button class="button button-outline dark-button" type="submit">Log In</button>
           </form>
           <p>Don't have an account?

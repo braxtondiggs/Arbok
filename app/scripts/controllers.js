@@ -7,28 +7,24 @@ angular.module('Quilava.controllers', [])
       });
     }])
     .controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup) {//, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate, $window) {
+        /*global Parse*/
         $rootScope.currentUser = Parse.User.current() || null;
+        $rootScope.currentUser.image = ($rootScope.currentUser.get('image'))?$rootScope.currentUser.get('image')._url:'/images/missingPerson.jpg';
         $scope.vote = {};
         //Login
         $scope.login = function() {
             $scope.modal.show();
-            $ionicSlideBoxDelegate.update();
             $ionicSlideBoxDelegate.enableSlide(false);
-            $scope.login.title = 'MVPlayer';
-        },
-        $scope.loginPage = function() {
             $scope.login.title = 'Login';
-            $ionicSlideBoxDelegate.slide(2);
-        },
+        };
         $scope.signupPage = function() {
             $scope.login.title = 'Signup';
             $ionicSlideBoxDelegate.slide(0);
-        },
-        $scope.homePage = function() {
-            $scope.login.title = 'MVPlayer';
+        };
+        $scope.loginPage = function() {
+            $scope.login.title = 'Login';
             $ionicSlideBoxDelegate.slide(1);
-            return false;
-        },
+        };
         $scope.closeLogin = function(alert) {
             $scope.modal.hide().then( function(){
                 if (alert) {
@@ -38,14 +34,14 @@ angular.module('Quilava.controllers', [])
                     });
                 }
             });
-        },
+        };
         $scope.logout = function() {
             $ionicPopup.confirm({
                 title: 'MVPlayer',
                 template: 'Are you sure you want to logout?'
             }).then(function(res) {
                 if (res) {
-                    if ($ionicSideMenuDelegate.isOpenLeft() == true) $ionicSideMenuDelegate.toggleLeft();
+                    if ($ionicSideMenuDelegate.isOpenLeft() === true) $ionicSideMenuDelegate.toggleLeft();
                     Parse.User.logOut();
                     $scope.loginData = {};
                     $scope.signupData = {};

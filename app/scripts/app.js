@@ -83,6 +83,30 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
       }
     };
   })
+  .directive('watchMenu', function($timeout, $ionicSideMenuDelegate) {
+  return {
+    restrict: 'A',
+    link: function($scope, $element, $attr) {
+      // Run in the next scope digest
+      $timeout(function() {
+        // Watch for changes to the openRatio which is a value between 0 and 1 that says how "open" the side menu is
+
+        $scope.$watch(function() { 
+          return $ionicSideMenuDelegate.getOpenRatio();
+        }, 
+          function(ratio) {
+            $scope.data=ratio;
+            if( ratio == 1){
+              $scope.ratio = true;
+            }else{
+              $scope.ratio = false;
+            }
+
+          });
+      });
+    }
+  };
+})
   .config(['EchonestProvider', function(EchonestProvider) {
     EchonestProvider.setApiKey('0NPSO7NBLICGX3CWQ');
   }])

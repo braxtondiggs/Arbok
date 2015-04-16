@@ -7,7 +7,7 @@ angular.module('Quilava.controllers')
     error: null,
     success: null,
     showPositive: false
-  }; 
+  };
   $scope.doLogin = function(isValid, email, password) {
     if (isValid) {
       var user = new Parse.User();
@@ -64,36 +64,38 @@ angular.module('Quilava.controllers')
     }
   };
   $scope.forgotMyPassword = function(email) {
+    console.log(email);
     if (!email.$invalid) {
       $ionicPopup.confirm({
         title: 'MVPlayer',
         template: 'Did you forget your password?',
         buttons: [
-        { text: 'Cancel' },
-        { text: 'Yes',
-          type: 'button-positive',
-          onTap: function() {
-            Parse.User.requestPasswordReset(email, {
-              success: function() {
-                $scope.login = {
-                  hasErrors: false,
-                  showPositive: true,
-                  error: null,
-                  success: 'Please check your email, a new password has been sent there.'
-                };
-                $scope.$apply();
-              },
-              error: function() {
-                $scope.login = {
-                  hasErrors: true,
-                  error: null,
-                  success: 'THat email address is not is our system.'
-                };
-                $scope.$apply();
-              }
-            });
+          {text: 'Cancel'},
+          {text: 'Yes',
+            type: 'button-positive',
+            onTap: function() {
+              Parse.User.requestPasswordReset(email.$viewValue, {
+                success: function() {
+                  $scope.login = {
+                    hasErrors: false,
+                    showPositive: true,
+                    error: null,
+                    success: 'Please check your email, a new password has been sent there.'
+                  };
+                  $scope.$apply();
+                },
+                error: function() {
+                  $scope.login = {
+                    hasErrors: true,
+                    error: null,
+                    success: 'THat email address is not is our system.'
+                  };
+                  $scope.$apply();
+                }
+              });
+            }
           }
-        }]
+        ]
       });
     }else {
       $scope.login = {

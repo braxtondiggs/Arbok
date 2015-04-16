@@ -6,7 +6,7 @@ angular.module('Quilava.controllers', [])
         $rootScope.controllerClass = toState.className;
       });
     }])
-    .controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup) {//, $http, $ionicPopup, UserService, ENV, $ionicSideMenuDelegate, $ionicHistory, $localStorage, $timeout, $ionicSlideBoxDelegate, $window) {
+    .controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicActionSheet', '$ionicLoading', '$cordovaCamera', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicActionSheet, $ionicLoading, $cordovaCamera) {
         /*global Parse*/
         $rootScope.currentUser = Parse.User.current() || null;
         $rootScope.currentUser.image = ($rootScope.currentUser.get('image'))?$rootScope.currentUser.get('image')._url:'/images/missingPerson.jpg';
@@ -41,7 +41,9 @@ angular.module('Quilava.controllers', [])
                 template: 'Are you sure you want to logout?'
             }).then(function(res) {
                 if (res) {
-                    if ($ionicSideMenuDelegate.isOpenLeft() === true) $ionicSideMenuDelegate.toggleLeft();
+                    if ($ionicSideMenuDelegate.isOpenLeft() === true) {
+                        $ionicSideMenuDelegate.toggleLeft();
+                    }
                     Parse.User.logOut();
                     $scope.loginData = {};
                     $scope.signupData = {};
@@ -49,7 +51,77 @@ angular.module('Quilava.controllers', [])
                     $ionicPopup.alert({
                         title: 'MVPlayer',
                         template: 'You have been successfully logged out'
-                    })
+                    });
+                }
+            });
+        };
+        $scope.updateImage = function() {
+            var hideSheet = $ionicActionSheet.show({
+                buttons: [
+                    { text: 'Choose Image' },
+                    { text: 'Take Photo' }
+                ],
+                titleText: 'Photo Upload',
+                cancelText: 'Cancel',
+                buttonClicked: function(index) {
+                    $ionicLoading.show();
+                    function uploadPhoto(image) {
+                        function loadComplete() {
+                            hideSheet();
+                            $ionicLoading.hide();
+                        }
+                        var user = $rootScope.currentUser;
+                        var file = new Parse.File(user.id +'.png', { base64: image });
+                        user.set('image', file);
+                        user.save(null, {
+                            success: function() {
+                                $rootScope.currentUser.image = $rootScope.currentUser.get('image')._url;
+                                loadComplete();
+                            },
+                            error: function() {
+                                loadComplete();
+                                $ionicLoading.show({template: 'Error, we could not upload your photo...', duration: 2000});
+                            }
+                        });
+                    }
+                    function imageError() {
+                        hideSheet();
+                        $ionicLoading.hide();
+                        $ionicLoading.show({template: 'Error, could not load photo...', duration: 2000});
+                    }
+                    if (index === 0) {
+                        /* global Camera*/
+                        var pickerOptions = {
+                            destinationType: Camera.DestinationType.DATA_URL,
+                            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+                            quality: 50,
+                            EncodingType: Camera.EncodingType.PNG,
+                            MediaType: Camera.MediaType.PICTURE,
+                            targetWidth: 150,
+                            targetHeight: 150
+                        };
+                        $cordovaCamera.getPicture(pickerOptions).then(function(imageData) {
+                            uploadPhoto(imageData);
+                        },function(){
+                            imageError();
+                        });
+                    }else if(index === 1) {
+                        var cameraOptions = {
+                            quality: 50,
+                            destinationType: Camera.DestinationType.DATA_URL,
+                            sourceType: Camera.PictureSourceType.CAMERA,
+                            encodingType: Camera.EncodingType.PNG,
+                            correctOrientation: true,
+                            targetWidth: 150,
+                            targetHeight: 150,
+                            allowEdit: true
+                        };
+                        $cordovaCamera.getPicture(cameraOptions).then(function(imageData) {
+                            uploadPhoto(imageData);
+                        }, function() {
+                            imageError();
+                        });
+                    }
                 }
             });
         };
@@ -98,9 +170,6 @@ angular.module('Quilava.controllers', [])
         $scope.goBack = function() {
             $ionicHistory.goBack(-1);
         }
-        $scope.checkImage = function(img) {
-            return UserService.checkImage(img);
-        };
         $scope.convertSlug = function(name, slug) {
             return UserService.convertSlug(name, slug);
         };
@@ -272,109 +341,6 @@ angular.module('Quilava.controllers', [])
             $scope.vote.downvote = data.downvote;
             $scope.vote.voteId = data.voteId;
         });
-
-        // Create the login modal that we will use later
-        $ionicModal.fromTemplateUrl('templates/login.html', {
-            scope: $scope
-        }).then(function(modal) {
-            $scope.modal = modal;
-        });
-
-        // Triggered in the login modal to close it
-        $scope.closeLogin = function(alert) {
-                $scope.modal.hide().then( function(){
-                    if (alert) {
-                        $ionicPopup.alert({
-                            title: 'MVPlayer',
-                            template: 'Welcome, you are currently logged in! You can now chat and suggest songs!'
-                        });
-                    }
-                });
-            },
-
-            // Open the login modal
-            $scope.login = function() {
-                $scope.modal.show();
-                $ionicSlideBoxDelegate.update();
-                $ionicSlideBoxDelegate.enableSlide(false);
-                $scope.login.title = 'MVPlayer';
-            },
-            $scope.loginPage = function() {
-                $scope.login.title = 'Login';
-                $ionicSlideBoxDelegate.slide(2);
-            },
-            $scope.signupPage = function() {
-                $scope.login.title = 'Signup';
-                $ionicSlideBoxDelegate.slide(0);
-            },
-            $scope.homePage = function() {
-                $scope.login.title = 'MVPlayer';
-                $ionicSlideBoxDelegate.slide(1);
-                return false;
-            };
-
-        // Perform the login action when the user submits the login form
-        $scope.logout = function() {
-            $ionicPopup.confirm({
-                title: 'MVPlayer',
-                template: 'Are you sure you want to logout?'
-            }).then(function(res) {
-                if (res) {
-                    if ($ionicSideMenuDelegate.isOpenLeft() == true) $ionicSideMenuDelegate.toggleLeft();
-                    Parse.User.logOut();
-                    $scope.currentUser = null;
-                    $scope.loginData = {};
-                    $scope.signupData = {};
-                    $scope.vote.selectedIndex = 0;
-                    $ionicPopup.alert({
-                        title: 'MVPlayer',
-                        template: 'You have been successfully logged out'
-                    })
-                }
-            });
-        };
-        $scope.doLogin = function(isValid) {
-            if (isValid) {
-                var user = new Parse.User();
-                var loginData = $scope.loginData;
-                user.set('username', loginData.email); // in my app, email==username
-                user.set('password', loginData.password);
-                var user = new Parse.User({
-                    username: loginData.email,
-                    password: loginData.password
-                });
-                user.logIn({
-                    success: function(user) {
-                        $scope.currentUser = user;
-                        $scope.$apply();
-                        $scope.closeLogin(true);
-                    },
-                    error: function(user, error) {
-                        alert('Unable to log in: ' + error.code + ' ' + error.message);
-                    }
-                });
-            }
-        };
-        $scope.doSignup = function(isValid) {
-            if (isValid) {
-                var user = new Parse.User();
-                var signupData = $scope.signupData;
-                user.set('name', signupData.name); // in my app, email==username
-                user.set('email', signupData.email); // in my app, email==username
-                user.set('username', signupData.email);
-                user.set('password', signupData.password);
-                user.signUp(null, {
-                    success: function(user) {
-                        $scope.currentUser = user;
-                        $scope.$apply(); // Notify AngularJS to sync currentUser
-                        $scope.closeLogin(true);
-                    },
-                    error: function(user, error) {
-                        alert('Unable to sign up:  ' + error.code + ' ' + error.message);
-                    }
-                });
-            }
-        };
         $scope.deleteSong = function(item) {
             $ionicPopup.confirm({
                 title: 'MVPlayer',
@@ -389,7 +355,7 @@ angular.module('Quilava.controllers', [])
             });
         };*/
     }])
-    .controller('BrowseCtrl', function($scope, $stateParams, LoadingService) {
+    .controller('BrowseCtrl', function() {
         /*$scope.browse = {};
         $scope.browse.id = $stateParams.browseId;
         $scope.browse.loaded = false;
@@ -417,7 +383,7 @@ angular.module('Quilava.controllers', [])
             });
         }*/
     })
-    .controller('SearchCtrl', function($scope, $stateParams, LoadingService) {
+    .controller('SearchCtrl', function() {
         /*if ($stateParams.searchId) {
             $scope.search.term = $stateParams.searchId;
             $scope.doSearch($scope.search.term);
@@ -425,7 +391,7 @@ angular.module('Quilava.controllers', [])
             $scope.search = {};
         }*/
     })
-    .controller('ArtistCtrl', function($scope, $rootScope, $stateParams, $http, $ionicPopup, UserService, Echonest) {
+    .controller('ArtistCtrl', function() {
         /*if (!$rootScope.artist) {
             $rootScope.artist = {};
         }
@@ -483,7 +449,7 @@ angular.module('Quilava.controllers', [])
     .controller('QueueCtrl', function() {
         
     })
-    .controller('PlayerCtrl', function($scope, $ionicPopup, LoadingService, $cordovaGeolocation, cfpLoadingBar, $ionicScrollDelegate) {
+    .controller('PlayerCtrl', function() {
         /*LoadingService.showLoading();
         cfpLoadingBar.start();
         cfpLoadingBar.inc();
@@ -553,7 +519,7 @@ angular.module('Quilava.controllers', [])
             return Math.round(dist * 100) / 100;
         };*/
     })
-    .controller('ChatCtrl', function($scope, $ionicScrollDelegate, $ionicPopup, LoadingService, $window) {
+    .controller('ChatCtrl', function() {
         /*if ($scope.room !== null) {
             $scope.chats = null;
             var Chat = Parse.Object.extend("Chat");

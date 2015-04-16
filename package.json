@@ -55,6 +55,8 @@
     "org.apache.cordova.console",
     "com.ionic.keyboard",
     "org.apache.cordova.vibration",
-    "org.apache.cordova.inappbrowser"
+    "org.apache.cordova.inappbrowser",
+    "org.apache.cordova.camera",
+    "org.apache.cordova.file"
   ]
 }

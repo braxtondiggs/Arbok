@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth'])
+angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -194,7 +194,8 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
         url: '/music',
         views: {
           'menuContent': {
-            templateUrl: 'templates/music.html'
+            templateUrl: 'templates/music.html',
+            controller: 'MusicCtrl'
           }
         }
       })
@@ -202,7 +203,8 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
         url: '/settings',
         views: {
           'menuContent': {
-            templateUrl: 'templates/settings.html'
+            templateUrl: 'templates/settings.html',
+            controller: 'SettingsCtrl'
           }
         }
       });

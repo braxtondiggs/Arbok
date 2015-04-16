@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-.controller('LoginCtrl', ['$scope', '$rootScope', '$ionicPopup', '$localStorage', '$cordovaOauth', function($scope, $rootScope, $ionicPopup, $localStorage, $cordovaOauth) {
+.controller('LoginCtrl', ['$scope', '$rootScope', '$ionicPopup', '$cordovaOauth', '$ionicLoading', function($scope, $rootScope, $ionicPopup, $cordovaOauth, $ionicLoading) {
   /*global Parse*/
   $scope.login = {
     hasErrors: false,
@@ -10,6 +10,7 @@ angular.module('Quilava.controllers')
   };
   $scope.doLogin = function(isValid, email, password) {
     if (isValid) {
+      $ionicLoading.show();
       var user = new Parse.User();
       user.set('username', email);
       user.set('password', password);
@@ -22,6 +23,7 @@ angular.module('Quilava.controllers')
           $rootScope.currentUser = userData;
           $scope.login.hasErrors = false;
           $scope.closeLogin(true);
+          $ionicLoading.hide();
           $scope.$apply();
         },
         error: function() {
@@ -29,6 +31,7 @@ angular.module('Quilava.controllers')
             hasErrors: true,
             error: 'Invalid login credentials. Please try again.'
           };
+          $ionicLoading.hide();
           $scope.$apply();
         }
       });
@@ -39,6 +42,7 @@ angular.module('Quilava.controllers')
   };
   $scope.doSignup = function(isValid, name, email, password) {
     if (isValid) {
+      $ionicLoading.show();
       var user = new Parse.User();
       user.set('name', name);
       user.set('email', email);
@@ -49,6 +53,7 @@ angular.module('Quilava.controllers')
           $rootScope.currentUser = userData;
           $scope.login.hasErrors = false;
           $scope.closeLogin(true);
+          $ionicLoading.hide();
           $scope.$apply();
         },
         error: function() {
@@ -56,6 +61,7 @@ angular.module('Quilava.controllers')
             hasErrors: true,
             error: 'That email has already been taken'
           };
+          $ionicLoading.hide();
           $scope.$apply();
         }
       });
@@ -74,6 +80,7 @@ angular.module('Quilava.controllers')
           {text: 'Yes',
             type: 'button-positive',
             onTap: function() {
+              $ionicLoading.show();
               Parse.User.requestPasswordReset(email.$viewValue, {
                 success: function() {
                   $scope.login = {
@@ -82,6 +89,7 @@ angular.module('Quilava.controllers')
                     error: null,
                     success: 'Please check your email, a new password has been sent there.'
                   };
+                  $ionicLoading.hide();
                   $scope.$apply();
                 },
                 error: function() {
@@ -90,6 +98,7 @@ angular.module('Quilava.controllers')
                     error: null,
                     success: 'THat email address is not is our system.'
                   };
+                  $ionicLoading.hide();
                   $scope.$apply();
                 }
               });

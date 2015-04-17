@@ -32,6 +32,7 @@
 }
 @import '_colors.scss';
 @import 'login.scss';
+@import 'settings.scss';
 
 body {
     background-color: $darkBG;
@@ -86,6 +87,36 @@ h1 {
         }
     }
 }
+.list {
+    .item {
+        border-color: $topBorder;
+        color: $textColor;
+        background-color:transparent;
+    }
+    .item-divider {
+      font-size: 18px;
+      font-weight: 600;
+      background-color: $topBorder;
+      color: $coloredLinks;
+    }   
+}
+.accordion {
+    .item {
+        &.active,
+        &.stable,
+        &.activated {
+            background-color:$topBG;
+            border-color:$topBorder;
+        }
+        i {
+            color: $coloredLinks;
+        }
+    }
+}
+i.icon {
+    color: $coloredLinks;
+}
+
 .status_dropdown {
     position: absolute;
     top: 0;
@@ -119,6 +150,21 @@ h1 {
       }
     }
 }
+.card {
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.3);
+    background-color: $topBG;
+    border-color: $topBorder;
+    .item{
+        background-color:transparent;
+        color: rgba(255, 255, 255, 0.5);
+        .button {
+            margin-top:30px;
+        }
+        a {
+            color: $coloredLinksActivated;
+        }
+    }
+}
 .bar.bar-header .title {
     color: $textColor;
     font-family: helvetica_neue_lt_pro45_light;
@@ -147,6 +193,9 @@ h1 {
     .button-clear {
         color: $coloredLinks;
     }
+    a.icon {
+        color: $coloredLinks;
+    }
 }
 .menu-content {
     border-color: $topBorder!important;
@@ -160,6 +209,9 @@ h1 {
     &.activated {
         background-color: $coloredLinksActivated;
     }
+}
+.button-dark {
+    color: $coloredLinks!important;
 }
 .dark-list {
     background: rgba(0,0,0,0.01);
@@ -253,6 +305,11 @@ h1 {
                 i {
                     color: $coloredLinks;
                 }
+                .badge {
+                    color: $textColor;
+                    background-color: #cc6055;
+                    margin-top: 5px;
+                }
                 &:first-child {
                     border-top:none;
                 }
@@ -276,6 +333,33 @@ h1 {
             margin-top: 15px;
             margin-right: -10px;
         }
+    }
+}
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"] {
+    font-family: helvetica_neue_lt_pro45_light;
+    letter-spacing: 1px;
+    color: $textColor;
+    font-size: 16px;
+    font-weight: 600;
+    &::-webkit-input-placeholder {
+        color: $textColor;
+        letter-spacing: 1px;
+        font-weight:normal;
+    }
+}
+.item-toggle {
+    background-color: transparent;
+    .track {
+        background-color: transparent;
+        border-color:$topBorder;
+        .handle {
+            background-color: lighten($coloredLinks, 35%)!important;
+        }
+
+    }
+    input:checked + .track {
+        background-color: $coloredLinks;
+        border-color: $coloredLinks;
     }
 }
 body.search{

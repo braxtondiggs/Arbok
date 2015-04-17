@@ -6,10 +6,10 @@ angular.module('Quilava.controllers', [])
         $rootScope.controllerClass = toState.className;
       });
     }])
-    .controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicActionSheet', '$ionicLoading', '$cordovaCamera', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicActionSheet, $ionicLoading, $cordovaCamera) {
+    .controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicActionSheet', '$ionicLoading', '$ionicHistory', '$cordovaCamera', '$localStorage', 'lodash', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicActionSheet, $ionicLoading, $ionicHistory, $cordovaCamera, $localStorage, lodash) {
         /*global Parse*/
-        $rootScope.currentUser = Parse.User.current() || null;
-        $rootScope.currentUser.image = ($rootScope.currentUser.get('image'))?$rootScope.currentUser.get('image')._url:'/images/missingPerson.jpg';
+        $rootScope.currentUser = Parse.User.current() || {};
+        $rootScope.currentUser.image = (!lodash.isEmpty($rootScope.currentUser))?$rootScope.currentUser.get('image')._url:'/images/missingPerson.jpg';
         $scope.vote = {};
         //Login
         $scope.login = function() {
@@ -45,8 +45,8 @@ angular.module('Quilava.controllers', [])
                         $ionicSideMenuDelegate.toggleLeft();
                     }
                     Parse.User.logOut();
-                    $scope.loginData = {};
-                    $scope.signupData = {};
+                    $localStorage.$reset();
+                    $ionicHistory.clearHistory();
                     $scope.vote.selectedIndex = 0;
                     $ionicPopup.alert({
                         title: 'MVPlayer',

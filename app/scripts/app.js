@@ -6,7 +6,7 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(false);
     }
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
@@ -180,16 +180,6 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
           }
         }
       })
-      .state('app.chat', {
-        url: '/chat',
-        className: 'chat',
-        views: {
-          'menuContent': {
-            templateUrl: 'templates/chat.html',
-            controller: 'ChatCtrl'
-          }
-        }
-      })
       .state('app.music', {
         url: '/music',
         views: {
@@ -201,10 +191,21 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
       })
       .state('app.settings', {
         url: '/settings',
+        className: 'settings',
         views: {
           'menuContent': {
             templateUrl: 'templates/settings.html',
             controller: 'SettingsCtrl'
+          }
+        }
+      })
+      .state('app.settings-player', {
+        url: '/settings/player',
+        className: 'player_settings',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/player_settings.html',
+            controller: 'PlayerSettingsCtrl'
           }
         }
       });

@@ -1,5 +1,97 @@
 <ion-view view-title="Settings">
   <ion-content>
-  
+  	<div class="status_dropdown error animated" ng-class="settings.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings.hasErrors">
+      <h2 class="center">Validation Error</h2>
+      <p ng-show="settingsForm.name.$invalid" class="help-block">- Enter a valid name.</p>
+      <p ng-show="settingsForm.email.$invalid" class="help-block">- Enter a valid email.</p>
+      <p ng-show="settingsForm.password.$invalid" class="help-block">- Enter a valid password.</p>
+      <p ng-show="settings.error">{{settings.error}}</p>
+      <i class="ion ion-close" ng-click="settings.hasErrors = false;"></i>
+    </div>
+    <div class="list">
+      <form name="settingsForm" ng-submit="submitForm(settingsForm.name, settingsForm.email, settingsForm.gender, settingsForm.password, settingsForm.confirmPassword)" novalidate>
+        <div class="item item-divider">
+          <span class="animated bounceInLeft">ACCOUNT SETTINGS</span>
+        </div>
+        <div class="item item-input item-floating-label">
+          <span class="input-label">Email</span>
+          <input type="email" name="email" placeholder="Email" ng-model="email" ng-minlength="1" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" ng-change="isChanged.email = true">
+          <i class="ion ion-close-round animated" ng-class="email.length ? 'fadeIn' : 'fadeOut'" ng-click="email = ''" ng-show="email.length">&nbsp;</i>
+        </div>
+        <div class="item item-input item-floating-label">
+          <span class="input-label">Nickname</span>
+          <input type="text" name="name" placeholder="Nickname" ng-model="name" ng-minlength="3" ng-maxlength="16" ng-change="isChanged.name = true">
+          <i class="ion ion-close-round animated" ng-class="name.length ? 'fadeIn' : 'fadeOut'" ng-click="name = ''" ng-show="name.length">&nbsp;</i>
+        </div>
+        <div class="item item-input item-floating-label">
+          <span class="input-label">Password</span>
+          <input type="password" name="password" placeholder="Password" ng-model="password" ng-minlength="6" ng-change="isChanged.password = true">
+          <i class="ion ion-close-round animated" ng-class="password.length ? 'fadeIn' : 'fadeOut'" ng-click="password = ''" ng-show="password.length">&nbsp;</i>
+        </div>
+        <div class="item item-input item-floating-label">
+          <span class="input-label">Confirm New Password</span>
+          <input type="password" name="confirmPassword" placeholder="Confirm New Password" ng-model="confirmPassword" compare-to="password" ng-change="isChanged.confirmPassword = true">
+          <i class="ion ion-close-round animated" ng-class="confirmPassword.length ? 'fadeIn' : 'fadeOut'" ng-click="confirmPassword = ''" ng-show="confirmPassword.length">&nbsp;</i>
+        </div>
+        <ul class="list gender">
+        	<li class="item item-checkbox label-checkbox">
+        		Gender
+        	</li>
+  			<li class="item item-checkbox">
+     			<label class="checkbox">
+       				<input type="radio" name="gender" ng-model="gender" ng-change="isChanged.gender = true" value="Male">
+     			</label>
+     			Male
+  			</li>
+  			<li class="item item-checkbox">
+     			<label class="checkbox">
+       				<input type="radio" name="gender" ng-model="gender" ng-change="isChanged.gender = true" value="Female">
+     			</label>
+     			Female
+  			</li>
+		</ul>
+        <div class="save_settings">
+          <button type="submit" class="button button-stable">
+            Save Settings
+          </button>
+        </div>
+        <div class="item item-divider">
+          <span class="animated bounceInLeft">NOTIFICATIONS</span>
+        </div>
+        <ul class="list">
+        	<li class="item item-toggle">
+     			Sound Alerts
+     			<label class="toggle">
+       				<input type="checkbox" name="mobileNotifications" ng-model="mobileNotifications" ng-change="saveInput('mobileNotifications', mobileNotifications)" ng-true-value="true" ng-false-value="false">
+       				<div class="track">
+         				<div class="handle"></div>
+       				</div>
+     			</label>
+  			</li>
+      	</form>
+      	<div class="item item-divider">
+          <span class="animated bounceInLeft">CONFIGURATIONS</span>
+        </div>
+        <a class="item item-icon-right" href="/#/app/settings/player">
+        	Configure Physical MVPlayer <i class="ion-chevron-right icon"></i>
+        </a>
+    	<div class="item item-divider">
+        	<span class="animated bounceInLeft">CONTACT US</span>
+      	</div>
+      	<a class="item" ng-click="featureRequest()">
+        	<i class="icon ion-star ion" style="color:#f1c40f;"></i>&nbsp;Request a Feature
+      	</a>
+      	<a class="item" ng-click="bugReport()">
+        	<i class="icon ion-bug ion" style="color:#2980b9;"></i>&nbsp;Report a Bug
+      	</a>
+    </div>
+    <div class="user_buttons">
+      	<button class="button button-outline button-dark" ng-click="logout()">
+        	Log Out
+      	</button>
+      	<button class="button button-outline button-assertive" ng-click="deleteAccount()">
+        	Delete Account
+      	</button>
+    </div>
   </ion-content>
 </ion-view>

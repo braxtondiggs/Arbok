@@ -1,0 +1,65 @@
+@import '_colors.scss';
+.settings {
+	.item-floating-label .input-label {
+		display:none;
+	}
+	.item {
+		i {
+			width: 30px;
+			font-size: 20px;
+			text-align: center;
+			margin-left: -5px;
+		}
+	}
+	.save_settings {
+		padding:20px 10px;		button {
+			width:100%;
+			color: $coloredLinks;
+  			border-color: $topBorder;
+  			background-color: $topBorder;
+		}
+	}
+	.user_buttons {
+		padding:10px;
+		button {
+			width:100%;
+			&:first-child {
+				margin-bottom:15px;
+			}
+		}
+	}
+	.item-floating-label {
+		input + i.ion-close-round {
+			position: absolute;
+			right: 0;
+			top: 12px;
+			font-size: 28px;
+			display:block;
+			color: #cc6055;
+		}
+	}
+	.list.gender{
+		li.item {
+			width:37.5%;
+			float: left;
+			background-color: transparent;
+			border-right:none;
+			border-left:none;
+			input {
+				&:before {
+					background-color:transparent;
+					border-color: $coloredLinks;
+				}
+			}
+			&.label-checkbox {
+				padding-left:20px;
+				width:25%
+			}
+		}
+		&:after {
+			clear: both;
+			display:block;
+			content: '';
+		}
+	}
+}

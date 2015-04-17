@@ -21,6 +21,9 @@ angular.module('Quilava.controllers')
       user.logIn({
         success: function(userData) {
           $rootScope.currentUser = userData;
+          $rootScope.currentUser.image = userData.get('image')._url;
+          $scope.loginData = {};
+          $scope.signupData = {};
           $scope.login.hasErrors = false;
           $scope.closeLogin(true);
           $ionicLoading.hide();
@@ -51,6 +54,9 @@ angular.module('Quilava.controllers')
       user.signUp(null, {
         success: function(userData) {
           $rootScope.currentUser = userData;
+          $rootScope.currentUser.image = '/images/missingPerson.jpg';
+          $scope.loginData = {};
+          $scope.signupData = {};
           $scope.login.hasErrors = false;
           $scope.closeLogin(true);
           $ionicLoading.hide();

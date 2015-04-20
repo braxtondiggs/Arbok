@@ -32,6 +32,7 @@
 }
 @import '_colors.scss';
 @import 'login.scss';
+@import 'profile.scss';
 @import 'discover.scss';
 @import 'player.scss';
 @import 'settings.scss';
@@ -60,8 +61,16 @@ h1 {
             color:$coloredLinks;
         }
     }
-    .tab-content {
-        top:49px;
+    &.tabs-striped  {
+        .tabs {
+            border-color: $topBorder;
+            color: $coloredLinks;
+            .tab-item.tab-item-active,
+            .tab-item.activated,
+            {
+                border-color: $coloredLinks!important;
+            }
+        }
     }
 }
 .popup-container {
@@ -302,6 +311,7 @@ h1 {
         .bar-header.loggedIn {
             height:125px!important;
             padding:0;
+            overflow:hidden;
             + .has-header {
                 top:125px!important;
             }
@@ -465,70 +475,12 @@ body.search{
         left: 48px;
         text-align: left;
     }
-    .profile {
-        width:100%;
-        position:relative;
-        overflow: hidden;
-        .img-circle {
-            width: 75px;
-            height: 75px;
-            margin: 5px auto auto;
-            position: relative;
-            box-shadow: 5px 5px 10px rgba(0,0,0,.7);
-            img {
-                width: 107%;
-                height: 107%;
-                margin-left: -2px;
-                margin-top: -2px;
-            }
-            .ion-plus-circled {
-                position: absolute;
-                bottom: 4px;
-                right: 10px;
-                font-size: 20px;
-                color: $coloredLinks;
-                text-shadow: 1px 1px #555;
-            }
-        }
-        .title {
-            position: relative;
-            left: 0;
-            text-align: center;
-            text-shadow: 1px 1px #555;
-        }
-        .background {
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: 50%;
-            -webkit-filter: blur(20px);
-            -moz-filter: blur(20px);
-            -o-filter: blur(20px);
-            -ms-filter: blur(20px);
-            filter: blur(20px);
-            height: 95%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            z-index: -1;
-        }
-    }
     .item-content,
     .item {
         font-size: 18px;
         i {
             margin-right: 15px;
             font-size: 26px;
-        }
-    }
-    .settings {
-        position: absolute;
-        right: 15px;
-        top: 5px;
-        text-shadow: 1px 1px #555;
-        z-index: 2;
-        i {
-            color: $coloredLinks;
-            font-size: 30px;
         }
     }
 }
@@ -773,10 +725,16 @@ body.search{
     .ion-chevron-right,
     .ion-play {
         float: right;
-        margin-top: 10px;
+        margin-top:22px;
+        font-size:28px;
+        color: $coloredLinksActivated;
     }
     .item-thumbnail-left {
-        min-height:75px;
+        min-height:90px;
+        padding-left:126px;
+        > img:first-child {
+            max-width:100px;
+        }
         img {
             top:5px;
         }

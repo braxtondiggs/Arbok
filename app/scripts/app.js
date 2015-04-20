@@ -154,13 +154,12 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 			}
 		}
 	})
-	.state('app.favorites', {
-		url: '/favorites',
-		className: 'favorites',
+	.state('app.profile', {
+		url: '/profile',
 		views: {
 			'menuContent': {
-				templateUrl: 'templates/favorites.html',
-				controller: 'FavoritesCtrl'
+				templateUrl: 'templates/profile.html',
+				controller: 'ProfileCtrl'
 			}
 		}
 	})

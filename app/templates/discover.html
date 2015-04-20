@@ -1,25 +1,63 @@
-<ion-view view-title="{{discover.title}}">
-    <ion-content>
-        <ion-tabs class="tabs-icon-only">
-            <ion-tab title="Favorites" icon-on="ion-ios-heart" icon-off="ion-ios-heart-outline" on-select="isDiscover()">
-                <ion-nav-view class="padding">
-                    soemthing
+<ion-view view-title="Discover">
+    <ion-content scroll="false">
+        <ion-tabs class="tabs-icon-only tabs-striped text-only tabs-color-light">
+            <ion-tab title="New">
+                <ion-nav-view>
+                    <ion-content>
+                        <div class="list more dark-list animated fadeIn ordered" ng-show="discover.new.videos.length">
+                            <a class="item item-thumbnail-left animated fadeIn" ng-repeat="new in discover.new.videos | limitTo: discover.new.limit">
+                                <img ng-src="{{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}}">
+                                <i class="icon ion-play icon-accessory"></i>
+                                <h2>{{new.get('artistName')}}</h2>
+                                <p>{{new.get('artistTitle')}}</p>
+                                <div class="BGImage" ng-style="{'background-image':'url({{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}})'}"></div>
+                            </a>
+                        </div>
+                        <ion-infinite-scroll on-infinite="loadMoreNew()" distance="1%" ng-if="discover.new.videos.length && !discover.new.limitMax"></ion-infinite-scroll>
+                        <p class="empty-list" ng-show="!discover.new.videos.length && discover.new.loaded">It looks like we don't have any music for this section. Check back later!</p>
+                    </ion-content>
                 </ion-nav-view>
             </ion-tab>
-            <ion-tab title="Playlist" icon-on="ion-ios-analytics" icon-off="ion-ios-analytics-outline" on-select="isGenre()">
+            <ion-tab title="Top">
                 <ion-nav-view>
-                    <div class="list genre_list">
-    					<a href="app/genre/{{genre.name}}" class="item item-icon-left" ng-repeat="genre in genres">
-    						<div class="list_content">
-	    						<i class="icon ion-social-youtube-outline"></i>
-	    						#{{genre.get('name')}}
-	    						<span>
-	    							<strong>96</strong> Songs
-	    						</span>
-	    					</div>
-    						<div class="BGImage" ng-style="{'background-image':'url({{genre.get('image')._url}})', 'background-position-y': '{{genre.get('position')}}px'}"></div>
-    					</a>
-    				</div>
+                    <ion-content>
+                        <div class="list more dark-list animated fadeIn ordered" ng-show="discover.top.week.videos.length">
+                            <a class="item item-thumbnail-left animated fadeIn" ng-repeat="top in discover.top.week.videos | limitTo: discover.top.week.limit">
+                                <img ng-src="{{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}}">
+                                <i class="icon ion-play icon-accessory"></i>
+                                <h2>{{top.get('artistName')}}</h2>
+                                <p>{{top.get('artistTitle')}}</p>
+                                <div class="BGImage" ng-style="{'background-image':'url({{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}})'}"></div>
+                            </a>
+                        </div>
+                        <ion-infinite-scroll on-infinite="loadMoreTop()" distance="1%" ng-if="discover.top.week.videos.length  && !discover.top.week.limitMax"></ion-infinite-scroll>
+                        <p class="empty-list" ng-show="!discover.top.week.videos.length && discover.top.week.loaded">It looks like we don't have any music for this section. Check back later!</p>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Playlists">
+                <ion-nav-view>
+                    <ion-content>
+                        Playlists
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Genre">
+                <ion-nav-view>
+                    <ion-content>
+                        <div class="list genre_list">
+        					<a href="app/genre/{{genre.name}}" class="item item-icon-left animated fadeInRight delay-{{$index}}" ng-repeat="genre in discover.genres">
+        						<div class="list_content">
+    	    						<i class="icon ion-social-youtube-outline"></i>
+    	    						#{{genre.get('name')}}
+    	    						<span>
+    	    							<strong>96</strong> Songs
+    	    						</span>
+    	    					</div>
+        						<div class="BGImage" ng-style="{'background-image':'url({{genre.get('image')._url}})', 'background-position-y': '{{genre.get('position')}}px'}"></div>
+        					</a>
+        				</div>
+                    </ion-content>
                 </ion-nav-view>
             </ion-tab>
         </ion-tabs>

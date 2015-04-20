@@ -6,7 +6,7 @@ angular.module('Quilava.controllers', [])
 			$rootScope.controllerClass = toState.className;
 		});
 	}])
-	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicActionSheet', '$ionicLoading', '$ionicHistory', '$cordovaCamera', '$localStorage', 'lodash', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicActionSheet, $ionicLoading, $ionicHistory, $cordovaCamera, $localStorage, lodash) {
+	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicLoading', '$ionicHistory', '$localStorage', 'lodash', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup , $ionicLoading, $ionicHistory, $localStorage, lodash) {
 		/*global Parse*/
 		$rootScope.currentUser = Parse.User.current() || {};
 		if (!lodash.isEmpty($rootScope.currentUser)) {
@@ -63,86 +63,6 @@ angular.module('Quilava.controllers', [])
 						title: 'MVPlayer',
 						template: 'You have been successfully logged out'
 					});
-				}
-			});
-		};
-		$scope.updateImage = function() {
-			var hideSheet = $ionicActionSheet.show({
-				buttons: [{
-					text: 'Choose Image'
-				}, {
-					text: 'Take Photo'
-				}],
-				titleText: 'Photo Upload',
-				cancelText: 'Cancel',
-				buttonClicked: function(index) {
-					$ionicLoading.show();
-
-					function uploadPhoto(image) {
-						function loadComplete() {
-							hideSheet();
-							$ionicLoading.hide();
-						}
-						var user = $rootScope.currentUser;
-						var file = new Parse.File(user.id + '.png', {
-							base64: image
-						});
-						user.set('image', file);
-						user.save(null, {
-							success: function() {
-								$rootScope.currentUser.image = $rootScope.currentUser.get('image')._url;
-								loadComplete();
-							},
-							error: function() {
-								loadComplete();
-								$ionicLoading.show({
-									template: 'Error, we could not upload your photo...',
-									duration: 2000
-								});
-							}
-						});
-					}
-
-					function imageError() {
-						hideSheet();
-						$ionicLoading.hide();
-						$ionicLoading.show({
-							template: 'Error, could not load photo...',
-							duration: 2000
-						});
-					}
-					if (index === 0) {
-						/* global Camera*/
-						var pickerOptions = {
-							destinationType: Camera.DestinationType.DATA_URL,
-							sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-							quality: 50,
-							EncodingType: Camera.EncodingType.PNG,
-							MediaType: Camera.MediaType.PICTURE,
-							targetWidth: 150,
-							targetHeight: 150
-						};
-						$cordovaCamera.getPicture(pickerOptions).then(function(imageData) {
-							uploadPhoto(imageData);
-						}, function() {
-							imageError();
-						});
-					} else if (index === 1) {
-						var cameraOptions = {
-							quality: 50,
-							destinationType: Camera.DestinationType.DATA_URL,
-							sourceType: Camera.PictureSourceType.CAMERA,
-							encodingType: Camera.EncodingType.PNG,
-							correctOrientation: true,
-							targetWidth: 150,
-							allowEdit: true
-						};
-						$cordovaCamera.getPicture(cameraOptions).then(function(imageData) {
-							uploadPhoto(imageData);
-						}, function() {
-							imageError();
-						});
-					}
 				}
 			});
 		};

@@ -32,6 +32,8 @@
 }
 @import '_colors.scss';
 @import 'login.scss';
+@import 'discover.scss';
+@import 'player.scss';
 @import 'settings.scss';
 
 body {
@@ -42,9 +44,25 @@ body {
 .modal {
     background-color: $darkBG;
 }
+.platform-android .action-sheet .button {
+    color: #007aff;
+    margin-left: 15px;
+}
 body,
 h1 {
     font-family: 'helvetica_neue_lt_pro47LtCn';
+}
+.tabs-top {
+    .tabs {
+        top:0;
+        background-color: $topBorder;
+        i {
+            color:$coloredLinks;
+        }
+    }
+    .tab-content {
+        top:49px;
+    }
 }
 .popup-container {
     .popup {
@@ -112,9 +130,6 @@ h1 {
             color: $coloredLinks;
         }
     }
-}
-i.icon {
-    color: $coloredLinks;
 }
 
 .status_dropdown {
@@ -285,10 +300,10 @@ i.icon {
     }
     &.menu-left {
         .bar-header.loggedIn {
-            height:125px;
+            height:125px!important;
             padding:0;
             + .has-header {
-                top:125px;
+                top:125px!important;
             }
         }
         .scroll {
@@ -341,6 +356,8 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
     color: $textColor;
     font-size: 16px;
     font-weight: 600;
+    -webkit-appearance: none;
+    border-radius: 0;
     &::-webkit-input-placeholder {
         color: $textColor;
         letter-spacing: 1px;
@@ -811,25 +828,6 @@ span.special {
 .nothing-here {
     width: 100%;
     margin-top: 50px;
-}
-.animated { 
-    -webkit-animation-duration: 2s; 
-    animation-duration: 2s; 
-    -webkit-animation-fill-mode: both; 
-    animation-fill-mode: both; 
-} 
-
-@-webkit-keyframes fadeIn { 
-    0% {opacity: 0;}
-    100% {opacity: 1;} 
-} 
-@keyframes fadeIn { 
-    0% {opacity: 0;}
-    100% {opacity: 1;} 
-} 
-.fadeIn { 
-    -webkit-animation-name: fadeIn; 
-    animation-name: fadeIn; 
 }
 .delay {
     &-1 {

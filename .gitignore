@@ -1,9 +1,10 @@
 node_modules
 www
-.tmp
+.idea
 .temp
 .sass-cache
 app/lib
+app/bower_components
 coverage
 platforms
 *.swp
@@ -21,3 +22,4 @@ plugins/
 platforms/**/
 !www/config.xml
 !www/res
+app/scripts/configuration.js

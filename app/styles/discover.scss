@@ -1,0 +1,40 @@
+@import '_colors.scss';
+.genre_list {
+	.item {
+		position: relative;
+		color: $coloredLinks!important;
+		font-size:26px;
+		.BGImage {
+			position: absolute;
+			top:0;
+			left:0;
+			right: 0;
+  			bottom: 0;
+			background-size: cover;
+			z-index:-1;
+			-webkit-filter: blur(1px);
+            -moz-filter: blur(1px);
+            -o-filter: blur(1px);
+            -ms-filter: blur(1px);
+            filter: blur(1px);
+            opacity: .3;
+            background-repeat: no-repeat;
+
+		}
+		.list_content {
+			margin-left:20px;
+			z-index:1;
+			font-weight: 600;
+			i {
+				margin-left:10px;
+			}
+			span {
+				margin-top:5px;
+				display:block;
+				color: $textColor;
+				font-size:14px;
+				font-weight: normal;
+			}
+		}
+	}
+}

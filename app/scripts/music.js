@@ -1,52 +1,109 @@
 'use strict';
 angular.module('Quilava.controllers')
-.controller('MusicCtrl', ['$scope', '$localStorage', '$ionicLoading', 'lodash', function($scope, $localStorage, $ionicLoading, lodash)  {
-	$scope.$storage = $localStorage.$default({
-    	'myMusic': []
-    });
-	$scope.refreshMusic = function(){
-        $ionicLoading.show({template: 'Searching audio files, please wait...'});
-        $scope.$storage.myMusic = null;
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem){
-            function collectMedia(path, recursive, level) {
-           	if (level === undefined) { 
-           		level = 0;
-           	}
-      		var directoryEntry = new DirectoryEntry('', path);
-      		if(!directoryEntry.isDirectory) {
-         		console.log('The provided path is not a directory');
-         		return;
-     		}
-      		var directoryReader = directoryEntry.createReader();
-      		directoryReader.readEntries(function (entries) {
-            var extension;
-            for (var i = 0; i < entries.length; i++) {
-               	if (entries[i].name === '.') {
-               		continue;
-               	}
-               	extension = entries[i].name.substr(entries[i].name.lastIndexOf('.'));
-               	if (entries[i].isDirectory === true && recursive === true) {
-                  	collectMedia(entries[i].fullPath, recursive, level + 1);
-               	} else if (entries[i].isFile === true && lodash.indexOf(['.mp3', '.wav', '.m4a'], extension) >= 0) {
-                  
-                  //$scope.$storage.myMusic.push(entries[i].fullPath);
-                  console.log('File saved: ' + entries[i].fullPath);
-               }
-            }
-        }, function(error) {
-            console.log('Unable to read the directory. Errore: ' + error.code);
-        });
-      		console.log('Current path analized is: ' + path);
-        }
-            var root = fileSystem.root;
-            collectMedia(root.fullPath, true, undefined);
-        },
-        function(error){
-            console.log('File System Error: ' + error.code);
-        });
-        //$scope.$broadcast('scroll.refreshComplete');
-	};
-	if (lodash.isEmpty($scope.$storage.myMusic)) {//check if ran before
-		$scope.refreshMusic();
-	}
-}]);
+	.controller('MusicCtrl', ['$scope', '$rootScope', '$ionicPopup', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$localStorage', '$window', '$state', function($scope, $rootScope, $ionicPopup, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $localStorage, $window, $state) {
+		$scope.$storage = $localStorage.$default({
+			'myMusic': []
+		});
+		$ionicLoading.show('Accessing Filesystem.. Please wait');
+		$scope.showSubDirs = function(file) {
+			if (file.isDirectory || file.isUpNav) {
+				if (file.isUpNav) {
+					processFile(file.nativeURL.replace(file.actualName + '/', ''));
+				} else {
+					processFile(file.nativeURL);
+				}
+			} else {
+				if (hasExtension(file.name)) {
+
+				}
+			}
+		};
+		if ($window.LocalFileSystem) {
+			$window.requestFileSystem($window.LocalFileSystem.PERSISTENT, 0, function(fs) {
+				var directoryReader = fs.root.createReader();
+				directoryReader.readEntries(function(entries) {
+					var arr = [];
+					processEntries(entries, arr); // arr is pass by refrence
+					$scope.files = arr;
+					$ionicLoading.hide();
+				}, function(error) {
+					console.log(error);
+				});
+			}, function(error) {
+				console.log(error);
+			});
+		}else {
+			$ionicLoading.hide();
+			$ionicPopup.alert({
+				title: 'MVPlayer - Error',
+				template: 'We could not access your music directory, please check back later.'
+			}).then(function() {
+				$state.transitionTo('app.dashboard');
+				$ionicHistory.nextViewOptions({
+					historyRoot: true
+				});
+			});
+		}
+
+		function fsResolver(url, callback) {
+			$window.resolveLocalFileSystemURL(url, callback);
+		}
+
+		function hasExtension(fileName) {
+			var exts = ['.mp3', '.m4a', '.ogg', '.mp4', '.aac'];
+			return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName);
+		}
+
+		function processFile(url) {
+			fsResolver(url, function(fs) {
+				var directoryReader = fs.createReader();
+				directoryReader.readEntries(function(entries) {
+					if (entries.length > 0) {
+						var arr = [];
+						// push the path to go one level up
+						if (fs.fullPath !== '/') {
+							arr.push({
+								id: 0,
+								name: '.. One level up',
+								actualName: fs.name,
+								isDirectory: false,
+								isUpNav: true,
+								nativeURL: fs.nativeURL,
+								fullPath: fs.fullPath
+							});
+						}
+						processEntries(entries, arr);
+						$scope.$apply(function() {
+							$scope.files = arr;
+						});
+						$ionicScrollDelegate.scrollTop();
+					} else {
+						$ionicLoading.show({
+							template: fs.name + ' folder is empty!',
+							duration: 2000
+						});
+					}
+				}, function(error) {
+					console.log(error);
+				});
+			});
+		}
+
+		function processEntries(entries, arr) {
+			for (var i = 0; i < entries.length; i++) {
+				var e = entries[i];
+				// do not push/show hidden files or folders
+				if (e.name.indexOf('.') !== 0) {
+					arr.push({
+						id: i + 1,
+						name: e.name,
+						isUpNav: false,
+						isDirectory: e.isDirectory,
+						nativeURL: e.nativeURL,
+						fullPath: e.fullPath
+					});
+				}
+			}
+			return arr;
+		}
+	}]);

@@ -1,4 +1,4 @@
-// Generated on 2015-04-07 using generator-ionic 0.7.1
+// Generated on 2015-04-18 using generator-ionic 0.7.2
 'use strict';
 
 var _ = require('lodash');
@@ -31,7 +31,7 @@ module.exports = function (grunt) {
     // Environment Variables for Angular App
     // This creates an Angular Module that can be injected via ENV
     // Add any desired constants to the ENV objects below.
-    // https://github.com/diegonetto/generator-ionic#environment-specific-configuration
+    // https://github.com/diegonetto/generator-ionic/blob/master/docs/FAQ.md#how-do-i-add-constants
     ngconstant: {
       options: {
         space: '  ',
@@ -157,7 +157,7 @@ module.exports = function (grunt) {
       },
       sass: {
         src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        ignorePath: /(\.\.\/){1,2}lib\//
+        ignorePath: /(\.\.\/){1,2}bower_components\//
       }
     },
 
@@ -226,6 +226,14 @@ module.exports = function (grunt) {
       options: {
         //root: '<%= yeoman.app %>',
         noRebase: true
+      },
+      dist: {
+        files: {
+          '<%= yeoman.dist %>/<%= yeoman.styles %>/main.css': [
+            '.temp/<%= yeoman.styles %>/**/*.css',
+            '<%= yeoman.app %>/<%= yeoman.styles %>/**/*.css'
+          ]
+        }
       }
     },
     htmlmin: {
@@ -516,7 +524,7 @@ module.exports = function (grunt) {
   });
   grunt.registerTask('run', function() {
     grunt.config('concurrent.ionic.tasks', ['ionic:run:' + this.args.join(), 'watch']);
-    return grunt.task.run(['init', 'concurrent:ionic']);
+    return grunt.task.run(['compress', 'concurrent:ionic']);
   });
   grunt.registerTask('build', function() {
     return grunt.task.run(['init', 'ionic:build:' + this.args.join()]);

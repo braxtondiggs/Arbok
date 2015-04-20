@@ -1,6 +1,8 @@
+'use strict';
 var Mandrill = require('mandrill');
 Mandrill.initialize('teFqEIqTxBzb_8p6pBMnMw');
-
+/*global Parse*/
+/*jshint camelcase: false */
 Parse.Cloud.define('sendEmail', function(request, response) {
 	Mandrill.sendEmail({
 		message: {
@@ -8,19 +10,17 @@ Parse.Cloud.define('sendEmail', function(request, response) {
 			subject: request.params.subject,
 			from_email: request.params.email,
 			from_name: request.params.name,
-	    to: [
-	      {
-	      	email: 'braxtondiggs@gmail.com',
-	        name: 'MVPlayer | Braxton Diggs'
-	      }
-	    ]
-	  },
-	  	async: true
+			to: [{
+				email: 'braxtondiggs@gmail.com',
+				name: 'MVPlayer | Braxton Diggs'
+			}]
+		},
+		async: true
 	},{
-		success: function(httpResponse) {
+		success: function() {
 			response.success('Email sent!');
 		},
-		error: function(httpResponse) {
+		error: function() {
 			response.error('Uh oh, something went wrong');
 		}
 	});

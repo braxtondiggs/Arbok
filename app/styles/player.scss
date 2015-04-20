@@ -1,0 +1,20 @@
+@import '_colors.scss';
+div.input {
+	.location-label,
+	#location-player {
+		border-color: transparent;
+		margin-top:50px;
+	}
+	.location-button {
+		margin-top:50px;
+		height: 50px;
+	}
+	&.input-inline-button  {
+		.button {
+			display: inline-block;
+		}
+		.input__field {
+			width: calc(100% - 102px);
+		}
+	}
+}

@@ -1,30 +1,32 @@
 <ion-view view-title="Find A MVPlayer">
     <ion-content ng-class="{'has-footer': room}">
-        <div ng-show="players.length">
-            <div class="list card animated dark-list" ng-repeat="player in players" ng-class="{'fadeIn': loaded}">
-                <div class="item item-avatar list-title">
+    <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
+        <div ng-show="players.length" ng-class="players.length ? 'fadeIn' : 'fadeOut'">
+            <div class="list card dark-list" ng-repeat="player in players" ng-click="joinServer(player.id)">
+                <div class="item item-avatar list-title animated fadeIn">
                     <img ng-src="{{player.attributes.image}}">
                     <h2>{{player.attributes.name}}&nbsp;<span>(~{{getDistance(player.attributes.latlng._latitude, player.attributes.latlng._longitude, lnglat.lat, lnglat.lng, 'm')}} miles)</span></h2>
                     <p>{{player.attributes.address}}</p>
                 </div>
-                <div class="item item-image">
+                <div class="item item-image animated fadeIn" ng-if="player.attributes.playingImg">
                     <img ng-src="{{player.attributes.playingImg}}">
                 </div>
-                <a class="item item-icon-left assertive" ng-click="joinServer(player.id)">
+                <a class="item item-icon-left assertive animated fadeIn">
                     <i class="icon ion-music-note"></i> Join The Party
                 </a>
             </div>
             <button class="button button-outline dark-button" ng-click="resetLocation();">Wrong Players? Manually Edit Location</button>
         </div>
-        <div ng-show="!players.length && loaded || lnglat.err">
+        <div ng-show="!players.length && loaded || lnglat.err" class="animated" ng-class="!players.length && loaded || lnglat.err ? 'fadeIn' : 'fadeOut'">
             <p class="empty-list" ng-show="!players.length">It looks there isn't any MVPlayers in your area. <i class="ion-sad"></i></p>
             <p class="empty-list">If you know your location, use the input below to manually set your location.</p>
-            <span class="input input--jiro">
-                <input class="input__field input__field--jiro" type="text" id="location-player" ng-model="location" ng-class="{'input--filled': location.length > 0}">
-                <label class="input__label input__label--jiro" for="location-player">
-                    <span class="input__label-content input__label-content--jiro">Location:</span>
+            <div class="input input-inline-button animated tada delay-5" >
+                <label class="input__label location-label" for="location">
+                    <i class="icon ion-ios-location"></i>
                 </label>
-            </span>
+                <input class="input__field" type="text" placeholder="Location" name="location" id="location-player" ng-model="location">
+                <button class="button button-outline dark-button location-button">Go</button>
+            </div>
         </div>
         <p class="empty-list" ng-show="!players.length && !loaded && !lnglat.err"><i class="ion-navigate"></i>&nbsp;We are trying to determine your location. Please wait...</p>
     </ion-content>

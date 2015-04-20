@@ -38,28 +38,28 @@
 			color: #cc6055;
 		}
 	}
-	.list.gender{
-		li.item {
-			width:37.5%;
-			float: left;
-			background-color: transparent;
-			border-right:none;
-			border-left:none;
-			input {
-				&:before {
-					background-color:transparent;
-					border-color: $coloredLinks;
-				}
-			}
-			&.label-checkbox {
-				padding-left:20px;
-				width:25%
+}
+.list.gender{
+	li.item {
+		width:37.5%;
+		float: left;
+		background-color: transparent;
+		border-right:none;
+		border-left:none;
+		input {
+			&:before {
+				background-color:transparent;
+				border-color: $coloredLinks;
 			}
 		}
-		&:after {
-			clear: both;
-			display:block;
-			content: '';
+		&.label-checkbox {
+			padding-left:20px;
+			width:25%
 		}
+	}
+	&:after {
+		clear: both;
+		display:block;
+		content: '';
 	}
 }

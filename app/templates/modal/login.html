@@ -15,11 +15,11 @@
       <i class="ion ion-close" ng-click="login.hasErrors = false;"></i>
     </div>
     <ion-slide-box show-pager="false" active-slide="1">
-      <ion-slide>
+      <ion-slide ng-style="{'background-image':'url(images/bgLogin.jpg)'}">
         <div class="box padding">
           <h1>MVPlayer</h1>
           <p>Signup or use Facebook for a quicker access!</p>
-          <form id="signupForm" name="signupForm" ng-submit="doSignup(signupForm.$valid, signupForm.name.$viewValue, signupForm.email.$viewValue, signupForm.password.$viewValue)" novalidate>
+          <form id="signupForm" name="signupForm" ng-submit="doSignup(signupForm.$valid, signupForm.name.$viewValue, signupForm.email.$viewValue, null, signupForm.password.$viewValue, '/images/missingPerson.jpg', null)" novalidate>
             <div class="input">
               <label class="input__label" for="name">
                 <i class="icon ion-person"></i>
@@ -59,7 +59,7 @@
           </div>
         </div>
       </ion-slide>
-      <ion-slide>
+      <ion-slide ng-style="{'background-image':'url(images/bgLogin.jpg)'}">
         <div class="box padding">
           <h1>MVPlayer</h1>
           <p>Login to your MVPlayer account or use Facebook for a quicker login!</p>
@@ -82,7 +82,7 @@
           <p>Don't have an account?
             <a ng-click="signupPage()">Sign Up</a>
           </p>
-          <div class="social-login">
+          <div class="social-login hide-on-keyboard-open">
             <div class="facebook" ng-click="facebookLogin()">
               <i class="icon ion-social-facebook"></i>&nbsp;Sign in with Facebook
               <div class="icon-holder">

@@ -111,9 +111,6 @@ angular.module('Quilava.controllers', [])
 		$scope.goBack = function() {
 			$ionicHistory.goBack(-1);
 		}
-		$scope.convertSlug = function(name, slug) {
-			return UserService.convertSlug(name, slug);
-		};
 		$scope.voteClicked = function(index) {
 			if ($scope.vote.selectedIndex !== index) {
 				$scope.vote.selectedIndex = index;

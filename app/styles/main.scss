@@ -32,6 +32,7 @@
 }
 @import '_colors.scss';
 @import 'login.scss';
+@import 'search.scss';
 @import 'profile.scss';
 @import 'discover.scss';
 @import 'player.scss';
@@ -314,6 +315,7 @@ h1 {
             overflow:hidden;
             + .has-header {
                 top:125px!important;
+                background-repeat: no-repeat;
             }
         }
         .scroll {
@@ -389,58 +391,6 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
         border-color: $coloredLinks;
     }
 }
-body.search{
-    #header-search {
-        position: absolute;
-        top: 12px;
-        right: 0;
-        z-index: 0;
-        margin-right:30px;
-        height: 43px;
-        text-align: center;
-        display:inline-block;
-        font-size: 17px;
-        vertical-align: top;
-        width: calc(100% - 115px);
-        z-index: 100;
-        .ion-search {
-            position: absolute;
-            top: -1x;
-            left: 5px;
-            color: #fff;
-            font-size: 20px;
-        }
-        input.search {
-            padding-left: 30px!important;
-            height: 32px;
-            margin-top:-8px;
-            line-height:15px;
-            font-size:20px;
-            background: transparent;
-            color: $textColor;
-            border-bottom: 2px solid $coloredLinks;
-            &::-webkit-input-placeholder {
-               color: $textColor;
-               line-height:25px;
-            }
-        }
-        .ion-close {
-            position: absolute;
-            right: 6px;
-            top: -1px;
-            color: #fff;
-            font-size:20px;
-        }
-    }
-    .bar-header .header-item.title {
-        display: none;
-    }
-    &.platform-ios {
-        #header-search {
-            top:30px;
-        }
-    }
-}
 #loading-bar .bar {
     height: 2px!important;
     padding: 0;
@@ -448,6 +398,7 @@ body.search{
 
 .pane {
     background-color: $darkBG;
+    background-repeat: no-repeat;
 }
 
 .view-container {
@@ -669,46 +620,6 @@ body.search{
         }
     }
 }
-.player {
-    .item-avatar h2 span {
-        color: $textColor;
-        font-size: 10px;
-    }
-    .item p {
-        color: $textColor;
-    }
-    i {
-        color: $coloredLinks;
-    }
-    .item-image {
-        img {
-            max-height:190px;
-        }
-        &:after {
-            content: "What's Playing Now";
-            color: $textColor;
-            position: absolute;
-            bottom: 40%;
-            background-color: rgba(0, 0, 0, 0.5);
-            width: 100%;
-            display: block;
-            font-size: 22px;
-            padding: 10px 0;
-            font-weight: bold;
-        }
-    }
-    .item-avatar > img:first-child {
-        padding: 2px;
-        border: 2px solid $coloredLinks;
-        height: 60px;
-        width: 60px;
-        max-height:initial;
-        max-width: initial;
-        left: 5px;
-        top: 5px;
-    }
-}
-
 .queue {
     .ion-chevron-right {
         float: right;
@@ -736,7 +647,7 @@ body.search{
             max-width:100px;
         }
         img {
-            top:5px;
+            top:4px;// minus 1 for border
         }
     }
 }

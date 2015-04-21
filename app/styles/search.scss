@@ -1,0 +1,57 @@
+@import '_colors.scss';
+body.search{
+    #header-search {
+        position: absolute;
+        top: 12px;
+        right: 0;
+        z-index: 0;
+        margin-right:30px;
+        height: 43px;
+        text-align: center;
+        display:inline-block;
+        font-size: 17px;
+        vertical-align: top;
+        width: calc(100% - 115px);
+        z-index: 100;
+        .ion-search {
+            position: absolute;
+            top: -1x;
+            left: 5px;
+            color: #fff;
+            font-size: 20px;
+        }
+        input.search {
+            padding-left: 30px!important;
+            height: 32px;
+            margin-top:-8px;
+            line-height:15px;
+            font-size:20px;
+            background: transparent;
+            color: $textColor;
+            border-bottom: 2px solid $coloredLinks;
+            &::-webkit-input-placeholder {
+               color: $textColor;
+               line-height:25px;
+            }
+        }
+        .ion-close {
+            position: absolute;
+            right: 6px;
+            top: -1px;
+            color: #fff;
+            font-size:20px;
+        }
+    }
+    .bar-header .header-item.title {
+        display: none;
+    }
+    //&.platform-ios {
+        #header-search {
+            top:7px;
+        }
+    //}
+    .search-history a.item,
+    .search-history a.item i{
+        font-size: 20px;
+    }
+}

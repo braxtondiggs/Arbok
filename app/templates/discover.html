@@ -1,7 +1,7 @@
 <ion-view view-title="Discover" ng-style="{'background-image':'url(images/BG.png)'}">
     <ion-content scroll="false">
         <ion-tabs class="tabs-icon-only tabs-striped text-only tabs-color-light">
-            <ion-tab title="New">
+            <ion-tab title="New" on-select="discover.newSelected()">
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list animated fadeIn ordered" ng-show="discover.new.videos.length">
@@ -13,12 +13,12 @@
                                 <div class="BGImage" ng-style="{'background-image':'url({{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}})'}"></div>
                             </a>
                         </div>
-                        <ion-infinite-scroll on-infinite="loadMoreNew()" distance="1%" ng-if="discover.new.videos.length && !discover.new.limitMax"></ion-infinite-scroll>
+                        <ion-infinite-scroll on-infinite="discover.loadMoreNew()" distance="1%" ng-if="discover.new.videos.length && !discover.new.limitMax"></ion-infinite-scroll>
                         <p class="empty-list" ng-show="!discover.new.videos.length && discover.new.loaded">It looks like we don't have any music for this section. Check back later!</p>
                     </ion-content>
                 </ion-nav-view>
             </ion-tab>
-            <ion-tab title="Top">
+            <ion-tab title="Top" on-select="discover.topSelected()">
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list animated fadeIn ordered" ng-show="discover.top.week.videos.length">
@@ -30,19 +30,19 @@
                                 <div class="BGImage" ng-style="{'background-image':'url({{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}})'}"></div>
                             </a>
                         </div>
-                        <ion-infinite-scroll on-infinite="loadMoreTop()" distance="1%" ng-if="discover.top.week.videos.length  && !discover.top.week.limitMax"></ion-infinite-scroll>
+                        <ion-infinite-scroll on-infinite="discover.loadMoreTop()" distance="1%" ng-if="discover.top.week.videos.length  && !discover.top.week.limitMax"></ion-infinite-scroll>
                         <p class="empty-list" ng-show="!discover.top.week.videos.length && discover.top.week.loaded">It looks like we don't have any music for this section. Check back later!</p>
                     </ion-content>
                 </ion-nav-view>
             </ion-tab>
-            <ion-tab title="Playlists">
+            <ion-tab title="Playlists" on-select="discover.playlistSelected()">
                 <ion-nav-view>
                     <ion-content>
                         Playlists
                     </ion-content>
                 </ion-nav-view>
             </ion-tab>
-            <ion-tab title="Genre">
+            <ion-tab title="Genre" on-select="discover.genreSelected()">
                 <ion-nav-view>
                     <ion-content>
                         <div class="list genre_list">

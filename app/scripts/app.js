@@ -19,7 +19,7 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 	return {
 		checkImage: function(img) {
 			if (img) {
-				return (img.slice(-3) === 'jpg') ? img : 'http://placehold.it/125x70';
+				return (img.slice(-3) === 'jpg') ? ((img.indexOf('http://imvdb.com/') > -1)?img.substr(17):img): 'http://placehold.it/125x80';
 			} else {
 				return;
 			}

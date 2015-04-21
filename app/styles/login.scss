@@ -12,15 +12,25 @@
                 height: 100%;
                 .slider-slide {
                     height:100%;
-                    &:first-child {
+                    .BG_login {
                         background-repeat: no-repeat;
-                        background-position: 34%;
                         background-size: cover;
+                        position: absolute;
+                        height: 100%;
+                        width: 100%;
+                        z-index: -1;
+                        -webkit-filter: blur(1px);
+                        -moz-filter: blur(1px);
+                        -o-filter: blur(1px);
+                        -ms-filter: blur(1px);
+                        filter: blur(1px);
+                        opacity: 0.3
                     }
-                    &:nth-child(2) {
-                        background-repeat: no-repeat;
+                    &:first-child .BG_login{
+                        background-position: 34%;
+                    }
+                    &:nth-child(2) .BG_login{
                         background-position: 97%;
-                        background-size: cover;
                     }
                 }
             }

@@ -18,3 +18,42 @@ div.input {
 		}
 	}
 }
+.player {
+    .item-avatar h2 span {
+        color: $textColor;
+        font-size: 10px;
+    }
+    .item p {
+        color: $textColor;
+    }
+    i {
+        color: $coloredLinks;
+    }
+    .item-image {
+        img {
+            max-height:190px;
+        }
+        &:after {
+            content: "What's Playing Now";
+            color: $textColor;
+            position: absolute;
+            bottom: 40%;
+            background-color: rgba(#FFF, 0.5);
+            width: 100%;
+            display: block;
+            font-size: 22px;
+            padding: 10px 0;
+            font-weight: bold;
+        }
+    }
+    .item-avatar > img:first-child {
+        padding: 2px;
+        border: 2px solid $coloredLinks;
+        height: 60px;
+        width: 60px;
+        max-height:initial;
+        max-width: initial;
+        left: 5px;
+        top: 5px;
+    }
+}

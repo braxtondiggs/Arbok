@@ -5,10 +5,10 @@
             <ion-nav-buttons side="left">
                 <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
             </ion-nav-buttons>
-            <form id="header-search" ng-submit="doSearch(search.term)" name="searchForm">
+            <form id="header-search" name="searchForm" ng-controller="SearchCtrl">
               <i class="ion-search"></i>
-              <input class="search" name="search" id="search" type="search" placeholder="Search" ng-model="search.term" ng-minlength="1">
-              <a class="ion-close clear-search" ng-show="search.term.length" ng-click="search.term = ''"></a>
+              <input class="search" name="search" id="search" type="text" placeholder="Search" ng-model="searchTerm" ng-model-options="{debounce: 500}">
+              <a class="ion-close clear-search" ng-show="searchTerm.length" ng-click="searchTerm= ''"></a>
             </form>
         </ion-nav-bar>
         <ion-nav-view name="menuContent"></ion-nav-view>
@@ -28,7 +28,7 @@
                 <div class="background" ng-style="{'background-image':'url({{currentUser.image}})'}"></div>
             </a>
         </header>
-        <ion-content class="has-header" scroll="false" ng-style="{'background-image':'url(images/BG_fade.png)'}">
+        <ion-content class="has-header" scroll="false" ng-style="{'background-image':'url(images/BG.png)'}">
             <ion-list>
                 <ion-item nav-clear menu-close ng-class="{'animated fadeInLeft delay-1': ratio}" ng-click="login();" href="#" ng-if="!currentUser._serverData" ng-show="ratio">
                     <i class="icon ion-person-stalker" ng-class="{'animated bounceIn delay-6': ratio}" ng-show="ratio"></i>Log-in / Sign-up

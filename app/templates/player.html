@@ -1,7 +1,7 @@
 <ion-view view-title="Find A MVPlayer" ng-style="{'background-image':'url(images/BG.png)'}">
     <ion-content ng-class="{'has-footer': room}">
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
-        <div ng-show="players.length" ng-class="players.length ? 'fadeIn' : 'fadeOut'">
+        <div class="animated" ng-show="players.length" ng-class="players.length ? 'fadeIn' : 'fadeOut'">
             <div class="list card dark-list" ng-repeat="player in players" ng-click="joinServer(player.id)">
                 <div class="item item-avatar list-title animated fadeIn">
                     <img ng-src="{{player.attributes.image}}" ng-if="{{player.attributes.image}}">

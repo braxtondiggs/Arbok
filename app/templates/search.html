@@ -1,36 +1,79 @@
 <ion-view title="Search" ng-style="{'background-image':'url(images/BG.png)'}">
-    <ion-content ng-class="{'has-footer': room}">
-        <div class="list card search dark-list" ng-show="search.tracks.length">
-            <div class="item item-divider list-title">
-                Tracks
-            </div>
-            <a class="item item-thumbnail-left animated" ng-repeat="track in search.tracks" ng-click="addSong(track.id, track.artists[0].name, track.song_title, track.image.o)"ng-class="{'fadeIn': search.loaded}">
-                <img ng-src="{{track.image.o}}">
-                <i class="icon ion-play icon-accessory"></i>
-                <h2>{{track.artists[0].name}}</h2>
-                <p>{{track.song_title}}</p>
-            </a>
-        </div>
-        <div class="list card search dark-list" ng-show="search.artists.length">
-            <div class="item item-divider list-title">
-                Artist
-            </div>
-            <a class="item item-thumbnail-left animated" href="#/app/artist/id/{{artist.id}}"  ng-title="{{artist.name}}" ng-repeat="artist in search.artists" ng-click="setSearchBar(false)" ng-class="{'fadeIn': search.loaded}">
-                <img ng-src="{{checkImage(artist.image)}}">
-                <i class="icon ion-chevron-right icon-accessory"></i>
-                <h2>{{convertSlug(artist.name, artist.slug)}}</h2>
-            </a>
-        </div>
-        <div class="list list-inset dark-list search" ng-show="(!search.artists.length || !search.artists.length) && searchHistory.length">
-            <div class="item item-divider list-title">
-                <i class="ion-heart icon"></i>&nbsp;Previously Searched
-            </div>
-            <a class="item browse-item" href="#/app/search/{{artist}}/"  ng-repeat="artist in searchHistory" ng-click="setSearchBar(false)">
-                <i class="icon ion-search"></i>
-                <i class="icon ion-chevron-right icon-accessory"></i>
-                {{artist}}
-            </a>
-        </div>
+    <ion-content scroll="false">
+         <ion-tabs class="tabs-icon-only tabs-striped text-only tabs-color-light">
+            <ion-tab title="Tracks" on-select="activateTab(0)">
+                <ion-nav-view>
+                    <ion-content>
+                        <div class="list more dark-list animated ordered" ng-class="search.tracks.results.length ? 'fadeIn' : 'fadeOut'" ng-show="search.tracks.results.length">
+                            <a class="item item-thumbnail-left animated fadeIn" ng-repeat="track in search.tracks.results">
+                                <img ng-src="{{track.image.o}}">
+                                <i class="icon ion-play icon-accessory"></i>
+                                <h2>{{track.artists[0].name}}</h2>
+                                <p>{{track.song_title}}</p>
+                                <div class="BGImage" ng-style="{'background-image':'url({{track.image.o}})'}"></div>
+                            </a>
+                        </div>
+                        <ion-infinite-scroll on-infinite="loadMoreSearch('videos', 'tracks')" distance="1%" ng-if="search.tracks.results.length && !search.tracks.maxed"></ion-infinite-scroll>
+                        <p class="empty-list" ng-show="!search.tracks.results.length && search.tracks.loaded">It looks like we don't have any music for this section. Check back later!</p>
+                        <div class="list list-inset dark-list search search-history animated delay-4" ng-class="!search.tracks.results.length && $storage.search.tracks.length > 0 && !search.tracks.loaded? 'bounceInUp' : 'fadeOut'" ng-show="!search.tracks.results.length && $storage.search.tracks.length > 0 && !search.tracks.loaded" ng-if="$storage.search.tracks.length > 0">
+                            <div class="item item-divider list-title">
+                                <i class="ion-heart icon"></i>&nbsp;Previously Searched Tracks
+                            </div>
+                            <a class="item browse-item" ng-repeat="track in $storage.search.tracks">
+                                <i class="icon ion-search"></i>
+                                <i class="icon ion-chevron-right icon-accessory"></i>
+                                {{track}}
+                            </a>
+                        </div>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Artist" on-select="activateTab(1)">
+                <ion-nav-view>
+                    <ion-content>
+                        <div class="list more dark-list animated fadeIn ordered delay-4" ng-show="search.artist.results.length">
+                            <a class="item item-thumbnail-left animated fadeIn" ng-repeat="artist in search.artist.results">
+                                <div style= "width: 100px;overflow: hidden;height: 80px;position: absolute;left: 10px;top:4px;">
+                                    <img ng-src="{{search.checkImage(artist.image)}}" style="width:100%;  min-height: 80px;">
+                                </div>
+                                <i class="icon ion-play icon-accessory"></i>
+                                <h2>{{search.convertSlug(artist.name, artist.slug)}}</h2>
+                                <div class="BGImage" ng-style="{'background-image':'url({{search.checkImage(artist.image)}})'}"></div>
+                            </a>
+                        </div>
+                        <ion-infinite-scroll on-infinite="loadMoreSearch('entities', 'artist')" distance="1%" ng-if="search.artist.results.length && !search.artist.maxed"></ion-infinite-scroll>
+                        <p class="empty-list" ng-show="!search.artist.results.length && search.artist.loaded">It looks like we don't have any music for this section. Check back later!</p>
+                        <div class="list list-inset dark-list search search-history animated delay-4" ng-class="!search.artist.results.length && $storage.search.artist.length > 0 && !search.artist.loaded? 'bounceInUp' : 'fadeOut'" ng-show="!search.artist.results.length && $storage.search.artist.length > 0 && !search.artist.loaded"  ng-if="$storage.search.artist.length > 0">
+                            <div class="item item-divider list-title">
+                                <i class="ion-heart icon"></i>&nbsp;Previously Searched Artist
+                            </div>
+                            <a class="item browse-item" ng-repeat="artist in $storage.search.artist">
+                                <i class="icon ion-search"></i>
+                                <i class="icon ion-chevron-right icon-accessory"></i>
+                                {{artist}}
+                            </a>
+                        </div>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Playlists" on-select="activateTab(2)">
+                <ion-nav-view>
+                    <ion-content>
+                        <div class="list more dark-list animated fadeIn ordered" ng-show="search.playlist.results.length">
+                            <a class="item item-thumbnail-left animated fadeIn" ng-repeat="playlist in search.playlist.results">
+                                <img ng-src="{{playlist.get('image')}}">
+                                <i class="icon ion-play icon-accessory"></i>
+                                <h2>{{playlist.get('name')}}</h2>
+                                <p>{{playlist.get('description')}}</p>
+                                <div class="BGImage" ng-style="{'background-image':'url({{playlist.get('image')}})'}"></div>
+                            </a>
+                        </div>
+                        <ion-infinite-scroll on-infinite="loadMoreSearch('Playlist', 'playlist')" distance="1%" ng-if="search.playlist.results.length && !search.playlist.maxed"></ion-infinite-scroll>
+                        <p class="empty-list" ng-show="!search.playlist.results.length && search.playlist.loaded">It looks like we don't have any music for this section. Check back later!</p>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+        <!--
         <div class="list list-inset dark-list search" ng-show="!search.artists.length || !search.artists.length">
             <div class="item item-divider list-title">
                 <i class="ion-arrow-graph-up-right icon"></i>&nbsp;Trending Searches
@@ -40,6 +83,6 @@
                 <i class="icon ion-chevron-right icon-accessory"></i>
                 {{artist}}
             </a>
-        </div>
+        </div>-->
     </ion-content>
 </ion-view>

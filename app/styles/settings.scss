@@ -12,11 +12,16 @@
 		}
 	}
 	.save_settings {
-		padding:20px 10px;		button {
+		padding:20px 10px;
+		button {
 			width:100%;
 			color: $coloredLinks;
   			border-color: $topBorder;
   			background-color: $topBorder;
+  			&.activated {
+  				background-color: #444;
+  				border-color: #444;
+  			}
 		}
 	}
 	.user_buttons {

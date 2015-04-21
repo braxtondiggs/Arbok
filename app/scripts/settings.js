@@ -3,7 +3,6 @@ angular.module('Quilava.controllers')
 	.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', '$ionicLoading', '$ionicPopup', '$ionicHistory', '$cordovaEmailComposer', '$localStorage', function($scope, $rootScope, $state, $ionicLoading, $ionicPopup, $ionicHistory, $cordovaEmailComposer, $localStorage) {
 		/*global Parse*/
 		$scope.settingsForm = {};
-		console.log(Parse.User.current());
 		if (Parse.User.current()) {
 			$scope.name = $rootScope.currentUser.get('name');
 			$scope.gender = $rootScope.currentUser.get('gender');
@@ -60,6 +59,7 @@ angular.module('Quilava.controllers')
 						changeComplete(txt);
 					},
 					error: function(error) {
+						$ionicLoading.hide();
 						if (error.code === 202) {
 							$scope.settings = {
 								hasErrors: true,
@@ -91,7 +91,6 @@ angular.module('Quilava.controllers')
 					$scope.settings.hasErrors = true;
 				}
 			}
-			console.log(gender);
 			if ($scope.isChanged.gender) {
 				if (gender.$valid) {
 					user.set('gender', gender.$viewValue);
@@ -109,6 +108,7 @@ angular.module('Quilava.controllers')
 				}
 
 			}
+			$ionicLoading.hide();
 			initChanged();
 		};
 		$scope.featureRequest = function() {

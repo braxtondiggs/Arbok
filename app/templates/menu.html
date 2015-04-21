@@ -28,7 +28,7 @@
                 <div class="background" ng-style="{'background-image':'url({{currentUser.image}})'}"></div>
             </a>
         </header>
-        <ion-content class="has-header" scroll="false">
+        <ion-content class="has-header" scroll="false" ng-style="{'background-image':'url(images/BG_fade.png)'}">
             <ion-list>
                 <ion-item nav-clear menu-close ng-class="{'animated fadeInLeft delay-1': ratio}" ng-click="login();" href="#" ng-if="!currentUser._serverData" ng-show="ratio">
                     <i class="icon ion-person-stalker" ng-class="{'animated bounceIn delay-6': ratio}" ng-show="ratio"></i>Log-in / Sign-up

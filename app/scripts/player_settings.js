@@ -14,10 +14,4 @@ angular.module('Quilava.controllers')
 				toolbar: 'no'
 			});
 		};
-		$scope.toggleGroup = function(group) {
-			$scope.shownGroup = ($scope.isGroupShown(group)) ? null : group;
-		};
-		$scope.isGroupShown = function(group) {
-			return $scope.shownGroup === group;
-		};
 	}]);

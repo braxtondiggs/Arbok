@@ -1,6 +1,7 @@
 'use strict';
 angular.module('Quilava.controllers')
 	.controller('DiscoverCtrl', ['$scope', function($scope) {
+		/*global Parse*/
 		$scope.discover = {
 			top:{
 				week: {
@@ -23,9 +24,10 @@ angular.module('Quilava.controllers')
 			success: function(results) {
 				$scope.discover.new.videos = results;
 				$scope.discover.new.loaded = true;
+				$scope.$apply();
 			}
 		});
-		var Browse = Parse.Object.extend('Browse');
+		Browse = Parse.Object.extend('Browse');
 		query = new Parse.Query(Browse);
 		query.equalTo('section', 1);
 		query.ascending('artistOrder');
@@ -33,6 +35,7 @@ angular.module('Quilava.controllers')
 			success: function(results) {
 				$scope.discover.top.week.videos = results;
 				$scope.discover.top.week.loaded = true;
+				$scope.$apply();
 			}
 		});
 		var Genres = Parse.Object.extend('Genres');
@@ -41,6 +44,7 @@ angular.module('Quilava.controllers')
 		query.find({
 			success: function(results) {
 				$scope.discover.genres = results;
+				$scope.$apply();
 			}
 		});
 		$scope.loadMoreNew = function() {

@@ -1,16 +1,16 @@
-<ion-view view-title="Player Settings">
+<ion-view view-title="Player Settings" ng-style="{'background-image':'url(images/BG.png)'}">
   <ion-nav-buttons side="right">
     <a class="button button-icon icon ion-plus-round" ng-click="addNew()"></a>
   </ion-nav-buttons>
   <ion-content>
-    <div class="status_dropdown error animated" ng-class="settings_player.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings_player.hasErrors">
+    <!--<div class="status_dropdown error animated" ng-class="settings_player.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings_player.hasErrors">
       <h2 class="center">Validation Error</h2>
       <p ng-show="settingsPlayerForm.name.$invalid" class="help-block">- Enter a valid name.</p>
       <p ng-show="settingsPlayerForm.email.$invalid" class="help-block">- Enter a valid email.</p>
       <p ng-show="settingsPlayerForm.password.$invalid" class="help-block">- Enter a valid password.</p>
       <p ng-show="settings_player.error">{{settings.error}}</p>
       <i class="ion ion-close" ng-click="settings_player.hasErrors = false;"></i>
-    </div>
+    </div>-->
     <div class="card animated" ng-class="!$storage.initConfig ? 'bounceInUp' : 'bounceOutDown'" ng-show="!$storage.initConfig" style="animation-duration: 1s">
       <div class="item item-text-wrap">
         You need to have a physical MVPlayer box in your position in order to configure a box. Do you have one? If not go here to <a ng-click="openBrowser('http://mvplayer.herokuapp.com/')">purchase one in our online store.</a>
@@ -21,14 +21,6 @@
     </div>
     <div class="playerSettings animated delay-5" ng-class="$storage.initConfig ? 'fadeIn' : 'fadeOut'" ng-show="$storage.initConfig">
       <p style="margin:20px 50px;text-align:center;">To add a new MVPlayer click the add button below.</p>
-      <ion-list class="accordion">
-        <ion-item class="item-stable" ng-click="toggleGroup(0)" ng-class="{active: isGroupShown(0)}">
-          <i class="icon" ng-class="isGroupShown(0) ? 'ion-minus' : 'ion-plus'"></i>&nbsp; {{name}}
-        </ion-item>
-        <ion-item class="item-accordion" ng-show="isGroupShown(0)">
-          Form Shit
-        </ion-item>
-      </ion-list>
     </div>
   </ion-content>
 </ion-view>

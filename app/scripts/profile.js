@@ -1,6 +1,7 @@
 'use strict';
 angular.module('Quilava.controllers')
 	.controller('ProfileCtrl', ['$scope', '$rootScope', '$ionicActionSheet', '$ionicLoading', '$cordovaCamera', function($scope, $rootScope, $ionicActionSheet, $ionicLoading,$cordovaCamera) {
+		/*global Parse*/
 		$scope.updateImage = function() {
 			var hideSheet = $ionicActionSheet.show({
 				buttons: [{
@@ -26,6 +27,7 @@ angular.module('Quilava.controllers')
 						user.save(null, {
 							success: function() {
 								$rootScope.currentUser.image = $rootScope.currentUser.get('image')._url;
+								$scope.$apply();
 								loadComplete();
 							},
 							error: function() {

@@ -1,4 +1,4 @@
-<ion-view view-title="Settings">
+<ion-view view-title="Settings" ng-style="{'background-image':'url(images/BG.png)'}">
   <ion-content>
   	<div class="status_dropdown error animated" ng-class="settings.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings.hasErrors">
       <h2 class="center">Validation Error</h2>
@@ -16,17 +16,17 @@
         <div class="item item-input item-floating-label">
           <span class="input-label">Email</span>
           <input type="email" name="email" placeholder="Email" ng-model="email" ng-minlength="1" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" ng-change="isChanged.email = true">
-          <i class="ion ion-close-round animated" ng-class="email.length ? 'fadeIn' : 'fadeOut'" ng-click="email = ''" ng-show="email.length">&nbsp;</i>
+          <i class="ion ion-close-round animated delay-4" ng-class="email.length ? 'fadeIn' : 'fadeOut'" ng-click="email = ''" ng-show="email.length">&nbsp;</i>
         </div>
         <div class="item item-input item-floating-label">
           <span class="input-label">Nickname</span>
           <input type="text" name="name" placeholder="Nickname" ng-model="name" ng-minlength="3" ng-maxlength="16" ng-change="isChanged.name = true">
-          <i class="ion ion-close-round animated" ng-class="name.length ? 'fadeIn' : 'fadeOut'" ng-click="name = ''" ng-show="name.length">&nbsp;</i>
+          <i class="ion ion-close-round animated delay-4" ng-class="name.length ? 'fadeIn' : 'fadeOut'" ng-click="name = ''" ng-show="name.length">&nbsp;</i>
         </div>
         <div class="item item-input item-floating-label">
           <span class="input-label">Password</span>
           <input type="password" name="password" placeholder="Password" ng-model="password" ng-minlength="6" ng-change="isChanged.password = true">
-          <i class="ion ion-close-round animated" ng-class="password.length ? 'fadeIn' : 'fadeOut'" ng-click="password = ''" ng-show="password.length">&nbsp;</i>
+          <i class="ion ion-close-round animated delay-4" ng-class="password.length ? 'fadeIn' : 'fadeOut'" ng-click="password = ''" ng-show="password.length">&nbsp;</i>
         </div>
         <div class="item item-input item-floating-label">
           <span class="input-label">Confirm New Password</span>

@@ -1,7 +1,7 @@
-<ion-view>
+<ion-view ng-style="{'background-image':'url(images/BG.png)'}">
     <ion-nav-title>{{artist.convertedSlug}}</ion-nav-title>
-    <ion-content ng-class="{'has-footer': room}">
-        <div class="artist animated" ng-class="{'fadeIn': artist.loaded}" ng-show="artist.loaded">
+    <ion-content>
+        <div class="artist animated fadeIn" ng-show="artist.loaded">
             <img class="img-thumbnail" ng-src="{{checkImage(artist.img)}}" alt="" ng-if="artist.videography.length || artist.featured.length">
             <div class="row">
                 <p class="bio" ng-text-truncate="artist.biographies" ng-tt-chars-threshold="240" ng-tt-more-label="Show" ng-tt-less-label="Hide"></p>

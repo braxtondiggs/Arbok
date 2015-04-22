@@ -1,28 +1,32 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('SearchCtrl', ['$scope', '$rootScope', '$stateParams', '$http', '$ionicLoading', 'UserService', '$localStorage', function($scope, $rootScope, $stateParams, $http, $ionicLoading, UserService, $localStorage) {
+	.controller('SearchCtrl', ['$scope', '$stateParams', '$http', '$ionicLoading', '$ionicPopup', 'UserService', '$localStorage', 'lodash', '$state', function($scope, $stateParams, $http, $ionicLoading, $ionicPopup, UserService, $localStorage, lodash, $state) {
+		/*jshint camelcase: false */
+		$scope.search = {};
 		function init() {
-			$rootScope.search = {
-				tracks: {
-					loaded: false,
-					hasChanged: true,
-					maxed: false
-				},
-				artist: {
-					loaded: false,
-					hasChanged: true,
-					maxed: false
-				},
-				playlist: {
-					loaded: false,
-					hasChanged: true,
-					maxed: false
-				}
+			$scope.search.tracks = {
+				loaded: false,
+				hasChanged: true,
+				maxed: false,
+				current_page: 0
+
+			};
+			$scope.search.artist = {
+				loaded: false,
+				hasChanged: true,
+				maxed: false,
+				current_page: 0
+			};
+			$scope.search.playlist =  {
+				loaded: false,
+				hasChanged: true,
+				maxed: true,
+				current_page: 0
 			};
 		}
 		init();
-		$scope.searchTerm = '';
-		$scope.searchActiveTab = 0;
+		$scope.search.term = '';
+		$scope.search.activeTab = 0;
 		$scope.$storage = $localStorage.$default({
 			'search': {
 				tracks: [],
@@ -30,27 +34,40 @@ angular.module('Quilava.controllers')
 				playlist: []
 			}
 		});
-		function searchIMVDB(term, action, obj) {
-			$rootScope.search[obj].loaded = false;
+		function searchIMVDB(term, action, obj, page) {
+			if (page > 1) {
+				$scope.search[obj].loaded = false;
+			}
 			$http.get(
-				'http://imvdb.com/api/v1/search/' + action + '?q=' + term
+				'http://imvdb.com/api/v1/search/' + action + '?q=' + term + '&page=' + page
 			).success(function(data) {
-				$rootScope.search[obj] = {
-					results: data.results,
-					loaded: true
-				};
+				if (page > 1) {
+					lodash.merge($scope.search[obj], data, function(a, b) {
+						if (lodash.isArray(a)) {
+							return a.concat(b);
+						}
+					});
+					$scope.search[obj].current_page = data.current_page;
+				}else {
+					$scope.search[obj] = {
+						results: data.results,
+						current_page: data.current_page,
+						total_pages: data.total_pages,
+						loaded: true
+					};
+				}
 				saveHistory(term, obj);
 			});
 		}
 		function searchParse(term, parseObj, obj) {
 			/*global Parse*/
-			$rootScope.search[obj].loaded = false;
+			$scope.search[obj].loaded = false;
 			var ParseObj = Parse.Object.extend(parseObj);
 			var query = new Parse.Query(ParseObj);
 			query.contains('name' , term);
 			query.find({
 				success: function(playlists) {
-					$rootScope.search[obj] = {
+					$scope.search[obj] = {
 						results: playlists,
 						loaded: true
 					};
@@ -72,51 +89,56 @@ angular.module('Quilava.controllers')
 				}
 			}
 		}
-		$scope.$watch('searchTerm', function (search) {
+		function getPage(obj) {
+			return ($scope.search[obj].current_page > 0)?parseInt($scope.search[obj].current_page, 10) + 1:1;
+		}
+		$scope.$watch('search.term', function (search) {
 			if (!search || search.length <= 2) {
 				init();
 				return 0;
 			}
-			if (search === $scope.searchTerm) {
-				if ($scope.searchActiveTab === 0) {
+			if (search === $scope.search.term) {
+				if ($scope.search.activeTab === 0) {
 					$scope.search.artist.hasChanged = true;
 					$scope.search.playlist.hasChanged = true;
-					searchIMVDB(search, 'videos', 'tracks');
-				}else if ($scope.searchActiveTab === 1) {
+					searchIMVDB(search, 'videos', 'tracks', 1);
+				}else if ($scope.search.activeTab === 1) {
 					$scope.search.tracks.hasChanged = true;
 					$scope.search.playlist.hasChanged = true;
-					searchIMVDB(search, 'entities', 'artist');
-				}else if ($scope.searchActiveTab === 2) {
+					searchIMVDB(search, 'entities', 'artist', 1);
+				}else if ($scope.search.activeTab === 2) {
 					$scope.search.tracks.hasChanged = true;
 					$scope.search.artist.hasChanged = true;
 					searchParse(search, 'Playlist', 'playlist');
 				}
 				$scope.search.hasChanged = true;
-				$rootScope.searchTerm = $scope.searchTerm;
 			}
 		});
-		$scope.$watch('searchActiveTab', function (tab) {
-			if($rootScope.searchTerm !== '' && $rootScope.searchTerm !== undefined) {
+		$scope.$watch('search.activeTab', function (tab) {
+			if($scope.search.term !== '' && $scope.search.term !== undefined) {
 				if(tab === 0 && $scope.search.tracks.hasChanged) {
-					$rootScope.search.tracks.hasChanged = false;
-					searchIMVDB($rootScope.searchTerm, 'videos', 'tracks');
+					$scope.search.tracks.hasChanged = false;
+					searchIMVDB($scope.search.term, 'videos', 'tracks', 1);
 				}else if(tab === 1 && $scope.search.artist.hasChanged) {
-					$rootScope.search.artist.hasChanged = false;
-					searchIMVDB($rootScope.searchTerm, 'entities', 'artist');
+					$scope.search.artist.hasChanged = false;
+					searchIMVDB($scope.search.term, 'entities', 'artist', 1);
 				}else if (tab === 2 && $scope.search.playlist.hasChanged) {
-					$rootScope.search.playlist.hasChanged = false;
-					searchParse($rootScope.searchTerm, 'Playlist', 'playlist');
+					$scope.search.playlist.hasChanged = false;
+					searchParse($scope.search.term, 'Playlist', 'playlist');
 				}
 			}
 		});
 		$scope.loadMoreSearch = function(action, obj) {
-			/*if (obj === 'tracks' || obj === 'artist') {
-				searchIMVDB($scope.searchTerm, action, obj);
+			if (obj === 'tracks' || obj === 'artist') {
+				if (parseInt($scope.search[obj].current_page, 10) !== parseInt($scope.search[obj].total_pages, 10)) {
+					searchIMVDB($scope.search.term, action, obj, getPage(obj));
+				}else {
+					$scope.search[obj].maxed = true;
+				}
 			}else {
-				searchParse($scope.searchTerm, action, obj);
-			}*/
-			//console.log(action, obj);
-			console.log(action, obj);
+				searchParse($scope.search.term, action, obj);
+			}
+			$scope.$broadcast('scroll.infiniteScrollComplete');
 		};
 		$scope.search.checkImage = function(img) {
 			return UserService.checkImage(img);
@@ -124,7 +146,70 @@ angular.module('Quilava.controllers')
 		$scope.search.convertSlug = function(name, slug) {
 			return UserService.convertSlug(name, slug);
 		};
-		$scope.activateTab= function(tab) {
-			$scope.searchActiveTab = tab;
+		$scope.search.activateTab= function(tab) {
+			$scope.search.activeTab = tab;
+		};
+		$scope.search.setSearch = function(term) {
+			$scope.search.term = term;
+		};
+		$scope.search.submitSong = function(index) {
+			if ($scope.currentUser && $scope.room) {
+				var confirmPopup = $ionicPopup.confirm({
+					title: 'MVPlayer',
+					template: 'Are you sure you want add this song?'
+				});
+				console.log(index, confirmPopup);
+				/*confirmPopup.then(function(res) {
+					if (res) {
+						var found = false;
+						for (var i = 0; i < $scope.queue_list.length; i++) {
+							if ($scope.queue_list[i].IMVDBtrackId === id) {
+								found = true;
+							}
+						}
+						if (!found) {
+							socket.emit('song:new', {
+								server_id: $scope.room,
+								track_id: id,
+								userId: $scope.currentUser.id,
+								userName: $scope.currentUser._serverData.name,
+								trackTitle: title,
+								artistName: name,
+								artistImage: image
+							}, function(confirm) {
+								if (confirm.status === 1) {
+									$ionicPopup.alert({
+										title: 'MVPlayer',
+										template: "Your song is now in the queue! Sit back and be the <span class=\"special\">MVP</span> you are."
+									});
+								} else {
+									$ionicPopup.alert({
+										title: 'MVPlayer',
+										template: "A Serious Error Occured, Sorry Bro!"
+									});
+								}
+							});
+						} else {
+							$ionicPopup.alert({
+								title: 'MVPlayer - Error',
+								template: 'Looks like this song is already in the Queue.'
+							});
+						}
+					}
+				});*/
+			} else {
+				var body = ($scope.currentUser) ? 'You have not connected to a MVPlayer yet.' : 'You need to be logged inorder to suggest a song',
+					location = ($scope.currentUser) ? 'app.player' : null;
+				$ionicPopup.alert({
+					title: 'MVPlayer - Error',
+					template: body
+				}).then(function() {
+					if (location !== null) {
+						$state.transitionTo(location);
+					}else {
+						//$scope.login();
+					}
+				});
+			}
 		};
 	}]);

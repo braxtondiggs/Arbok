@@ -137,65 +137,7 @@ angular.module('Quilava.controllers', [])
 		$scope.firstLetters = function(str) {*/
 		//return ((str)?str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase()}):'');
 		/*};
-		$scope.addSong = function(id, name, title, image) {
-			if ($scope.currentUser && $scope.room) {
-				var confirmPopup = $ionicPopup.confirm({
-					title: 'MVPlayer',
-					template: 'Are you sure you want add this song?'
-				});
-				confirmPopup.then(function(res) {
-					if (res) {
-						var found = false;
-						for (var i = 0; i < $scope.queue_list.length; i++) {
-							if ($scope.queue_list[i].IMVDBtrackId === id) {
-								found = true;
-							}
-						}
-						if (!found) {
-							socket.emit('song:new', {
-								server_id: $scope.room,
-								track_id: id,
-								userId: $scope.currentUser.id,
-								userName: $scope.currentUser._serverData.name,
-								trackTitle: title,
-								artistName: name,
-								artistImage: image
-							}, function(confirm) {
-								if (confirm.status === 1) {
-									$ionicPopup.alert({
-										title: 'MVPlayer',
-										template: "Your song is now in the queue! Sit back and be the <span class=\"special\">MVP</span> you are."
-									});
-								} else {
-									$ionicPopup.alert({
-										title: 'MVPlayer',
-										template: "A Serious Error Occured, Sorry Bro!"
-									});
-								}
-							});
-						} else {
-							$ionicPopup.alert({
-								title: 'MVPlayer - Error',
-								template: 'Looks like this song is already in the Queue.'
-							});
-						}
-					}
-				});
-			} else {
-				var body = ($scope.currentUser) ? 'You have not connected to a MVPlayer yet.' : 'You need to be logged inorder to suggest a song',
-					location = ($scope.currentUser) ? '#/app/player' : null;
-				$ionicPopup.alert({
-					title: 'MVPlayer - Error',
-					template: body
-				}).then(function(res) {
-					if (location !== null) {
-						window.location = location;
-					}else {
-						$scope.login();
-					}
-				});
-			}
-		}
+		
 		$scope.joinServer = function(id) {
 			$scope.queue_list = {};
 			socket.emit('user:init', {

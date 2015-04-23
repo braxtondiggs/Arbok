@@ -1,20 +1,24 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('ArtistCtrl', ['$scope', '$stateParams', 'UserService', function($scope, $stateParams, UserService) {
-		$scope.artist = {};
-		/*
+	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', function($scope, $stateParams, $http, UserService) {
+		/*jshint camelcase: false */
+		$scope.artist = {
+			info: {}
+		};
 		function getArtistInfo(id) {
 			$http.get(
-				$scope.domain + 'music/artist?e=' + id
+				'http://imvdb.com/api/v1/entity/' + id + '?include=artist_videos,featured_videos'
 			).success(function(data) {
-				$rootScope.artist.loaded = true;
-				$rootScope.artist.name = data.name;
-				$rootScope.artist.slug = data.slug;
-				$rootScope.artist.img = data.image;
-				$rootScope.artist.convertedSlug = $scope.convertSlug(data.name, data.slug);
-				$rootScope.artist.videography = data.artist_videos.videos;
-				$rootScope.artist.featured = data.featured_artist_videos.videos;
-				Echonest.artists.get({
+				$scope.artist.loaded = true;
+				$scope.artist.info = {
+					name: data.name,
+					slug: data.slug,
+					img: data.image,
+					convertedSlug: $scope.artist.convertSlug(data.name, data.slug),
+					videography: data.artist_videos.videos,
+					featured: data.featured_artist_videos.videos
+				};
+				/*Echonest.artists.get({
 				  name: $rootScope.artist.convertedSlug
 				}).then(function(artist) {
 				  return artist.getBiographies();
@@ -25,18 +29,18 @@ angular.module('Quilava.controllers')
 							break;
 						}
 					}
-				});
+				});*/
 			});
 		}
 		var param = $stateParams;
-		if (param && param.artistId && param.action && $rootScope.artist.id !== param.artistId) {
-			$rootScope.artist.id = param.artistId;
-			$rootScope.artist.loaded = false;
+		if (param && param.artistId && param.action) {
+			$scope.artist.id = param.artistId;
+			$scope.artist.loaded = false;
 			if (param.action === 'id') {
-				getArtistInfo(param.artistId);
+				//getArtistInfo(param.artistId);
 			} else if (param.action === 'slug') {
-				$http.get(
-					$scope.domain + 'music/search?e=' + param.artistId
+				/*$http.get(
+					$scope.domain + 'music/search?e=' + param.artistId ?method=slug
 				).success(function(data) {
 					if (data.results.length) {
 						getArtistInfo(data.results[0].id);
@@ -44,9 +48,9 @@ angular.module('Quilava.controllers')
 						$rootScope.artist.loaded = true;
 						$rootScope.artist.convertedSlug = $scope.convertSlug(null, param.artistId);
 					}
-				});
+				});*/
 			}
-		}*/
+		}
 		$scope.artist.checkImage = function(img) {
 			return UserService.checkImage(img);
 		};

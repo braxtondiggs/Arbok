@@ -94,7 +94,6 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 
 	.state('app.dashboard', {
 		url: '/dashboard',
-		className: 'dashboard',
 		views: {
 			'menuContent': {
 				templateUrl: 'templates/dashboard.html',
@@ -104,7 +103,6 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 	})
 	.state('app.search', {
 		url: '/search/{searchId}/',
-		className: 'search',
 		params: {
 			searchId: {
 				value: null,
@@ -165,7 +163,6 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 	})
 	.state('app.player', {
 		url: '/player',
-		className: 'player',
 		views: {
 			'menuContent': {
 				templateUrl: 'templates/player.html',
@@ -184,7 +181,6 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 	})
 	.state('app.settings', {
 		url: '/settings',
-		className: 'settings',
 		views: {
 			'menuContent': {
 				templateUrl: 'templates/settings.html',
@@ -194,7 +190,6 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 	})
 	.state('app.settings-player', {
 		url: '/settings/player',
-		className: 'player_settings',
 		views: {
 			'menuContent': {
 				templateUrl: 'templates/player_settings.html',

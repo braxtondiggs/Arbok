@@ -1,41 +1,72 @@
-<ion-view ng-style="{'background-image':'url(images/BG.png)'}">
-    <ion-nav-title>{{artist.convertedSlug}}</ion-nav-title>
+<ion-view ng-style="{'background-image':'url(images/BG.png)'}" class="artist">
+    <ion-nav-title>{{artist.info.convertedSlug}}</ion-nav-title>
     <ion-content>
-        <div class="artist animated fadeIn" ng-show="artist.loaded">
-            <img class="img-thumbnail" ng-src="{{checkImage(artist.img)}}" alt="" ng-if="artist.videography.length || artist.featured.length">
+        <!--<ion-tabs class="tabs-icon-only tabs-striped text-only tabs-color-light">
+            <ion-tab title="Videos" on-select="artist.activateTab(0)">
+                <ion-nav-view>
+                    <ion-content>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Appearance" on-select="artist.activateTab(0)">
+                <ion-nav-view>
+                    <ion-content>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Director" on-select="artist.activateTab(0)">
+                <ion-nav-view>
+                    <ion-content>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Featured" on-select="artist.activateTab(0)">
+                <ion-nav-view>
+                    <ion-content>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Exec. Pro." on-select="artist.activateTab(0)">
+                <ion-nav-view>
+                    <ion-content>
+                    </ion-content>
+                </ion-nav-view>
+            </ion-tab>-->
+        <!--<div class="artist animated fadeIn" ng-show="artist.loaded">
+            <img class="img-thumbnail" ng-src="{{artist.checkImage(artist.info.img)}}" alt="" ng-if="artist.info.videography.length || artist.info.featured.length">
             <div class="row">
-                <p class="bio" ng-text-truncate="artist.biographies" ng-tt-chars-threshold="240" ng-tt-more-label="Show" ng-tt-less-label="Hide"></p>
+                <p class="bio" ng-text-truncate="artist.info.biographies" ng-tt-chars-threshold="240" ng-tt-more-label="Show" ng-tt-less-label="Hide"></p>
             </div>
-            <p class="empty-list" ng-show="!artist.videography.length && !artist.featured.length">It looks like we don't have any playable music for this artist.</p>
-            <div class="videgraphy" ng-show="artist.videography.length">
+            <p class="empty-list" ng-show="!artist.info.videography.length && !artist.info.featured.length">It looks like we don't have any playable music for this artist.</p>
+            <div class="videgraphy" ng-show="artist.info.videography.length">
                 <h3 class="title">Videography</h3>
-                <div class="list card dark-list" ng-repeat="video in artist.videography">
+                <div class="list card dark-list" ng-repeat="video in artist.info.videography">
                     <div class="item item-divider list-title">
                         {{video.song_title}}
                     </div>
                     <div class="item item-image">
                         <img ng-src="{{video.image.l}}">
                     </div>
-                    <a class="item item-icon-left assertive" ng-click="addSong(video.id, artist.slug, video.song_title, video.image.l)">
+                    <a class="item item-icon-left assertive" ng-click="addSong($index, 'videography')">
                         <i class="icon ion-music-note"></i> Start Listening
                     </a>
 
                 </div>
             </div>
-            <div class="featured" ng-show="artist.featured.length">
+            <div class="featured" ng-show="artist.info.featured.length">
                 <h3 class="title">Featured Artist</h3>
-                <div class="list card dark-list" ng-repeat="video in artist.featured">
+                <div class="list card dark-list" ng-repeat="video in artist.info.featured">
                     <div class="item item-divider list-title">
                         {{video.song_title}}
                     </div>
                     <div class="item item-image">
                         <img ng-src="{{video.image.l}}">
                     </div>
-                    <a class="item item-icon-left assertive" ng-click="addSong(video.id, artist.slug, video.song_title, video.image.l)">
+                    <a class="item item-icon-left assertive" ng-click="addSong($index, 'featured')">
                         <i class="icon ion-music-note"></i> Start Listening
                     </a>
                 </div>
             </div>
-        </div>
+        </div>-->
     </ion-content>
 </ion-view>

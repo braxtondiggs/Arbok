@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('DiscoverCtrl', ['$scope', function($scope) {
+	.controller('DiscoverCtrl', ['$scope', '$ionicLoading', 'LoadingService', 'cfpLoadingBar', function($scope, $ionicLoading, LoadingService, cfpLoadingBar) {
 		/*global Parse*/
 		$scope.discover = {
 			top:{
@@ -16,8 +16,21 @@ angular.module('Quilava.controllers')
 				limitMax: false
 			}
 		};
+		function loading(isload) {
+			if (isload) {
+				cfpLoadingBar.start();
+				cfpLoadingBar.inc();
+				LoadingService.showLoading();
+				$ionicLoading.show();
+			}else {
+				LoadingService.hideLoading();
+				$ionicLoading.hide();
+				cfpLoadingBar.complete();
+			}
+		}
 		$scope.discover.newSelected = function() {
 			if (!$scope.discover.new.videos) {
+				loading(true);
 				var Browse = Parse.Object.extend('Browse');
 				var query = new Parse.Query(Browse);
 				query.equalTo('section', 0);
@@ -26,6 +39,7 @@ angular.module('Quilava.controllers')
 					success: function(results) {
 						$scope.discover.new.videos = results;
 						$scope.discover.new.loaded = true;
+						loading(false);
 						$scope.$apply();
 					}
 				});
@@ -33,6 +47,7 @@ angular.module('Quilava.controllers')
 		};
 		$scope.discover.topSelected = function() {
 			if (!$scope.discover.top.week.videos) {
+				loading(true);
 				var Browse = Parse.Object.extend('Browse');
 				var query = new Parse.Query(Browse);
 				query.equalTo('section', 1);
@@ -41,6 +56,7 @@ angular.module('Quilava.controllers')
 					success: function(results) {
 						$scope.discover.top.week.videos = results;
 						$scope.discover.top.week.loaded = true;
+						loading(false);
 						$scope.$apply();
 					}
 				});
@@ -51,12 +67,14 @@ angular.module('Quilava.controllers')
 		};
 		$scope.discover.genreSelected = function() {
 			if (!$scope.discover.genres) {
+				loading(true);
 				var Genres = Parse.Object.extend('Genres');
 				var query = new Parse.Query(Genres);
 				query.equalTo('public', true);
 				query.find({
 					success: function(results) {
 						$scope.discover.genres = results;
+						loading(false);
 						$scope.$apply();
 					}
 				});

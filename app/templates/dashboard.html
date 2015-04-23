@@ -1,5 +1,5 @@
-<ion-view view-title="Chat" cache-view="false" class="chat">
-    <ion-content class="has-subfooter" ng-class="{'isEmpty': !chats.length}">
+<ion-view view-title="Dashboard" cache-view="false" ng-style="{'background-image':'url(images/BG.png)'}" class="dashboard">
+    <ion-content>
         <div class="list chat-convo dark-list">
             <div class="item chat-item animated" ng-repeat="chat in chats" ng-class="{'isSelf' : chat.self, 'fadeIn': loaded}">
                 <div class="chat-img">

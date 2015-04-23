@@ -38,6 +38,7 @@ angular.module('Quilava.controllers')
 			if (page > 1) {
 				$scope.search[obj].loaded = false;
 			}
+			$ionicLoading.show();
 			$http.get(
 				'http://imvdb.com/api/v1/search/' + action + '?q=' + term + '&page=' + page
 			).success(function(data) {
@@ -48,20 +49,24 @@ angular.module('Quilava.controllers')
 						}
 					});
 					$scope.search[obj].current_page = data.current_page;
+					$scope.search[obj].loaded = true;
 				}else {
 					$scope.search[obj] = {
 						results: data.results,
 						current_page: data.current_page,
 						total_pages: data.total_pages,
-						loaded: true
+						loaded: true,
+						maxed: false
 					};
 				}
+				$ionicLoading.hide();
 				saveHistory(term, obj);
 			});
 		}
 		function searchParse(term, parseObj, obj) {
 			/*global Parse*/
 			$scope.search[obj].loaded = false;
+			$ionicLoading.show();
 			var ParseObj = Parse.Object.extend(parseObj);
 			var query = new Parse.Query(ParseObj);
 			query.contains('name' , term);
@@ -71,9 +76,11 @@ angular.module('Quilava.controllers')
 						results: playlists,
 						loaded: true
 					};
+					$ionicLoading.hide();
 					$scope.$apply();
 				},
 				error: function() {
+					$ionicLoading.hide();
 					$ionicLoading.show({
 						template: 'Error connecting to server...',
 						duration: 2000
@@ -82,11 +89,15 @@ angular.module('Quilava.controllers')
 			});
 		}
 		function saveHistory(term, obj) {
-			if ($scope.$storage.search[obj].indexOf(term) === -1) {
+			var index = $scope.$storage.search[obj].indexOf(term);
+			if (index === -1) {
 				$scope.$storage.search[obj].unshift(term);
 				if ($scope.$storage.search[obj].length >= 5) {
 					$scope.$storage.search[obj] = $scope.$storage.search[obj].slice(0, 5);
 				}
+			}else {
+				/*global ionic*/
+				$scope.$storage.search[obj] = ionic.Utils.arrayMove($scope.$storage.search[obj], 0, index);
 			}
 		}
 		function getPage(obj) {

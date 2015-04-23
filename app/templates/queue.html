@@ -1,4 +1,4 @@
-<ion-view view-title="What's Playing">
+<ion-view view-title="What's Playing" class="queue">
     <ion-content><!--Need to hide footer and right menu -->
         <ion-list class="list queue dark-list" ng-show="queue_list.length">
             <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{queue.IMVDBartistId}}" ng-repeat="queue in queue_list">

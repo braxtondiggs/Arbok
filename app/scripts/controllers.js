@@ -1,11 +1,6 @@
 'use strict';
 
 angular.module('Quilava.controllers', [])
-	.controller('BodyCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
-		$scope.$on('$stateChangeStart', function(event, toState) {
-			$rootScope.controllerClass = toState.className;
-		});
-	}])
 	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicLoading', '$ionicHistory', '$localStorage', 'lodash', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup , $ionicLoading, $ionicHistory, $localStorage, lodash) {
 		/*global Parse*/
 		$rootScope.currentUser = Parse.User.current() || {};
@@ -72,45 +67,7 @@ angular.module('Quilava.controllers', [])
 		}).then(function(modal) {
 			$scope.modal = modal;
 		});
-		/*$scope.domain = ENV.apiEndpoint;
-		$scope.isSearch = false;
-		$scope.loginData = {};
-		$scope.signupData = {};
-		$scope.search = {};
-		$scope.vote = {};
-		$scope.chats = [];
-		$scope.currentUser = Parse.User.current() || null;
-		$scope.room = window.localStorage['room'] || null;
-		$scope.hasVoted = window.localStorage['hasVoted'] || false;
-		$scope.vote.voteId = window.localStorage['voteId'] || null;
-		$scope.vote.selectedIndex = window.localStorage['voteselectedIndex'] || null;
-		$scope.$storage = $localStorage.$default({
-			'searchHistory': []
-		});
-		$scope.searchHistory = $scope.$storage.searchHistory;
-		$scope.$watch('hasVoted', function() {
-			window.localStorage['hasVoted'] = $scope.hasVoted;
-		});
-		$scope.$watch('vote.voteId', function() {
-			window.localStorage['voteId'] = $scope.vote.voteId;
-		});
-		$scope.$watch('vote.selectedIndex', function() {
-			window.localStorage['voteselectedIndex'] = $scope.vote.selectedIndex;
-		});
-		$scope.$watch('searchHistory', function() {
-			$scope.$storage.searchHistory = $scope.searchHistory;
-		});
-		$scope.setSearchBar = function(val) {
-			$scope.isSearch = val;
-			if (val) {
-				$timeout(function() {
-					document.getElementById('search').focus();
-				}, 500);
-			}
-		};
-		$scope.goBack = function() {
-			$ionicHistory.goBack(-1);
-		}
+/*
 		$scope.voteClicked = function(index) {
 			if ($scope.vote.selectedIndex !== index) {
 				$scope.vote.selectedIndex = index;
@@ -134,9 +91,6 @@ angular.module('Quilava.controllers', [])
 				$scope.addSong(data.results[0].id, artist, title, image);
 			});
 		};
-		$scope.firstLetters = function(str) {*/
-		//return ((str)?str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase()}):'');
-		/*};
 		
 		$scope.joinServer = function(id) {
 			$scope.queue_list = {};
@@ -208,143 +162,4 @@ angular.module('Quilava.controllers', [])
 				}
 			});
 		};*/
-	}])
-	.controller('ArtistCtrl', function() {
-		/*if (!$rootScope.artist) {
-			$rootScope.artist = {};
-		}
-		function getArtistInfo(id) {
-			$http.get(
-				$scope.domain + 'music/artist?e=' + id
-			).success(function(data) {
-				$rootScope.artist.loaded = true;
-				$rootScope.artist.name = data.name;
-				$rootScope.artist.slug = data.slug;
-				$rootScope.artist.img = data.image;
-				$rootScope.artist.convertedSlug = $scope.convertSlug(data.name, data.slug);
-				$rootScope.artist.videography = data.artist_videos.videos;
-				$rootScope.artist.featured = data.featured_artist_videos.videos;
-				Echonest.artists.get({
-				  name: $rootScope.artist.convertedSlug
-				}).then(function(artist) {
-				  return artist.getBiographies();
-				}).then(function(artist) {
-					for (var i = 0; i < artist.biographies.length; i++) {
-						if (!artist.biographies[i].truncated) {
-							$rootScope.artist.biographies = artist.biographies[i].text;
-							break;
-						}
-					}
-				});
-			});
-		}
-		var param = $stateParams;
-		if (param && param.artistId && param.action && $rootScope.artist.id !== param.artistId) {
-			$rootScope.artist.id = param.artistId;
-			$rootScope.artist.loaded = false;
-			if (param.action === 'id') {
-				getArtistInfo(param.artistId);
-			} else if (param.action === 'slug') {
-				$http.get(
-					$scope.domain + 'music/search?e=' + param.artistId
-				).success(function(data) {
-					if (data.results.length) {
-						getArtistInfo(data.results[0].id);
-					}else {
-						$rootScope.artist.loaded = true;
-						$rootScope.artist.convertedSlug = $scope.convertSlug(null, param.artistId);
-					}
-				});
-			}
-		}
-		$scope.checkImage = function(img) {
-			return UserService.checkImage(img);
-		};
-		$scope.convertSlug = function(name, slug) {
-			return UserService.convertSlug(name, slug);
-		};*/
-	})
-	//.controller('QueueCtrl', function() {
-
-	//})
-	.controller('ChatCtrl', function() {
-		/*if ($scope.room !== null) {
-			$scope.chats = null;
-			var Chat = Parse.Object.extend("Chat");
-			var query = new Parse.Query(Chat);
-			LoadingService.showLoading();
-			query.equalTo("room", $scope.room);
-			query.ascending("createdAt");
-			$scope.loaded = false;
-			query.find({
-				success: function(results) {
-					var result = [];
-					for (var i = 0; i < results.length; i++) {
-						results[i]._serverData.self = ($scope.currentUser !== null && results[i]._serverData.userId === $scope.currentUser.id) ? true : false;
-						results[i]._serverData.createdAt = moment(results[i].createdAt).format("dddd, MMMM Do YYYY, h:mm:ss a");
-						result.push(results[i]._serverData);
-					}
-					$scope.chats = result;
-					$ionicScrollDelegate.scrollBottom();
-					LoadingService.hideLoading();
-					$scope.loaded = true;
-				}
-			});
-		} else {
-			$ionicPopup.alert({
-				title: 'MVPlayer',
-				template: 'You need to be connect to player first to see chat messages! Click \'OK\' to goto player setup!'
-			}).then(function(res) {
-				if (res) {
-					$window.location = '#/app/player'
-				}
-			});
-		}
-		$scope.sendChat = function(msg) {
-			var title = 'MVPlayer - Error',
-				body = null;
-			if (msg.chatMsg !== "") {
-				if ($scope.room) {
-					if ($scope.currentUser) {
-						var img = ($scope.currentUser._serverData.image) ? $scope.currentUser._serverData.image._url : null;
-						document.getElementById('chat-input').value = '';
-						socket.emit('chat', {
-							'room': $scope.room,
-							'from': $scope.currentUser._serverData.name,
-							'userId': $scope.currentUser.id,
-							'img': img,
-							'body': msg.chatMsg
-						});
-					} else {
-						body = 'You have not connected to a MVPlayer yet.';
-						location = '#/app/player';
-					}
-				} else {
-					body = 'You need to be logged inorder to suggest a song';
-					location = null;
-				}
-				if (body !== null) {
-					$ionicPopup.alert({
-						title: title,
-						template: body
-					}).then(function(res) {
-						if (location !== null){
-							window.location = location;
-						}else {
-							$scope.login();
-						}
-					});
-				}
-			}
-		}
-
-		socket.on('chat:new', function(data) {
-			data.self = (data.userId === $scope.currentUser.id) ? true : false;
-			data.createdAt = moment().format("dddd, MMMM Do YYYY, h:mm:ss a");
-			$scope.chats.push(data);
-			$ionicScrollDelegate.scrollBottom();
-		});
-		$scope.scrollBottom = function() {
-			$ionicScrollDelegate.scrollBottom();
-		};*/
-	});
+	}]);

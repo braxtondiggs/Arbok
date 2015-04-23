@@ -6,7 +6,7 @@
     .tab-content {
         top: 205px!important;
     }
-    .profile {
+    .profile_container {
         .title {
             color: $textColor;
             font-family: helvetica_neue_lt_pro45_light;
@@ -39,7 +39,7 @@
             font-size: 30px;
         }
     }
-.profile {
+.profile_container {
     width:100%;
     overflow: hidden;
     text-decoration: none;

@@ -1,5 +1,6 @@
 @import '_colors.scss';
-.settings {
+.settings,
+.player_settings_modal {
 	.item-floating-label .input-label {
 		display:none;
 	}
@@ -66,5 +67,60 @@
 		clear: both;
 		display:block;
 		content: '';
+	}
+}
+.player_settings_modal {
+	.upload_image {
+		border: 3px dashed $coloredLinks;
+		border-radius: 25px;
+		width: 80%;
+		height: 180px;
+		margin: 20px auto;
+		position: relative;
+		img {
+			display:none;
+		}
+		.clear-image {
+			font-size: 32px;
+			background-color: white;
+			color: black;
+			border-radius: 24px;
+			position: absolute;
+			width: 27px;
+			height: 36px;
+			position: absolute;
+			right:-5px;
+			top:-5px;
+			display:none;
+			&:before {
+				line-height:.88;
+			}
+		}
+		&:after {
+			content: 'Upload an image for player';
+			line-height: 150px;
+  			text-align: center;
+  			display: block;
+  			font-size: 18px;
+  			font-weight: 500;
+		}
+		&.has-image {
+			img {
+				display:block;
+			}
+			.clear-image {
+				display:block;
+			}
+		}
+	}
+}
+.player_settings {
+	.list .item {
+		h2 {
+			color: $coloredLinks;
+		}
+		&.item-avatar {
+			height: 41px;
+		}
 	}
 }

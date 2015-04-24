@@ -1,0 +1,44 @@
+<div class="modal player_settings_modal" ng-controller="PlayerSettingsDetailCtrl">
+  <ion-header-bar>
+    <h1 class="title" align-title="center">{{(playerSettings.server.get('name').length)?playerSettings.server.get('name'):'New Player'}}</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closePlayerEdit()">Cancel</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <div class="status_dropdown error animated" ng-class="login.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="login.hasErrors">
+      <h2 class="center">Validation Error</h2>
+      <p ng-show="signupForm.name.$invalid" class="help-block">- Enter a valid name.</p>
+      <p ng-show="loginForm.email.$invalid || signupForm.email.$invalid" class="help-block">- Enter a valid email.</p>
+      <p ng-show="loginForm.password.$invalid || signupForm.password.$invalid" class="help-block">- Enter a valid password.</p>
+      <p ng-show="login.error">- {{login.error}}</p>
+      <i class="ion ion-close" ng-click="login.hasErrors = false;"></i>
+    </div>
+    <div class="list">
+      <form name="playerForm" ng-submit="submitForm(playerForm.name, playerForm.address)" novalidate>
+        <div class="item item-divider">
+          <span class="animated bounceInLeft">Player Information</span>
+        </div>
+        <div class="item item-input item-floating-label">
+          <span class="input-label">Name{{playerSettings.server.get('name')}}</span>
+          <input type="text" name="name" placeholder="Name" ng-model="name" ng-minlength="4" ng-change="inputChange('name', name)">
+          <i class="ion ion-close-round animated delay-4" ng-class="name.length ? 'fadeIn' : 'fadeOut'" ng-click="name = ''" ng-show="name.length">&nbsp;</i>
+        </div>
+        <div class="item item-input item-floating-label">
+          <span class="input-label">Address</span>
+          <input type="text" name="address" placeholder="Address" ng-model="address" ng-minlength="4" ng-change="inputChange('address', address)">
+          <i class="ion ion-close-round animated delay-4" ng-class="address.length ? 'fadeIn' : 'fadeOut'" ng-click="address = ''" ng-show="address.length">&nbsp;</i>
+        </div>
+        <div class="upload_image" ng-click="getImage()" ng-class="{ 'has-image': image.length }">
+          <img ng-src="{{image}}">
+          <div class="clear-image icon ion-close-circled" ng-click="clearImage()"></div>
+        </div>
+        <div class="save_settings">
+          <button type="submit" class="button button-stable">
+            Save Player
+          </button>
+        </div>
+      </form>
+    </div>
+  </ion-content>
+</div>

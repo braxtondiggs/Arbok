@@ -1,16 +1,8 @@
 <ion-view view-title="Player Settings" ng-style="{'background-image':'url(images/BG.png)'}" class="player_settings">
   <ion-nav-buttons side="right">
-    <a class="button button-icon icon ion-plus-round" ng-click="addNew()"></a>
+    <a class="button button-icon icon ion-plus-round" ng-click="addNewPlayer()"></a>
   </ion-nav-buttons>
   <ion-content>
-    <!--<div class="status_dropdown error animated" ng-class="settings_player.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings_player.hasErrors">
-      <h2 class="center">Validation Error</h2>
-      <p ng-show="settingsPlayerForm.name.$invalid" class="help-block">- Enter a valid name.</p>
-      <p ng-show="settingsPlayerForm.email.$invalid" class="help-block">- Enter a valid email.</p>
-      <p ng-show="settingsPlayerForm.password.$invalid" class="help-block">- Enter a valid password.</p>
-      <p ng-show="settings_player.error">{{settings.error}}</p>
-      <i class="ion ion-close" ng-click="settings_player.hasErrors = false;"></i>
-    </div>-->
     <div class="card animated" ng-class="!$storage.initConfig ? 'bounceInUp' : 'bounceOutDown'" ng-show="!$storage.initConfig" style="animation-duration: 1s">
       <div class="item item-text-wrap">
         You need to have a physical MVPlayer box in your position in order to configure a box. Do you have one? If not go here to <a ng-click="openBrowser('http://mvplayer.herokuapp.com/')">purchase one in our online store.</a>
@@ -20,7 +12,16 @@
       </div>
     </div>
     <div class="playerSettings animated delay-5" ng-class="$storage.initConfig ? 'fadeIn' : 'fadeOut'" ng-show="$storage.initConfig">
-      <p style="margin:20px 50px;text-align:center;">To add a new MVPlayer click the add button below.</p>
+      <p style="margin:20px 50px;text-align:center;">To add a new MVPlayer click the add button above.</p>
+      <ion-list can-swipe="true" show-delete="false" class="list" ng-if="players.length">
+        <ion-item class="item item-avatar animated fadeInRight delay-{{$index}}" ng-repeat="player in players" ng-click="editPlayer($index)">
+          <img src="{{player.get('image')._url}}">
+          <h2>{{player.get('name')}}</h2>
+          <p>{{player.get('address')}}</p>
+          <ion-delete-button class="button-assertive icon ion-trash-a" ng-click="deletePlayer($index)"></ion-delete-button?
+        </ion-item>
+        <!--<div class="BGImage" ng-style="{'background-image':'url({{player.get('image')._url}})'}"></div>-->
+      </ion-list>
     </div>
   </ion-content>
 </ion-view>

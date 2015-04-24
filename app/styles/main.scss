@@ -84,12 +84,24 @@ h1 {
                 color: $coloredLinks;
                 font-size:20px;
             }
+            .popup-sub-title {
+                color: $textColor;
+            }
         }
         .popup-body {
             font-family: 'helvetica_neue_lt_pro45_light';
             padding: 10px 20px;
             font-size: 12px;
             margin: 20px 0;
+            .input {
+                padding:0;
+                .input__field {
+                    border: none;
+                    height: 34px;
+                    float:none;
+                    width: 100%;
+                }
+            }
         }
         .popup-buttons {
             .button {

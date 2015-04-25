@@ -35,8 +35,10 @@
 @import 'search.scss';
 @import 'profile.scss';
 @import 'discover.scss';
+@import 'artist.scss';
 @import 'player.scss';
 @import 'settings.scss';
+@import 'tabSlideBox.scss';
 
 body {
     background-color: $darkBG;
@@ -528,7 +530,7 @@ textarea, input[type="text"], input[type="password"], input[type="datetime"], in
         text-decoration: none;
     }
 }
-.chat {
+.dashboard {
     .chat-convo {
         margin: 0;
         .chat-item {

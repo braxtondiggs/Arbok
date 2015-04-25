@@ -15,7 +15,7 @@
             <a class="profile_settings" nav-clear menu-close href="#/app/settings" ng-if="currentUser._serverData">
                 <i class="icon ion-gear-b" ng-class="{'animated bounceIn': ratio}" ng-show="ratio"></i>
             </a>
-            <a class="profile" nav-clear menu-close ng-if="currentUser._serverData" href="#/app/profile">
+            <a class="profile_container" nav-clear menu-close ng-if="currentUser._serverData" href="#/app/profile">
                 <div class="img-circle" ng-class="{'animated bounceIn': ratio}" ng-show="ratio">
                     <img alt="" ng-src="{{currentUser.image}}"/>
                 </div>

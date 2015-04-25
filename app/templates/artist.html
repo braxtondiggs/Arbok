@@ -1,72 +1,74 @@
-<ion-view ng-style="{'background-image':'url(images/BG.png)'}" class="artist">
+<ion-view class="artist">
     <ion-nav-title>{{artist.info.convertedSlug}}</ion-nav-title>
-    <ion-content>
-        <!--<ion-tabs class="tabs-icon-only tabs-striped text-only tabs-color-light">
-            <ion-tab title="Videos" on-select="artist.activateTab(0)">
-                <ion-nav-view>
-                    <ion-content>
-                    </ion-content>
-                </ion-nav-view>
-            </ion-tab>
-            <ion-tab title="Appearance" on-select="artist.activateTab(0)">
-                <ion-nav-view>
-                    <ion-content>
-                    </ion-content>
-                </ion-nav-view>
-            </ion-tab>
-            <ion-tab title="Director" on-select="artist.activateTab(0)">
-                <ion-nav-view>
-                    <ion-content>
-                    </ion-content>
-                </ion-nav-view>
-            </ion-tab>
-            <ion-tab title="Featured" on-select="artist.activateTab(0)">
-                <ion-nav-view>
-                    <ion-content>
-                    </ion-content>
-                </ion-nav-view>
-            </ion-tab>
-            <ion-tab title="Exec. Pro." on-select="artist.activateTab(0)">
-                <ion-nav-view>
-                    <ion-content>
-                    </ion-content>
-                </ion-nav-view>
-            </ion-tab>-->
-        <!--<div class="artist animated fadeIn" ng-show="artist.loaded">
-            <img class="img-thumbnail" ng-src="{{artist.checkImage(artist.info.img)}}" alt="" ng-if="artist.info.videography.length || artist.info.featured.length">
-            <div class="row">
-                <p class="bio" ng-text-truncate="artist.info.biographies" ng-tt-chars-threshold="240" ng-tt-more-label="Show" ng-tt-less-label="Hide"></p>
+    <ion-content class="animated fadeIn"> <!--ng-show="artist.loaded">-->
+        <div class="profile_container">
+            <div class="img-circle animated bounceIn">
+                <img alt="" ng-src="{{artist.info.checkedImage}}"/>
             </div>
-            <p class="empty-list" ng-show="!artist.info.videography.length && !artist.info.featured.length">It looks like we don't have any playable music for this artist.</p>
-            <div class="videgraphy" ng-show="artist.info.videography.length">
-                <h3 class="title">Videography</h3>
-                <div class="list card dark-list" ng-repeat="video in artist.info.videography">
-                    <div class="item item-divider list-title">
-                        {{video.song_title}}
-                    </div>
-                    <div class="item item-image">
-                        <img ng-src="{{video.image.l}}">
-                    </div>
-                    <a class="item item-icon-left assertive" ng-click="addSong($index, 'videography')">
-                        <i class="icon ion-music-note"></i> Start Listening
-                    </a>
+            <div class="background" ng-style="artist.info.style"></div>
+        </div>
+        <tab-slide-box tab="0">
+            <div class="tsb-icons">
+                <div class="tsb-ic-wrp">
+                    <ion-scroll direction="x" class="tsb-hscroll">
+                        <a ng-if="artist.info.videography.length" on-finish-render="artist.info.videography.info">Videos</a>
+                        <a ng-if="artist.info.featured.length">Featured</a>
+                        <a ng-if="artist.info.apperance.length">Appearance</a>
+                        <a ng-if="artist.info.director.length">Director</a>
+                        <a ng-if="artist.info.execpro.length">Exec. Pro.</a>
+                        <a ng-if="artist.info.biographies">Bio</a>
+                        <a ng-if="false">Social</a>
+                    </ion-scroll>
+                </div>
+            </div>
+            <ion-slide-box show-pager="false" on-slide-changed="slideHasChanged($index)" >
+                <ion-slide ng-if="artist.info.videography.length" class="animated bounceInUp" ng-style="{'background-image':'url(images/BG.png)'}">
+                    <div class="videography">
+                        <div class="list card dark-list" ng-repeat="video in artist.info.videography">
+                            <div class="item item-divider list-title">
+                                {{video.song_title}}
+                            </div>
+                            <div class="item item-image">
+                                <img ng-src="{{video.image.l}}">
+                            </div>
+                            <a class="item item-icon-left assertive" ng-click="addSong($index, 'videography')">
+                                <i class="icon ion-music-note"></i> Start Listening
+                            </a>
 
-                </div>
-            </div>
-            <div class="featured" ng-show="artist.info.featured.length">
-                <h3 class="title">Featured Artist</h3>
-                <div class="list card dark-list" ng-repeat="video in artist.info.featured">
-                    <div class="item item-divider list-title">
-                        {{video.song_title}}
+                        </div>
                     </div>
-                    <div class="item item-image">
-                        <img ng-src="{{video.image.l}}">
+                </ion-slide>
+                <ion-slide ng-if="artist.info.featured.length" ng-style="{'background-image':'url(images/BG.png)'}">
+                    <div class="featured">
+                        <div class="list card dark-list" ng-repeat="video in artist.info.featured">
+                            <div class="item item-divider list-title">
+                                {{video.song_title}}
+                            </div>
+                            <div class="item item-image">
+                                <img ng-src="{{video.image.l}}">
+                            </div>
+                            <a class="item item-icon-left assertive" ng-click="addSong($index, 'featured')">
+                                <i class="icon ion-music-note"></i> Start Listening
+                            </a>
+                        </div>
                     </div>
-                    <a class="item item-icon-left assertive" ng-click="addSong($index, 'featured')">
-                        <i class="icon ion-music-note"></i> Start Listening
-                    </a>
-                </div>
-            </div>
-        </div>-->
+                </ion-slide>
+                <ion-slide ng-if="artist.info.apperance.length">
+                    <h3>Mail content</h3>
+                </ion-slide>
+                <ion-slide ng-if="artist.info.director.length">
+                    <h3>Car content</h3>
+                </ion-slide>
+                <ion-slide ng-if="artist.info.execpro.length">
+                    <h3>Profile content</h3>
+                </ion-slide>
+                <ion-slide ng-if="artist.info.biographies">
+                    <p class="bio" ng-text-truncate="artist.info.biographies" ng-tt-chars-threshold="240" ng-tt-more-label="Show" ng-tt-less-label="Hide"></p>
+                </ion-slide>
+                <ion-slide ng-if="false">
+                    Social :)
+                </ion-slide>
+            </ion-slide-box>
+        </tab-slide-box>
     </ion-content>
 </ion-view>

@@ -1,0 +1,14 @@
+@import '_colors.scss';
+.artist {
+	.profile_container {
+		position: relative;
+		.img-circle {
+			margin:20px auto;
+			width: 175px;
+			height:175px;
+		}
+	}
+	.slider-slide {
+		background-color: $darkBG;
+	}
+}

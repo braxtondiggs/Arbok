@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', function($scope, $stateParams, $http, UserService) {
+	.controller('ArtistCtrl', ['$scope', '$ionicSlideBoxDelegate', '$stateParams', '$http', 'UserService', function($scope, $ionicSlideBoxDelegate, $stateParams, $http, UserService) {
 		/*jshint camelcase: false */
 		$scope.artist = {
 			info: {}
@@ -15,9 +15,12 @@ angular.module('Quilava.controllers')
 					slug: data.slug,
 					img: data.image,
 					convertedSlug: $scope.artist.convertSlug(data.name, data.slug),
+					checkedImage: $scope.artist.checkImage(data.image),
 					videography: data.artist_videos.videos,
-					featured: data.featured_artist_videos.videos
+					featured: data.featured_artist_videos.videos,
+					style: {'background-image' : 'url('+$scope.artist.checkImage(data.image)+')'}
 				};
+				$ionicSlideBoxDelegate.update();
 				/*Echonest.artists.get({
 				  name: $rootScope.artist.convertedSlug
 				}).then(function(artist) {
@@ -32,12 +35,15 @@ angular.module('Quilava.controllers')
 				});*/
 			});
 		}
+		$scope.onSlideMove = function(data){
+			console.log('You have selected ' + data.index + ' tab');
+		};
 		var param = $stateParams;
 		if (param && param.artistId && param.action) {
 			$scope.artist.id = param.artistId;
 			$scope.artist.loaded = false;
 			if (param.action === 'id') {
-				//getArtistInfo(param.artistId);
+				getArtistInfo(param.artistId);
 			} else if (param.action === 'slug') {
 				/*$http.get(
 					$scope.domain + 'music/search?e=' + param.artistId ?method=slug

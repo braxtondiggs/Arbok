@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'tabSlideBox'])
+angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'pubnub.angular.service', 'tabSlideBox'])
 .run(function($ionicPlatform) {
 	$ionicPlatform.ready(function() {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

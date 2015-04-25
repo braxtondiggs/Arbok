@@ -90,3 +90,15 @@ angular.module('Quilava.controllers')
 		$scope.isRefresh = false;
 		init();
 	}]);
+
+/*
+		$scope.subscribe = function() {
+			PubNub.ngSubscribe({ channel: 'Demo_Channel' });
+			$rootScope.$on(PubNub.ngMsgEv('Demo_Channel'), function(event, payload) {
+				// payload contains message, channel, env...
+				console.log('got a message event:', payload);
+			});
+			$rootScope.$on(PubNub.ngPrsEv('Demo_Channel'), function(event, payload) {
+				console.log('got a presence event:', payload);
+			});
+		};*/

@@ -1,9 +1,15 @@
 'use strict';
 
 angular.module('Quilava.controllers', [])
-	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicLoading', '$ionicHistory', '$localStorage', 'lodash', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup , $ionicLoading, $ionicHistory, $localStorage, lodash) {
+	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicLoading', '$ionicHistory', '$localStorage', 'lodash', 'PubNub', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup , $ionicLoading, $ionicHistory, $localStorage, lodash, PubNub) {
 		/*global Parse*/
+		/*jshint camelcase: false */
+		/* exported PubNub */
 		$rootScope.currentUser = Parse.User.current() || {};
+		PubNub.init({
+			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
+			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'
+		});
 		if (!lodash.isEmpty($rootScope.currentUser)) {
 			if ($rootScope.currentUser.get('image')) {
 				$rootScope.currentUser.image = $rootScope.currentUser.get('image')._url;

@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('ProfileCtrl', ['$scope', '$rootScope', '$ionicActionSheet', '$ionicLoading', '$cordovaCamera', function($scope, $rootScope, $ionicActionSheet, $ionicLoading,$cordovaCamera) {
+	.controller('ProfileCtrl', ['$scope', '$ionicActionSheet', '$ionicLoading', '$cordovaCamera', function($scope, $ionicActionSheet, $ionicLoading,$cordovaCamera) {
 		/*global Parse*/
 		$scope.updateImage = function() {
 			var hideSheet = $ionicActionSheet.show({
@@ -19,15 +19,13 @@ angular.module('Quilava.controllers')
 							hideSheet();
 							$ionicLoading.hide();
 						}
-						var user = $rootScope.currentUser;
+						var user = Parse.User.current();
 						var file = new Parse.File(user.id + '.png', {
 							base64: image
 						});
 						user.set('image', file);
 						user.save(null, {
 							success: function() {
-								$rootScope.currentUser.image = $rootScope.currentUser.get('image')._url;
-								$scope.$apply();
 								loadComplete();
 							},
 							error: function() {

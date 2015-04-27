@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$ionicLoading', '$ionicScrollDelegate', '$cordovaGeolocation', 'LoadingService', 'cfpLoadingBar', function($scope, $rootScope, $localStorage, $ionicLoading, $ionicScrollDelegate, $cordovaGeolocation, LoadingService, cfpLoadingBar) {
+	.controller('PlayerCtrl', ['$scope', '$localStorage', '$state', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'cfpLoadingBar', 'PubNub', function($scope, $localStorage, $state, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $cordovaGeolocation, $cordovaDialogs, LoadingService, cfpLoadingBar, PubNub) {
 		function init() {
 			/*global Parse*/
 			LoadingService.showLoading();
@@ -66,6 +66,29 @@ angular.module('Quilava.controllers')
 				});
 			}
 		});
+		$scope.findLocation = function(location) {
+			/*global GeocoderJS*/
+			var googleGeocoder = new GeocoderJS.createGeocoder({'provider': 'google'});
+		    googleGeocoder.geocode(location, function(result) {
+		        $scope.lnglat = {lat: result[0].latitude, lng: result[0].longitude, err: false};
+		        $ionicScrollDelegate.scrollTop(true);
+		        $scope.$apply();
+		    });
+		};
+		$scope.joinServer = function(id) {
+			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'MVPlayer', ['Connect', 'Cancel']).then(function(res) {
+				if (res ===1) {
+					PubNub.ngSubscribe({channel: id});
+					$cordovaDialogs.alert('You have succesfully connect to this player', 'MVPlayer').then(function() {
+						$state.transitionTo('app.dashboard');
+						$ionicHistory.nextViewOptions({
+							historyRoot: true
+						});
+					});
+				}
+			});
+			
+		};
 		$scope.getDistance = function(lat1, lon1, lat2, lon2, unit) {
 			var radlat1 = Math.PI * lat1 / 180,
 				radlat2 = Math.PI * lat2 / 180,
@@ -90,15 +113,3 @@ angular.module('Quilava.controllers')
 		$scope.isRefresh = false;
 		init();
 	}]);
-
-/*
-		$scope.subscribe = function() {
-			PubNub.ngSubscribe({ channel: 'Demo_Channel' });
-			$rootScope.$on(PubNub.ngMsgEv('Demo_Channel'), function(event, payload) {
-				// payload contains message, channel, env...
-				console.log('got a message event:', payload);
-			});
-			$rootScope.$on(PubNub.ngPrsEv('Demo_Channel'), function(event, payload) {
-				console.log('got a presence event:', payload);
-			});
-		};*/

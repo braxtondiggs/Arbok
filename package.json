@@ -58,6 +58,7 @@
     "org.apache.cordova.inappbrowser",
     "org.apache.cordova.camera",
     "org.apache.cordova.file",
-    "de.appplant.cordova.plugin.email-composer"
+    "de.appplant.cordova.plugin.email-composer",
+    "org.apache.cordova.dialogs"
   ]
 }

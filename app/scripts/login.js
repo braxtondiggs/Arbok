@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('LoginCtrl', ['$scope', '$rootScope', '$ionicPopup', '$cordovaOauth', '$ionicLoading', '$localStorage', '$http', function($scope, $rootScope, $ionicPopup, $cordovaOauth, $ionicLoading, $localStorage, $http) {
+	.controller('LoginCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$cordovaOauth', '$ionicLoading', '$localStorage', '$http', function($scope, $rootScope, $cordovaDialogs, $cordovaOauth, $ionicLoading, $localStorage, $http) {
 		/*global Parse*/
 		$scope.login = {
 			hasErrors: false,
@@ -87,39 +87,31 @@ angular.module('Quilava.controllers')
 		};
 		$scope.forgotMyPassword = function(email) {
 			if (!email.$invalid) {
-				$ionicPopup.confirm({
-					title: 'MVPlayer',
-					template: 'Did you forget your password?',
-					buttons: [{
-						text: 'Cancel'
-					}, {
-						text: 'Yes',
-						type: 'button-positive',
-						onTap: function() {
-							$ionicLoading.show();
-							Parse.User.requestPasswordReset(email.$viewValue, {
-								success: function() {
-									$scope.login = {
-										hasErrors: false,
-										showPositive: true,
-										error: null,
-										success: 'Please check your email, a new password has been sent there.'
-									};
-									$ionicLoading.hide();
-									$scope.$apply();
-								},
-								error: function() {
-									$scope.login = {
-										hasErrors: true,
-										error: null,
-										success: 'That email address is not is our system.'
-									};
-									$ionicLoading.hide();
-									$scope.$apply();
-								}
-							});
-						}
-					}]
+				$cordovaDialogs.confirm('Did you forget your password?', 'MVPlayer', ['Yes', 'Cancel']).then(function(res) {
+					if (res === 1) {
+						$ionicLoading.show();
+						Parse.User.requestPasswordReset(email.$viewValue, {
+							success: function() {
+								$scope.login = {
+									hasErrors: false,
+									showPositive: true,
+									error: null,
+									success: 'Please check your email, a new password has been sent there.'
+								};
+								$ionicLoading.hide();
+								$scope.$apply();
+							},
+							error: function() {
+								$scope.login = {
+									hasErrors: true,
+									error: null,
+									success: 'That email address is not is our system.'
+								};
+								$ionicLoading.hide();
+								$scope.$apply();
+							}
+						});
+					}
 				});
 			} else {
 				$scope.login = {

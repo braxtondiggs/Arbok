@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('Quilava.controllers', [])
-	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicLoading', '$ionicHistory', '$localStorage', 'lodash', 'PubNub', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup , $ionicLoading, $ionicHistory, $localStorage, lodash, PubNub) {
+	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$cordovaDialogs', '$ionicLoading', '$ionicHistory', '$localStorage', 'lodash', 'PubNub', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $cordovaDialogs , $ionicLoading, $ionicHistory, $localStorage, lodash, PubNub) {
 		/*global Parse*/
 		/*jshint camelcase: false */
 		/* exported PubNub */
@@ -37,19 +37,13 @@ angular.module('Quilava.controllers', [])
 		$scope.closeLogin = function(alert) {
 			$scope.modal.hide().then(function() {
 				if (alert) {
-					$ionicPopup.alert({
-						title: 'MVPlayer',
-						template: 'Welcome, you are currently logged in! You can now chat and suggest songs!'
-					});
+					$cordovaDialogs.alert('Welcome, you are currently logged in! You can now chat and suggest songs!', 'MVPlayer');
 				}
 			});
 		};
 		$scope.logout = function() {
-			$ionicPopup.confirm({
-				title: 'MVPlayer',
-				template: 'Are you sure you want to logout?'
-			}).then(function(res) {
-				if (res) {
+			$cordovaDialogs.confirm('Are you sure you want to logout?', 'MVPlayer').then(function(res) {
+				if (res === 1) {
 					if ($ionicSideMenuDelegate.isOpenLeft() === true) {
 						$ionicSideMenuDelegate.toggleLeft();
 					}
@@ -60,10 +54,7 @@ angular.module('Quilava.controllers', [])
 					});
 					$scope.vote.selectedIndex = 0;
 					$rootScope.currentUser = {};
-					$ionicPopup.alert({
-						title: 'MVPlayer',
-						template: 'You have been successfully logged out'
-					});
+					$cordovaDialogs.alert('You have been successfully logged out', 'MVPlayer');
 				}
 			});
 		};
@@ -74,6 +65,14 @@ angular.module('Quilava.controllers', [])
 			$scope.modal = modal;
 		});
 /*
+
+$rootScope.$on(PubNub.ngMsgEv('Demo_Channel'), function(event, payload) {
+				// payload contains message, channel, env...
+				console.log('got a message event:', payload);
+			});
+			$rootScope.$on(PubNub.ngPrsEv('Demo_Channel'), function(event, payload) {
+				console.log('got a presence event:', payload);
+			});
 		$scope.voteClicked = function(index) {
 			if ($scope.vote.selectedIndex !== index) {
 				$scope.vote.selectedIndex = index;

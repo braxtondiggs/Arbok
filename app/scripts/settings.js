@@ -1,13 +1,14 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', '$ionicLoading', '$ionicPopup', '$ionicHistory', '$cordovaEmailComposer', '$localStorage', function($scope, $rootScope, $state, $ionicLoading, $ionicPopup, $ionicHistory, $cordovaEmailComposer, $localStorage) {
+	.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', '$cordovaEmailComposer', '$localStorage', function($scope, $rootScope, $state, $ionicLoading, $cordovaDialogs, $ionicHistory, $cordovaEmailComposer, $localStorage) {
 		/*global Parse*/
 		$scope.settingsForm = {};
 		if (Parse.User.current()) {
-			$scope.name = $rootScope.currentUser.get('name');
-			$scope.gender = $rootScope.currentUser.get('gender');
-			$scope.mobileNotifications = $rootScope.currentUser.get('mobileNotifications') || true;
-			$scope.email = $rootScope.currentUser.getEmail();
+			var user = Parse.User.current();
+			$scope.name = user.get('name');
+			$scope.gender = user.get('gender');
+			$scope.mobileNotifications = user.get('mobileNotifications') || true;
+			$scope.email = user.getEmail();
 			$scope.settings = {
 				error: null,
 				hasErrors: false
@@ -31,7 +32,7 @@ angular.module('Quilava.controllers')
 		initChanged();
 		$scope.saveInput = function(name, input) {
 			$ionicLoading.show();
-			var user = $rootScope.currentUser;
+			var user = Parse.User.current();
 			user.set(name, input);
 			user.save(null, {
 				success: function() {
@@ -46,7 +47,7 @@ angular.module('Quilava.controllers')
 			});
 		};
 		$scope.submitForm = function(name, email, gender, password, confirmPassword) {
-			var user = $rootScope.currentUser;
+			var user = Parse.User.current();
 			$ionicLoading.show();
 
 			function parseSave(user, txt) {
@@ -121,10 +122,7 @@ angular.module('Quilava.controllers')
 			$cordovaEmailComposer.isAvailable().then(function() {
 				$cordovaEmailComposer.addAlias('gmail', 'com.google.android.gm');
 				$cordovaEmailComposer.open(email).then(function() {
-					$ionicPopup.alert({
-						title: 'MVPlayer - Email Sent',
-						template: 'Your email was succefully sent, we will get back to you with in 12-24 hours.'
-					});
+					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'MVPlayer - Email Sent');
 				});
 			});
 		};
@@ -137,10 +135,7 @@ angular.module('Quilava.controllers')
 			$cordovaEmailComposer.isAvailable().then(function() {
 				$cordovaEmailComposer.addAlias('gmail', 'com.google.android.gm');
 				$cordovaEmailComposer.open(email).then(function() {
-					$ionicPopup.alert({
-						title: 'MVPlayer - Email Sent',
-						template: 'Your email was succefully sent, we will get back to you with in 12-24 hours.'
-					});
+					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'MVPlayer - Email Sent');
 				});
 			});
 		};
@@ -152,38 +147,27 @@ angular.module('Quilava.controllers')
 				historyRoot: true
 			});
 			$rootScope.currentUser = {};
-			$ionicPopup.alert({
-				title: 'MVPlayer',
-				template: 'You have been successfully logged out'
-			});
+			$cordovaDialogs.alert('You have been successfully logged out', 'MVPlayer');
 		};
 		$scope.deleteAccount = function() {
-			$ionicPopup.confirm({
-				title: 'Delete Your Account',
-				template: 'Deleting your account will also remove all of your library data. This is permanent and cannout be undone. Are your sure?',
-				buttons: [{
-					text: 'Cancel'
-				}, {
-					text: 'Yes',
-					type: 'button-positive',
-					onTap: function() {
-						$ionicLoading.show();
-						var user = $rootScope.currentUser;
-						user.destroy({
-							success: function() {
-								$localStorage.$reset();
-								$state.transitionTo('app.dashboard');
-								$ionicHistory.clearHistory();
-							},
-							error: function() {
-								$ionicLoading.show({
-									template: 'Error connecting to server...',
-									duration: 2000
-								});
-							}
-						});
-					}
-				}]
+			$cordovaDialogs.confirm('Deleting your account will also remove all of your library data. This is permanent and cannout be undone. Are your sure?', 'Delete Your Account', ['Yes', 'Cancel']).then(function(res) {
+				if (res === 1) {
+					$ionicLoading.show();
+					var user = Parse.User.current();
+					user.destroy({
+						success: function() {
+							$localStorage.$reset();
+							$state.transitionTo('app.dashboard');
+							$ionicHistory.clearHistory();
+						},
+						error: function() {
+							$ionicLoading.show({
+								template: 'Error connecting to server...',
+								duration: 2000
+							});
+						}
+					});
+				}
 			});
 		};
 	}]);

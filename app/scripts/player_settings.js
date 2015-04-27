@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('PlayerSettingsCtrl', ['$scope', '$ionicLoading', '$ionicPopup', '$ionicModal', '$localStorage', '$cordovaInAppBrowser', function($scope, $ionicLoading, $ionicPopup, $ionicModal, $localStorage, $cordovaInAppBrowser) {
+	.controller('PlayerSettingsCtrl', ['$scope', '$ionicLoading', '$cordovaDialogs', '$ionicModal', '$localStorage', '$ionicListDelegate', '$cordovaInAppBrowser', 'PubNub', function($scope, $ionicLoading, $cordovaDialogs, $ionicModal, $localStorage, $ionicListDelegate, $cordovaInAppBrowser, PubNub) {
 		$scope.$storage = $localStorage.$default({
 			initConfig: false
 		});
@@ -30,48 +30,38 @@ angular.module('Quilava.controllers')
 		});
 		$scope.addNewPlayer = function() {
 			function showPrompt() {
-				$ionicPopup.show({
-					template: '<div class="input"><input type="text" class="input__field" ng-model="playerSettings.new.objID"></div>',
-					title: 'Enter Player ID',
-					subTitle: 'The 8 character string that is visable on the TV screen.',
-					scope: $scope,
-					buttons: [
-						{ text: 'Cancel' },
-						{
-							text: '<b>Save</b>',
-							type: 'button-positive',
-							onTap: function(e) {
-								if (!$scope.playerSettings.new.objID) {
-									e.preventDefault();
-								} else {
-									$ionicLoading.show();
-									var Player = Parse.Object.extend('Player');
-									var query = new Parse.Query(Player);
-									query.equalTo('objectId', $scope.playerSettings.new.objID);
-									query.equalTo('isSetup', false);
-									query.equalTo('isBox', true);
-									query.find({
-										success: function(results) {
-											$ionicLoading.hide();
-											if (results.length) {
-												var user = Parse.User.current();
-												var relation = user.relation('userPlayer');
-												relation.add(results);
-    											user.save();
-												$scope.playerSettings.server = results[0];
-												$scope.name = $scope.playerSettings.server.get('name');
-												$scope.address = $scope.playerSettings.server.get('address');
-												$scope.image = ($scope.playerSettings.server.get('image'))?$scope.playerSettings.server.get('image')._url: null;
-												$scope.modal.show();
-											}else {
-												showPrompt();
-											}
-										}
-									});
+				$cordovaDialogs.prompt('The 8 character string that is visable on the TV screen.', 'Enter Player ID', ['Save', 'Cancel']).then(function(res) {
+					if (res.buttonIndex === 1 && res.input1 === '') {
+						showPrompt();
+					} else {
+						if (res.buttonIndex === 1) {
+							$ionicLoading.show();
+							$scope.playerSettings.new.objID = res.input1;
+							var Player = Parse.Object.extend('Player');
+							var query = new Parse.Query(Player);
+							query.equalTo('objectId', $scope.playerSettings.new.objID);
+							query.equalTo('isSetup', false);
+							query.equalTo('isBox', true);
+							query.find({
+								success: function(results) {
+									$ionicLoading.hide();
+									if (results.length) {
+										var user = Parse.User.current();
+										var relation = user.relation('userPlayer');
+										relation.add(results);
+	    								user.save();
+										$scope.playerSettings.server = results[0];
+										$scope.name = $scope.playerSettings.server.get('name');
+										$scope.address = $scope.playerSettings.server.get('address');
+										$scope.image = ($scope.playerSettings.server.get('image'))?$scope.playerSettings.server.get('image')._url: null;
+										$scope.modal.show();
+									}else {
+										showPrompt();
+									}
 								}
-							}
+							});
 						}
-					]
+					}
 				});
 			}
 			showPrompt();
@@ -84,11 +74,16 @@ angular.module('Quilava.controllers')
 			$scope.modal.show();
 		};
 		$scope.deletePlayer = function(index) {
-			PubNub.ngPublish({
-				channel: $scope.player[index].id,
-				message: {'player_delete': $scope.player[index].id}
+			$cordovaDialogs.confirm('Are you sure you want to delete this player?', 'MVPlayer', ['Delete','Cancel']).then(function(res) {
+				if (res === 1) {
+					PubNub.ngPublish({
+						channel: $scope.player[index].id,
+						message: {'player_delete': $scope.player[index].id}
+					});
+					$scope.player[index].destroy();
+				}
 			});
-			$scope.player[index].destroy();
+			$ionicListDelegate.closeOptionButtons();
 		};
 		$scope.closePlayerEdit = function() {
 			$scope.modal.hide();

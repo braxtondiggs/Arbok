@@ -5,11 +5,11 @@
                 <i class="icon ion-gear-b animated bounceIn"></i>
             </a>
             <div class="img-circle animated bounceIn" ng-click="updateImage()">
-                <img alt="" ng-src="{{currentUser.image}}"/>
+                <img alt="" ng-src="{{Parse.User.current().get('image')._url}}"/>
                 <i class="icon ion-plus-circled"></i>
             </div>
-            <h1 class="title animated fadeInLeft">{{currentUser.get('name')}}</h1>
-            <div class="background" ng-style="{'background-image':'url({{currentUser.image}})'}"></div>
+            <h1 class="title animated fadeInLeft">{{Parse.User.current().get('name')}}</h1>
+            <div class="background" ng-style="{'background-image':'url({{Parse.User.current().get('image')._url}})'}"></div>
         </div>
         <ion-tabs class="tabs-icon-only tabs-striped text-only">
             <ion-tab title="My Favs">

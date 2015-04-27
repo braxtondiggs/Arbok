@@ -74,7 +74,7 @@
 		border: 3px dashed $coloredLinks;
 		border-radius: 25px;
 		width: 80%;
-		height: 180px;
+		height: 240px;
 		margin: 20px auto;
 		position: relative;
 		img {
@@ -87,10 +87,10 @@
 			border-radius: 24px;
 			position: absolute;
 			width: 27px;
-			height: 36px;
+			height: 27px;
 			position: absolute;
-			right:-5px;
-			top:-5px;
+			right:3px;
+			top:3px;
 			display:none;
 			&:before {
 				line-height:.88;
@@ -105,7 +105,10 @@
   			font-weight: 500;
 		}
 		&.has-image {
+			overflow: hidden;
 			img {
+				width:100%;
+				height:100%;
 				display:block;
 			}
 			.clear-image {
@@ -116,11 +119,31 @@
 }
 .player_settings {
 	.list .item {
+		padding:0;
 		h2 {
 			color: $coloredLinks;
 		}
 		&.item-avatar {
-			height: 41px;
+			.item-content {
+				padding-top:17px;
+				.BGImage {
+					background-position-y: 50%;
+					position: absolute;
+					top:0;
+					left:0;
+					right: 0;
+		  			bottom: 0;
+					background-size: cover;
+					z-index:-1;
+					-webkit-filter: blur(1px);
+		            -moz-filter: blur(1px);
+		            -o-filter: blur(1px);
+		            -ms-filter: blur(1px);
+		            filter: blur(1px);
+		            opacity: .3;
+		            background-repeat: no-repeat;
+				}
+			}
 		}
 	}
 }

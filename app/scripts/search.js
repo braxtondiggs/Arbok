@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('SearchCtrl', ['$scope', '$stateParams', '$http', '$ionicLoading', '$ionicPopup', 'UserService', '$localStorage', 'lodash', '$state', function($scope, $stateParams, $http, $ionicLoading, $ionicPopup, UserService, $localStorage, lodash, $state) {
+	.controller('SearchCtrl', ['$scope', '$stateParams', '$http', '$ionicLoading', '$cordovaDialogs', 'UserService', '$localStorage', 'lodash', '$state', function($scope, $stateParams, $http, $ionicLoading, $cordovaDialogs, UserService, $localStorage, lodash, $state) {
 		/*jshint camelcase: false */
 		$scope.search = {};
 		function init() {
@@ -165,11 +165,11 @@ angular.module('Quilava.controllers')
 		};
 		$scope.search.submitSong = function(index) {
 			if ($scope.currentUser && $scope.room) {
-				var confirmPopup = $ionicPopup.confirm({
-					title: 'MVPlayer',
-					template: 'Are you sure you want add this song?'
+				$cordovaDialogs.confirm('Are you sure you want add this song?', 'MVPlayer').then(function(res) {
+					if (res === 1) {
+					}
 				});
-				console.log(index, confirmPopup);
+				console.log(index);
 				/*confirmPopup.then(function(res) {
 					if (res) {
 						var found = false;
@@ -211,10 +211,7 @@ angular.module('Quilava.controllers')
 			} else {
 				var body = ($scope.currentUser) ? 'You have not connected to a MVPlayer yet.' : 'You need to be logged inorder to suggest a song',
 					location = ($scope.currentUser) ? 'app.player' : null;
-				$ionicPopup.alert({
-					title: 'MVPlayer - Error',
-					template: body
-				}).then(function() {
+				$cordovaDialogs.alert(body, 'MVPlayer - Error').then(function() {
 					if (location !== null) {
 						$state.transitionTo(location);
 					}else {

@@ -127,13 +127,11 @@
 			.item-content {
 				padding-top:17px;
 				.BGImage {
-					background-position-y: 50%;
 					position: absolute;
 					top:0;
 					left:0;
 					right: 0;
 		  			bottom: 0;
-					background-size: cover;
 					z-index:-1;
 					-webkit-filter: blur(1px);
 		            -moz-filter: blur(1px);
@@ -141,7 +139,8 @@
 		            -ms-filter: blur(1px);
 		            filter: blur(1px);
 		            opacity: .3;
-		            background-repeat: no-repeat;
+		            width:100%;
+		            margin-top: -50%;
 				}
 			}
 		}

@@ -1,13 +1,13 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('ArtistCtrl', ['$scope', '$ionicSlideBoxDelegate', '$stateParams', '$http', 'UserService', function($scope, $ionicSlideBoxDelegate, $stateParams, $http, UserService) {
+	.controller('ArtistCtrl', ['$scope', '$rootScope' ,'$ionicSlideBoxDelegate', '$ionicScrollDelegate', '$stateParams', '$http', 'UserService', 'Echonest', function($scope, $rootScope, $ionicSlideBoxDelegate, $ionicScrollDelegate, $stateParams, $http, UserService, Echonest) {
 		/*jshint camelcase: false */
 		$scope.artist = {
 			info: {}
 		};
 		function getArtistInfo(id) {
 			$http.get(
-				'http://imvdb.com/api/v1/entity/' + id + '?include=artist_videos,featured_videos'
+				'http://imvdb.com/api/v1/entity/' + id + '?include=artist_videos,featured_videos,credits'
 			).success(function(data) {
 				$scope.artist.loaded = true;
 				$scope.artist.info = {
@@ -18,26 +18,11 @@ angular.module('Quilava.controllers')
 					checkedImage: $scope.artist.checkImage(data.image),
 					videography: data.artist_videos.videos,
 					featured: data.featured_artist_videos.videos,
-					style: {'background-image' : 'url('+$scope.artist.checkImage(data.image)+')'}
+					style: {'background-image' : 'url('+$scope.artist.checkImage(data.image)+')'},
+					bio: null
 				};
-				$ionicSlideBoxDelegate.update();
-				/*Echonest.artists.get({
-				  name: $rootScope.artist.convertedSlug
-				}).then(function(artist) {
-				  return artist.getBiographies();
-				}).then(function(artist) {
-					for (var i = 0; i < artist.biographies.length; i++) {
-						if (!artist.biographies[i].truncated) {
-							$rootScope.artist.biographies = artist.biographies[i].text;
-							break;
-						}
-					}
-				});*/
 			});
 		}
-		$scope.onSlideMove = function(data){
-			console.log('You have selected ' + data.index + ' tab');
-		};
 		var param = $stateParams;
 		if (param && param.artistId && param.action) {
 			$scope.artist.id = param.artistId;
@@ -62,5 +47,24 @@ angular.module('Quilava.controllers')
 		};
 		$scope.artist.convertSlug = function(name, slug) {
 			return UserService.convertSlug(name, slug);
+		};
+		$scope.artist.getBio = function() {
+			console.log($scope.artist.info.bio);
+			if ($scope.artist.info.bio === null) {
+				console.log('hello');
+				Echonest.artists.get({
+					name: $scope.artist.info.convertedSlug
+				}).then(function(artist) {
+				  return artist.getBiographies();
+				}).then(function(artist) {
+					console.log(artist);
+					for (var i = 0; i < artist.biographies.length; i++) {
+						if (!artist.biographies[i].truncated) {
+							$scope.artist.info.bio = artist.biographies[i].text;
+							break;
+						}
+					}
+				});
+			}
 		};
 	}]);

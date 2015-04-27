@@ -2,7 +2,7 @@
     <ion-content ng-class="{'has-footer': room}">
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
         <div class="animated" ng-show="players.length" ng-class="players.length ? 'fadeIn' : 'fadeOut'">
-            <div class="list card dark-list" ng-repeat="player in players" ng-click="joinServer(player.id)">
+            <div class="list card dark-list" ng-repeat="player in players" ng-click="joinServer($index)">
                 <div class="item item-avatar list-title animated fadeIn">
                     <img ng-src="{{player.get('image')._url}}" ng-if="player.get('image')._url">
                     <h2>{{player.get('name')}}&nbsp;<span>(~{{getDistance(player.get('latlng')._latitude, player.get('latlng')._longitude, lnglat.lat, lnglat.lng, 'm')}} miles)</span></h2>

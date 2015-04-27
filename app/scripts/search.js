@@ -2,6 +2,7 @@
 angular.module('Quilava.controllers')
 	.controller('SearchCtrl', ['$scope', '$stateParams', '$http', '$ionicLoading', '$cordovaDialogs', 'UserService', '$localStorage', 'lodash', '$state', function($scope, $stateParams, $http, $ionicLoading, $cordovaDialogs, UserService, $localStorage, lodash, $state) {
 		/*jshint camelcase: false */
+		/*global Parse*/
 		$scope.search = {};
 		function init() {
 			$scope.search.tracks = {
@@ -64,7 +65,6 @@ angular.module('Quilava.controllers')
 			});
 		}
 		function searchParse(term, parseObj, obj) {
-			/*global Parse*/
 			$scope.search[obj].loaded = false;
 			$ionicLoading.show();
 			var ParseObj = Parse.Object.extend(parseObj);
@@ -164,6 +164,7 @@ angular.module('Quilava.controllers')
 			$scope.search.term = term;
 		};
 		$scope.search.submitSong = function(index) {
+			$scope.currentUser = Parse.User.current();
 			if ($scope.currentUser && $scope.room) {
 				$cordovaDialogs.confirm('Are you sure you want add this song?', 'MVPlayer').then(function(res) {
 					if (res === 1) {

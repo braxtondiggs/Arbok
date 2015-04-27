@@ -10,7 +10,6 @@
 			left:0;
 			right: 0;
   			bottom: 0;
-			background-size: cover;
 			z-index:-1;
 			-webkit-filter: blur(1px);
             -moz-filter: blur(1px);
@@ -18,8 +17,8 @@
             -ms-filter: blur(1px);
             filter: blur(1px);
             opacity: .3;
-            background-repeat: no-repeat;
-
+            width:100%;
+            margin-top:-25%
 		}
 		.list_content {
 			margin-left:20px;
@@ -56,9 +55,7 @@
 			border-right: 45px solid transparent;
 			border-bottom: 40px solid rgba($coloredLinks, 0.7);
 		}
-		&:after {
-			content: counter(ordered-counter, decimal) ". "; 
-			counter-increment: ordered-counter;
+		.counter {
 		  	font-size: 18px;
 		  	color: $textColor;
 		  	font-weight: 600;
@@ -75,14 +72,12 @@
 }
 .more {
 	.BGImage{
-		background-size: cover;
 	  	position: absolute;
 	  	top: 0;
 	  	left: 0;
 	  	right: 0;
 	  	bottom: 0;
 	  	z-index: -1;
-	  	background-position-y: 50%;
 	  	opacity: .3;
 	  	background-repeat: no-repeat;
 	  	-webkit-filter: blur(3px);
@@ -90,5 +85,7 @@
 	  	-o-filter: blur(3px);
 	  	-ms-filter: blur(3px);
 	  	filter: blur(3px);
+	  	width:100%;
+	  	margin-top:-25%;
 	}
 }

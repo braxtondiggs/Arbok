@@ -11,13 +11,13 @@
             <ion-tab title="Tracks" on-select="search.activateTab(0)">
                 <ion-nav-view>
                     <ion-content>
-                        <div class="list more dark-list ordered" ng-show="search.tracks.results.length" ng-click="search.submitSong($index)">
-                            <a class="item item-thumbnail-left" ng-repeat="track in search.tracks.results">
+                        <div class="list more dark-list ordered" ng-show="search.tracks.results.length" ng-click="search.submitSong($index)" >
+                            <a class="item item-thumbnail-left" collection-repeat="track in search.tracks.results" item-height="91px">
                                 <img ng-src="{{track.image.o}}">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{track.artists[0].name}}</h2>
                                 <p>{{track.song_title}}</p>
-                                <div class="BGImage" ng-style="{'background-image':'url({{track.image.o}})'}"></div>
+                                <img class="BGImage" ng-src="{{track.image.o}}" />
                             </a>
                             <ion-infinite-scroll on-infinite="loadMoreSearch('videos', 'tracks')" distance="1%" ng-if="!search.tracks.maxed && search.tracks.loaded" immediate-check="false"></ion-infinite-scroll>
                         </div>
@@ -39,13 +39,13 @@
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list ordered" ng-show="search.artist.results.length">
-                            <a class="item item-thumbnail-left" ng-href="#/app/artist/id/{{artist.id}}" ng-repeat="artist in search.artist.results">
+                            <a class="item item-thumbnail-left" ng-href="#/app/artist/id/{{artist.id}}" collection-repeat="artist in search.artist.results" item-height="91px">
                                 <div style= "width: 100px;overflow: hidden;height: 80px;position: absolute;left: 10px;top:4px;">
                                     <img ng-src="{{search.checkImage(artist.image)}}" style="width:100%;  min-height: 80px;">
                                 </div>
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{search.convertSlug(artist.name, artist.slug)}}</h2>
-                                <div class="BGImage" ng-style="{'background-image':'url({{search.checkImage(artist.image)}})'}"></div>
+                                <img class="BGImage" ng-src="{{search.checkImage(artist.image)}}" />
                             </a>
                             <ion-infinite-scroll on-infinite="loadMoreSearch('entities', 'artist')" distance="1%" ng-if="!search.artist.maxed && search.artist.loaded" immediate-check="false"></ion-infinite-scroll>
                         </div>
@@ -67,12 +67,12 @@
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list ordered" ng-show="search.playlist.results.length">
-                            <a class="item item-thumbnail-left" ng-repeat="playlist in search.playlist.results">
+                            <a class="item item-thumbnail-left" collection-repeat="playlist in search.playlist.results" item-height="91px">
                                 <img ng-src="{{playlist.get('image')}}">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{playlist.get('name')}}</h2>
                                 <p>{{playlist.get('description')}}</p>
-                                <div class="BGImage" ng-style="{'background-image':'url({{playlist.get('image')}})'}"></div>
+                                <img class="BGImage" ng-src="{{playlist.get('image')}}" />
                             </a>
                         </div>
                         <ion-infinite-scroll on-infinite="loadMoreSearch('Playlist', 'playlist')" distance="1%" ng-if="search.playlist.results.length && !search.playlist.maxed"></ion-infinite-scroll>

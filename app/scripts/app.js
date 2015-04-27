@@ -125,15 +125,6 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 			}
 		}
 	})
-	/*.state('app.more', {
-		url: '/more/:browseId',
-		views: {
-			'menuContent': {
-				templateUrl: 'templates/more.html',
-				controller: 'BrowseCtrl'
-			}
-		}
-	})*/
 	.state('app.artist', {
 		url: '/artist/:action/:artistId',
 		views: {

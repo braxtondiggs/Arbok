@@ -55,7 +55,6 @@ angular.module('Quilava.controllers')
 							$scope.$broadcast('scroll.refreshComplete');
 						}
 						$scope.$apply();
-
 					},
 					error: function() {
 						$ionicLoading.show({
@@ -75,10 +74,14 @@ angular.module('Quilava.controllers')
 		        $scope.$apply();
 		    });
 		};
-		$scope.joinServer = function(id) {
+		$scope.joinServer = function(index) {
 			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'MVPlayer', ['Connect', 'Cancel']).then(function(res) {
 				if (res ===1) {
-					PubNub.ngSubscribe({channel: id});
+					PubNub.ngSubscribe({channel: $scope.players[index].id});
+					var user = Parse.User.current();
+					user.set('connectedPlayer', $scope.players[index]);
+					user.save();
+					/*Should unsubscribe from all*/
 					$cordovaDialogs.alert('You have succesfully connect to this player', 'MVPlayer').then(function() {
 						$state.transitionTo('app.dashboard');
 						$ionicHistory.nextViewOptions({

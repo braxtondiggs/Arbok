@@ -10,16 +10,11 @@ angular.module('Quilava.controllers', [])
 			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
 			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'
 		});
-		if (!lodash.isEmpty($rootScope.currentUser)) {
-			if ($rootScope.currentUser.get('image')) {
-				$rootScope.currentUser.image = $rootScope.currentUser.get('image')._url;
-			} else {
-				$rootScope.currentUser.image = '/images/missingPerson.jpg';
+		if (Parse.User.current()) {
+			if (!Parse.User.current().get('image')) {
+				Parse.User.current().set('image', cordova.file.applicationDirectory + '/images/missingPerson.jpg');
 			}
-		} else {
-			$rootScope.currentUser.image = '/images/missingPerson.jpg';
 		}
-		$scope.vote = {};
 		//Login
 		$scope.login = function() {
 			$scope.modal.show();

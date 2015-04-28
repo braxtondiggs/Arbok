@@ -57,6 +57,97 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 		}
 	};
 })
+.factory('MusicService', function($state, $cordovaDialogs, $http, $ionicLoading, PubNub) {
+	return {
+		storeDB: function(artistInfo) {
+			/*jshint camelcase: false */
+			/*global Parse*/
+			var user = Parse.User.current(),
+				that = this;
+			if (user) {
+				if(user.get('connectedPlayer')) {
+					$cordovaDialogs.confirm('Are you sure you want add this song?', 'MVPlayer').then(function(res) {
+						if (res === 1) {
+							//Do Queue Stuff
+							/*
+							for (var i = 0; i < $scope.queue_list.length; i++) {
+								if ($scope.queue_list[i].IMVDBtrackId === id) {
+									found = true;
+								}
+							}
+
+							$ionicPopup.alert({
+								title: 'MVPlayer - Error',
+								template: 'Looks like this song is already in the Queue.'
+							});*/
+							$ionicLoading.show();
+							$http.get(
+								'http://imvdb.com/api/v1/video/' + String(artistInfo.id) + '?include=sources'
+							).success(function(data) {
+								var sources = data.sources,
+									youtubeKey = null;
+								for (var key in sources) {
+									if (sources[key].source === 'youtube') {
+										youtubeKey = sources[key].source_data;
+										break;
+									}
+								}
+								if (key !== null) {
+									var player = user.get('connectedPlayer');
+									var Videos = Parse.Object.extend('Videos');
+									var video = new Videos();
+									var relation = player.relation('playerVideo');
+									video.set('userId', user);
+									video.set('image', artistInfo.image.l);
+									video.set('IMVDBtrackId', String(artistInfo.id));
+									if (artistInfo.convertedSlug) {
+										video.set('artistInfo', artistInfo.convertedSlug);
+										video.set('IMVDBartistId', String(artistInfo.id));
+									}else {
+										video.set('artistInfo', artistInfo.artists[0].name);
+									}
+									video.set('playerId', user.get('connectedPlayer'));
+									video.set('trackInfo', artistInfo.song_title);
+									video.set('year', artistInfo.year);
+									video.set('youtubeId', youtubeKey);
+									video.save(null, {
+										success: function() {
+											relation.add(video);
+											player.save();
+											$cordovaDialogs.alert('Your song is now in the queue! Sit back and be the MVP you are.', 'MVPlayer');
+											that.pubNub(video);
+											$ionicLoading.hide();
+										}, error: function() {
+											$ionicLoading.hide();
+										}
+									});
+								}else {
+									$cordovaDialogs.alert('A Serious Error Occured, Sorry Bro!' ,'MVPlayer');
+									//Need An Error to Save Errors
+								}
+							});
+						}
+					});
+				}else{
+					$cordovaDialogs.alert('You have not connected to a MVPlayer yet.', 'MVPlayer - Error').then(function() {
+						$state.transitionTo('app.player');
+					});
+				}
+			} else {
+				$cordovaDialogs.alert('You need to be logged inorder to suggest a song', 'MVPlayer - Error').then(function() {
+					//$scope.login();
+				});
+			}
+		},
+		pubNub: function(video) {
+			PubNub.ngPublish({
+				channel: video.get('playerId'),
+				message: {'song_added': video}
+			});
+			console.log('hi');
+		}
+	};
+})
 .directive('watchMenu', function($timeout, $ionicSideMenuDelegate) {
 	return {
 		restrict: 'A',

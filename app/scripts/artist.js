@@ -1,16 +1,17 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('ArtistCtrl', ['$scope', '$rootScope' ,'$ionicSlideBoxDelegate', '$ionicScrollDelegate', '$stateParams', '$http', 'UserService', 'Echonest', function($scope, $rootScope, $ionicSlideBoxDelegate, $ionicScrollDelegate, $stateParams, $http, UserService, Echonest) {
+	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', 'MusicService', 'Echonest', function($scope, $stateParams, $http, UserService, MusicService, Echonest) {
 		/*jshint camelcase: false */
 		$scope.artist = {
 			info: {}
 		};
 		function getArtistInfo(id) {
 			$http.get(
-				'http://imvdb.com/api/v1/entity/' + id + '?include=artist_videos,featured_videos,credits'
+				'http://imvdb.com/api/v1/entity/' + id + '?include=artist_videos,featured_videos'
 			).success(function(data) {
 				$scope.artist.loaded = true;
 				$scope.artist.info = {
+					id: data.discogs_id,
 					name: data.name,
 					slug: data.slug,
 					img: data.image,
@@ -42,6 +43,9 @@ angular.module('Quilava.controllers')
 				});*/
 			}
 		}
+		$scope.queueSong = function(index, type) {
+			MusicService.storeDB($scope.artist.info[type][index]);
+		};
 		$scope.artist.checkImage = function(img) {
 			return UserService.checkImage(img);
 		};
@@ -49,15 +53,12 @@ angular.module('Quilava.controllers')
 			return UserService.convertSlug(name, slug);
 		};
 		$scope.artist.getBio = function() {
-			console.log($scope.artist.info.bio);
 			if ($scope.artist.info.bio === null) {
-				console.log('hello');
 				Echonest.artists.get({
 					name: $scope.artist.info.convertedSlug
 				}).then(function(artist) {
 				  return artist.getBiographies();
 				}).then(function(artist) {
-					console.log(artist);
 					for (var i = 0; i < artist.biographies.length; i++) {
 						if (!artist.biographies[i].truncated) {
 							$scope.artist.info.bio = artist.biographies[i].text;

@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('SearchCtrl', ['$scope', '$stateParams', '$http', '$ionicLoading', '$cordovaDialogs', 'UserService', '$localStorage', 'lodash', '$state', function($scope, $stateParams, $http, $ionicLoading, $cordovaDialogs, UserService, $localStorage, lodash, $state) {
+	.controller('SearchCtrl', ['$scope', '$http', '$ionicLoading', '$cordovaDialogs', 'UserService', 'MusicService', '$localStorage', 'lodash', function($scope, $http, $ionicLoading, $cordovaDialogs, UserService, MusicService, $localStorage, lodash) {
 		/*jshint camelcase: false */
 		/*global Parse*/
 		$scope.search = {};
@@ -164,61 +164,6 @@ angular.module('Quilava.controllers')
 			$scope.search.term = term;
 		};
 		$scope.search.submitSong = function(index) {
-			$scope.currentUser = Parse.User.current();
-			if ($scope.currentUser && $scope.room) {
-				$cordovaDialogs.confirm('Are you sure you want add this song?', 'MVPlayer').then(function(res) {
-					if (res === 1) {
-					}
-				});
-				console.log(index);
-				/*confirmPopup.then(function(res) {
-					if (res) {
-						var found = false;
-						for (var i = 0; i < $scope.queue_list.length; i++) {
-							if ($scope.queue_list[i].IMVDBtrackId === id) {
-								found = true;
-							}
-						}
-						if (!found) {
-							socket.emit('song:new', {
-								server_id: $scope.room,
-								track_id: id,
-								userId: $scope.currentUser.id,
-								userName: $scope.currentUser._serverData.name,
-								trackTitle: title,
-								artistName: name,
-								artistImage: image
-							}, function(confirm) {
-								if (confirm.status === 1) {
-									$ionicPopup.alert({
-										title: 'MVPlayer',
-										template: "Your song is now in the queue! Sit back and be the <span class=\"special\">MVP</span> you are."
-									});
-								} else {
-									$ionicPopup.alert({
-										title: 'MVPlayer',
-										template: "A Serious Error Occured, Sorry Bro!"
-									});
-								}
-							});
-						} else {
-							$ionicPopup.alert({
-								title: 'MVPlayer - Error',
-								template: 'Looks like this song is already in the Queue.'
-							});
-						}
-					}
-				});*/
-			} else {
-				var body = ($scope.currentUser) ? 'You have not connected to a MVPlayer yet.' : 'You need to be logged inorder to suggest a song',
-					location = ($scope.currentUser) ? 'app.player' : null;
-				$cordovaDialogs.alert(body, 'MVPlayer - Error').then(function() {
-					if (location !== null) {
-						$state.transitionTo(location);
-					}else {
-						//$scope.login();
-					}
-				});
-			}
+			MusicService.storeDB($scope.search.tracks.results[index]);
 		};
 	}]);

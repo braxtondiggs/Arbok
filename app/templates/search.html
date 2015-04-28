@@ -11,8 +11,8 @@
             <ion-tab title="Tracks" on-select="search.activateTab(0)">
                 <ion-nav-view>
                     <ion-content>
-                        <div class="list more dark-list ordered" ng-show="search.tracks.results.length" ng-click="search.submitSong($index)" >
-                            <a class="item item-thumbnail-left" collection-repeat="track in search.tracks.results" item-height="91px">
+                        <div class="list more dark-list ordered" ng-show="search.tracks.results.length">
+                            <a class="item item-thumbnail-left" collection-repeat="track in search.tracks.results" item-height="91px" ng-click="search.submitSong($index)">
                                 <img ng-src="{{track.image.o}}">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{track.artists[0].name}}</h2>

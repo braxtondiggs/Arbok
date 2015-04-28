@@ -45,6 +45,8 @@
             <ion-tab title="Bio" on-select="artist.getBio()">
                 <ion-nav-view class="padding">
                     <p class="bio" ng-text-truncate="artist.info.bio" ng-tt-chars-threshold="240" ng-tt-more-label="Show" ng-tt-less-label="Hide"></p>
+                    <p ng-if="!artist.info.bio">Sorry, no biography info right now.</p>
+                    <img style="margin-top:20px;margin-left:10px;" ng-if="artist.info.bio" src="images/echonest.png" />
                 </ion-nav-view>
             </ion-tab>
             <ion-tab title="Social" hidden="true">

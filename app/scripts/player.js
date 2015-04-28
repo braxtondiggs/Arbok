@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('PlayerCtrl', ['$scope', '$localStorage', '$state', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'cfpLoadingBar', 'PubNub', function($scope, $localStorage, $state, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $cordovaGeolocation, $cordovaDialogs, LoadingService, cfpLoadingBar, PubNub) {
+	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$state', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'cfpLoadingBar', 'PubNub', function($scope, $rootScope, $localStorage, $state, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $cordovaGeolocation, $cordovaDialogs, LoadingService, cfpLoadingBar, PubNub) {
 		function init() {
 			/*global Parse*/
 			LoadingService.showLoading();
@@ -68,11 +68,11 @@ angular.module('Quilava.controllers')
 		$scope.findLocation = function(location) {
 			/*global GeocoderJS*/
 			var googleGeocoder = new GeocoderJS.createGeocoder({'provider': 'google'});
-		    googleGeocoder.geocode(location, function(result) {
-		        $scope.lnglat = {lat: result[0].latitude, lng: result[0].longitude, err: false};
-		        $ionicScrollDelegate.scrollTop(true);
-		        $scope.$apply();
-		    });
+			googleGeocoder.geocode(location, function(result) {
+				$scope.lnglat = {lat: result[0].latitude, lng: result[0].longitude, err: false};
+				$ionicScrollDelegate.scrollTop(true);
+				$scope.$apply();
+			});
 		};
 		$scope.joinServer = function(index) {
 			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'MVPlayer', ['Connect', 'Cancel']).then(function(res) {
@@ -80,7 +80,16 @@ angular.module('Quilava.controllers')
 					PubNub.ngSubscribe({channel: $scope.players[index].id});
 					var user = Parse.User.current();
 					user.set('connectedPlayer', $scope.players[index]);
-					user.save();
+					user.save(null, {
+						success: function() {
+							$scope.players[index].relation('playerVideo').query().find({
+								success: function(queue) {
+									$rootScope.queue = queue;
+									$scope.$apply();
+								}
+							});
+						}
+					});
 					/*Should unsubscribe from all*/
 					$cordovaDialogs.alert('You have succesfully connect to this player', 'MVPlayer').then(function() {
 						$state.transitionTo('app.dashboard');

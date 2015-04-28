@@ -8,9 +8,9 @@ angular.module('Quilava.controllers')
 				$scope.playerSettings.server.set('isSetup', true);
 				$scope.playerSettings.server.set('userId', Parse.User.current());
 				$scope.playerSettings.server.set('latlng', new Parse.GeoPoint({latitude: geocode.latitude, longitude: geocode.longitude}));
-	    		$scope.playerSettings.server.save();
-	    		$scope.modal.hide();
-	    		$ionicLoading.show({
+				$scope.playerSettings.server.save();
+				$scope.modal.hide();
+				$ionicLoading.show({
 					template: 'Save was succesful...',
 					duration: 2000
 				});
@@ -23,9 +23,9 @@ angular.module('Quilava.controllers')
 		$scope.psd.geoCode = function(address, callback) {
 			/*global GeocoderJS*/
 			var googleGeocoder = new GeocoderJS.createGeocoder({'provider': 'google'});
-		    googleGeocoder.geocode(address, function(result) {
-		        callback(result[0]);
-		    });
+			googleGeocoder.geocode(address, function(result) {
+				callback(result[0]);
+			});
 		};
 		$scope.inputChange = function(name, input) {
 			$scope.playerSettings.server.set(name, input);

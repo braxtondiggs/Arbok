@@ -53,17 +53,17 @@
         <header class="bar bar-header bar-stable">
             <h1 class="title"><i class="ion-music-note"></i>What's Playing</h1>
         </header>
-        <ion-content class="has-header">
-            <ion-list class="list queue dark-list" ng-show="queue_list.length">
-                <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{queue.IMVDBartistId}}" menu-close ng-repeat="queue in queue_list">
-                    <img ng-src="{{queue.imagePreview}}">
+        <ion-content class="has-header" ng-controller="QueueCtrl">
+            <ion-list class="list queue dark-list" ng-show="queue.length">
+                <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{queuedVideo.get('IMVDBartistId')}}" menu-close ng-repeat="video in queue">
+                    <img ng-src="{{video.get('image')}}">
                     <i class="icon ion-chevron-right icon-accessory"></i>
-                    <h2>{{queue.artistInfo}}</h2>
-                    <p>{{queue.trackInfo}}</p>
-                    <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong(queue);$event.stopPropagation();" ng-if="queue.userId === currentUser.id"></ion-option-button>
+                    <h2>{{video.get('artistInfo')}}</h2>
+                    <p>{{video.get('trackInfo')}}</p>
+                    <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong(video);$event.stopPropagation();" ng-if="video.get('userId').id === Parse.User.current().id"></ion-option-button>
                 </ion-item>
             </ion-list>
-            <p ng-show="!queue_list.length" class="empty-list">Is it quiet in here? No music is playing. Be the first!</p>
+            <p ng-show="!queue.length" class="empty-list">Is it quiet in here? No music is playing. Be the first!</p>
         </ion-content>
     </ion-side-menu>
 </ion-side-menus>

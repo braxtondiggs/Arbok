@@ -31,16 +31,21 @@ angular.module('Quilava.controllers')
 			if (param.action === 'id') {
 				getArtistInfo(param.artistId);
 			} else if (param.action === 'slug') {
-				/*$http.get(
-					$scope.domain + 'music/search?e=' + param.artistId ?method=slug
+				$http.get(
+					'http://imvdb.com/api/v1/search/entities?q=' + param.artistId
 				).success(function(data) {
 					if (data.results.length) {
-						getArtistInfo(data.results[0].id);
+						for (var i = 0; i < data.results.length; i++) {
+							if (data.results[i].slug === param.artistId) {
+								getArtistInfo(data.results[i].id);
+								break;
+							}
+						}
 					}else {
-						$rootScope.artist.loaded = true;
-						$rootScope.artist.convertedSlug = $scope.convertSlug(null, param.artistId);
+						$scope.artist.loaded = true;
+						$scope.artist.info.convertedSlug = $scope.artist.convertSlug(null, param.artistId);
 					}
-				});*/
+				});
 			}
 		}
 		$scope.queueSong = function(index, type) {

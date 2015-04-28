@@ -66,7 +66,9 @@ Parse.Cloud.job('IMVDB', function(response) {
 						browse.set('section', parseInt(id, 10));
 						browse.set('artistOrder', parseInt(i, 10));
 						browse.set('artistName', trim(($(this).find('.artist_line').next('p').text() || '')));
+						browse.set('artistSlug', trim(($(this).find('.artist_line').next('p').find('a').attr('href') || '')).substring(19));
 						browse.set('artistTitle', trim(($(this).find('.artist_line a').attr('title') || '')));
+						browse.set('artistTitleSlug', $(this).find('.artist_line a').attr('href').substring(parseInt($(this).find('.artist_line a').attr('href').lastIndexOf('/'), 10) + 1));
 						browse.set('artistImage', trim(($(this).find('img').attr('src') || '')));
 						 
 						browse.save();
@@ -74,7 +76,7 @@ Parse.Cloud.job('IMVDB', function(response) {
 				}
 			},
 			error: function(httpResponse) {
-				console.error('Request failed with response code ' + httpResponse.status);
+				response.error('Request failed with response code ' + httpResponse.status);
 			}
 		});
 	}

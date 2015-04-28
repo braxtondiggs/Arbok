@@ -1,20 +1,44 @@
 'use strict';
 
 angular.module('Quilava.controllers', [])
-	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$cordovaDialogs', '$ionicLoading', '$ionicHistory', '$localStorage', 'lodash', 'PubNub', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $cordovaDialogs , $ionicLoading, $ionicHistory, $localStorage, lodash, PubNub) {
+	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$cordovaDialogs', '$cordovaVibration', '$ionicLoading', '$ionicHistory', '$localStorage', 'lodash', 'PubNub', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $cordovaDialogs, $cordovaVibration, $ionicLoading, $ionicHistory, $localStorage, lodash, PubNub) {
 		/*global Parse*/
+		/*global ionic*/
 		/*jshint camelcase: false */
 		/* exported PubNub */
-		$rootScope.currentUser = Parse.User.current() || {};
+		$rootScope.currentUser = Parse.User.current() || {};$scope.showVotePanel = true;
 		PubNub.init({
 			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
 			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'
 		});
 		if (Parse.User.current()) {
-			if (!Parse.User.current().get('image')) {
-				Parse.User.current().set('image', cordova.file.applicationDirectory + '/images/missingPerson.jpg');
+			if (!$rootScope.currentUser.get('image')) {
+				$rootScope.currentUser.set('image', cordova.file.applicationDirectory + '/images/missingPerson.jpg');
 			}
 		}
+		$scope.activateVote = function(index) {
+			console.log(index);
+			if (ionic.Platform.isWebView()) {
+				$cordovaVibration.vibrate(100);
+			}
+			if ($ionicSideMenuDelegate.isOpenRight() === true) {
+				$ionicSideMenuDelegate.toggleRight();
+			}
+			$scope.showVotePanel = true;
+			$ionicSideMenuDelegate.canDragContent(false);
+		};
+		$scope.onSwipeUp = function() {
+			console.log('vote Up');
+			$scope.vote = 1;
+			//$scope.showVotePanel = false;
+			$ionicSideMenuDelegate.canDragContent(true);
+		};
+		$scope.onSwipeDown = function() {
+			console.log('vote Down');
+			$scope.vote = 2;
+			//$scope.showVotePanel = false;
+			$ionicSideMenuDelegate.canDragContent(true);
+		};
 		//Login
 		$scope.login = function() {
 			$scope.modal.show();
@@ -59,107 +83,11 @@ angular.module('Quilava.controllers', [])
 		}).then(function(modal) {
 			$scope.modal = modal;
 		});
-/*
-
-$rootScope.$on(PubNub.ngMsgEv('Demo_Channel'), function(event, payload) {
-				// payload contains message, channel, env...
-				console.log('got a message event:', payload);
-			});
-			$rootScope.$on(PubNub.ngPrsEv('Demo_Channel'), function(event, payload) {
-				console.log('got a presence event:', payload);
-			});
-		$scope.voteClicked = function(index) {
-			if ($scope.vote.selectedIndex !== index) {
-				$scope.vote.selectedIndex = index;
-				socket.emit('vote:client', {
-					server_id: $scope.room,
-					track_id: $scope.queue_list[0].objectId,
-					upVote: ($scope.vote.selectedIndex === 2) ? true : false,
-					downVote: ($scope.vote.selectedIndex === 1) ? true : false,
-					userId: $scope.currentUser.id,
-					userName: $scope.currentUser._serverData.name,
-					hasVoted: $scope.hasVoted,
-					voteId: $scope.vote.voteId
-				});
-				$scope.hasVoted = true;
-			}
-		}
-		$scope.findSong = function(artist, title, image) {
-			$http.get(
-				$scope.domain + 'music/search?v=' + artist + ' ' + title
-			).success(function(data) {
-				$scope.addSong(data.results[0].id, artist, title, image);
-			});
-		};
-		
-		$scope.joinServer = function(id) {
-			$scope.queue_list = {};
-			socket.emit('user:init', {
-				room: id
-			}, function(confirm) {
-				window.localStorage['room'] = id;
-				$scope.room = id;
-				if (confirm.length > 0) {
-					$scope.queue_list = confirm;
-					$scope.vote.upvote = confirm[0].upvoteNum;
-					$scope.vote.downvote = confirm[0].downvoteNum;
-				}
-				$ionicPopup.alert({
-					title: 'MVPlayer',
-					template: 'You are now joined to this player!'
-				}).then(function(res) {
-					window.location = '#/app/browse';
-				});
-			});
-			socket.emit('chat:init', {
-				room: id
-			}, function(confirm) {
-				$scope.chats = confirm;
-			});
-		};
-		socket.on('connect', function() {
-			if ($scope.room) {
-				socket.emit('user:init', {
-					room: $scope.room
-				}, function(confirm) {
-					if (confirm.length > 0) {
-						$scope.queue_list = confirm;
-						$scope.vote.upvote = confirm[0].upvoteNum;
-						$scope.vote.downvote = confirm[0].downvoteNum;
-					}
-				});
-				socket.emit('chat:init', {
-					room: $scope.room
-				}, function(confirm) {
-					$scope.chats = confirm;
-				});
-			}
+		/*$rootScope.$on(PubNub.ngMsgEv('Demo_Channel'), function(event, payload) {
+			// payload contains message, channel, env...
+			console.log('got a message event:', payload);
 		});
-		socket.on('playlist:playingImg', function(data) {
-			//$scope.player.attributes.playingImg = data;//not going to work needs to update per player
-		});
-		socket.on('playlist:change', function(data) {
-			if (data[0].objectId !== $scope.queue_list[0].objectId) {$scope.hasVoted = false;$scope.vote.selectedIndex = 0;$scope.vote.upvote = 0;$scope.vote.downvote=0;}
-			$timeout(function() {
-				$scope.queue_list = data;
-			}, 100);
-		});
-		socket.on('vote:change', function(data) {
-			$scope.vote.upvote = data.upvote;
-			$scope.vote.downvote = data.downvote;
-			$scope.vote.voteId = data.voteId;
-		});
-		$scope.deleteSong = function(item) {
-			$ionicPopup.confirm({
-				title: 'MVPlayer',
-				template: 'Are you sure you want to delete this song from the queue?'
-			}).then(function(res) {
-				if (res) {
-					socket.emit('song:delete', {
-						'track_id': item.objectId,
-						'player_id': item.playerId
-					});
-				}
-			});
-		};*/
+		$rootScope.$on(PubNub.ngPrsEv('Demo_Channel'), function(event, payload) {
+			console.log('got a presence event:', payload);
+		});*/
 	}]);

@@ -1,11 +1,11 @@
 <ion-view view-title="Discover" ng-style="{'background-image':'url(images/BG.png)'}" class="discover">
     <ion-content scroll="false">
         <ion-tabs class="tabs-icon-only tabs-striped text-only tabs-color-light">
-            <ion-tab title="New" on-select="discover.newSelected()">
+            <ion-tab title="New" on-select="discover.getSelected(discover.new, 0)">
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list animated fadeIn ordered" ng-show="discover.new.videos.length">
-                            <a class="item item-thumbnail-left animated fadeIn" collection-repeat="new in discover.new.videos | limitTo: discover.new.limit" item-height="91px">
+                            <a class="item item-thumbnail-left animated fadeIn" collection-repeat="new in discover.new.videos | limitTo: discover.new.limit" item-height="91px" ng-click="discover.queueSong(new)">
                                 <img ng-src="{{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}}">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{new.get('artistName')}}</h2>
@@ -14,16 +14,16 @@
                                 <span class="counter">{{$index+1}}.</span>
                             </a>
                         </div>
-                        <ion-infinite-scroll on-infinite="discover.loadMoreNew()" distance="1%" ng-if="discover.new.videos.length && !discover.new.limitMax"></ion-infinite-scroll>
+                        <ion-infinite-scroll on-infinite="discover.loadMore(discover.new)" distance="1%" ng-if="discover.new.videos.length && !discover.new.limitMax"></ion-infinite-scroll>
                         <p class="empty-list" ng-show="!discover.new.videos.length && discover.new.loaded">It looks like we don't have any music for this section. Check back later!</p>
                     </ion-content>
                 </ion-nav-view>
             </ion-tab>
-            <ion-tab title="Top" on-select="discover.topSelected()">
+            <ion-tab title="Top" on-select="discover.getSelected(discover.top.week, 1)">
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list animated fadeIn ordered" ng-show="discover.top.week.videos.length">
-                            <a class="item item-thumbnail-left animated fadeIn" collection-repeat="top in discover.top.week.videos | limitTo: discover.top.week.limit" item-height="91px">
+                            <a class="item item-thumbnail-left animated fadeIn" collection-repeat="top in discover.top.week.videos | limitTo: discover.top.week.limit" item-height="91px" ng-click="discover.queueSong(top)">
                                 <img ng-src="{{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}}">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{top.get('artistName')}}</h2>
@@ -32,7 +32,7 @@
                                 <span class="counter">{{$index+1}}.</span>
                             </a>
                         </div>
-                        <ion-infinite-scroll on-infinite="discover.loadMoreTop()" distance="1%" ng-if="discover.top.week.videos.length  && !discover.top.week.limitMax"></ion-infinite-scroll>
+                        <ion-infinite-scroll on-infinite="discover.loadMore(discover.top.week)" distance="1%" ng-if="discover.top.week.videos.length  && !discover.top.week.limitMax"></ion-infinite-scroll>
                         <p class="empty-list" ng-show="!discover.top.week.videos.length && discover.top.week.loaded">It looks like we don't have any music for this section. Check back later!</p>
                     </ion-content>
                 </ion-nav-view>

@@ -79,17 +79,23 @@ angular.module('Quilava.controllers')
 				if (res ===1) {
 					PubNub.ngSubscribe({channel: $scope.players[index].id});
 					var user = Parse.User.current();
-					user.set('connectedPlayer', $scope.players[index]);
-					user.save(null, {
-						success: function() {
-							$scope.players[index].relation('playerVideo').query().find({
-								success: function(queue) {
-									$rootScope.queue = queue;
-									$scope.$apply();
-								}
-							});
-						}
-					});
+					if (user) {
+						user.set('connectedPlayer', $scope.players[index]);
+						user.save(null, {
+							success: function() {
+								$scope.players[index].relation('playerVideo').query().find({
+									success: function(queue) {
+										$rootScope.queue = queue;
+										$scope.$apply();
+									}
+								});
+							}
+						});
+					} else {
+						$scope.$storage = $localStorage.$default({
+							'connectedPlayer': $scope.players[index]
+						});
+					}
 					/*Should unsubscribe from all*/
 					$cordovaDialogs.alert('You have succesfully connect to this player', 'MVPlayer').then(function() {
 						$state.transitionTo('app.dashboard');

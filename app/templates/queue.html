@@ -1,15 +1,15 @@
 <ion-view view-title="What's Playing" class="queue">
     <ion-content><!--Need to hide footer and right menu -->
-        <ion-list class="list queue dark-list" ng-show="queue_list.length">
-            <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{queue.IMVDBartistId}}" ng-repeat="queue in queue_list">
-                <img ng-src="{{queue.imagePreview}}">
+        <ion-list class="list queue dark-list" ng-show="queue.length">
+            <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" ng-repeat="video in queue">
+                <img ng-src="{{video.get('image')}}">
                 <i class="icon ion-chevron-right icon-accessory"></i>
-                <h2>{{queue.artistInfo}}</h2>
-                <p>{{queue.trackInfo}}</p>
-                <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong(queue)" ng-if="queue.userId === currentUser.id"></ion-option-button>
+                <h2>{{video.get('artistInfo')}}</h2>
+                <p>{{video.get('trackInfo')}}</p>
+                <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong(queue)" ng-if="video.get('userId').id === currentUser.id"></ion-option-button>
             </ion-item>
         </ion-list>
-        <p ng-show="!queue_list.length" class="empty-list">Is it quiet in here? No music is playing. Be the first!</p>
+        <p ng-show="!queue.length" class="empty-list">Is it quiet in here? No music is playing. Be the first!</p>
 
     </ion-content>
 </ion-view>

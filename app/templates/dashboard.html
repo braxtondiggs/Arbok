@@ -1,4 +1,4 @@
-<ion-view view-title="Dashboard" cache-view="false" ng-style="{'background-image':'url(images/BG.png)'}" class="dashboard">
+<ion-view view-title="Dashboard" ng-style="{'background-image':'url(images/BG.png)'}" class="dashboard">
     <ion-content>
         <div class="list chat-convo dark-list">
             <div class="item chat-item animated" ng-repeat="chat in chats" ng-class="{'isSelf' : chat.self, 'fadeIn': loaded}">
@@ -17,7 +17,7 @@
         </div>
        
     </ion-content>
-    <ion-subfooter-bar align-title="left" class="bar bar-subfooter chat-write">
+    <ion-subfooter-bar align-title="left" class="bar chat-write animated flipInX delay-6" ng-class="queue.length? 'bar-subfooter' : 'bar-footer'">
         <input type="text" id="chat-input" placeholder="Tap to write message..." ng-model="chat.chatMsg">
         <button class="button button-small button-outline dark-button" ng-click="sendChat(chat)">Send</button>
     </ion-subfooter-bar>

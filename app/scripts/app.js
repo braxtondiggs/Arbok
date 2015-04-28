@@ -102,9 +102,13 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 									video.set('IMVDBtrackId', String(artistInfo.id));
 									if (artistInfo.convertedSlug) {
 										video.set('artistInfo', artistInfo.convertedSlug);
-										video.set('IMVDBartistId', String(artistInfo.id));
 									}else {
 										video.set('artistInfo', artistInfo.artists[0].name);
+									}
+									if (artistInfo.slug) {
+										video.set('IMVDBartistId', artistInfo.slug);
+									}else {
+										video.set('IMVDBartistId', artistInfo.artists[0].slug);
 									}
 									video.set('playerId', user.get('connectedPlayer'));
 									video.set('trackInfo', artistInfo.song_title);
@@ -144,7 +148,6 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 				channel: video.get('playerId'),
 				message: {'song_added': video}
 			});
-			console.log('hi');
 		}
 	};
 })

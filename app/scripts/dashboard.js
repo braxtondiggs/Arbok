@@ -1,7 +1,20 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('DashboardCtrl', ['$scope', function($scope) {
-		console.log($scope);
+	.controller('DashboardCtrl', ['$scope', '$ionicScrollDelegate', 'LoadingService', function($scope, $ionicScrollDelegate, LoadingService) {
+		/*global Parse*/
+		LoadingService.showLoading();
+		LoadingService.hideLoading();
+		var user = Parse.User.current();
+		function isConnected(player) {
+			console.log(player);
+		}
+		if (user) {
+			if (isConnected()) {
+
+			}
+		}else {
+
+		}
 		/*if ($scope.room !== null) {
 			$scope.chats = null;
 			var Chat = Parse.Object.extend("Chat");
@@ -77,8 +90,8 @@ angular.module('Quilava.controllers')
 			data.createdAt = moment().format("dddd, MMMM Do YYYY, h:mm:ss a");
 			$scope.chats.push(data);
 			$ionicScrollDelegate.scrollBottom();
-		});
+		});*/
 		$scope.scrollBottom = function() {
 			$ionicScrollDelegate.scrollBottom();
-		};*/
+		};
 	}]);

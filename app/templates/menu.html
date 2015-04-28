@@ -7,6 +7,11 @@
             </ion-nav-buttons>
         </ion-nav-bar>
         <ion-nav-view name="menuContent"></ion-nav-view>
+        <div class="votePanel" on-swipe-up="onSwipeUp()" on-swipe-down="onSwipeDown()" ng-if="showVotePanel">
+            <div class="tick" ng-class="{'active': vote == 1}"></div>
+            <div class="cross" ng-class="{'active': vote == 2}"></div>
+            <div class="bgColor" ng-class="{'active': vote > 0}"></div>
+        </div>
         <div ng-include="'templates/footer.html'"></div>
     </ion-side-menu-content>
 
@@ -17,10 +22,10 @@
             </a>
             <a class="profile_container" nav-clear menu-close ng-if="currentUser._serverData" href="#/app/profile">
                 <div class="img-circle" ng-class="{'animated bounceIn': ratio}" ng-show="ratio">
-                    <img alt="" ng-src="{{Parse.User.current().get('image')._url}}"/>
+                    <img alt="" ng-src="{{currentUser.get('image')._url}}"/>
                 </div>
                 <h1 class="title" ng-class="{'animated fadeInLeft': ratio}" ng-if="currentUser._serverData && ratio">{{currentUser.get('name')}}</h1>
-                <div class="background" ng-style="{'background-image':'url({{Parse.User.current().get('image')._url}})'}"></div>
+                <div class="background" ng-style="{'background-image':'url({{currentUser.get('image')._url}})'}"></div>
             </a>
         </header>
         <ion-content class="has-header" scroll="false" ng-style="{'background-image':'url(images/BG.png)'}">
@@ -55,12 +60,12 @@
         </header>
         <ion-content class="has-header" ng-controller="QueueCtrl">
             <ion-list class="list queue dark-list" ng-show="queue.length">
-                <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{queuedVideo.get('IMVDBartistId')}}" menu-close ng-repeat="video in queue">
+                <ion-item class="item item-thumbnail-left item-remove-animate" ng-href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" menu-close ng-repeat="video in queue" on-hold="activateVote($index)">
                     <img ng-src="{{video.get('image')}}">
                     <i class="icon ion-chevron-right icon-accessory"></i>
                     <h2>{{video.get('artistInfo')}}</h2>
                     <p>{{video.get('trackInfo')}}</p>
-                    <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong(video);$event.stopPropagation();" ng-if="video.get('userId').id === Parse.User.current().id"></ion-option-button>
+                    <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong($index);$event.stopPropagation();" ng-if="video.get('userId').id === currentUser.id"></ion-option-button>
                 </ion-item>
             </ion-list>
             <p ng-show="!queue.length" class="empty-list">Is it quiet in here? No music is playing. Be the first!</p>

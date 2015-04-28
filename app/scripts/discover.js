@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('DiscoverCtrl', ['$scope', '$ionicLoading', 'LoadingService', 'cfpLoadingBar', function($scope, $ionicLoading, LoadingService, cfpLoadingBar) {
+	.controller('DiscoverCtrl', ['$scope', '$ionicLoading', '$cordovaDialogs', '$http', 'LoadingService', 'MusicService', 'cfpLoadingBar', function($scope, $ionicLoading, $cordovaDialogs, $http, LoadingService, MusicService, cfpLoadingBar) {
 		/*global Parse*/
 		$scope.discover = {
 			top:{
@@ -28,34 +28,39 @@ angular.module('Quilava.controllers')
 				cfpLoadingBar.complete();
 			}
 		}
-		$scope.discover.newSelected = function() {
-			if (!$scope.discover.new.videos) {
-				loading(true);
-				var Browse = Parse.Object.extend('Browse');
-				var query = new Parse.Query(Browse);
-				query.equalTo('section', 0);
-				query.ascending('artistOrder');
-				query.find({
-					success: function(results) {
-						$scope.discover.new.videos = results;
-						$scope.discover.new.loaded = true;
-						loading(false);
-						$scope.$apply();
+		$scope.discover.queueSong = function(discoverObj) {
+			$ionicLoading.show();
+			$http.get(
+				'http://imvdb.com/api/v1/search/videos?q=' + discoverObj.get('artistTitle')
+			).success(function(data) {
+				var failed = true;
+				if (data.results.length) {
+					for (var i = 0; i < data.results.length; i++) {
+						/*jshint camelcase: false */
+						if (data.results[i].song_title === discoverObj.get('artistTitle') && data.results[i].artists[0].slug === discoverObj.get('artistSlug')) {
+							MusicService.storeDB(data.results[i]);
+							failed = false;
+							break;
+						}
 					}
-				});
-			}
+				}
+				if (failed) {
+					$ionicLoading.hide();
+					$cordovaDialogs.alert('A Serious Error Occured, Sorry Bro!', 'MVPlayer');
+				}
+			});
 		};
-		$scope.discover.topSelected = function() {
-			if (!$scope.discover.top.week.videos) {
+		$scope.discover.getSelected = function(discoverObj, section) {
+			if (!discoverObj.videos) {
 				loading(true);
 				var Browse = Parse.Object.extend('Browse');
 				var query = new Parse.Query(Browse);
-				query.equalTo('section', 1);
+				query.equalTo('section', section);
 				query.ascending('artistOrder');
 				query.find({
 					success: function(results) {
-						$scope.discover.top.week.videos = results;
-						$scope.discover.top.week.loaded = true;
+						discoverObj.videos = results;
+						discoverObj.loaded = true;
 						loading(false);
 						$scope.$apply();
 					}
@@ -80,19 +85,11 @@ angular.module('Quilava.controllers')
 				});
 			}
 		};
-		$scope.discover.loadMoreNew = function() {
-			if ($scope.discover.new.videos.length > $scope.discover.new.limit) {
-				$scope.discover.new.limit += 10;
+		$scope.discover.loadMore = function(discoverObj) {
+			if (discoverObj.videos.length > discoverObj.limit) {
+				discoverObj.limit += 10;
 			}else {
-				$scope.discover.new.limitMax = true;
-			}
-			$scope.$broadcast('scroll.infiniteScrollComplete');
-		};
-		$scope.discover.loadMoreTop = function() {
-			if ($scope.discover.top.week.videos.length > $scope.discover.top.week.limit) {
-				$scope.discover.top.week.limit += 10;
-			}else {
-				$scope.discover.top.week.limitMax = true;
+				discoverObj.limitMax = true;
 			}
 			$scope.$broadcast('scroll.infiniteScrollComplete');
 		};

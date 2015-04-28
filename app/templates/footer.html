@@ -1,14 +1,14 @@
-<ion-footer-bar align-title="left" class="footer-bar fx-easing-bounce" ng-show="queue_list.length">
+<ion-footer-bar align-title="left" class="footer-bar animated" ng-class="queue.length? 'bounceInUp':'bounceOutDown'" ng-show="queue.length" on-hold="activateVote(0)">
   <div class="row">
-  	<a href="#/app/queue" class="col-20 col" ng-click="setSearchBar(false)">
-  		<img ng-src="{{queue_list[0].imagePreview}}" />
+  	<a href="#/app/queue" class="col-20 col">
+  		<img ng-src="{{queue[0].get('image')}}" />
   	</a>
-  	<a href="#/app/queue" class="col col-50" ng-click="setSearchBar(false)">
-  		<h2>{{queue_list[0].artistInfo}}</h2>
-      <p>{{queue_list[0].trackInfo}}</p>
+  	<a href="#/app/queue" class="col col-50">
+  		<h2>{{queue[0].get('artistInfo')}}</h2>
+      <p>{{queue[0].get('trackInfo')}}</p>
   	</a>
-  	<div class="col-30 col" ng-show="queue_list.length">
-  		<div class="vote-info">
+  	<div class="col-30 col" ng-show="queue.length">
+  		<!--<div class="vote-info">
             <div class="vote-data" ng-click="voteClicked(2)">
               <span class="upvote" ng-class="{ 'selected': 2 == vote.selectedIndex }">
                 <i class="ion-thumbsup"></i>
@@ -21,7 +21,7 @@
                 {{vote.downvote}}
               </span>
             </div>
-        </div>
+        </div>-->
   	</div>
   </div>
 </ion-footer-bar>

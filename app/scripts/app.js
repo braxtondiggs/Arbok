@@ -121,7 +121,8 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 											$cordovaDialogs.alert('Your song is now in the queue! Sit back and be the MVP you are.', 'MVPlayer');
 											that.pubNub(video);
 											$ionicLoading.hide();
-										}, error: function() {
+										},
+										error: function() {
 											$ionicLoading.hide();
 										}
 									});
@@ -145,8 +146,8 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 		},
 		pubNub: function(video) {
 			PubNub.ngPublish({
-				channel: video.get('playerId'),
-				message: {'song_added': video}
+				channel: video.get('playerId').id,
+				message: {'type': 'song_added', 'id': video.id}
 			});
 		}
 	};

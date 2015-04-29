@@ -83,11 +83,23 @@ angular.module('Quilava.controllers', [])
 		}).then(function(modal) {
 			$scope.modal = modal;
 		});
-		/*$rootScope.$on(PubNub.ngMsgEv('Demo_Channel'), function(event, payload) {
-			// payload contains message, channel, env...
-			console.log('got a message event:', payload);
-		});
-		$rootScope.$on(PubNub.ngPrsEv('Demo_Channel'), function(event, payload) {
-			console.log('got a presence event:', payload);
-		});*/
+		if ($rootScope.currentUser) {
+			if ($rootScope.currentUser.get('connectedPlayer')) {
+				PubNub.ngSubscribe({channel: $rootScope.currentUser.get('connectedPlayer').id});
+				$rootScope.$on(PubNub.ngMsgEv($rootScope.currentUser.get('connectedPlayer').id), function(event, payload) {
+					if (payload.message.type === 'song_added') {
+						var Videos = Parse.Object.extend('Videos');
+						var query = new Parse.Query(Videos);
+						query.equalTo('objectId', payload.message.id);
+						query.limit(1);
+						query.find({
+							success: function(video) {
+								$rootScope.queue.push(video[0]);
+								$scope.$apply();
+							}
+						});
+					}
+				});
+			}
+		}
 	}]);

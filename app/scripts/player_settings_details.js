@@ -16,7 +16,7 @@ angular.module('Quilava.controllers')
 				});
 				PubNub.ngPublish({
 					channel: $scope.playerSettings.new.objID,
-					message: {'player_update': $scope.playerSettings.server}
+					message: {'type': 'player_update', 'id': $scope.playerSettings.new.objID}
 				});
 			});
 		};

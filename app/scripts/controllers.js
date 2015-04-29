@@ -16,6 +16,20 @@ angular.module('Quilava.controllers', [])
 				$rootScope.currentUser.set('image', cordova.file.applicationDirectory + '/images/missingPerson.jpg');
 			}
 		}
+		function onResume() {
+			if ($rootScope.currentUser) {
+				if ($rootScope.currentUser.get('connectedPlayer')) {
+					PubNub.ngSubscribe({channel: $rootScope.currentUser.get('connectedPlayer').id});
+				}
+			}
+		}
+		function onPause() {
+			if ($rootScope.currentUser) {
+				if ($rootScope.currentUser.get('connectedPlayer')) {
+					PubNub.ngUnsubscribe({channel: $rootScope.currentUser.get('connectedPlayer').id});
+				}
+			}
+		}
 		$scope.activateVote = function(index) {
 			console.log(index);
 			if (ionic.Platform.isWebView()) {
@@ -99,7 +113,16 @@ angular.module('Quilava.controllers', [])
 							}
 						});
 					}
+					if (payload.message.type === 'song_delete') {
+						for (var i = 0; i < $rootScope.queue.length; i++) {
+							if ($rootScope.queue[i].id === payload.message.id) {
+								$rootScope.queue.splice(i, 1);
+							}
+						}
+					}
 				});
 			}
 		}
+		document.addEventListener('resume', onResume, false);
+		document.addEventListener('pause', onPause, false);
 	}]);

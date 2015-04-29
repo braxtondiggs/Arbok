@@ -1,0 +1,41 @@
+$text-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
+$header-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
+$simple-line-font-path: "../bower_components/simple-line-icons/fonts/" !default;
+$fa-font-path: "../bower_components/font-awesome/fonts/" !default;
+
+// bower:scss
+@import 'bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+@import 'simple-line-icons/scss/simple-line-icons.scss';
+// endbower
+
+@import 'owl.carousel/src/scss/owl.carousel.scss';
+@import '_colors.scss';
+//@import 'player/player.scss';
+//@import 'player/setup.scss';
+@import '../views/main/about.scss';
+@import '../views/main/main.scss';
+@import '../views/main/contact.scss';
+@import '../views/main/features.scss';
+@import '../views/main/footer.scss';
+@import '../views/main/gallery.scss';
+@import '../views/main/image_gallery.scss';
+@import '../views/main/navbar.scss';
+@import '../views/main/newsletter.scss';
+@import '../views/main/social-media.scss';
+@import '../views/main/team.scss';
+@import '../views/main/testimonials.scss';
+@import '../views/main/video.scss';
+
+html {
+  font-size: 62.5%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+body {
+  font-family: $text-font-family;
+  font-size: 20px;
+  line-height: 1.42857143;
+  color: #333333;
+  background-color: #ffffff;
+}
+@import '_animations.scss';
+@import '_responsive.scss';

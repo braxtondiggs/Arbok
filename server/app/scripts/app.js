@@ -1,5 +1,5 @@
 'use strict';
-angular.module('serverApp', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlayer', 'ngStorage', 'ngDialog'])
+angular.module('MVPlayer', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlayer', 'ngStorage', 'ngDialog', 'pubnub.angular.service'])
   	.config(function ($routeProvider, $locationProvider) {
 		$routeProvider.when('/', {
 			templateUrl: 'views/main.html',
@@ -10,13 +10,9 @@ angular.module('serverApp', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlay
 			controller: 'PlayerCtrl'
 		})
 		.when('/player/box', {
-			templateUrl: 'views/player.html',
+			templateUrl: 'views/box.html',
 			controller: 'PlayerCtrl'
 		})
-.when('/player', {
-  templateUrl: 'views/player.html',
-  controller: 'PlayerCtrl'
-})
 		.otherwise({
 			redirectTo: '/'
 		});

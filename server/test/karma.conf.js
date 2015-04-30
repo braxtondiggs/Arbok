@@ -42,6 +42,8 @@ module.exports = function(config) {
       'bower_components/angularjs-geolocation/src/geolocation.js',
       'bower_components/angular-echonest/build/angular-echonest.js',
       'bower_components/ngDialog/js/ngDialog.js',
+      'bower_components/pubnub/web/pubnub.min.js',
+      'bower_components/pubnub-angular/lib/pubnub-angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",

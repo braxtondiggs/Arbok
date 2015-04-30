@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="serverApp" class="yo-anim-enabled">
+  <body ng-app="MVPlayer" class="yo-anim-enabled {{bodyClass}}">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -66,12 +66,14 @@
     <script src="bower_components/angularjs-geolocation/src/geolocation.js"></script>
     <script src="bower_components/angular-echonest/build/angular-echonest.js"></script>
     <script src="bower_components/ngDialog/js/ngDialog.js"></script>
+    <script src="bower_components/pubnub/web/pubnub.min.js"></script>
+    <script src="bower_components/pubnub-angular/lib/pubnub-angular.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
-        <script src="scripts/waypoints.min.js"></script>
-        <script src="scripts/main.js"></script>
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
+        <script src="scripts/waypoints.min.js"></script>
+        <script src="scripts/main.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/player.js"></script>
         <!-- endbuild -->

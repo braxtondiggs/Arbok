@@ -6,7 +6,7 @@ angular.module('Quilava.controllers', [])
 		/*global ionic*/
 		/*jshint camelcase: false */
 		/* exported PubNub */
-		$rootScope.currentUser = Parse.User.current() || {};$scope.showVotePanel = true;
+		$rootScope.currentUser = Parse.User.current() || {};$scope.showVotePanel = false;
 		PubNub.init({
 			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
 			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'

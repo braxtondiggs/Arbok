@@ -1,10 +1,10 @@
 'use strict';
-angular.module('serverApp').controller('MainCtrl', ['$scope', '$window', 'ngDialog', function ($scope, $window, ngDialog) {
+angular.module('MVPlayer').controller('MainCtrl', ['$scope', '$window', 'ngDialog', function ($scope, $window, ngDialog) {
 	/*global Parse*/
 	$scope.contact = {};
 	$scope.newsletter = {};
 	$scope.$on('$viewContentLoaded', function(){
-		angularContentLoaded();
+		angularContentLoaded();// jshint ignore:line
 	});
 	$scope.newsletterAdd = function() {
 		var Newsletter = Parse.Object.extend('Newsletter');

@@ -1,28 +1,24 @@
-
-
+'use strict';
+/*global $:false */
+/*jshint camelcase: false */
 /**
-	 * jQuery.browser.mobile (http://detectmobilebrowser.com/)
-	 *
-	 * jQuery.browser.mobile will be true if the browser is a mobile device
-	 *
-	 **/
-	(function(a) {
-		($.browser = $.browser || {}).mobile = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4));
-	})(navigator.userAgent || navigator.vendor || window.opera);
+ * jQuery.browser.mobile (http://detectmobilebrowser.com/)
+ *
+ * jQuery.browser.mobile will be true if the browser is a mobile device
+ *
+ **/
+(function(a) {
+	($.browser = $.browser || {}).mobile = /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4));
+})(navigator.userAgent || navigator.vendor || window.opera);
 
+(function(a) {
+	($.browser = $.browser || {}).ipad = /ipad/i.test(a);
+})(navigator.userAgent || navigator.vendor || window.opera);
 
-	(function(a) {
-		($.browser = $.browser || {}).ipad = /ipad/i.test(a);
-	})(navigator.userAgent || navigator.vendor || window.opera);
+var mobile = $.browser.mobile;
+var ipad = $.browser.ipad;
 
-
-	var mobile = $.browser.mobile;
-	var ipad = $.browser.ipad;
-
-
-
-function angularContentLoaded() {
-	'use strict';
+function angularContentLoaded() {// jshint ignore:line
 	testimonials.init();
 	home.initCarousel();
 	overlay.init();
@@ -30,7 +26,7 @@ function angularContentLoaded() {
 	$('.home-carousel-wrapper').delay(500).transition({ opacity : 1 }, 800, function(){
 		
 		waypoints_init();
-		var $obj = $('.home-carousel-wrapper').find('.yo-anim').each(function() {
+		$('.home-carousel-wrapper').find('.yo-anim').each(function() {
 			var delay = $(this).data('animation-delay');
 
 			if (delay) {
@@ -56,28 +52,28 @@ function angularContentLoaded() {
 }
 
 
-$("#contact-form").submit(function(e) {
+$('#contact-form').submit(function(e) {
 	$('#contact-form .contact-form').removeClass('#contact-form message-error');
-	$.post("contact-send.php", $('#contact-form').serialize(), function(data) {
+	$.post('contact-send.php', $('#contact-form').serialize(), function(data) {
 		if (data.status === 'ok') {
-			$("#contact-form .message-success").removeClass('hidden').transition({ opacity : 1 });
-			$("#contact-form .button-submit .button-send").addClass('button-transparent');
+			$('#contact-form .message-success').removeClass('hidden').transition({ opacity : 1 });
+			$('#contact-form .button-submit .button-send').addClass('button-transparent');
 			$('#contact-form .contact-form').val('');
 			setTimeout(function(){
-				$("#contact-form .message-success").transition({ opacity : 0 }, function(){
+				$('#contact-form .message-success').transition({ opacity : 0 }, function(){
 					$(this).addClass('hidden');
 				});
-				$("#contact-form .button-submit .button-send").removeClass('button-transparent');
+				$('#contact-form .button-submit .button-send').removeClass('button-transparent');
 			}, 3000);
 		} else {
-			$.each(data.errors, function(i, e) {
+			$.each(data.errors, function(i) {
 				$('.' + i).addClass('#contact-form message-error');
 			});
 		}
 	}, 'json');
 	e.preventDefault();
 });
-$("#contact-form").on('keyup', '.contact-form', function() {
+$('#contact-form').on('keyup', '.contact-form', function() {
 	var that = this;
 	if ($(this).val() !== '') {
 		$(this).removeClass('message-error');
@@ -85,22 +81,21 @@ $("#contact-form").on('keyup', '.contact-form', function() {
 		$(that).addClass('message-error');
 	}
 });
-$("#newsletter-form").submit(function(e) {
+$('#newsletter-form').submit(function(e) {
 		$('#newsletter-form .newsletter-form').removeClass('#newsletter-form message-error');
-		$.post("newsletter-send.php", $('#newsletter-form').serialize(), function(data) {
-			var form = $('#newsletter-form');
+		$.post('newsletter-send.php', $('#newsletter-form').serialize(), function(data) {
 			if (data.status === 'ok') {
-				$("#newsletter-form .message-success").removeClass('hidden').transition({ opacity : 1 });
-				$("#newsletter-form .button-submit .button-send").addClass('button-transparent');
+				$('#newsletter-form .message-success').removeClass('hidden').transition({ opacity : 1 });
+				$('#newsletter-form .button-submit .button-send').addClass('button-transparent');
 				$('#newsletter-form .newsletter-form').val('');
 				setTimeout(function(){
-					$("#newsletter-form .message-success").transition({ opacity : 0 }, function(){
+					$('#newsletter-form .message-success').transition({ opacity : 0 }, function(){
 						$(this).addClass('hidden');
 					});
-					$("#newsletter-form .button-submit .button-send").removeClass('button-transparent');
+					$('#newsletter-form .button-submit .button-send').removeClass('button-transparent');
 				}, 3000);
 			} else {
-				$.each(data.errors, function(i, e) {
+				$.each(data.errors, function(i) {
 					$('.' + i).addClass('#newsletter-form message-error');
 				});
 			}
@@ -108,7 +103,7 @@ $("#newsletter-form").submit(function(e) {
 		e.preventDefault();
 	});
 
-	$("#newsletter-form").on('keyup', '.newsletter-form', function() {
+	$('#newsletter-form').on('keyup', '.newsletter-form', function() {
 		var that = this;
 		if ($(this).val() !== '') {
 			$(this).removeClass('message-error');
@@ -116,15 +111,12 @@ $("#newsletter-form").submit(function(e) {
 			$(that).addClass('message-error');
 		}
 	});
-
-var testimonials = {
+var testimonials = {// jshint ignore:line
 	init: function() {
-
-		var that = this;
-		var owl = $("#testimonial-carousel");
-		owl.on('initialized.owl.carousel',function(e){
+		var owl = $('#testimonial-carousel');
+		owl.on('initialized.owl.carousel',function(){
 			var controls = $(this).find('.owl-controls');
-			controls.prependTo($(".controls-testimonials"));
+			controls.prependTo($('.controls-testimonials'));
 		});
 		
 		owl.owlCarousel({
@@ -152,19 +144,18 @@ var testimonials = {
 		
 	}
 };
-
-var home = {
+var home = {// jshint ignore:line
 	initCarousel: function() {
 		var that = this;
-		var owl = $("#home-carousel");
-		owl.on('initialized.owl.carousel',function(e){
+		var owl = $('#home-carousel');
+		owl.on('initialized.owl.carousel',function(){
 			var controls = owl.find('.owl-controls');
-			controls.prependTo($(".controls-home"));
+			controls.prependTo($('.controls-home'));
 		});			
 		
-		owl.on('initialized.owl.carousel',function(e){
+		owl.on('initialized.owl.carousel',function(){
 			var controls = $(that).find('.owl-controls');
-			controls.prependTo($(".controls-home"));
+			controls.prependTo($('.controls-home'));
 		});
 		owl.owlCarousel({
 			items: 1,
@@ -193,7 +184,7 @@ var home = {
 	}
 };
 
-var overlay = {
+var overlay = {// jshint ignore:line
 	carousel: false,
 	isLarge: false,
 	isAnimating: false,
@@ -216,19 +207,21 @@ var overlay = {
 			
 	initCarousel: function(current) {
 		var owl = $('#images');
-		owl.on('initialized.owl.carousel',function(e){
+		owl.on('initialized.owl.carousel',function(){
 			var controls = $(this).find('.owl-controls');
-			controls.prependTo($(".controls"));
-			if(current !== undefined)
+			controls.prependTo($('.controls'));
+			if(current !== undefined) {
 				$(owl).trigger('jumpTo.owl', current);
+			}
 			
-			if($(owl).find('.item').length === 1)
+			if($(owl).find('.item').length === 1){
 				$('.controls').hide();
+			}
 			
 			$('#gallery #images .owl-item img').each(function(i, el) {
 				
-				var imgLoad = imagesLoaded( el );
-				imgLoad.on( 'done', function( instance ) {
+				var imgLoad = imagesLoaded( el );// jshint ignore:line
+				imgLoad.on( 'done', function() {
 					if(el.offsetWidth !== 0) {
 						$(el).css('margin-left', - (el.width / 2));
 					}
@@ -247,7 +240,7 @@ var overlay = {
 			
 			
 		});
-		owl.on('onChangeState',function(e){
+		owl.on('onChangeState',function(){
 			$('#gallery #images .owl-item img').each(function(i, el) {
 				if(el.offsetWidth !== 0) {
 					$(el).css('margin-left', - (el.width / 2));
@@ -259,19 +252,22 @@ var overlay = {
 		});
 
 		
-		owl.on('onResponsiveAfter',function(e){
+		owl.on('onResponsiveAfter',function(){
 			$('#images .owl-item img').each(function(i, el) {
-				if(el.offsetWidth !== 0)
+				if(el.offsetWidth !== 0){
 					$(el).css('margin-left', - (el.offsetWidth / 2));
-				if(el.offsetHeight !== 0)
+				}
+				if(el.offsetHeight !== 0){
 					$(el).css('margin-top', - (el.offsetHeight / 2));
+				}
 			});
 		});
 		
 		owl.imagesLoaded(function(){
 			var loop = true;
-			if($(owl).find('.item').length === 1)
+			if($(owl).find('.item').length === 1){
 				loop = false;
+			}
 			owl.owlCarousel({
 				items: 1,
 				loop: loop,
@@ -297,8 +293,9 @@ var overlay = {
 	},
 	open: function(url, element) {
 		var that = this;
-		if (url === undefined || url === '')
+		if (url === undefined || url === ''){
 			return false;
+		}
 
 		if (/\.(jpg|png|gif|jpeg)$/.test(url)) {
 			var response = '';
@@ -306,20 +303,19 @@ var overlay = {
 			
 			if(element.rel) {
 				$('a[rel='+element.rel+']').each(function(i, el) {
-					response += '<div class="item"><figure"><img class="" src="'+el.href+'" /></figure></div>';
-					if(el === element)
+					response += '<div class="item"><figure><img class="" src="'+el.href+'" /></figure></div>';
+					if(el === element){
 						current = i;
+					}
 				});
 			} else {
-				response = '<div class="item"><figure"><img src="'+element.href+'" /></figure></div>';
+				response = '<div class="item"><figure><img src="'+element.href+'" /></figure></div>';
 			}
 			response = '<section id="gallery"><div class="gallery-content fullscreen"><a class="close-button"><i class="icon-close"></i></a><div class="gallery"><div class="loading-spinner"></div><div id="images" class="owl-carousel owl-theme">'+response+'</div><div class="controls"></div></div></div></section>';
 			$('.gallery-wrapper').html(response);
-			$('body').css('overflow-y', "hidden");
+			$('body').css('overflow-y', 'hidden');
 			$('.gallery-wrapper').show(0, function() {
 				that.initCarousel(current);
-				var owl = $('.gallery .owl-carousel');
-				
 				$(this).transition({x: 0, opacity: 1}, function(){
 					$(this).find('.owl-stage-outer').transition({ opacity : 1 });
 					
@@ -328,7 +324,7 @@ var overlay = {
 		} else {
 			$.get(url , function(response) {
 				$('.gallery-wrapper').html(response);
-				$('body').css('overflow-y', "hidden");
+				$('body').css('overflow-y', 'hidden');
 				$('.gallery-wrapper').show(0, function() {
 
 					that.initCarousel();
@@ -344,7 +340,7 @@ var overlay = {
 	},
 	close: function() {
 		var that = this;
-		$('body').css("overflow-y", "auto");
+		$('body').css('overflow-y', 'auto');
 		$('.gallery-wrapper').transition({x: -90, opacity: 0}, function() {
 			$(this).removeClass('overlay-active').hide();
 			if($('#images').data('owlCarousel')) {
@@ -353,23 +349,24 @@ var overlay = {
 			$(document.documentElement).off('keyup.portfolio');
 			that.isLarge = false;
 			that.isAnimating = false;
-			$(".gallery-wrapper").removeClass('full-image');
+			$('.gallery-wrapper').removeClass('full-image');
 			$('.gallery-wrapper').removeClass('large-image');
 		});
 	}
 };
 
-var navbar = {
+var navbar = {// jshint ignore:line
 	show: function() {
-		if (mobile)
+		if (mobile){
 			return;
+		}
 		
 		$('body').on('click', '#navbar li .home-page, #mini-navbar li .home-page, .footer-nav li .home-page', function(e) {
 			e.preventDefault();
 			var that = this; 
 			
 			$('html, body').animate({
-				scrollTop: $($(that).data('target')).offset().top -  ($("#mini-navbar .nav-height").height())
+				scrollTop: $($(that).data('target')).offset().top -  ($('#mini-navbar .nav-height').height())
 			}, 500);
 		});
 		
@@ -400,7 +397,7 @@ var features = {
 	},
 	
 	initCarousel: function() {
-		var owl = $("#features-carousel");
+		var owl = $('#features-carousel');
 		owl.owlCarousel({
 			items: 1,
 			autoHeight: false,
@@ -417,8 +414,8 @@ var features = {
 	},
 	
 	destroy: function() {
-		var owl = $("#features-carousel");
-		owl.on('onResponsiveAfter.destroy', function(e){
+		var owl = $('#features-carousel');
+		owl.on('onResponsiveAfter.destroy', function(){
 			owl.data('owlCarousel').destroy();
 			owl.off('onResponsiveAfter.destroy');
 		});
@@ -434,8 +431,7 @@ var team = {
 	},
 	
 	initCarousel: function() {
-		var that = this;
-		var owl = $("#team-carousel");
+		var owl = $('#team-carousel');
 		owl.owlCarousel({
 			items: 1,
 			autoHeight: false,
@@ -451,8 +447,8 @@ var team = {
 	},
 	
 	destroy: function() {
-		var owl = $("#team-carousel");
-		owl.on('onResponsiveAfter.destroy', function(e){
+		var owl = $('#team-carousel');
+		owl.on('onResponsiveAfter.destroy', function(){
 			owl.data('owlCarousel').destroy();
 			owl.off('onResponsiveAfter.destroy');
 		});
@@ -461,7 +457,7 @@ var team = {
 	
 };
 
-var mobileNav = {
+var mobileNav = {// jshint ignore:line
 	show: function() {
 		this.open();
 		this.close();
@@ -491,7 +487,7 @@ var mobileNav = {
 			e.preventDefault();
 			var that = this;
 			
-			$(".flyout-menu .open-children").parent().removeClass('subnav-open');
+			$('.flyout-menu .open-children').parent().removeClass('subnav-open');
 			$('#flyout-container').animate({height: 0}, function() {
 				$('#flyout-container .open').css('height', 0).removeClass('open');
 				$('body').removeClass('mobile-nav-show');
@@ -513,10 +509,10 @@ var mobileNav = {
 	
 };
 
-	function waypoints_init() {
+	function waypoints_init() {// jshint ignore:line
 		if(!ipad && !mobile) {
-			if(jQuery.waypoints) {
-				var $obj=$('.yo-anim').each(function(){
+			if(jQuery.waypoints) {// jshint ignore:line
+				$('.yo-anim').each(function(){
 					var delay=$(this).data('animation-delay');
 					$(this).waypoint(function(){
 						if(delay) {
@@ -538,44 +534,44 @@ var mobileNav = {
 		}
 	}
 
-function loadEnquire() {
-	enquire.register("screen and (max-width: 767px)", {
+function loadEnquire() {// jshint ignore:line
+	enquire.register('screen and (max-width: 767px)', {// jshint ignore:line
 
-	    // OPTIONAL
-	    // If supplied, triggered when a media query matches.
-	    match : function() {
+		// OPTIONAL
+		// If supplied, triggered when a media query matches.
+		match : function() {
 			features.init();
 			team.init();
 		},      
-	                                
-	    // OPTIONAL
-	    // If supplied, triggered when the media query transitions 
-	    // *from a matched state to an unmatched state*.
-	    unmatch : function() {
+									
+		// OPTIONAL
+		// If supplied, triggered when the media query transitions 
+		// *from a matched state to an unmatched state*.
+		unmatch : function() {
 			features.destroy();
-			team.destroy()
+			team.destroy();
 		},    
-	    
-	    // OPTIONAL
-	    // If supplied, triggered once, when the handler is registered.
-	    setup : function() {
+		
+		// OPTIONAL
+		// If supplied, triggered once, when the handler is registered.
+		setup : function() {
 
 		},    
-	                                
-	    // OPTIONAL, defaults to false
-	    // If set to true, defers execution of the setup function 
-	    // until the first time the media query is matched
-	    deferSetup : true,
-	                                
-	    // OPTIONAL
-	    // If supplied, triggered when handler is unregistered. 
-	    // Place cleanup code here
-	    destroy : function() {}
-	      
+									
+		// OPTIONAL, defaults to false
+		// If set to true, defers execution of the setup function 
+		// until the first time the media query is matched
+		deferSetup : true,
+									
+		// OPTIONAL
+		// If supplied, triggered when handler is unregistered. 
+		// Place cleanup code here
+		destroy : function() {}
+		  
 	});
 }
 
-var video = {
+var video = {// jshint ignore:line
 	videoUrl : 'http://www.vimeo.com/118917181',
 	endpoint : 'http://www.vimeo.com/api/oembed.json',
 	callback : 'video.embedVideo',
@@ -587,12 +583,13 @@ var video = {
 	},
 			
 	embedVideo: function(video) {
-		document.getElementById('embed').innerHTML = unescape(video.html);
+		document.getElementById('embed').innerHTML = unescape(video.html);// jshint ignore:line
 	},
 			
 	init : function() {
-		if($('#video-section').length === 0)
+		if($('#video-section').length === 0){
 			return false;
+		}
 		this.videoInit();
 		var js = document.createElement('script');
 		js.setAttribute('type', 'text/javascript');
@@ -601,6 +598,3 @@ var video = {
 	}
 
 };
-
-//$("a[rel='tooltip']").tooltip();
-

@@ -10,8 +10,7 @@ $fa-font-path: "../bower_components/font-awesome/fonts/" !default;
 
 @import 'owl.carousel/src/scss/owl.carousel.scss';
 @import '_colors.scss';
-//@import 'player/player.scss';
-//@import 'player/setup.scss';
+@import 'player.scss';
 @import '../views/main/about.scss';
 @import '../views/main/main.scss';
 @import '../views/main/contact.scss';

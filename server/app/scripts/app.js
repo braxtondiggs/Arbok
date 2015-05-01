@@ -1,6 +1,6 @@
 'use strict';
-angular.module('MVPlayer', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlayer', 'ngStorage', 'ngDialog', 'pubnub.angular.service'])
-  	.config(function ($routeProvider, $locationProvider) {
+angular.module('MVPlayer', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlayer', 'ngStorage', 'ngDialog', 'pubnub.angular.service', 'angular-echonest'])
+  	.config(function ($routeProvider, $locationProvider, EchonestProvider) {
 		$routeProvider.when('/', {
 			templateUrl: 'views/main.html',
 			controller: 'MainCtrl'
@@ -19,4 +19,5 @@ angular.module('MVPlayer', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlaye
 		$locationProvider.html5Mode(true);
 		/*global Parse*/
 		Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
+		EchonestProvider.setApiKey('0NPSO7NBLICGX3CWQ');
 	});

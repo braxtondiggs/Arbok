@@ -5,11 +5,11 @@
 <div id="popUps">
     <div id="currentlyPlaying">
         <div class="album-cover">
-            <img alt="" ng-src="{{queueList[0].imagePreview}}" />
+            <img alt="" ng-src="{{track.get('image')}}" />
         </div>
         <div class="music-info">
-            <h3>{{queueList[0].artistInfo}}</h3>
-            <p>{{queueList[0].trackInfo}}</p>
+            <h3>{{track.get('artistInfo')}}</h3>
+            <p>{{track.get('trackInfo')}}</p>
         </div>
     </div>
     <div id="voteOff" ng-class="voteoff.bannerLocation">

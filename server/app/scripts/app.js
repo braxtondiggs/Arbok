@@ -1,5 +1,5 @@
 'use strict';
-angular.module('MVPlayer', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlayer', 'ngStorage', 'ngDialog', 'pubnub.angular.service', 'angular-echonest'])
+angular.module('MVPlayer', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlayer', 'ngStorage', 'ngDialog', 'pubnub.angular.service', 'angular-echonest', 'cgNotify'])
   	.config(function ($routeProvider, $locationProvider, EchonestProvider) {
 		$routeProvider.when('/', {
 			templateUrl: 'views/main.html',

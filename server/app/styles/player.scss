@@ -1,6 +1,24 @@
 @import '_colors.scss';
 body.Player {
 	background-color:#000;
+	.loading {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 100%;
+		width: 100%;
+		background-color: #000;
+		img {
+			margin: auto;
+			top: 0;
+			position: absolute;
+			left: 0;
+			right: 0;
+  			bottom: 0;
+		}
+	}
 }
 #currentlyPlaying {
 	opacity: .8;
@@ -136,4 +154,49 @@ video#bgvid {
 		  	text-align:right;
 		}
   	}
+}
+.activity-modal {
+	opacity: .8;
+	background-color: #000;
+  	border: 1px solid #000;
+  	-webkit-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140, 0.35);
+	-moz-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140, 0.35);
+	box-shadow: 3px 3px 5px 0px rgba(236, 0, 140, 0.35);
+	max-width:500px;
+  	.cg-notify-message-template {
+  		color: #eee;
+  		padding: 2px 11px 8px 11px;
+  		font-size: 11px;
+  		img {
+  			height:84px;
+  			width: 96px;
+  			float:left;
+  		}
+  		.content {
+  			float: right;
+  			padding: 0 0 5px 0;
+  			margin-left:10px;
+  			h3 {
+  				color: $bgPrimaryColor;
+  				font-size: 16px;
+			  	font-weight: bold;
+			  	padding: 0 0 7px 0;
+			  	display: block;
+			  	text-shadow: 1px 1px 0 #000;
+			  	margin:0;
+  			}
+  			p{
+  				padding: 0;
+  				margin: 0;
+  				font-size:12px;
+  				overflow: initial;
+  			}
+  		}
+  	}
+	.cg-notify-close {
+		display:none;
+	}
+}
+.delay-2 {
+	animation-delay: .6s;
 }

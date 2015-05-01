@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Quilava.controllers')
-	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$state', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'cfpLoadingBar', 'PubNub', function($scope, $rootScope, $localStorage, $state, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $cordovaGeolocation, $cordovaDialogs, LoadingService, cfpLoadingBar, PubNub) {
+	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$state', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'cfpLoadingBar', 'PubNub', 'lodash', function($scope, $rootScope, $localStorage, $state, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $cordovaGeolocation, $cordovaDialogs, LoadingService, cfpLoadingBar, PubNub, lodash) {
 		function init() {
 			/*global Parse*/
 			LoadingService.showLoading();
@@ -77,12 +77,14 @@ angular.module('Quilava.controllers')
 		$scope.joinServer = function(index) {
 			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'MVPlayer', ['Connect', 'Cancel']).then(function(res) {
 				if (res ===1) {
-					if ($scope.currentUser.get('connectedPlayer')) {
-						PubNub.ngUnsubscribe({channel: $scope.currentUser.get('connectedPlayer').id});
+					if (!lodash.isEmpty(user)) {
+						if ($scope.currentUser.get('connectedPlayer')) {
+							PubNub.ngUnsubscribe({channel: $scope.currentUser.get('connectedPlayer').id});
+						}
 					}
 					PubNub.ngSubscribe({channel: $scope.players[index].id});
 					var user = Parse.User.current();
-					if (user) {
+					if (!lodash.isEmpty(user)) {
 						user.set('connectedPlayer', $scope.players[index]);
 						user.save(null, {
 							success: function() {

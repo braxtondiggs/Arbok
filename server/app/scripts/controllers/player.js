@@ -1,5 +1,5 @@
 'use strict';
-angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$http', '$q', 'notify', function ($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $http, $q, notify) {
+angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$http', '$q', 'notify', 'lodash', function ($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $http, $q, notify, lodash) {
 	/*global $:false */
 	/*global Parse*/
 	/*global YT*/
@@ -99,10 +99,14 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	function getSong(callback) {
 		$scope.box.relation('playerVideo').query().limit(1).ascending('createdAt').find({
 			success: function(queue) {
-				if (queue) {
+				if (!lodash.isEmpty(queue)) {
 					callback(queue[0]);
 				} else {
 					emptyQueue(function(randomTrack) {
+						PubNub.ngPublish({
+							channel: $scope.box.id,
+							message: {'type': 'song_added', 'id': video.id, 'username': undefined, 'image': randomTrack.get('image'), 'artist': randomTrack.get('artistInfo'), 'track': randomTrack.get('trackInfo')}
+						});
 						callback(randomTrack);
 					});
 				}
@@ -119,6 +123,9 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					$scope.playerEvent.target.loadVideoById($scope.track.get('youtubeId'));
 					$scope.playerEvent.target.setPlaybackQuality('small');
 					activateBar();
+					$scope.loading = false;
+					$scope.box.set('playingImg', $scope.track.get('image'))
+					$scope.box.save();
 				}
 			}
 		});
@@ -286,7 +293,6 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			songEnded();
 			detonate();
 		} else if (event.data === YT.PlayerState.PLAYING) {
-			$scope.loading = false;
 			$('#currentlyPlaying').addClass('active');
 			if ($scope.detonate !== null) {
 				//$timeout.cancel($scope.detonate);

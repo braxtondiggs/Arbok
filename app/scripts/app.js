@@ -57,14 +57,14 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 		}
 	};
 })
-.factory('MusicService', function($state, $cordovaDialogs, $http, $ionicLoading, PubNub) {
+.factory('MusicService', function($state, $cordovaDialogs, $http, $ionicLoading, PubNub, lodash) {
 	return {
 		storeDB: function(artistInfo) {
 			/*jshint camelcase: false */
 			/*global Parse*/
 			var user = Parse.User.current(),
 				that = this;
-			if (user) {
+			if (!lodash.isEmpty(user)) {
 				if(user.get('connectedPlayer')) {
 					$cordovaDialogs.confirm('Are you sure you want add this song?', 'MVPlayer').then(function(res) {
 						if (res === 1) {
@@ -145,9 +145,10 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 			}
 		},
 		pubNub: function(video) {
+			var user = Parse.User.current();
 			PubNub.ngPublish({
 				channel: video.get('playerId').id,
-				message: {'type': 'song_added', 'id': video.id}
+				message: {'type': 'song_added', 'id': video.id, 'username': user.get('name'), 'image': video.get('image'), 'artist': video.get('artistInfo'), 'track': video.get('trackInfo')}
 			});
 		}
 	};

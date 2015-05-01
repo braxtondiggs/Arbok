@@ -29,7 +29,6 @@ module.exports = function(config) {
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-youtube-player/build/angularYoutubePlayer.min.js',
       'bower_components/angular-notify/dist/angular-notify.js',
-      'bower_components/lodash/dist/lodash.compat.js',
       'bower_components/parse-js-sdk/lib/parse.js',
       'bower_components/eventEmitter/EventEmitter.js',
       'bower_components/eventie/eventie.js',
@@ -44,6 +43,7 @@ module.exports = function(config) {
       'bower_components/ngDialog/js/ngDialog.js',
       'bower_components/pubnub/web/pubnub.min.js',
       'bower_components/pubnub-angular/lib/pubnub-angular.js',
+      'bower_components/ng-lodash/build/ng-lodash.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",

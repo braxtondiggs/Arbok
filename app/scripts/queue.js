@@ -4,6 +4,15 @@ angular.module('Quilava.controllers')
 		/*global Parse*/
 		$rootScope.queue = [];
 		var user = Parse.User.current();
+		function getVideos(player) {
+			player.relation('playerVideo').query().find({
+				success: function(queue) {
+					$rootScope.queue = queue;
+					console.log(queue);
+					$scope.$apply();
+				}
+			});
+		}
 		if (user) {
 			if (user.get('connectedPlayer')) {
 				if (!$scope.queue.length) {
@@ -15,16 +24,15 @@ angular.module('Quilava.controllers')
 							myPlayer = player;
 						}
 					}).then(function(player) {
-						player.relation('playerVideo').query().find({
-							success: function(queue) {
-								$rootScope.queue = queue;
-								console.log(queue);
-								$scope.$apply();
-							}
-						});
+						getVideos(player);
 					});
 				}
 			}
+		}else {
+			//if ($scope.$storage.connectedPlayer){
+				//Need to get Object ID
+				//getVideos(player);
+			//}
 		}
 		$scope.deleteSong = function(index){
 			$cordovaDialogs.confirm('Are you sure you want to delete this video from the queue?', 'MVPlayer', ['Delete','Cancel']).then(function(res) {

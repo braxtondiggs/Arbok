@@ -85,7 +85,6 @@ angular.module('Quilava.controllers', [])
 					$ionicHistory.nextViewOptions({
 						historyRoot: true
 					});
-					$scope.vote.selectedIndex = 0;
 					$rootScope.currentUser = {};
 					$cordovaDialogs.alert('You have been successfully logged out', 'MVPlayer');
 				}
@@ -97,7 +96,7 @@ angular.module('Quilava.controllers', [])
 		}).then(function(modal) {
 			$scope.modal = modal;
 		});
-		if ($rootScope.currentUser) {
+		if (!lodash.isEmpty($rootScope.currentUser)) {
 			if ($rootScope.currentUser.get('connectedPlayer')) {
 				PubNub.ngSubscribe({channel: $rootScope.currentUser.get('connectedPlayer').id});
 				$rootScope.$on(PubNub.ngMsgEv($rootScope.currentUser.get('connectedPlayer').id), function(event, payload) {

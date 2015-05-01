@@ -35,10 +35,10 @@ div.input {
         }
         &:after {
             content: "What's Playing Now";
-            color: $textColor;
+            color: $coloredLinks;
             position: absolute;
             bottom: 40%;
-            background-color: rgba(#FFF, 0.5);
+            background-color: rgba(#000, 0.5);
             width: 100%;
             display: block;
             font-size: 22px;

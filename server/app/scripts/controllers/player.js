@@ -1,5 +1,5 @@
 'use strict';
-angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$http', '$q', 'notify', 'lodash', function ($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $http, $q, notify, lodash) {
+angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', function ($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash) {
 	/*global $:false */
 	/*global Parse*/
 	/*global YT*/
@@ -15,6 +15,13 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	$scope.$storage = $localStorage.$default({
 		boxCode: null
 	});
+	$scope.vote = {
+		upvote: 0,
+		downvote:0,
+		total: 0,
+		status: false,
+		counter: 10
+	};
 	$scope.player = {
 		width: $(window).width(),
 		height: $(window).height(),
@@ -44,19 +51,37 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					$window.alert('Failed to initalize new player, with error code: ' + error.message);
 				});
 			}else if (payload.message.type === 'song_added') {
-				notify({messageTemplate:'<img ng-src="'+payload.message.image+'"><span class="content"><h3 class="header">'+payload.message.username+' just added a song</h3><p>'+payload.message.artist+' - '+payload.message.track+'</p></span>', classes: 'activity-modal' } );
+				var msg = (payload.message.username)?payload.message.username + ' just added a song':'The queue was empty!',
+					submsg = (payload.message.username)?payload.message.artist + ' - ' + payload.message.track:'So we picked a song for you.';
+				notify({messageTemplate:'<img ng-src="'+payload.message.image+'"><span class="content"><h3 class="header">'+msg+'</h3><p>'+submsg+'</p></span>', classes: 'activity-modal' } );
 			}else if (payload.message.type === 'chat_added') {
 				//notify({messageTemplate:'<span><img ng-src="'+ payload.message.userimage+'""><p><strong>'+payload.message.username+':&nbsp;</stong>'+chat.get('text')+'</p></span>', position: 'right'} );
-			}else if (payload.message.type === 'vote_added') {
-				notify({messageTemplate:'<span><img ng-src="'+ payload.message.userimage+'""><p><strong>'+payload.message.username+':&nbsp;</stong>Likes this song!</p></span>', position: 'right'} );
-				if (true) {//number of people in row vs number of downvotes
+			}else if (payload.message.type === 'vote') {
+				notify({messageTemplate:'<img ng-src="'+ payload.message.image +'""><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+ ((payload.message.vote)?'Liked':'Disliked') +' this song!</p></span>', classes: 'activity-modal' });
+				if (payload.message.vote){
+					$scope.vote.upvote++;
+				}else {
+					$scope.vote.downvote++;
+				}
+				$scope.vote.total++;
+				if($scope.vote.downvote > 2) {
 					activateSongChange();
 				}
 			}
 		});
 	}
 	function activateSongChange() {
-
+		$scope.vote.status = true;
+		var counter = $interval(function() {
+			$scope.vote.counter--;
+			if ($scope.vote.counter === 0) {
+				$scope.vote.status = false;
+				$interval.cancel(counter);
+				$timeout(function() {
+					songEnded();
+				}, 1000);
+			}
+		}, 1000, 10);
 	}
 	function openModal() {
 		ngDialog.open({
@@ -105,7 +130,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					emptyQueue(function(randomTrack) {
 						PubNub.ngPublish({
 							channel: $scope.box.id,
-							message: {'type': 'song_added', 'id': video.id, 'username': undefined, 'image': randomTrack.get('image'), 'artist': randomTrack.get('artistInfo'), 'track': randomTrack.get('trackInfo')}
+							message: {'type': 'song_added', 'id': randomTrack.id, 'username': undefined, 'image': randomTrack.get('image'), 'artist': randomTrack.get('artistInfo'), 'track': randomTrack.get('trackInfo')}
 						});
 						callback(randomTrack);
 					});
@@ -116,7 +141,6 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	function initalizePlayer() {
 		getSong(function(track) {
 			$scope.track = track;
-			$scope.$apply();
 			console.log($scope.track);
 			if ($scope.track) {
 				if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtubeId')) {
@@ -124,15 +148,23 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					$scope.playerEvent.target.setPlaybackQuality('small');
 					activateBar();
 					$scope.loading = false;
-					$scope.box.set('playingImg', $scope.track.get('image'))
+					$scope.box.set('playingImg', $scope.track.get('image'));
 					$scope.box.save();
+					$scope.$apply();
 				}
 			}
 		});
 	}
-	function deleteSong() {
+	function deleteSong(callback) {
 		$scope.last_track = $scope.track;
-		$scope.track.destroy();
+		$scope.track.destroy({
+			success: function() {
+				callback();
+			},
+			error: function() {
+				callback();
+			}
+		});
 	}
 	function emptyQueue(emptycallback) {
 		function saveTrack(imvdbTrack, callback) {
@@ -220,7 +252,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				).success(function(data) {
 					var similar = data.response.artists,
 						found = false;
-					angular.forEach(similar, function(video) {
+					angular.forEach(similar, function() {
 						promise = promise.then(function(){
 							if (!found) {
 								var ran = Math.floor(Math.random()*similar.length);
@@ -264,18 +296,26 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	}
 
 	function activateBar() {
-		setTimeout(function() {
+		$timeout(function() {
 			$('#currentlyPlaying').removeClass('active');
 		}, 60000);
 	}
 	function songEnded() {
 		$scope.loading = true;
+		$scope.vote = {
+			upvote: 0,
+			downvote:0,
+			total: 0,
+			status: false,
+			counter: 10
+		};
 		PubNub.ngPublish({
 			channel: $scope.box.id,
 			message: {type: 'song_delete', id: $scope.track.id}
 		});
-		deleteSong();
-		initalizePlayer();
+		deleteSong(function() {
+			initalizePlayer();
+		});
 	}
 	function detonate() {
 		/*$timeout.cancel($scope.detonate);
@@ -287,6 +327,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	$scope.onError = function() {
 		//Find Another Song
 		songEnded();
+		notify({messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>', classes: 'activity-modal'});
 	};
 	$scope.onStateChange = function(event) {
 		if (event.data === YT.PlayerState.ENDED) {

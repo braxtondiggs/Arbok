@@ -117,17 +117,8 @@ body.Player {
 	padding: 10px 0;
 	font-size: 20px;
 	transition: 1s;
-	display: none;
-	&.active {
-		display: block;
-		top: 40%;
-	}
-	&.bottom {
-		top: 120%;
-	}
-	&.top {
-		top: -100px;
-	}
+	display: block;
+	top: 40%;
 }
 video#bgvid {
 	position: fixed;
@@ -162,7 +153,11 @@ video#bgvid {
   	-webkit-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140, 0.35);
 	-moz-box-shadow: 3px 3px 5px 0px rgba(236, 0, 140, 0.35);
 	box-shadow: 3px 3px 5px 0px rgba(236, 0, 140, 0.35);
-	max-width:500px;
+	max-width:initial;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	color: initial;
   	.cg-notify-message-template {
   		color: #eee;
   		padding: 2px 11px 8px 11px;
@@ -178,7 +173,7 @@ video#bgvid {
   			margin-left:10px;
   			h3 {
   				color: $bgPrimaryColor;
-  				font-size: 16px;
+  				font-size: 26px;
 			  	font-weight: bold;
 			  	padding: 0 0 7px 0;
 			  	display: block;
@@ -188,7 +183,7 @@ video#bgvid {
   			p{
   				padding: 0;
   				margin: 0;
-  				font-size:12px;
+  				font-size:20px;
   				overflow: initial;
   			}
   		}

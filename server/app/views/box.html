@@ -1,7 +1,7 @@
 <div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)" ng-hide="!track"></div>
-<!--<video autoplay loop id="bgvid" ng-if="isBox && !box.get('isSetup')">
+<video autoplay loop id="bgvid" ng-if="isBox && !box.get('isSetup')">
 	<source ng-src="videos/box-background.mp4" type="video/mp4">
-</video>-->
+</video>
 <div id="popUps">
     <div id="currentlyPlaying">
         <div class="album-cover">
@@ -12,8 +12,8 @@
             <p>{{track.get('trackInfo')}}</p>
         </div>
     </div>
-    <div id="voteOff" ng-class="voteoff.bannerLocation">
-        I guess nobody liked this song! Song Changing in <span class="countdown">{{voteoff.count}}</span>
+    <div id="voteOff" class="animated" ng-class="(vote.status)?'bounceInUp':bounceOutUp" ng-show="vote.status">
+        I guess nobody liked this song! Song Changing in <span class="countdown">{{vote.counter}}</span>
     </div>
 </div>
 <div class="loading animated" ng-class="(loading)?'fadeIn':'fadeOut'" ng-show="loading">

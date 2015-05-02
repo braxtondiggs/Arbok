@@ -49,7 +49,7 @@ angular.module('Quilava.controllers')
 										var user = Parse.User.current();
 										var relation = user.relation('userPlayer');
 										relation.add(results);
-	    								user.save();
+										user.save();
 										$scope.playerSettings.server = results[0];
 										$scope.name = $scope.playerSettings.server.get('name');
 										$scope.address = $scope.playerSettings.server.get('address');

@@ -14,6 +14,7 @@ angular.module('Quilava.controllers')
 					template: 'Save was succesful...',
 					duration: 2000
 				});
+				$scope.players.push($scope.playerSettings.server);
 				PubNub.ngPublish({
 					channel: $scope.playerSettings.new.objID,
 					message: {'type': 'player_update', 'id': $scope.playerSettings.new.objID}

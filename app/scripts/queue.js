@@ -5,7 +5,7 @@ angular.module('Quilava.controllers')
 		$rootScope.queue = [];
 		var user = Parse.User.current();
 		function getVideos(player) {
-			player.relation('playerVideo').query().find({
+			player.relation('playerVideo').query().ascending('createdAt').find({
 				success: function(queue) {
 					$rootScope.queue = queue;
 					console.log(queue);

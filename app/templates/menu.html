@@ -7,10 +7,16 @@
             </ion-nav-buttons>
         </ion-nav-bar>
         <ion-nav-view name="menuContent"></ion-nav-view>
-        <div class="votePanel" on-swipe-up="onSwipeUp()" on-swipe-down="onSwipeDown()" ng-if="showVotePanel">
-            <div class="tick" ng-class="{'active': vote == 1}"></div>
-            <div class="cross" ng-class="{'active': vote == 2}"></div>
-            <div class="bgColor" ng-class="{'active': vote > 0}"></div>
+        <div class="votePanel" on-swipe-up="onSwipeAction(true)" on-swipe-down="onSwipeAction(false)" ng-if="vote.panel"><!-- on-tap="cancelVote()">-->
+            <div class="vote-help" ng-if="vote.action == null">
+                <img src="images/upvote.png" class="upvote"/>
+                <img src="images/downvote.png" class="downvote"/>
+            </div>
+            <div class="tick" ng-class="{'active': vote.action == true}"></div>
+            <div class="cross" ng-class="{'active': vote.action == false}"></div>
+            <div class="defaultbgColor" ng-show="vote.action == null"></div>
+            <div class="bgColorTick bgColor" ng-class="{'active': vote.action == true}"></div>
+            <div class="bgColorCross bgColor" ng-class="{'active': vote.action == false}"></div>
         </div>
         <div ng-include="'templates/footer.html'"></div>
     </ion-side-menu-content>

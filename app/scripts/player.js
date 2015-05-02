@@ -14,7 +14,7 @@ angular.module('Quilava.controllers')
 				err: false
 			};
 			var posOptions = {
-				timeout: 2000,
+				timeout: 10000,
 				enableHighAccuracy: false
 			};
 			$cordovaGeolocation
@@ -30,6 +30,9 @@ angular.module('Quilava.controllers')
 					LoadingService.hideLoading();
 					cfpLoadingBar.complete();
 					$scope.loaded = true;
+					if ($scope.isRefresh) {
+						$scope.$broadcast('scroll.refreshComplete');
+					}
 				});
 		}
 		$scope.resetLocation = function() {
@@ -77,13 +80,13 @@ angular.module('Quilava.controllers')
 		$scope.joinServer = function(index) {
 			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'MVPlayer', ['Connect', 'Cancel']).then(function(res) {
 				if (res ===1) {
+					var user = Parse.User.current();
 					if (!lodash.isEmpty(user)) {
 						if ($scope.currentUser.get('connectedPlayer')) {
 							PubNub.ngUnsubscribe({channel: $scope.currentUser.get('connectedPlayer').id});
 						}
 					}
 					PubNub.ngSubscribe({channel: $scope.players[index].id});
-					var user = Parse.User.current();
 					if (!lodash.isEmpty(user)) {
 						user.set('connectedPlayer', $scope.players[index]);
 						user.save(null, {

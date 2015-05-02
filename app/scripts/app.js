@@ -57,7 +57,7 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 		}
 	};
 })
-.factory('MusicService', function($state, $cordovaDialogs, $http, $ionicLoading, PubNub, lodash) {
+.factory('MusicService', function($rootScope, $state, $cordovaDialogs, $http, $ionicLoading, PubNub, lodash) {
 	return {
 		storeDB: function(artistInfo) {
 			/*jshint camelcase: false */
@@ -121,6 +121,11 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 											$cordovaDialogs.alert('Your song is now in the queue! Sit back and be the MVP you are.', 'MVPlayer');
 											that.pubNub(video);
 											$ionicLoading.hide();
+											that.inQueue(video.id, function(found) {
+												if (!found) {
+													$rootScope.queue.push(video);
+												}
+											});
 										},
 										error: function() {
 											$ionicLoading.hide();
@@ -150,6 +155,17 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 				channel: video.get('playerId').id,
 				message: {'type': 'song_added', 'id': video.id, 'username': user.get('name'), 'image': video.get('image'), 'artist': video.get('artistInfo'), 'track': video.get('trackInfo')}
 			});
+		},
+		inQueue: function(id, callback) {
+			var queue = $rootScope.queue,
+				found = false;
+			for (var i = 0;i < queue.length; i++) {
+				if (queue[i].id === id) {
+					found = true;
+					break;
+				}
+			}
+			callback(found);
 		}
 	};
 })

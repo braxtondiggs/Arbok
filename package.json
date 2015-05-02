@@ -59,6 +59,7 @@
     "org.apache.cordova.camera",
     "org.apache.cordova.file",
     "de.appplant.cordova.plugin.email-composer",
-    "org.apache.cordova.dialogs"
+    "org.apache.cordova.dialogs",
+    "nl.x-services.plugins.toast"
   ]
 }

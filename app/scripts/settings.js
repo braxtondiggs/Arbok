@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', '$cordovaEmailComposer', '$localStorage', function($scope, $rootScope, $state, $ionicLoading, $cordovaDialogs, $ionicHistory, $cordovaEmailComposer, $localStorage) {
 		/*global Parse*/
 		$scope.settingsForm = {};
@@ -11,7 +11,9 @@ angular.module('Quilava.controllers')
 			$scope.email = user.getEmail();
 			$scope.settings = {
 				error: null,
-				hasErrors: false
+				hasErrors: false,
+				success: null,
+				showPositive: false
 			};
 		} else {
 			$state.transitionTo('app.dashboard');
@@ -46,18 +48,16 @@ angular.module('Quilava.controllers')
 				}
 			});
 		};
-		$scope.submitForm = function(name, email, gender, password, confirmPassword) {
-			var user = Parse.User.current();
-			$ionicLoading.show();
-
-			function parseSave(user, txt) {
-				function changeComplete(showTxt) {
-					console.log(showTxt);//Needs to be finished
-					$ionicLoading.hide();
-				}
+		$scope.submitForm = function(isValid, name, email, gender, password, confirmPassword) {
+			function parseSave(user) {
 				user.save(null, {
 					success: function() {
-						changeComplete(txt);
+						$scope.settings = {
+							showPositive: true,
+							success: 'Information successfully stored',
+							hasErrors: false
+						};
+						$ionicLoading.hide();
 					},
 					error: function(error) {
 						$ionicLoading.hide();
@@ -75,42 +75,48 @@ angular.module('Quilava.controllers')
 					}
 				});
 			}
-			if ($scope.isChanged.email) {
-				if (email.$valid) {
-					user.set('email', email.$viewValue);
-					user.set('username', email.$viewValue);
-					parseSave(user, 'Email');
-				} else {
-					$scope.settings.hasErrors = true;
+			if (isValid) {
+				var user = Parse.User.current();
+				$ionicLoading.show();
+				if ($scope.isChanged.email) {
+					if (email.$valid) {
+						user.set('email', email.$viewValue);
+						user.set('username', email.$viewValue);
+						parseSave(user);
+					} else {
+						$scope.settings.hasErrors = true;
+					}
 				}
-			}
-			if ($scope.isChanged.name) {
-				if (name.$valid) {
-					user.set('name', name.$viewValue);
-					parseSave(user, 'Name');
-				} else {
-					$scope.settings.hasErrors = true;
+				if ($scope.isChanged.name) {
+					if (name.$valid) {
+						user.set('name', name.$viewValue);
+						parseSave(user);
+					} else {
+						$scope.settings.hasErrors = true;
+					}
 				}
-			}
-			if ($scope.isChanged.gender) {
-				if (gender.$valid) {
-					user.set('gender', gender.$viewValue);
-					parseSave(user, 'Gender');
-				} else {
-					$scope.settings.hasErrors = true;
+				if ($scope.isChanged.gender) {
+					if (gender.$valid) {
+						user.set('gender', gender.$viewValue);
+						parseSave(user);
+					} else {
+						$scope.settings.hasErrors = true;
+					}
 				}
-			}
-			if ($scope.isChanged.password || $scope.isChanged.confirmPassword) {
-				if (password.$valid && confirmPassword.$valid) {
-					user.set('password', password.$viewValue);
-					parseSave(user, 'Password');
-				} else {
-					$scope.settings.hasErrors = true;
-				}
+				if ($scope.isChanged.password || $scope.isChanged.confirmPassword) {
+					if (password.$valid && confirmPassword.$valid) {
+						user.set('password', password.$viewValue);
+						parseSave(user);
+					} else {
+						$scope.settings.hasErrors = true;
+					}
 
+				}
+				$ionicLoading.hide();
+				initChanged();
+			}else {
+				$scope.settings.hasErrors = true;
 			}
-			$ionicLoading.hide();
-			initChanged();
 		};
 		$scope.featureRequest = function() {
 			var email = {
@@ -122,7 +128,7 @@ angular.module('Quilava.controllers')
 			$cordovaEmailComposer.isAvailable().then(function() {
 				$cordovaEmailComposer.addAlias('gmail', 'com.google.android.gm');
 				$cordovaEmailComposer.open(email).then(function() {
-					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'MVPlayer - Email Sent');
+					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'Alma - Email Sent');
 				});
 			});
 		};
@@ -135,7 +141,7 @@ angular.module('Quilava.controllers')
 			$cordovaEmailComposer.isAvailable().then(function() {
 				$cordovaEmailComposer.addAlias('gmail', 'com.google.android.gm');
 				$cordovaEmailComposer.open(email).then(function() {
-					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'MVPlayer - Email Sent');
+					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'Alma - Email Sent');
 				});
 			});
 		};
@@ -147,7 +153,7 @@ angular.module('Quilava.controllers')
 				historyRoot: true
 			});
 			$rootScope.currentUser = {};
-			$cordovaDialogs.alert('You have been successfully logged out', 'MVPlayer');
+			$cordovaDialogs.alert('You have been successfully logged out', 'Alma');
 		};
 		$scope.deleteAccount = function() {
 			$cordovaDialogs.confirm('Deleting your account will also remove all of your library data. This is permanent and cannout be undone. Are your sure?', 'Delete Your Account', ['Yes', 'Cancel']).then(function(res) {

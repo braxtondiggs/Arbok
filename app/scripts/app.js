@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'pubnub.angular.service', 'tabSlideBox'])
+angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'pubnub.angular.service'])
 .run(function($ionicPlatform) {
 	$ionicPlatform.ready(function() {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -66,86 +66,84 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 				that = this;
 			if (!lodash.isEmpty(user)) {
 				if(user.get('connectedPlayer')) {
-					$cordovaDialogs.confirm('Are you sure you want add this song?', 'MVPlayer').then(function(res) {
+					$cordovaDialogs.confirm('Are you sure you want add this song?', 'Alma').then(function(res) {
 						if (res === 1) {
-							//Do Queue Stuff
-							/*
-							for (var i = 0; i < $scope.queue_list.length; i++) {
-								if ($scope.queue_list[i].IMVDBtrackId === id) {
-									found = true;
-								}
-							}
-
-							$ionicPopup.alert({
-								title: 'MVPlayer - Error',
-								template: 'Looks like this song is already in the Queue.'
-							});*/
-							$ionicLoading.show();
-							$http.get(
-								'http://imvdb.com/api/v1/video/' + String(artistInfo.id) + '?include=sources'
-							).success(function(data) {
-								var sources = data.sources,
-									youtubeKey = null;
-								for (var key in sources) {
-									if (sources[key].source === 'youtube') {
-										youtubeKey = sources[key].source_data;
-										break;
-									}
-								}
-								if (key !== null) {
-									var player = user.get('connectedPlayer');
-									var Videos = Parse.Object.extend('Videos');
-									var video = new Videos();
-									var relation = player.relation('playerVideo');
-									video.set('userId', user);
-									video.set('image', artistInfo.image.l);
-									video.set('IMVDBtrackId', String(artistInfo.id));
-									if (artistInfo.convertedSlug) {
-										video.set('artistInfo', artistInfo.convertedSlug);
-									}else {
-										video.set('artistInfo', artistInfo.artists[0].name);
-									}
-									if (artistInfo.slug) {
-										video.set('IMVDBartistId', artistInfo.slug);
-									}else {
-										video.set('IMVDBartistId', artistInfo.artists[0].slug);
-									}
-									video.set('playerId', user.get('connectedPlayer'));
-									video.set('trackInfo', artistInfo.song_title);
-									video.set('year', artistInfo.year);
-									video.set('youtubeId', youtubeKey);
-									video.save(null, {
-										success: function() {
-											relation.add(video);
-											player.save();
-											$cordovaDialogs.alert('Your song is now in the queue! Sit back and be the MVP you are.', 'MVPlayer');
-											that.pubNub(video);
-											$ionicLoading.hide();
-											that.inQueue(video.id, function(found) {
-												if (!found) {
-													$rootScope.queue.push(video);
+							that.inTrackQueue(String(artistInfo.id), function(found) {
+								if (!found) {
+									$ionicLoading.show();
+									$http.get(
+										'http://imvdb.com/api/v1/video/' + String(artistInfo.id) + '?include=sources'
+									).success(function(data) {
+										var sources = data.sources,
+											youtubeKey = null;
+										for (var key in sources) {
+											if (sources[key].source === 'youtube') {
+												youtubeKey = sources[key].source_data;
+												break;
+											}
+										}
+										if (key !== null) {
+											var player = user.get('connectedPlayer');
+											var Videos = Parse.Object.extend('Videos');
+											var video = new Videos();
+											var relation = player.relation('playerVideo');
+											video.set('userId', user);
+											video.set('image', artistInfo.image.l);
+											video.set('IMVDBtrackId', String(artistInfo.id));
+											if (artistInfo.convertedSlug) {
+												video.set('artistInfo', artistInfo.convertedSlug);
+											}else {
+												video.set('artistInfo', artistInfo.artists[0].name);
+											}
+											if (artistInfo.slug) {
+												video.set('IMVDBartistId', artistInfo.slug);
+											}else {
+												video.set('IMVDBartistId', artistInfo.artists[0].slug);
+											}
+											video.set('playerId', user.get('connectedPlayer'));
+											video.set('trackInfo', artistInfo.song_title);
+											video.set('year', artistInfo.year);
+											video.set('youtubeId', youtubeKey);
+											video.save(null, {
+												success: function() {
+													relation.add(video);
+													player.save();
+													$cordovaDialogs.alert('Your song is now in the queue!', 'Alma');
+													that.pubNub(video);
+													$ionicLoading.hide();
+													that.inQueue(video.id, function(found) {
+														if (!found) {
+															$rootScope.queue.push(video);
+														}
+													});
+												},
+												error: function() {
+													$ionicLoading.hide();
 												}
 											});
-										},
-										error: function() {
-											$ionicLoading.hide();
+										}else {
+											$cordovaDialogs.alert('A Serious Error Occured, Sorry Bro!' ,'Alma').then(function() {
+												//Need An Error to Save Errors
+												$ionicLoading.hide();
+											});
 										}
 									});
 								}else {
-									$cordovaDialogs.alert('A Serious Error Occured, Sorry Bro!' ,'MVPlayer');
-									//Need An Error to Save Errors
+									$cordovaDialogs.alert('Looks like this song is already in the Queue.', 'Alma - Error');
 								}
 							});
 						}
 					});
 				}else{
-					$cordovaDialogs.alert('You have not connected to a MVPlayer yet.', 'MVPlayer - Error').then(function() {
+					$cordovaDialogs.alert('You have not connected to a Alma yet.', 'Alma - Error').then(function() {
 						$state.transitionTo('app.player');
+						$ionicLoading.hide();
 					});
 				}
 			} else {
-				$cordovaDialogs.alert('You need to be logged inorder to suggest a song', 'MVPlayer - Error').then(function() {
+				$cordovaDialogs.alert('You need to be logged inorder to suggest a song', 'Alma - Error').then(function() {
 					//$scope.login();
+					$ionicLoading.hide();
 				});
 			}
 		},
@@ -166,6 +164,17 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 				}
 			}
 			callback(found);
+		},
+		inTrackQueue: function(id, callback) {
+			var queue = $rootScope.queue,
+				found = false;
+			for (var i = 0;i < queue.length; i++) {
+				if (queue[i].get('IMVDBtrackId') === id) {
+					found = true;
+					break;
+				}
+			}
+			callback(found);
 		}
 	};
 })
@@ -181,7 +190,7 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 					},
 					function(ratio) {
 						$scope.data = ratio;
-						if (ratio === 1) {
+						if (ratio >= 0.5) {
 							$scope.ratio = true;
 						} else {
 							$scope.ratio = false;
@@ -189,6 +198,17 @@ angular.module('Quilava', ['ionic', 'ngCordova', 'config', 'filter', 'Quilava.co
 					});
 			});
 		}
+	};
+})
+.directive('errSrc', function() {
+	return {
+	  	link: function(scope, element, attrs) {
+	    	element.bind('error', function() {
+	      		if (attrs.src !== attrs.errSrc) {
+	        		attrs.$set('src', attrs.errSrc);
+	      		}
+	    	});
+	  	}
 	};
 })
 .config(['EchonestProvider', function(EchonestProvider) {

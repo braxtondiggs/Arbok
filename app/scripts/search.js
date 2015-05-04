@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('SearchCtrl', ['$scope', '$http', '$ionicLoading', '$cordovaDialogs', 'UserService', 'MusicService', '$localStorage', 'lodash', function($scope, $http, $ionicLoading, $cordovaDialogs, UserService, MusicService, $localStorage, lodash) {
 		/*jshint camelcase: false */
 		/*global Parse*/

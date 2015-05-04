@@ -1,26 +1,31 @@
 <ion-view view-title="Settings" ng-style="{'background-image':'url(images/BG.png)'}" class="settings">
   <ion-content>
-  	<div class="status_dropdown error animated" ng-class="settings.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings.hasErrors">
-      <h2 class="center">Validation Error</h2>
-      <p ng-show="settingsForm.name.$invalid" class="help-block">- Enter a valid name.</p>
-      <p ng-show="settingsForm.email.$invalid" class="help-block">- Enter a valid email.</p>
-      <p ng-show="settingsForm.password.$invalid" class="help-block">- Enter a valid password.</p>
-      <p ng-show="settings.error">{{settings.error}}</p>
-      <i class="ion ion-close" ng-click="settings.hasErrors = false;"></i>
-    </div>
     <div class="list">
-      <form name="settingsForm" ng-submit="submitForm(settingsForm.name, settingsForm.email, settingsForm.gender, settingsForm.password, settingsForm.confirmPassword)" novalidate>
+      <form name="settingsForm" ng-submit="submitForm(settingsForm.$valid, settingsForm.name, settingsForm.email, settingsForm.gender, settingsForm.password, settingsForm.confirmPassword)" novalidate>
+        <div class="status_dropdown error animated" ng-class="settings.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings.hasErrors">
+          <h2 class="center">Validation Error</h2>
+          <p ng-show="settingsForm.name.$invalid" class="help-block">- Enter a valid name.</p>
+          <p ng-show="settingsForm.email.$invalid" class="help-block">- Enter a valid email.</p>
+          <p ng-show="settingsForm.password.$invalid" class="help-block">- Enter a valid password.</p>
+          <p ng-show="settings.error">{{settings.error}}</p>
+          <i class="ion ion-close" ng-click="settings.hasErrors = false;"></i>
+        </div>
+        <div class="status_dropdown success animated" ng-class="settings.showPositive ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings.showPositive">
+          <h2 class="center">Success</h2>
+          <p ng-show="settings.success">- {{settings.success}}</p>
+          <i class="ion ion-close" ng-click="settings.showPositive = false;"></i>
+        </div>
         <div class="item item-divider">
           <span class="animated bounceInLeft">ACCOUNT SETTINGS</span>
         </div>
         <div class="item item-input item-floating-label">
           <span class="input-label">Email</span>
-          <input type="email" name="email" placeholder="Email" ng-model="email" ng-minlength="1" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" ng-change="isChanged.email = true">
+          <input type="email" name="email" placeholder="Email" ng-model="email" ng-minlength="1" ng-required="true" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" ng-change="isChanged.email = true">
           <i class="ion ion-close-round animated delay-4" ng-class="email.length ? 'fadeIn' : 'fadeOut'" ng-click="email = ''" ng-show="email.length">&nbsp;</i>
         </div>
         <div class="item item-input item-floating-label">
           <span class="input-label">Nickname</span>
-          <input type="text" name="name" placeholder="Nickname" ng-model="name" ng-minlength="3" ng-maxlength="16" ng-change="isChanged.name = true">
+          <input type="text" name="name" placeholder="Nickname" ng-model="name" ng-minlength="3" ng-required="true" ng-maxlength="16" ng-change="isChanged.name = true">
           <i class="ion ion-close-round animated delay-4" ng-class="name.length ? 'fadeIn' : 'fadeOut'" ng-click="name = ''" ng-show="name.length">&nbsp;</i>
         </div>
         <div class="item item-input item-floating-label">
@@ -73,7 +78,7 @@
           <span class="animated bounceInLeft">CONFIGURATIONS</span>
         </div>
         <a class="item item-icon-right" href="#app/settings/player">
-        	Configure Physical MVPlayer <i class="ion-chevron-right icon"></i>
+        	Configure Physical Alma Player <i class="ion-chevron-right icon"></i>
         </a>
     	<div class="item item-divider">
         	<span class="animated bounceInLeft">CONTACT US</span>

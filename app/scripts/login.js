@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('LoginCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$cordovaOauth', '$ionicLoading', '$localStorage', '$http', function($scope, $rootScope, $cordovaDialogs, $cordovaOauth, $ionicLoading, $localStorage, $http) {
 		/*global Parse*/
 		$scope.login = {
@@ -8,6 +8,7 @@ angular.module('Quilava.controllers')
 			success: null,
 			showPositive: false
 		};
+		$scope.signup = $scope.login;
 		$scope.doLogin = function(isValid, email, password) {
 			if (isValid) {
 				$ionicLoading.show();
@@ -39,7 +40,6 @@ angular.module('Quilava.controllers')
 					}
 				});
 			} else {
-				console.log('errors');
 				$scope.login.hasErrors = true;
 			}
 		};
@@ -52,9 +52,6 @@ angular.module('Quilava.controllers')
 				user.set('username', email);
 				user.set('password', password);
 				user.set('mobileNotifications', true);
-				if (image) {
-					//user.set('image', image);
-				}
 				if (gender) {
 					user.set('gender', gender);
 				}
@@ -67,13 +64,13 @@ angular.module('Quilava.controllers')
 						$rootScope.currentUser.image = image;
 						$scope.loginData = {};
 						$scope.signupData = {};
-						$scope.login.hasErrors = false;
+						$scope.signup.hasErrors = false;
 						$scope.closeLogin(true);
 						$ionicLoading.hide();
 						$scope.$apply();
 					},
 					error: function() {
-						$scope.login = {
+						$scope.signup = {
 							hasErrors: true,
 							error: 'That email has already been taken'
 						};
@@ -82,12 +79,12 @@ angular.module('Quilava.controllers')
 					}
 				});
 			} else {
-				$scope.login.hasErrors = false;
+				$scope.signup.hasErrors = true;
 			}
 		};
 		$scope.forgotMyPassword = function(email) {
 			if (!email.$invalid) {
-				$cordovaDialogs.confirm('Did you forget your password?', 'MVPlayer', ['Yes', 'Cancel']).then(function(res) {
+				$cordovaDialogs.confirm('Did you forget your password?', 'Alma', ['Yes', 'Cancel']).then(function(res) {
 					if (res === 1) {
 						$ionicLoading.show();
 						Parse.User.requestPasswordReset(email.$viewValue, {
@@ -104,8 +101,8 @@ angular.module('Quilava.controllers')
 							error: function() {
 								$scope.login = {
 									hasErrors: true,
-									error: null,
-									success: 'That email address is not is our system.'
+									error: 'That email address is not is our system.',
+									success: null 
 								};
 								$ionicLoading.hide();
 								$scope.$apply();

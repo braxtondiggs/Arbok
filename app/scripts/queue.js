@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('QueueCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$ionicSideMenuDelegate', 'PubNub', function($scope, $rootScope, $cordovaDialogs, $ionicSideMenuDelegate, PubNub) {
 		/*global Parse*/
 		$rootScope.queue = [];
@@ -35,14 +35,14 @@ angular.module('Quilava.controllers')
 			//}
 		}
 		$scope.deleteSong = function(index){
-			$cordovaDialogs.confirm('Are you sure you want to delete this video from the queue?', 'MVPlayer', ['Delete','Cancel']).then(function(res) {
+			$cordovaDialogs.confirm('Are you sure you want to delete this video from the queue?', 'Alma', ['Delete','Cancel']).then(function(res) {
 				if (res === 1) {
 					PubNub.ngPublish({
 						channel: $rootScope.currentUser.get('connectedPlayer').id,
 						message: {'type': 'song_delete', 'id': $rootScope.queue[index].id}
 					});
 					$rootScope.queue[index].destroy();
-					$cordovaDialogs.alert('Your video has successfully been removed from the queue', 'MVPlayer').then(function() {
+					$cordovaDialogs.alert('Your video has successfully been removed from the queue', 'Alma').then(function() {
 						if ($ionicSideMenuDelegate.isOpenRight() === true) {
 							$ionicSideMenuDelegate.toggleRight();
 						}

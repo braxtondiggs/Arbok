@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('Quilava.controllers', [])
-	.controller('AppCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaToast', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $cordovaDialogs, $cordovaVibration, $cordovaToast, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService) {
+angular.module('Alma.controllers', [])
+	.controller('AppCtrl', ['$scope', '$rootScope', '$state', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaToast', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $state, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $cordovaDialogs, $cordovaVibration, $cordovaToast, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService) {
 		/*global Parse*/
 		/*global ionic*/
 		/*jshint camelcase: false */
@@ -16,11 +16,6 @@ angular.module('Quilava.controllers', [])
 			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
 			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'
 		});
-		if (!lodash.isEmpty(user)) {
-			if (!user.get('image')) {
-				user.set('image', cordova.file.applicationDirectory + '/images/missingPerson.jpg');
-			}
-		}
 		function onResume() {
 			if (!lodash.isEmpty(user)) {
 				if (user.get('connectedPlayer')) {
@@ -76,7 +71,11 @@ angular.module('Quilava.controllers', [])
 						channel: user.get('connectedPlayer').id,
 						message: {'type': 'vote', 'id': vote.id, 'username': user.get('name'), 'image': user.get('image')._url, 'vote': vote.get('vote')}
 					});
-					$cordovaToast.show('Vote successful', 'short', 'bottom')
+					if ($cordovaToast) {
+						$timeout(function() {
+							$cordovaToast.show('Vote successful', 'short', 'bottom');
+						}, 1000);
+					}
 				}
 			});
 			$timeout(function() {
@@ -101,12 +100,12 @@ angular.module('Quilava.controllers', [])
 		$scope.closeLogin = function(alert) {
 			$scope.modal.hide().then(function() {
 				if (alert) {
-					$cordovaDialogs.alert('Welcome, you are currently logged in! You can now chat and suggest songs!', 'MVPlayer');
+					$cordovaDialogs.alert('Welcome, you are currently logged in! You can now chat and suggest songs!', 'Alma');
 				}
 			});
 		};
 		$scope.logout = function() {
-			$cordovaDialogs.confirm('Are you sure you want to logout?', 'MVPlayer').then(function(res) {
+			$cordovaDialogs.confirm('Are you sure you want to logout?', 'Alma').then(function(res) {
 				if (res === 1) {
 					if ($ionicSideMenuDelegate.isOpenLeft() === true) {
 						$ionicSideMenuDelegate.toggleLeft();
@@ -117,7 +116,14 @@ angular.module('Quilava.controllers', [])
 						historyRoot: true
 					});
 					delete $rootScope.currentUser;
-					$cordovaDialogs.alert('You have been successfully logged out', 'MVPlayer');
+					var current = $ionicHistory.currentView();
+					if (current.stateName === 'app.settings'  || current.stateName === 'app.profile') {
+						$state.transitionTo('app.dashboard');
+						$ionicHistory.nextViewOptions({
+							historyRoot: true
+						});
+					}
+					$cordovaDialogs.alert('You have been successfully logged out', 'Alma');
 				}
 			});
 		};

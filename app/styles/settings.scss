@@ -1,4 +1,10 @@
 @import '_colors.scss';
+.settings.pane {
+	.status_dropdown {
+		position:relative;
+		margin-bottom:10px;
+	}
+}
 .settings,
 .player_settings_modal {
 	.item-floating-label .input-label {
@@ -96,6 +102,14 @@
 				line-height:.88;
 			}
 		}
+		&:before {
+			content: '\f147';
+			display: block;
+			font-size: 98px;
+  			font-family: "Ionicons";
+  			text-align: center;
+  			margin-top: 60px;
+		}
 		&:after {
 			content: 'Upload an image for player';
 			line-height: 150px;
@@ -116,6 +130,16 @@
 			}
 		}
 	}
+	.bar-header {
+		z-index:0;
+	}
+	.status_dropdown {
+		top:-50px;
+		z-index:5;
+	}
+	ion-content {
+		overflow: visible;
+	}
 }
 .player_settings {
 	.list .item {
@@ -126,6 +150,7 @@
 		&.item-avatar {
 			.item-content {
 				padding-top:17px;
+				background-color: transparent;
 				.BGImage {
 					position: absolute;
 					top:0;

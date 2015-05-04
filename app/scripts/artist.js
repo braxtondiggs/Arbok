@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', 'MusicService', 'Echonest', function($scope, $stateParams, $http, UserService, MusicService, Echonest) {
 		/*jshint camelcase: false */
 		$scope.artist = {

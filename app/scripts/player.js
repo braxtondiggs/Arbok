@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$state', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'cfpLoadingBar', 'PubNub', 'lodash', function($scope, $rootScope, $localStorage, $state, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $cordovaGeolocation, $cordovaDialogs, LoadingService, cfpLoadingBar, PubNub, lodash) {
 		function init() {
 			/*global Parse*/
@@ -78,7 +78,7 @@ angular.module('Quilava.controllers')
 			});
 		};
 		$scope.joinServer = function(index) {
-			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'MVPlayer', ['Connect', 'Cancel']).then(function(res) {
+			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'Alma', ['Connect', 'Cancel']).then(function(res) {
 				if (res ===1) {
 					var user = Parse.User.current();
 					if (!lodash.isEmpty(user)) {
@@ -105,7 +105,7 @@ angular.module('Quilava.controllers')
 						});
 					}
 					/*Should unsubscribe from all*/
-					$cordovaDialogs.alert('You have succesfully connect to this player', 'MVPlayer').then(function() {
+					$cordovaDialogs.alert('You have succesfully connect to this player', 'Alma').then(function() {
 						$state.transitionTo('app.dashboard');
 						$ionicHistory.nextViewOptions({
 							historyRoot: true

@@ -28,31 +28,31 @@
             </a>
             <a class="profile_container" nav-clear menu-close ng-if="currentUser._serverData" href="#/app/profile">
                 <div class="img-circle" ng-class="{'animated bounceIn': ratio}" ng-show="ratio">
-                    <img alt="" ng-src="{{currentUser.get('image')._url}}"/>
+                    <img alt="" ng-src="{{(currentUser.get('image'))?currentUser.get('image')._url:'/images/missingPerson.jpg'}}" err-src="/images/missingPerson.jpg" />
                 </div>
                 <h1 class="title" ng-class="{'animated fadeInLeft': ratio}" ng-if="currentUser._serverData && ratio">{{currentUser.get('name')}}</h1>
-                <div class="background" ng-style="{'background-image':'url({{currentUser.get('image')._url}})'}"></div>
+                <div class="background" ng-style="{'background-image':'url({{(currentUser.get('image'))?currentUser.get('image')._url:'/images/missingPerson.jpg'}})'}"></div>
             </a>
         </header>
         <ion-content class="has-header" scroll="false" ng-style="{'background-image':'url(images/BG.png)'}">
             <ion-list>
-                <ion-item nav-clear menu-close ng-class="{'animated fadeInLeft delay-1': ratio}" ng-click="login();" href="#" ng-if="!currentUser._serverData" ng-show="ratio">
-                    <i class="icon ion-person-stalker" ng-class="{'animated bounceIn delay-6': ratio}" ng-show="ratio"></i>Log-in / Sign-up
+                <ion-item nav-clear menu-close class="animated delay-1" ng-class="(ratio)?'fadeInLeft':'fadeOutLeft'" ng-click="login();" href="#" ng-if="!currentUser._serverData" ng-show="ratio">
+                    <i class="icon ion-person-stalker animated delay-6" ng-class="(ratio)?'bounceIn':'bounceOut'" ng-show="ratio"></i>Log-in / Sign-up
                 </ion-item>
-                <ion-item nav-clear menu-close ng-class="{'animated fadeInLeft delay-2': ratio}" ng-show="ratio" href="#/app/dash">
-                    <i class="icon ion-home" ng-class="{'animated bounceIn delay-7': ratio}" ng-show="ratio"></i>Dashboard<span class="badge badge-assertive">0</span>
+                <ion-item nav-clear menu-close class="animated delay-2" ng-class="(ratio)?'fadeInLeft':'fadeOutLeft'" ng-show="ratio" href="#/app/dash">
+                    <i class="icon ion-home animated delay-7" ng-class="(ratio)?'bounceIn':'bounceOut'" ng-show="ratio"></i>Dashboard<span class="badge badge-assertive">0</span>
                 </ion-item>
-                <ion-item menu-close ng-class="{'animated fadeInLeft delay-3': ratio}" ng-show="ratio" href="#app/search/" ng-click="setSearchBar(true)">
-                    <i class="icon ion-search" ng-class="{'animated bounceIn delay-8': ratio}" ng-show="ratio"></i>Search
+                <ion-item menu-close class="animated delay-3" ng-class="(ratio)?'fadeInLeft':'fadeOutLeft'" ng-show="ratio" href="#app/search/" ng-click="setSearchBar(true)">
+                    <i class="icon ion-search animated delay-8" ng-class="(ratio)?'bounceIn':'bounceOut'" ng-show="ratio"></i>Search
                 </ion-item>
-                <ion-item nav-clear menu-close ng-class="{'animated fadeInLeft delay-4': ratio}" ng-show="ratio" href="#/app/discover">
-                    <i class="icon ion-music-note" ng-class="{'animated bounceIn delay-9': ratio}" ng-show="ratio"></i>Discover
+                <ion-item nav-clear menu-close class="animated delay-4" ng-class="(ratio)?'fadeInLeft':'fadeOutLeft'" ng-show="ratio" href="#/app/discover">
+                    <i class="icon ion-music-note animated delay-9" ng-class="(ratio)?'bounceIn':'bounceOut'" ng-show="ratio"></i>Discover
                 </ion-item>
-                <ion-item nav-clear menu-close ng-class="{'animated fadeInLeft delay-5': ratio}" ng-show="ratio" href="#/app/player">
-                    <i class="icon ion-radio-waves"ng-class="{'animated bounceIn delay-10': ratio}" ng-show="ratio"></i>Find a MVPlayer
+                <ion-item nav-clear menu-close class="animated delay-5" ng-class="(ratio)?'fadeInLeft':'fadeOutLeft'" ng-show="ratio" href="#/app/player">
+                    <i class="icon ion-radio-waves animated delay-10" ng-class="(ratio)?'bounceIn':'bounceOut'" ng-show="ratio"></i>Alma Venues
                 </ion-item>
-                <ion-item nav-clear menu-close ng-class="{'animated fadeInLeft delay-6': ratio}" ng-show="ratio" href="#/app/music">
-                    <i class="icon ion-headphone" ng-class="{'animated bounceIn delay-11': ratio}" ng-show="ratio" ></i>My Music
+                <ion-item nav-clear menu-close class="animated delay-6" ng-class="(ratio)?'fadeInLeft':'fadeOutLeft'" ng-show="ratio" href="#/app/music">
+                    <i class="icon ion-headphone animated delay-11" ng-class="(ratio)?'bounceIn':'bounceOut'" ng-show="ratio" ></i>My Music
                 </ion-item>
                 <ion-item nav-clear class="logout" ng-click="logout();" ng-if="currentUser._serverData">
                     <i class="icon ion-person-stalker animated bounceIn" ng-show="ratio"></i>Logout

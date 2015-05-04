@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('MusicCtrl', ['$scope', '$cordovaDialogs', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$localStorage', '$window', '$state', function($scope, $cordovaDialogs, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $localStorage, $window, $state) {
 		$scope.$storage = $localStorage.$default({
 			'myMusic': []
@@ -34,7 +34,7 @@ angular.module('Quilava.controllers')
 			});
 		}else {
 			$ionicLoading.hide();
-			$cordovaDialogs.alert('We could not access your music directory, please check back later.', 'MVPlayer - Error').then(function() {
+			$cordovaDialogs.alert('We could not access your music directory, please check back later.', 'Alma - Error').then(function() {
 				$state.transitionTo('app.dashboard');
 				$ionicHistory.nextViewOptions({
 					historyRoot: true

@@ -13,6 +13,8 @@
             font-weight: 400;
             font-size: 20px;
             margin-top:5px;
+            left:0;
+            text-align: center;
         }
         .img-circle {
             width:125px;
@@ -58,8 +60,8 @@
     }
     .title {
         position: relative;
-        left: 0;
-        text-align: center;
+        left: 0!important;
+        text-align: center!important;
         text-shadow: 1px 1px #555;
     }
     .background {

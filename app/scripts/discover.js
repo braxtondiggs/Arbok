@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('DiscoverCtrl', ['$scope', '$ionicLoading', '$cordovaDialogs', '$http', 'LoadingService', 'MusicService', 'cfpLoadingBar', function($scope, $ionicLoading, $cordovaDialogs, $http, LoadingService, MusicService, cfpLoadingBar) {
 		/*global Parse*/
 		$scope.discover = {
@@ -46,7 +46,7 @@ angular.module('Quilava.controllers')
 				}
 				if (failed) {
 					$ionicLoading.hide();
-					$cordovaDialogs.alert('A Serious Error Occured, Sorry Bro!', 'MVPlayer');
+					$cordovaDialogs.alert('A Serious Error Occured, Sorry Bro!', 'Alma');
 				}
 			});
 		};

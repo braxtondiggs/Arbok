@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('DashboardCtrl', ['$scope', '$ionicScrollDelegate', 'LoadingService', function($scope, $ionicScrollDelegate, LoadingService) {
 		/*global Parse*/
 		LoadingService.showLoading();

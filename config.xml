@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.cymbit.Quilava" version="0.5.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>MVPlayer</name>
+<widget id="com.cymbit.Alma" version="0.5.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>Alma</name>
   <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>
-  <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+  <author email="braxtondiggs@gmail.com" href="http://braxtondiggs@gmail.com">
+        Alma Team
     </author>
   <content src="index.html"/>
   <access origin="*"/>

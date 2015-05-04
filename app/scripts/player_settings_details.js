@@ -1,25 +1,36 @@
 'use strict';
-angular.module('Quilava.controllers')
-	.controller('PlayerSettingsDetailCtrl', ['$scope', '$cordovaCamera', '$ionicLoading', 'PubNub', function($scope, $cordovaCamera, $ionicLoading, PubNub) {
+angular.module('Alma.controllers')
+	.controller('PlayerSettingsDetailCtrl', ['$scope', '$cordovaCamera', '$ionicLoading', 'PubNub', 'lodash', function($scope, $cordovaCamera, $ionicLoading, PubNub, lodash) {
 		/*global Parse*/
-		$scope.psd = {};
-		$scope.submitForm = function() {
-			$scope.psd.geoCode($scope.address, function(geocode) {
-				$scope.playerSettings.server.set('isSetup', true);
-				$scope.playerSettings.server.set('userId', Parse.User.current());
-				$scope.playerSettings.server.set('latlng', new Parse.GeoPoint({latitude: geocode.latitude, longitude: geocode.longitude}));
-				$scope.playerSettings.server.save();
-				$scope.modal.hide();
-				$ionicLoading.show({
-					template: 'Save was succesful...',
-					duration: 2000
+		$scope.psd = {
+			hasErrors: false
+		};
+		$scope.submitForm = function(isValid, name, address) {
+			if (isValid) {
+				$scope.psd.hasErrors = false;
+				$scope.psd.geoCode(address, function(geocode) {
+					$scope.playerSettings.server.set('isSetup', true);
+					$scope.playerSettings.server.set('userId', Parse.User.current());
+					$scope.playerSettings.server.set('latlng', new Parse.GeoPoint({latitude: geocode.latitude, longitude: geocode.longitude}));
+					$scope.playerSettings.server.save();
+					$scope.modal.hide();
+					$ionicLoading.show({
+						template: 'Save was succesful...',
+						duration: 2000
+					});
+					if (!lodash.isEmpty($scope.playerSettings.new)) {
+						$scope.players.push($scope.playerSettings.server);
+					}
+					var id = (!lodash.isEmpty($scope.playerSettings.new))?$scope.playerSettings.new.objID:$scope.playerSettings.server.id;
+					PubNub.ngPublish({
+						channel: id,
+						message: {'type': 'player_update', 'id': id}
+					});
+					$scope.playerSettings.server = null;
 				});
-				$scope.players.push($scope.playerSettings.server);
-				PubNub.ngPublish({
-					channel: $scope.playerSettings.new.objID,
-					message: {'type': 'player_update', 'id': $scope.playerSettings.new.objID}
-				});
-			});
+			}else {
+				$scope.psd.hasErrors = true;
+			}
 		};
 		$scope.psd.geoCode = function(address, callback) {
 			/*global GeocoderJS*/
@@ -33,7 +44,7 @@ angular.module('Quilava.controllers')
 		};
 		$scope.clearImage = function() {
 			$scope.playerSettings.server.unset('image');
-			$scope.image = null;
+			$scope.playerSettings.server.save();
 		};
 		$scope.getImage = function() {
 			/* global Camera*/
@@ -51,7 +62,6 @@ angular.module('Quilava.controllers')
 					base64: imageData
 				});
 				$scope.playerSettings.server.set('image', file);
-				$scope.image = file;
 			}, function() {
 				$ionicLoading.hide();
 				$ionicLoading.show({

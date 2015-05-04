@@ -24,7 +24,7 @@
         color: $textColor;
         border-bottom: 2px solid $coloredLinks;
         &::-webkit-input-placeholder {
-           color: $textColor;
+           color: $coloredLinks;
            line-height:25px;
         }
     }
@@ -35,4 +35,30 @@
         color: #fff;
         font-size:20px;
     }
+}
+.track-search-icon,
+.artist-search-icon {
+    text-align: center;
+    font-size: 64px;
+    margin: 40px auto 0;
+    width: 84px;
+    position: relative;
+    color: $coloredLinks;
+    background-color: $darkBG;
+    border-radius: 10px 10px 10px;
+    padding:10px;
+    .icon {
+        &.search {
+            font-size: 38px;
+            color: $textColor;
+            position: absolute;
+            right: 5px;
+            bottom: 10px;
+        }
+    }
+}
+.artist-search-icon .search.icon {
+    font-size: 28px;
+    right: 14px;
+    bottom: 14px;
 }

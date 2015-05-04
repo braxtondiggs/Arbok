@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('ProfileCtrl', ['$scope', '$ionicActionSheet', '$ionicLoading', '$cordovaCamera', function($scope, $ionicActionSheet, $ionicLoading,$cordovaCamera) {
 		/*global Parse*/
 		$scope.updateImage = function() {

@@ -6,32 +6,30 @@
     </div>
   </ion-header-bar>
   <ion-content>
-    <div class="status_dropdown error animated" ng-class="login.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="login.hasErrors">
-      <h2 class="center">Validation Error</h2>
-      <p ng-show="signupForm.name.$invalid" class="help-block">- Enter a valid name.</p>
-      <p ng-show="loginForm.email.$invalid || signupForm.email.$invalid" class="help-block">- Enter a valid email.</p>
-      <p ng-show="loginForm.password.$invalid || signupForm.password.$invalid" class="help-block">- Enter a valid password.</p>
-      <p ng-show="login.error">- {{login.error}}</p>
-      <i class="ion ion-close" ng-click="login.hasErrors = false;"></i>
-    </div>
     <div class="list">
-      <form name="playerForm" ng-submit="submitForm(playerForm.name, playerForm.address)" novalidate>
+      <form name="playerForm" ng-submit="submitForm(playerForm.$valid, playerForm.name.$viewValue, playerForm.address.$viewValue)" novalidate>
+        <div class="status_dropdown error animated" ng-class="psd.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="psd.hasErrors">
+          <h2 class="center">Validation Error</h2>
+          <p ng-show="playerForm.name.$invalid" class="help-block">- Enter a valid name.</p>
+          <p ng-show="playerForm.address.$invalid" class="help-block">- Enter a valid address.</p>
+          <i class="ion ion-close" ng-click="psd.hasErrors = false;"></i>
+        </div>
         <div class="item item-divider">
           <span class="animated bounceInLeft">Player Information</span>
         </div>
         <div class="item item-input item-floating-label">
-          <span class="input-label">Name{{playerSettings.server.get('name')}}</span>
-          <input type="text" name="name" placeholder="Name" ng-model="name" ng-minlength="4" ng-change="inputChange('name', name)">
+          <span class="input-label">Name</span>
+          <input type="text" name="name" placeholder="Name" ng-model="name" ng-minlength="4" ng-required="true" ng-change="inputChange('name', name)">
           <i class="ion ion-close-round animated delay-4" ng-class="name.length ? 'fadeIn' : 'fadeOut'" ng-click="name = ''" ng-show="name.length">&nbsp;</i>
         </div>
         <div class="item item-input item-floating-label">
           <span class="input-label">Address</span>
-          <input type="text" name="address" placeholder="Address" ng-model="address" ng-minlength="4" ng-change="inputChange('address', address)">
+          <input type="text" name="address" placeholder="Address" ng-model="address" ng-minlength="4" ng-required="true" ng-change="inputChange('address', address)">
           <i class="ion ion-close-round animated delay-4" ng-class="address.length ? 'fadeIn' : 'fadeOut'" ng-click="address = ''" ng-show="address.length">&nbsp;</i>
         </div>
-        <div class="upload_image" ng-click="getImage()" ng-class="{ 'has-image': image.length }">
-          <img ng-src="{{image}}">
-          <div class="clear-image icon ion-close-circled" ng-click="clearImage()"></div>
+        <div class="upload_image animated bounceIn" ng-click="getImage()" ng-class="{ 'has-image': playerSettings.server.get('image')}">
+          <img ng-src="{{playerSettings.server.get('image')._url}}">
+          <div class="clear-image icon ion-close-circled" ng-click="clearImage();$event.stopPropagation();"></div>
         </div>
         <div class="save_settings">
           <button type="submit" class="button button-stable">

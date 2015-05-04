@@ -1,9 +1,10 @@
 'use strict';
-angular.module('Quilava.controllers')
+angular.module('Alma.controllers')
 	.controller('PlayerSettingsCtrl', ['$scope', '$ionicLoading', '$cordovaDialogs', '$ionicModal', '$localStorage', '$ionicListDelegate', '$cordovaInAppBrowser', 'PubNub', function($scope, $ionicLoading, $cordovaDialogs, $ionicModal, $localStorage, $ionicListDelegate, $cordovaInAppBrowser, PubNub) {
 		$scope.$storage = $localStorage.$default({
 			initConfig: false
 		});
+		$scope.players = null;
 		$scope.playerSettings = {
 			new: {
 			},
@@ -18,16 +19,21 @@ angular.module('Quilava.controllers')
 			$scope.modal = modal;
 		});
 		var user = Parse.User.current();
-		var relation = user.relation('userPlayer');
-		var query = relation.query();
-		query.equalTo('isSetup', true);
-		query.equalTo('isBox', true);
-		query.find({
-			success:function(list) {
-				$scope.players = list;
-				$scope.$apply();
-			}
-		});
+		function refreshList() {
+			$scope.players = null;
+			var relation = user.relation('userPlayer');
+			var query = relation.query();
+			query.equalTo('isSetup', true);
+			query.equalTo('isBox', true);
+			query.find({
+				success:function(list) {
+					$scope.players = list;
+					$scope.$broadcast('scroll.refreshComplete');
+					$scope.$apply();
+				}
+			});
+		}
+		refreshList();
 		$scope.addNewPlayer = function() {
 			function showPrompt() {
 				$cordovaDialogs.prompt('The 8 character string that is visable on the TV screen.', 'Enter Player ID', ['Save', 'Cancel']).then(function(res) {
@@ -74,19 +80,22 @@ angular.module('Quilava.controllers')
 			$scope.modal.show();
 		};
 		$scope.deletePlayer = function(index) {
-			$cordovaDialogs.confirm('Are you sure you want to delete this player?', 'MVPlayer', ['Delete','Cancel']).then(function(res) {
+			$cordovaDialogs.confirm('Are you sure you want to delete this player?', 'Alma', ['Delete','Cancel']).then(function(res) {
 				if (res === 1) {
 					PubNub.ngPublish({
-						channel: $scope.player[index].id,
-						message: {'player_delete': $scope.player[index].id}
+						channel: $scope.players[index].id,
+						message: {'player_delete': $scope.players[index].id}
 					});
-					$scope.player[index].destroy();
+					$scope.players[index].destroy();
+					$scope.players.splice(index, 1);
+					$cordovaDialogs.alert('Delete Succesful', 'Alma');
 				}
 			});
 			$ionicListDelegate.closeOptionButtons();
 		};
 		$scope.closePlayerEdit = function() {
 			$scope.modal.hide();
+			refreshList();
 		};
 		$scope.getStarted = function() {
 			$scope.$storage.initConfig = true;
@@ -97,5 +106,8 @@ angular.module('Quilava.controllers')
 				clearcache: 'yes',
 				toolbar: 'no'
 			});
+		};
+		$scope.doRefresh = function() {
+			refreshList();
 		};
 	}]);

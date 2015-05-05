@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('Alma.controllers', [])
-	.controller('AppCtrl', ['$scope', '$rootScope', '$state', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaToast', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $state, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $cordovaDialogs, $cordovaVibration, $cordovaToast, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService) {
+	.controller('AppCtrl', ['$scope', '$rootScope', '$state', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicScrollDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaToast', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $state, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicScrollDelegate, $cordovaDialogs, $cordovaVibration, $cordovaToast, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService) {
 		/*global Parse*/
 		/*global ionic*/
 		/*jshint camelcase: false */
 		/* exported PubNub */
-		$rootScope.currentUser = Parse.User.current() || {};
+		$rootScope.currentUser = Parse.User.current();
 		$scope.vote = {
 			panel:false,
 			track: null
@@ -59,13 +59,20 @@ angular.module('Alma.controllers', [])
 			var Vote = Parse.Object.extend('Vote');
 			var vote = new Vote();
 			var relation = $scope.vote.track.relation('trackVotes');
+			var relation2 = user.get('connectedPlayer').relation('playerVotes');
 			vote.set('userId', user);
 			vote.set('playerId', user.get('connectedPlayer'));
 			vote.set('videoId', $scope.vote.track);
+			vote.set('image', $scope.vote.track.get('image'));
+			vote.set('artistName', $scope.vote.track.get('artistInfo'));
+			vote.set('trackTitle', $scope.vote.track.get('trackInfo'));
+			vote.set('trackId', $scope.vote.track.get('IMVDBtrackId'));
+			vote.set('artistSlug', $scope.vote.track.get('IMVDBartistId'));
 			vote.set('vote', action);
 			vote.save(null, {
 				success: function() {
 					relation.add(vote);
+					relation2.add(vote);
 					$scope.vote.track.save();
 					PubNub.ngPublish({
 						channel: user.get('connectedPlayer').id,
@@ -84,7 +91,7 @@ angular.module('Alma.controllers', [])
 			}, 2000);
 		};
 		//Login
-		$scope.login = function() {
+		$rootScope.login = function() {
 			$scope.modal.show();
 			$ionicSlideBoxDelegate.enableSlide(false);
 			$scope.login.title = 'Login';
@@ -160,6 +167,25 @@ angular.module('Alma.controllers', [])
 								$scope.$apply();
 							}
 						}
+					}
+					if (payload.message.type === 'chat_msg') {
+						if (!$rootScope.chats) {
+							$rootScope.chats = [];
+							$rootScope.dashboard = {
+								count: 0
+							};
+						}
+						var obj = payload.message;
+						/*global moment*/
+						obj.createdAt = moment().format('dddd, MMMM Do YYYY, h:mm:ss a');
+						obj.self = (obj.id === user.id) ? true : false;
+						$rootScope.chats.push(obj);
+						var current = $ionicHistory.currentView();
+						if (current.stateName !== 'app.dashboard') {
+							$rootScope.dashboard.count++;
+						}
+						$scope.$apply();
+						$ionicScrollDelegate.scrollBottom();
 					}
 				});
 			}

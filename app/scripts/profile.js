@@ -1,7 +1,40 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('ProfileCtrl', ['$scope', '$ionicActionSheet', '$ionicLoading', '$cordovaCamera', function($scope, $ionicActionSheet, $ionicLoading,$cordovaCamera) {
+	.controller('ProfileCtrl', ['$scope', '$ionicActionSheet', '$ionicLoading', '$cordovaCamera', 'MusicService', function($scope, $ionicActionSheet, $ionicLoading, $cordovaCamera, MusicService) {
 		/*global Parse*/
+		$scope.profile ={
+			likes: {
+				results: {}
+			}
+		};
+		var user = Parse.User.current(),
+			Votes = Parse.Object.extend('Vote'),
+			query = new Parse.Query(Votes);
+		query.equalTo('userId', user);
+		query.equalTo('vote', true);
+		query.ascending('createdAt');
+		query.find({
+			success: function(results) {
+				$scope.profile.likes.results = results;
+				console.log(results);
+				$scope.$apply();
+			}
+		});
+		$scope.profile.submitSong = function(index) {
+			var track = $scope.profile.likes.results[index],
+				obj = {
+					id: track.get('trackId'),
+					img: {
+						l: track.get('image')
+					},
+					convertedSlug: track.get('artistName'),
+					slug: track.get('artistSlug'),
+					/*jshint camelcase: false */
+					song_title: track.get('trackTitle'),
+					year: null
+				};
+			MusicService.storeDB(obj);
+		};
 		$scope.updateImage = function() {
 			var hideSheet = $ionicActionSheet.show({
 				buttons: [{
@@ -19,7 +52,6 @@ angular.module('Alma.controllers')
 							hideSheet();
 							$ionicLoading.hide();
 						}
-						var user = Parse.User.current();
 						var file = new Parse.File(user.id + '.png', {
 							base64: image
 						});

@@ -13,8 +13,16 @@
         </div>
         <ion-tabs class="tabs-icon-only tabs-striped text-only">
             <ion-tab title="My Favs">
-                <ion-nav-view class="padding profile-tab-content">
-                    soemthing
+                <ion-nav-view class="profile-tab-content">
+                    <div class="list more dark-list" ng-if="profile.likes.results.length">
+                        <a class="item item-thumbnail-left" ng-repeat="like in profile.likes.results" ng-click="profile.submitSong($index)">
+                            <img ng-src="{{like.get('image')}}" err-src="http://placehold.it/100x80" />
+                            <i class="icon ion-play icon-accessory"></i>
+                            <h2>{{like.get('artistName')}}</h2>
+                            <p>{{like.get('trackTitle')}}</p>
+                            <img class="BGImage" ng-src="{{like.get('image')}}" err-src="http://placehold.it/375x300" />
+                        </a>
+                    </div>
                 </ion-nav-view>
             </ion-tab>
             <ion-tab title="My Playlist" ng-if="false">

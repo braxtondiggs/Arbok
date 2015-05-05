@@ -1,24 +1,36 @@
 <ion-view view-title="Dashboard" ng-style="{'background-image':'url(images/BG.png)'}" class="dashboard">
     <ion-content>
         <div class="list chat-convo dark-list">
+            <div class="setup animated rubberBand" ng-if="!$storage.hasSetupDashboard && !dashboard.chats">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse tincidunt neque orci, ac hendrerit justo blandit nec. Nullam vel odio in est vestibulum luctus non quis neque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;</p>
+                 <div class="setup_buttons">
+                    <button class="button button-positive" ng-click="dashboard.startTutorial()">
+                        Get Started
+                    </button>
+                    <button class="button button-default" ng-click="dashboard.skipTutorial()">
+                        Skip
+                    </button>
+                </div>
+            </div>
             <div class="item chat-item animated" ng-repeat="chat in chats" ng-class="{'isSelf' : chat.self, 'fadeIn': loaded}">
                 <div class="chat-img">
-                    <img class="img-circle img-border" ng-src="{{chat.image}}" />
+                    <img class="img-circle img-border" ng-src="{{chat.image._url}}" />
                 </div>
                 <div class="chat-bubble">
-                    <h2>{{chat.from}}</h2>
-                    <p>{{chat.body}}</p>
+                    <h2>{{chat.username}}</h2>
+                    <p>{{chat.msg}}</p>
                 </div>
                 <div class="chat-timestamp">
                     <p><i class="ion-clock">&nbsp;</i>{{chat.createdAt}}</p>
                 </div>
             </div>
-            <p ng-show="!chats.length && loaded" class="empty-list">No one has started to chat. Be the first!</p>
+            <p ng-show="!chats.length && $storage.hasSetupDashboard" class="empty-list">No one has started to chat. Be the first!</p>
         </div>
        
     </ion-content>
     <ion-subfooter-bar align-title="left" class="bar chat-write animated flipInX delay-6" ng-class="queue.length? 'bar-subfooter' : 'bar-footer'">
-        <input type="text" id="chat-input" placeholder="Tap to write message..." ng-model="chat.chatMsg">
-        <button class="button button-small button-outline dark-button" ng-click="sendChat(chat)">Send</button>
+        <i class="icon ion-ios-camera-outline chat-image" ng-click="dashboard.uploadImage()"></i>
+        <input type="text" id="chat-input" placeholder="Tap to write message..." ng-model="dashboard.chat.chatMsg">
+        <button class="button button-small button-outline dark-button" ng-click="dashboard.sendChat(dashboard.chat.chatMsg);dashboard.chat.chatMsg = '';">Send</button>
     </ion-subfooter-bar>
 </ion-view>

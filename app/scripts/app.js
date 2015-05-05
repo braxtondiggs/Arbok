@@ -135,7 +135,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 						}
 					});
 				}else{
-					$cordovaDialogs.alert('You have not connected to a Alma yet.', 'Alma - Error').then(function() {
+					$cordovaDialogs.alert('You have not connected to an Alma yet.', 'Alma - Error').then(function() {
 						$state.transitionTo('app.player');
 						$ionicLoading.hide();
 					});

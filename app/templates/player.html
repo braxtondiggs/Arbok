@@ -1,5 +1,5 @@
 <ion-view view-title="Alma Venues" ng-style="{'background-image':'url(images/BG.png)'}" class="player">
-    <ion-content ng-class="{'has-footer': room}">
+    <ion-content ng-class="{'has-footer':  currentUser.get('connectedPlayer').id}">
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
         <div class="animated" ng-show="players.length" ng-class="players.length ? 'fadeIn' : 'fadeOut'">
             <div class="list card dark-list" ng-repeat="player in players" ng-click="joinServer($index)">
@@ -8,7 +8,7 @@
                     <h2>{{player.get('name')}}&nbsp;<span>(~{{getDistance(player.get('latlng')._latitude, player.get('latlng')._longitude, lnglat.lat, lnglat.lng, 'm')}} miles)</span></h2>
                     <p>{{player.get('address')}}</p>
                 </div>
-                <div class="item item-image animated fadeIn" ng-if="player.get('playingImg')">
+                <div class="item item-image animated fadeIn" ng-if="player.get('playingImg')" ng-class="{'demo-player':$index=1}">
                     <img ng-src="{{player.get('playingImg')}}" err-src="http://placehold.it/400x200">
                 </div>
                 <a class="item item-icon-left assertive animated fadeIn">

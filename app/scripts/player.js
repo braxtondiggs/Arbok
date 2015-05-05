@@ -34,6 +34,9 @@ angular.module('Alma.controllers')
 						$scope.$broadcast('scroll.refreshComplete');
 					}
 				});
+			$scope.$storage = $localStorage.$default({
+				'hasSetupPlayer': false
+			});
 		}
 		$scope.resetLocation = function() {
 			$scope.lnglat.err = true;
@@ -58,6 +61,17 @@ angular.module('Alma.controllers')
 							$scope.$broadcast('scroll.refreshComplete');
 						}
 						$scope.$apply();
+						if (!$scope.$storage.hasSetupPlayer) {
+							/*global EnjoyHint*/
+							var enjoyhint = new EnjoyHint({});
+							var ehSteps= [
+								{
+				    				'click .demo-player' : 'Here is a list of all Alma Venues in your area, click one to get started.', showSkip: false, onBeforeStart: function() {$scope.$storage.hasSetupPlayer = true;}
+				    			}
+				 			];
+				    		enjoyhint.set(ehSteps);
+				    		enjoyhint.run();
+				    	}
 					},
 					error: function() {
 						$ionicLoading.show({
@@ -80,7 +94,7 @@ angular.module('Alma.controllers')
 		$scope.joinServer = function(index) {
 			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'Alma', ['Connect', 'Cancel']).then(function(res) {
 				if (res ===1) {
-					var user = Parse.User.current();
+					var user = $scope.currentUser;
 					if (!lodash.isEmpty(user)) {
 						if ($scope.currentUser.get('connectedPlayer')) {
 							PubNub.ngUnsubscribe({channel: $scope.currentUser.get('connectedPlayer').id});

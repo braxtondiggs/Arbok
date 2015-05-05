@@ -14,7 +14,19 @@ angular.module('Alma.controllers')
 				}
 			} else {
 				if (hasExtension(file.name)) {
-
+					console.log(file.name);
+					console.log(file.localURL);
+					$window.ID3.loadTags(file.nativeURL, function() {
+					    var tags = $window.ID3.getAllTags(file.nativeURL);
+					   $window.alert(tags.artist + ' - ' + tags.title + ', ' + tags.album);
+					   console.log(tags);
+					}, {
+						//dataReader: FileAPIReader(file),
+						tags: ['artist', 'album', 'track', 'title', 'picture'],
+						onError: function(reason) {
+							console.log(reason);
+						}
+					});
 				}
 			}
 		};
@@ -100,6 +112,7 @@ angular.module('Alma.controllers')
 						fullPath: e.fullPath
 					});
 				}
+				//$window.LocalFileSystem.root.getFile(currentFileEntry.nativeURL.replace('file://', ''), null, getInfo, fail); This will call the function to check the file for mp3s
 			}
 			return arr;
 		}

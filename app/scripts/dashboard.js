@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('DashboardCtrl', ['$scope', '$state', '$localStorage', '$cordovaDialogs', 'lodash', 'PubNub', function($scope, $state, $localStorage, $cordovaDialogs, lodash, PubNub) {
+	.controller('DashboardCtrl', ['$scope', '$rootScope', '$state', '$localStorage', '$cordovaDialogs', 'lodash', 'PubNub', function($scope, $rootScope, $state, $localStorage, $cordovaDialogs, lodash, PubNub) {
 		/*global Parse*/
 		$scope.dashboard = {
 			chat: {}
@@ -8,7 +8,6 @@ angular.module('Alma.controllers')
 		$scope.$storage = $localStorage.$default({
 			'hasSetupDashboard': false
 		});
-		var user = $scope.currentUser;;
 		$scope.dashboard.skipTutorial = function() {
 			$scope.$storage.hasSetupDashboard = true;
 		};
@@ -17,21 +16,23 @@ angular.module('Alma.controllers')
 			var enjoyhint = new EnjoyHint({});
 			var ehSteps= [
 				{
-    				'click .buttons.buttons-left.header-item' : 'Press the top corner to open your menu', showSkip: false, shape : 'circle', radius: 30
-    			}, {
-    				'click .demo-venue': 'Here is where you find all the Alma Venues in your area', showSkip: false, timeout: 1500, onBeforeStart: function() {$scope.$storage.hasSetupDashboard = true;}
-    			}
- 			];
-    		enjoyhint.set(ehSteps);
-    		enjoyhint.run();
+					'click .buttons.buttons-left.header-item' : 'Press the top corner to open your menu', showSkip: false, shape : 'circle', radius: 30
+				}, {
+					'click .demo-venue': 'Here is where you find all the Alma Venues in your area', showSkip: false, timeout: 1500, onBeforeStart: function() {$scope.$storage.hasSetupDashboard = true;}
+				}
+			];
+			enjoyhint.set(ehSteps);
+			enjoyhint.run();
 		};
 		$scope.dashboard.uploadImage = function() {
 			$cordovaDialogs.alert('We are currently working on this, check back later', 'Alma - Error');
 		};
 		$scope.dashboard.sendChat = function(msg) {
+			var user = $rootScope.currentUser;
 			if (msg !== '') {
+				console.log(user);
 				if (!lodash.isEmpty(user)) {
-					if (user.get('connectedPlayer')) {
+					if (user.get('connectedPlayer').id) {
 						PubNub.ngPublish({
 							channel: user.get('connectedPlayer').id,
 							message: {'type': 'chat_msg', 'id': user.id, 'msg': msg, 'username': user.get('name'), 'image': user.get('image')}

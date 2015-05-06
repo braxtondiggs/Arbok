@@ -76,7 +76,7 @@ angular.module('Alma.controllers', [])
 					$scope.vote.track.save();
 					PubNub.ngPublish({
 						channel: user.get('connectedPlayer').id,
-						message: {'type': 'vote', 'id': vote.id, 'username': user.get('name'), 'image': user.get('image')._url, 'vote': vote.get('vote')}
+						message: {'type': 'vote', 'id': vote.id, 'username': user.get('name'), 'image': user.get('image')._url, 'vote': action}
 					});
 					if ($cordovaToast) {
 						$timeout(function() {

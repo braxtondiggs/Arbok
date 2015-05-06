@@ -46,6 +46,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				player.save().then(function(obj) {
 					$scope.box = obj;
 					ngDialog.closeAll();
+					pubNubFub();
 					initalizePlayer();
 				}, function(error) {
 					$window.alert('Failed to initalize new player, with error code: ' + error.message);

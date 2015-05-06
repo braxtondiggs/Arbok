@@ -22,7 +22,7 @@ angular.module('Alma.controllers')
 				user.logIn({
 					success: function(userData) {
 						$rootScope.currentUser = userData;
-						$rootScope.currentUser.image = userData.get('image')._url;
+						$rootScope.currentUser.image = (userData.get('image'))?userData.get('image')._url:'';
 						$scope.loginData = {};
 						$scope.signupData = {};
 						$scope.login.hasErrors = false;

@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'pubnub.angular.service'])
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $cordovaSplashscreen) {
 	$ionicPlatform.ready(function() {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 		// for form inputs)
@@ -11,6 +11,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			// org.apache.cordova.statusbar required
 			StatusBar.styleDefault();
 		}
+		$cordovaSplashscreen.hide();
 	});
 	/*global Parse*/
 	Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');

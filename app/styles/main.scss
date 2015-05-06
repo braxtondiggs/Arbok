@@ -544,9 +544,20 @@ span.special {
     font-size: 20px;
     padding-top:50px;
 }
-.nothing-here {
+.nothing-eyhere {
     width: 100%;
     margin-top: 50px;
+}
+.platform-ios {
+    .tabs-top > .tabs {
+        top:0!important;
+    }
+    .dark-menu.menu-left .bar-header.loggedIn {
+        height:145px!important;
+        + .has-header {
+            top: 145px!important;
+        }
+    }
 }
 .delay {
     &-1 {

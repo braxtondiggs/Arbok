@@ -10,7 +10,6 @@
     "ngstorage": "~0.3.0",
     "angular-echonest": "*",
     "ng-text-truncate": "https://github.com/lorenooliveira/ng-text-truncate.git",
-    "angular-socket-io": "~0.7.0",
     "animate.css": "~3.2.6",
     "ng-lodash": "~0.2.0",
     "ionicons": "~2.0.1",
@@ -19,8 +18,7 @@
     "pubnub": "~3.7.10",
     "pubnub-angular": "~1.1.0",
     "geocoder-js": "https://github.com/geocoder-php/geocoder-js.git#55588816a505b3a5cbc30594ff6af4483a97e30c",
-    "enjoyhint": "https://github.com/xbsoftware/enjoyhint.git#82a6b1ed0ad0254109afedd7c6530cb06b95bbec",
-    "javascript-id3-reader": "https://github.com/braxtondiggs/JavaScript-ID3-Reader.git#~0.0.1"
+    "enjoyhint": "https://github.com/xbsoftware/enjoyhint.git#82a6b1ed0ad0254109afedd7c6530cb06b95bbec"
   },
   "devDependencies": {
     "angular-mocks": "~1.3.13",

@@ -50,42 +50,5 @@
   "scripts": {
     "test": "grunt test"
   },
-  "cordovaPlugins": [
-    "org.apache.cordova.device",
-    "org.apache.cordova.console",
-    "com.ionic.keyboard",
-    "org.apache.cordova.vibration",
-    "org.apache.cordova.inappbrowser",
-    "org.apache.cordova.camera",
-    "org.apache.cordova.file",
-    "de.appplant.cordova.plugin.email-composer",
-    "org.apache.cordova.dialogs",
-    "nl.x-services.plugins.toast",
-    "org.apache.cordova.console",
-    "de.appplant.cordova.plugin.email-composer",
-    "org.apache.cordova.camera",
-    "org.apache.cordova.vibration",
-    "org.apache.cordova.dialogs",
-    "org.apache.cordova.inappbrowser",
-    "org.apache.cordova.file",
-    "com.ionic.keyboard",
-    "nl.x-services.plugins.toast",
-    "org.apache.cordova.inappbrowser",
-    "de.appplant.cordova.plugin.email-composer",
-    "org.apache.cordova.console",
-    "de.appplant.cordova.plugin.email-composer",
-    "org.apache.cordova.device",
-    "org.apache.cordova.vibration",
-    "org.apache.cordova.vibration",
-    "org.apache.cordova.console",
-    "org.apache.cordova.inappbrowser",
-    "org.apache.cordova.camera",
-    "org.apache.cordova.dialogs",
-    "org.apache.cordova.file",
-    "org.apache.cordova.file",
-    "nl.x-services.plugins.toast",
-    "com.ionic.keyboard",
-    "com.ionic.keyboard",
-    "nl.x-services.plugins.toast"
-  ]
+  "cordovaPlugins": []
 }

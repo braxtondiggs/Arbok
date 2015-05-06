@@ -1,6 +1,6 @@
 @import '_colors.scss';
 .profile_page {
-    .tabs {
+    .profile_container + .tabs-top > .tabs {
         top:170px!important;
     }
     .tab-content {

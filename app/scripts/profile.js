@@ -24,7 +24,7 @@ angular.module('Alma.controllers')
 			var track = $scope.profile.likes.results[index],
 				obj = {
 					id: track.get('trackId'),
-					img: {
+					image: {
 						l: track.get('image')
 					},
 					convertedSlug: track.get('artistName'),

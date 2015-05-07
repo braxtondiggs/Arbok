@@ -55,8 +55,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				var msg = (payload.message.username)?payload.message.username + ' just added a song':'The queue was empty!',
 					submsg = (payload.message.username)?payload.message.artist + ' - ' + payload.message.track:'So we picked a song for you.';
 				notify({messageTemplate:'<img ng-src="'+payload.message.image+'"><span class="content"><h3 class="header">'+msg+'</h3><p>'+submsg+'</p></span>', classes: 'activity-modal' } );
-			}else if (payload.message.type === 'chat_added') {
-				//notify({messageTemplate:'<span><img ng-src="'+ payload.message.userimage+'""><p><strong>'+payload.message.username+':&nbsp;</stong>'+chat.get('text')+'</p></span>', position: 'right'} );
+			}else if (payload.message.type === 'chat_msg') {
+				notify({messageTemplate:'<img ng-src="'+ payload.message.image._url+'"><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+payload.message.msg+'</p></span>', classes: 'activity-modal'} );
 			}else if (payload.message.type === 'vote') {
 				notify({messageTemplate:'<img ng-src="'+ payload.message.image +'""><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+ ((payload.message.vote)?'Liked':'Disliked') +' this song!</p></span>', classes: 'activity-modal' });
 				if (payload.message.vote){
@@ -148,7 +148,6 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					$scope.playerEvent.target.loadVideoById($scope.track.get('youtubeId'));
 					$scope.playerEvent.target.setPlaybackQuality('small');
 					activateBar();
-					$scope.loading = false;
 					$scope.box.set('playingImg', $scope.track.get('image'));
 					$scope.box.save();
 					$scope.$apply();
@@ -282,6 +281,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 							callback();
 						}
 					});
+				}).error(function() {
+					callback();
 				});
 			});
 		}
@@ -319,11 +320,13 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		});
 	}
 	function detonate() {
-		/*$timeout.cancel($scope.detonate);
+		if ($scope.detonate !== null) {
+			$timeout.cancel($scope.detonate);
+		}
 		$scope.detonate = $timeout(function() {
 			songEnded();
 			detonate();
-		}, 10000);*/
+		}, 10000);
 	}
 	$scope.onError = function() {
 		//Find Another Song
@@ -336,10 +339,12 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			detonate();
 		} else if (event.data === YT.PlayerState.PLAYING) {
 			$('#currentlyPlaying').addClass('active');
+			$scope.loading = false;
 			if ($scope.detonate !== null) {
-				//$timeout.cancel($scope.detonate);
-				//$scope.detonate = null;
+				$timeout.cancel($scope.detonate);
+				$scope.detonate = null;
 			}
+			$scope.$apply();
 		}
 	};
 	$scope.onReady = function(event) {

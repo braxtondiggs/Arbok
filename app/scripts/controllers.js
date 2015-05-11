@@ -169,17 +169,8 @@ angular.module('Alma.controllers', [])
 						}
 					}
 					if (payload.message.type === 'chat_msg') {
-						if (!$rootScope.chats) {
-							$rootScope.chats = [];
-							$rootScope.dashboard = {
-								count: 0
-							};
-						}
 						var obj = payload.message;
-						/*global moment*/
-						obj.createdAt = moment().format('dddd, MMMM Do YYYY, h:mm:ss a');
-						obj.self = (obj.id === user.id) ? true : false;
-						$rootScope.chats.push(obj);
+						MusicService.addChat(obj.id, obj.msg, obj.username, obj.image);
 						var current = $ionicHistory.currentView();
 						if (current.stateName !== 'app.dashboard') {
 							$rootScope.dashboard.count++;

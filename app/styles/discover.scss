@@ -47,7 +47,7 @@
 			content: '';
 		  	position: absolute;
 		  	left:10px;
-		  	bottom:4px;
+		  	bottom:6px;
 		  	z-index: 1;
 			width: 0;
 			height: 0;
@@ -64,10 +64,17 @@
 		  	left: 15px;
 		  	bottom: 5px;
 		}
+		img.missingImage {
+			height:80px;
+			width:80px;
+		}
 	}
 	p {
 		font-size:16px;
 		text-shadow: 1px 0px #111;
+	}
+	.searchArtist.item-divider  {
+		background: rgba(0,0,0,0.2);
 	}
 }
 .more {

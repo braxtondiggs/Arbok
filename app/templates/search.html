@@ -2,7 +2,7 @@
     <ion-nav-title>
         <form id="header-search" name="searchForm">
             <i class="ion-search"></i>
-            <input class="search_input" name="search" id="search" type="text" placeholder="Search" ng-model="search.term" ng-model-options="{debounce: 500}">
+            <input class="search_input" name="search" id="search" type="text" placeholder="Search" ng-model="search.term" ng-model-options="{debounce: 250}" ng-keyup="search.getKeys($event)">
             <a class="ion-close clear-search" ng-show="search.term.length" ng-click="search.term = ''"></a>
         </form>
     </ion-nav-title>
@@ -13,11 +13,12 @@
                     <ion-content>
                         <div class="list more dark-list ordered" ng-show="search.tracks.results.length">
                             <a class="item item-thumbnail-left" collection-repeat="track in search.tracks.results" item-height="91px" ng-click="search.submitSong($index)">
-                                <img ng-src="{{track.image.o}}" err-src="http://placehold.it/100x80" />
+                                <img ng-src="{{track.image.o}}" err-src="images/logo_missing.png" />
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{track.artists[0].name}}</h2>
                                 <p>{{track.song_title}}</p>
-                                <img class="BGImage" ng-src="{{track.image.o}}" err-src="http://placehold.it/375x300" />
+                                <img class="BGImage" ng-src="{{track.image.o}}" ng-if="track.image.o" />
+                                <span class="counter">{{$index+1}}.</span>
                             </a>
                             <ion-infinite-scroll on-infinite="loadMoreSearch('videos', 'tracks')" distance="1%" ng-if="!search.tracks.maxed && search.tracks.loaded" immediate-check="false"></ion-infinite-scroll>
                         </div>
@@ -46,13 +47,29 @@
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list ordered" ng-show="search.artist.results.length">
-                            <a class="item item-thumbnail-left" ng-href="#/app/artist/id/{{artist.id}}" collection-repeat="artist in search.artist.results" item-height="91px">
+                            <div class="item item-divider searchArtist" ng-if="search.artist.resultsTop">
+                                Top Hits
+                            </div>
+                            <a class="item item-thumbnail-left" ng-href="#/app/artist/id/{{artist.id}}" ng-repeat="artist in search.artist.resultsTop">
                                 <div style= "width: 100px;overflow: hidden;height: 80px;position: absolute;left: 10px;top:4px;">
-                                    <img ng-src="{{search.checkImage(artist.image)}}" style="width:100%;  min-height: 80px;" err-src="http://placehold.it/100x80" />
+                                    <img ng-src="{{search.checkImage(artist.image)}}" style="width:100%;  min-height: 80px;height:80px;"/>
                                 </div>
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{search.convertSlug(artist.name, artist.slug)}}</h2>
-                                <img class="BGImage" ng-src="{{search.checkImage(artist.image)}}" err-src="http://placehold.it/375x300" />
+                                <img class="BGImage" ng-src="{{search.checkImage(artist.image)}}" ng-if="search.checkImage(artist.image).indexOf('logo_missing.png') === -1" />
+                                <span class="counter">{{$index+1}}.</span>
+                            </a>
+                            <div class="item item-divider searchArtist" ng-if="search.artist.results && search.artist.resultsTop">
+                                Related
+                            </div>
+                            <a class="item item-thumbnail-left" ng-href="#/app/artist/id/{{artist.id}}" ng-repeat="artist in search.artist.results">
+                                <div style= "width: 100px;overflow: hidden;height: 80px;position: absolute;left: 10px;top:4px;">
+                                    <img ng-src="{{search.checkImage(artist.image)}}" style="width:100%;  min-height: 80px;height:80px;"/>
+                                </div>
+                                <i class="icon ion-play icon-accessory"></i>
+                                <h2>{{search.convertSlug(artist.name, artist.slug)}}</h2>
+                                <img class="BGImage" ng-src="{{search.checkImage(artist.image)}}" ng-if="search.checkImage(artist.image).indexOf('logo_missing.png') === -1" />
+                                <span class="counter">{{$index+1}}.</span>
                             </a>
                             <ion-infinite-scroll on-infinite="loadMoreSearch('entities', 'artist')" distance="1%" ng-if="!search.artist.maxed && search.artist.loaded" immediate-check="false"></ion-infinite-scroll>
                         </div>
@@ -82,11 +99,11 @@
                     <ion-content>
                         <div class="list more dark-list ordered" ng-show="search.playlist.results.length">
                             <a class="item item-thumbnail-left" collection-repeat="playlist in search.playlist.results" item-height="91px">
-                                <img ng-src="{{playlist.get('image')}}" err-src="http://placehold.it/100x80"/>
+                                <img ng-src="{{playlist.get('image')}}" err-src="images/logo_missing.png" />
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{playlist.get('name')}}</h2>
                                 <p>{{playlist.get('description')}}</p>
-                                <img class="BGImage" ng-src="{{playlist.get('image')}}" err-src="http://placehold.it/375x300" />
+                                <img class="BGImage" ng-src="{{playlist.get('image')}}" ng-if="playlist.get('image')" />
                             </a>
                         </div>
                         <ion-infinite-scroll on-infinite="loadMoreSearch('Playlist', 'playlist')" distance="1%" ng-if="search.playlist.results.length && !search.playlist.maxed"></ion-infinite-scroll>

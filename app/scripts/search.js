@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('SearchCtrl', ['$scope', '$http', '$ionicLoading', '$cordovaDialogs', 'UserService', 'MusicService', '$localStorage', 'lodash', function($scope, $http, $ionicLoading, $cordovaDialogs, UserService, MusicService, $localStorage, lodash) {
+	.controller('SearchCtrl', ['$scope', '$http', '$ionicLoading', '$cordovaDialogs', '$cordovaKeyboard', 'UserService', 'MusicService', '$localStorage', 'lodash', function($scope, $http, $ionicLoading, $cordovaDialogs, $cordovaKeyboard, UserService, MusicService, $localStorage, lodash) {
 		/*jshint camelcase: false */
 		/*global Parse*/
 		$scope.search = {};
@@ -59,6 +59,14 @@ angular.module('Alma.controllers')
 						loaded: true,
 						maxed: false
 					};
+					if (obj === 'artist') {
+						$scope.search[obj].resultsTop = lodash.filter(data.results, function(item){
+							return $scope.search.convertSlug(item.name, item.slug).indexOf(term) > -1;
+						});
+						if (lodash.isEmpty($scope.search[obj].resultsTop)) {
+							delete $scope.search[obj].resultsTop;
+						}
+					}
 				}
 				$ionicLoading.hide();
 				saveHistory(term, obj);
@@ -150,6 +158,15 @@ angular.module('Alma.controllers')
 				searchParse($scope.search.term, action, obj);
 			}
 			$scope.$broadcast('scroll.infiniteScrollComplete');
+		};
+		$scope.search.getKeys = function($event) {
+			if($event.which === 13){
+				if (window.cordova && window.cordova.plugins.Keyboard) {
+					if ($cordovaKeyboard.isVisible()) {
+						$cordovaKeyboard.close();
+					}
+				}
+			}
 		};
 		$scope.search.checkImage = function(img) {
 			return UserService.checkImage(img);

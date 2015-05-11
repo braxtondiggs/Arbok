@@ -1,9 +1,9 @@
 <ion-view class="artist">
     <ion-nav-title>{{artist.info.convertedSlug}}</ion-nav-title>
-    <ion-content class="animated fadeIn" ng-show="artist.loaded">
+    <ion-content class="animated fadeIn" ng-show="artist.loaded" ng-class="{'has-footer':  currentUser.get('connectedPlayer').id}">
         <div class="profile_container">
             <div class="img-circle animated bounceIn">
-                <img alt="" ng-src="{{artist.info.checkedImage}}"/>
+                <img alt="" ng-src="{{artist.info.checkedImage}}" ng-class="artist.info.artistStyles"/>
             </div>
             <div class="background" ng-style="artist.info.style"></div>
         </div>
@@ -16,12 +16,13 @@
                                 {{video.song_title}}
                             </div>
                             <div class="item item-image">
-                                <img ng-src="{{video.image.l}}" err-src="http://placehold.it/375x200" />
+                                <img ng-src="{{video.image.l}}" err-src="images/logo_missing.png" />
                             </div>
                             <a class="item item-icon-left assertive">
                                 <i class="icon ion-music-note"></i> Start Listening
                             </a>
                         </div>
+                        <p ng-if="!artist.info.videography.length" class="center" style="margin-top:50px;">It looks like we do not have any songs for this artist right now, check back later</p>
                     </div>
                 </ion-nav-view>
             </ion-tab>
@@ -33,25 +34,37 @@
                                 {{video.song_title}}
                             </div>
                             <div class="item item-image">
-                                <img ng-src="{{video.image.l}}" err-src="http://placehold.it/375x200" />
+                                <img ng-src="{{video.image.l}}" err-src="images/logo_missing.png" />
                             </div>
                             <a class="item item-icon-left assertive">
                                 <i class="icon ion-music-note"></i> Start Listening
                             </a>
                         </div>
+                        <p ng-if="!artist.info.featured.length" class="center" style="margin-top:50px;">It looks like we do not have any songs for this artist right now, check back later</p>
                     </div>
                 </ion-nav-view>
             </ion-tab>
             <ion-tab title="Bio" on-select="artist.getBio()">
                 <ion-nav-view class="padding">
                     <p class="bio" ng-text-truncate="artist.info.bio" ng-tt-chars-threshold="240" ng-tt-more-label="Show" ng-tt-less-label="Hide"></p>
-                    <p ng-if="!artist.info.bio">Sorry, no biography info right now.</p>
-                    <img style="margin-top:20px;margin-left:10px;" ng-if="artist.info.bio" src="images/echonest.png" />
+                    <p ng-if="!artist.info.bio && artist.info.bioLoaded" class="center" style="margin-top:50px;">Sorry, no biography info right now.</p>
+                    <img style="margin-top:20px;margin-left:10px;" ng-if="artist.info.bio && artist.info.bioLoaded" src="images/echonest.png" />
                 </ion-nav-view>
             </ion-tab>
-            <ion-tab title="Social" hidden="true">
+            <ion-tab title="Social" hidden="true" ng-if="false">
                 <ion-nav-view class="padding">
                     More
+                </ion-nav-view>
+            </ion-tab>
+            <ion-tab title="Related" on-select="artist.getRelated()">
+                <ion-nav-view>
+                    <div class="row" ng-repeat="related in artist.info.related" ng-if="$index % 2 == 0" ng-init="relatedIndex = $index">
+                        <a href="#/app/artist/slug/{{artist.slug}}" class="col col-50 related" ng-repeat="i in [0,1]" ng-if="(relatedIndex + i)<artist.info.related.length">
+                            <img src="images/logo_missing.png" />
+                            <span>{{artist.info.related[relatedIndex+i].name}}</span>
+                        </a>
+                    </div>
+                    <p ng-if="!artist.info.related && artist.info.relatedLoaded" class="center" style="margin-top:50px;">Sorry, we could not find a similar artist to {{artist.info.convertedSlug}}.</p>
                 </ion-nav-view>
             </ion-tab>
         </ion-tabs>

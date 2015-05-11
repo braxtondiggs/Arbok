@@ -14,7 +14,7 @@
             </div>
             <div class="item chat-item animated" ng-repeat="chat in chats" ng-class="{'isSelf' : chat.self, 'fadeIn': loaded}">
                 <div class="chat-img">
-                    <img class="img-circle img-border" ng-src="{{chat.image._url}}" />
+                    <img class="img-circle img-border" ng-src="{{(chat.image)?chat.image._url:'/images/missingPerson.jpg'}}" err-src="/images/missingPerson.jpg" />
                 </div>
                 <div class="chat-bubble">
                     <h2>{{chat.username}}</h2>
@@ -30,7 +30,7 @@
     </ion-content>
     <ion-subfooter-bar align-title="left" class="bar chat-write animated flipInX delay-6" ng-class="queue.length? 'bar-subfooter' : 'bar-footer'">
         <i class="icon ion-ios-camera-outline chat-image" ng-click="dashboard.uploadImage()"></i>
-        <input type="text" id="chat-input" placeholder="Tap to write message..." ng-model="dashboard.chat.chatMsg">
+        <input type="text" id="chat-input" placeholder="Tap to write message..." ng-model="dashboard.chat.chatMsg" ng-keyup="dashboard.getKeys($event)">
         <button class="button button-small button-outline dark-button" ng-click="dashboard.sendChat(dashboard.chat.chatMsg);dashboard.chat.chatMsg = '';">Send</button>
     </ion-subfooter-bar>
 </ion-view>

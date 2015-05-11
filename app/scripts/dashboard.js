@@ -1,7 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('DashboardCtrl', ['$scope', '$rootScope', '$state', '$localStorage', '$cordovaDialogs', 'lodash', 'PubNub', function($scope, $rootScope, $state, $localStorage, $cordovaDialogs, lodash, PubNub) {
-		/*global Parse*/
+	.controller('DashboardCtrl', ['$scope', '$rootScope', '$state', '$localStorage', '$cordovaDialogs', '$cordovaKeyboard', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $state, $localStorage, $cordovaDialogs, $cordovaKeyboard, lodash, PubNub, MusicService) {
 		$scope.dashboard = {
 			chat: {}
 		};
@@ -32,7 +31,8 @@ angular.module('Alma.controllers')
 			if (msg !== '') {
 				console.log(user);
 				if (!lodash.isEmpty(user)) {
-					if (user.get('connectedPlayer').id) {
+					if (user.get('connectedPlayer')) {
+						MusicService.addChat(user.id, msg, user.get('name'), user.get('image'));
 						PubNub.ngPublish({
 							channel: user.get('connectedPlayer').id,
 							message: {'type': 'chat_msg', 'id': user.id, 'msg': msg, 'username': user.get('name'), 'image': user.get('image')}
@@ -47,6 +47,17 @@ angular.module('Alma.controllers')
 						$scope.login();
 					});
 				}
+			}
+		};
+		$scope.dashboard.getKeys = function($event) {
+			if($event.which === 13){
+				if (window.cordova && window.cordova.plugins.Keyboard) {
+					if ($cordovaKeyboard.isVisible()) {
+						$cordovaKeyboard.close();
+					}
+				}
+				$scope.dashboard.sendChat($scope.dashboard.chat.chatMsg);
+				$scope.dashboard.chat.chatMsg = '';
 			}
 		};
 	}]);

@@ -11,7 +11,9 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			// org.apache.cordova.statusbar required
 			StatusBar.styleDefault();
 		}
-		$cordovaSplashscreen.hide();
+		if (window.cordova && window.navigator.splashscreen) {
+			$cordovaSplashscreen.hide();
+		}
 	});
 	/*global Parse*/
 	Parse.initialize('GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k', 'WdvDW26S4r3o5F35HCC9gM5tAYah3tyTwXlwRBvE');
@@ -20,7 +22,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 	return {
 		checkImage: function(img) {
 			if (img) {
-				return (img.slice(-3) === 'jpg') ? ((img.indexOf('http://imvdb.com/') > -1)?img.substr(17):img): 'http://placehold.it/125x80';
+				return (img.slice(-3) === 'jpg') ? ((img.indexOf('http://imvdb.com/') > -1)?img.substr(17):img): '/images/logo_missing.png';
 			} else {
 				return;
 			}
@@ -176,6 +178,33 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 				}
 			}
 			callback(found);
+		},
+		addChat: function(id, msg, name, image) {
+			var user = Parse.User.current();
+			if (!$rootScope.chats) {
+				$rootScope.chats = [];
+				$rootScope.dashboard = {
+					count: 0
+				};
+			}
+			/*global moment*/
+			var obj = {
+				self: (id === user.id) ? true : false,
+				createdAt: moment().format('dddd, MMMM Do YYYY, h:mma'),
+				msg: msg,
+				username: name,
+				image: image
+			};
+			var found = false;
+			for (var i = 0;i < $rootScope.chats.length; i++) {
+				if ($rootScope.chats[i].createdAt === obj.createdAt && $rootScope.chats[i].id === obj.id) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				$rootScope.chats.push(obj);
+			}
 		}
 	};
 })
@@ -207,6 +236,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 	    	element.bind('error', function() {
 	      		if (attrs.src !== attrs.errSrc) {
 	        		attrs.$set('src', attrs.errSrc);
+	        		attrs.$set('class', 'missingImage');
 	      		}
 	    	});
 	  	}

@@ -6,11 +6,11 @@
                     <ion-content>
                         <div class="list more dark-list animated fadeIn ordered" ng-show="discover.new.videos.length">
                             <a class="item item-thumbnail-left animated fadeIn" collection-repeat="new in discover.new.videos | limitTo: discover.new.limit" item-height="91px" ng-click="discover.queueSong(new)">
-                                <img ng-src="{{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" err-src="http://placehold.it/100x80">
+                                <img ng-src="{{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" err-src="images/logo_missing.png">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{new.get('artistName')}}</h2>
                                 <p>{{new.get('artistTitle')}}</p>
-                                <img class="BGImage" ng-src="{{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" err-src="http://placehold.it/375x300" />
+                                <img class="BGImage" ng-src="{{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" ng-if="new.get('artistImage')" />
                                 <span class="counter">{{$index+1}}.</span>
                             </a>
                         </div>
@@ -24,11 +24,11 @@
                     <ion-content>
                         <div class="list more dark-list animated fadeIn ordered" ng-show="discover.top.week.videos.length">
                             <a class="item item-thumbnail-left animated fadeIn" collection-repeat="top in discover.top.week.videos | limitTo: discover.top.week.limit" item-height="91px" ng-click="discover.queueSong(top)">
-                                <img ng-src="{{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" err-src="http://placehold.it/100x80">
+                                <img ng-src="{{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" err-src="images/logo_missing.png">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{top.get('artistName')}}</h2>
                                 <p>{{top.get('artistTitle')}}</p>
-                                <img class="BGImage" ng-src="{{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" err-src="http://placehold.it/375x300" />
+                                <img class="BGImage" ng-src="{{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" ng-if="top.get('artistImage')" />
                                 <span class="counter">{{$index+1}}.</span>
                             </a>
                         </div>

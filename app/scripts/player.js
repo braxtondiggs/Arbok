@@ -66,7 +66,7 @@ angular.module('Alma.controllers')
 							var enjoyhint = new EnjoyHint({});
 							var ehSteps= [
 								{
-				    				'click .demo-player' : 'Here is a list of all Alma Venues in your area, click one to get started.', showSkip: false, onBeforeStart: function() {$scope.$storage.hasSetupPlayer = true;}
+				    				'click .demo-player' : 'Here is a list of all Alma Venues in your area, click one to get started.', onBeforeStart: function() {$scope.$storage.hasSetupPlayer = true;}
 				    			}
 				 			];
 				    		enjoyhint.set(ehSteps);

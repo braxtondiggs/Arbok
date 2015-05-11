@@ -2,7 +2,7 @@
   "name": "Alma",
   "version": "0.6.0",
   "dependencies": {
-    "ionic": "v1.0.0-rc.4",
+    "ionic": "v1.0.0-rc.5",
     "ngCordova": "0.1.14-alpha",
     "parse-js-sdk": "*",
     "moment": "*",

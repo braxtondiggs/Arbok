@@ -30,7 +30,7 @@
                 <div class="img-circle" ng-class="{'animated bounceIn': ratio}" ng-show="ratio">
                     <img alt="" ng-src="{{(currentUser.get('image'))?currentUser.get('image')._url:'/images/missingPerson.jpg'}}" err-src="/images/missingPerson.jpg" />
                 </div>
-                <h1 class="title" ng-class="{'animated fadeInLeft': ratio}" ng-if="currentUser._serverData && ratio">{{currentUser.get('name')}}</h1>
+                <h1 class="title" ng-class="{'animated fadeInLeft': ratio}" ng-show="currentUser._serverData && ratio">{{currentUser.get('name')}}</h1>
                 <div class="background" ng-style="{'background-image':'url({{(currentUser.get('image'))?currentUser.get('image')._url:'/images/missingPerson.jpg'}})'}"></div>
             </a>
         </header>

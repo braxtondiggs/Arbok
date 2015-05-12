@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('LoginCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$cordovaOauth', '$ionicLoading', '$localStorage', '$http', function($scope, $rootScope, $cordovaDialogs, $cordovaOauth, $ionicLoading, $localStorage, $http) {
+	.controller('LoginCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$cordovaOauth', '$ionicLoading', '$localStorage', '$http', '$cordovaKeyboard', function($scope, $rootScope, $cordovaDialogs, $cordovaOauth, $ionicLoading, $localStorage, $http, $cordovaKeyboard) {
 		/*global Parse*/
 		$scope.login = {
 			hasErrors: false,
@@ -9,6 +9,9 @@ angular.module('Alma.controllers')
 			showPositive: false
 		};
 		$scope.signup = $scope.login;
+		/*if (window.cordova && window.cordova.plugins.Keyboard) {
+			cordova.plugins.Keyboard.disableScroll(false);
+		}*/
 		$scope.doLogin = function(isValid, email, password) {
 			if (isValid) {
 				$ionicLoading.show();

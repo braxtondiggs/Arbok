@@ -11,7 +11,15 @@ angular.module('Alma.controllers', [])
 			panel:false,
 			track: null
 		};
+		$scope.canvas = {
+			isMOuseDown: false,
+			threshold: 3
+		};
 		var user = $rootScope.currentUser;
+		var _r = new DollarRecognizer();
+		var _points = [];
+		var canvas;
+		var ctx;
 		PubNub.init({
 			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
 			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'
@@ -40,22 +48,17 @@ angular.module('Alma.controllers', [])
 			if ($scope.queue[index]) {
 				var track = $scope.queue[index];
 				var action = null;
-				console.log(track);
-				/*if (track.get('trackVotes')) {
-					if (track.get('trackVotes').get('votes')) {
-						action = track.get('trackVotes').get('votes');
-					}
-				}*/
 				$scope.vote = {
 					panel: true,
 					track: track,
 					action: action
 				};
+				console.log('activateVote');
 			}
 			$ionicSideMenuDelegate.canDragContent(false);
 		};
-		$scope.onSwipeAction = function(action) {
-			$scope.vote.action = action;
+		$scope.onSwipeAction = function() {
+			/*$scope.vote.action = action;
 			var Vote = Parse.Object.extend('Vote');
 			var vote = new Vote();
 			var relation = $scope.vote.track.relation('trackVotes');
@@ -88,7 +91,106 @@ angular.module('Alma.controllers', [])
 			$timeout(function() {
 				$scope.vote.panel = false;
 				$ionicSideMenuDelegate.canDragContent(true);
-			}, 2000);
+			}, 2000);*/
+		};
+		$scope.canvas.init = function() {
+			canvas = document.getElementById('canvas');  
+			ctx = canvas.getContext('2d');
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+		$scope.canvas.touchstart = function(e) {
+			e.preventDefault();
+			_points = [];
+			ctx.beginPath();
+			ctx.strokeStyle = '#bae1ff';
+			ctx.lineCap = 'round';
+			ctx.lineJoin = 'round';
+			ctx.lineWidth = 6;
+			$scope.canvas.oldX = e.gesture.center.pageX;
+			$scope.canvas.oldY = e.gesture.center.pageY;
+		};
+		
+		$scope.canvas.touchmove = function(e) {
+			if ($scope.canvas.oldX - e.gesture.center.pageX < 3 && $scope.canvas.oldX - e.gesture.center.pageY > -3) {
+				return;
+			}
+			if ($scope.canvas.oldY - e.gesture.center.pageX < 3 && $scope.canvas.oldY - e.gesture.center.pageY > -3) {
+				return;
+			}
+			ctx.moveTo($scope.canvas.oldX, $scope.canvas.oldY);
+			$scope.canvas.oldX = e.gesture.center.pageX;
+			$scope.canvas.oldY = e.gesture.center.pageY;
+			ctx.lineTo($scope.canvas.oldX, $scope.canvas.oldY);
+			ctx.stroke();
+			ctx.shadowColor = 'rgba(169,236,255,0.25)';
+			ctx.shadowOffsetX = 0;
+			ctx.shadowOffsetY = 0;
+			ctx.shadowBlur = 10;
+			_points[_points.length] = new Point($scope.canvas.oldX, $scope.canvas.oldY);
+		};
+		
+		$scope.canvas.touchend = function(e) {
+			ctx.closePath();
+			if (_points.length >= 10) {
+				var result = _r.Recognize(_points);
+				//$('#shapeOutput').text(result.Name);
+				//$('#mathOutput').text(Math.round(result.Score*100) + '%');
+				console.log(result.Name);
+				console.log(Math.round(result.Score*100) + '%');
+			}
+			_points = [];
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+		};
+		// MOUSE BINDS FOR THE HELL OF IT
+		$scope.canvas.mousedown =  function(e) {
+			$scope.canvas.isMouseDown = true;
+			e.preventDefault();
+			_points = [];
+			ctx.beginPath();
+			ctx.strokeStyle = '#bae1ff';
+			ctx.lineCap = 'round';
+			ctx.lineJoin = 'round';
+			ctx.lineWidth = 6;
+			ctx.shadowColor = 'rgba(169,236,255,0.1)';
+			ctx.shadowOffsetX = 0;
+			ctx.shadowOffsetY = 0;
+			ctx.shadowBlur = 10;
+			console.log(e);
+			$scope.canvas.oldX = e.offsetX;
+			$scope.canvas.oldY = e.offsetY;
+		};
+		
+		$scope.canvas.mousemove = function(e) {
+			if (!$scope.canvas.isMouseDown) {
+				return;
+			}
+			if ($scope.canvas.oldX - e.offsetX < 3 && $scope.canvas.oldX - e.offsetX > -3) {
+				return;
+			}
+			if ($scope.canvas.oldY - e.offsetY < 3 && $scope.canvas.oldY - e.offsetY > -3) {
+				return;
+			}
+			ctx.moveTo($scope.canvas.oldX, $scope.canvas.oldY);
+			$scope.canvas.oldX = e.offsetX;
+			$scope.canvas.oldY = e.offsetY;
+			ctx.lineTo($scope.canvas.oldX, $scope.canvas.oldY);
+			ctx.stroke();
+			_points[_points.length] = new Point($scope.canvas.oldX, $scope.canvas.oldY);
+		};
+		
+		$scope.canvas.mouseup = function(e) {
+			$scope.canvas.isMouseDown = false;
+			ctx.closePath();
+			if (_points.length >= 10) {
+				var result = _r.Recognize(_points);
+				//$('#shapeOutput').text(result.Name);
+				//$('#mathOutput').text(Math.round(result.Score*100) + '%');
+				console.log(result.Name);
+				console.log(Math.round(result.Score*100) + '%');
+			}
+			_points = [];
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
 		};
 		//Login
 		$rootScope.login = function() {

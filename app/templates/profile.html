@@ -12,7 +12,7 @@
             <div class="background" ng-style="{'background-image':'url({{(currentUser.get('image'))?currentUser.get('image')._url:'/images/missingPerson.jpg'}})'}"></div>
         </div>
         <ion-tabs class="tabs-icon-only tabs-striped text-only">
-            <ion-tab title="My Favs">
+            <ion-tab title="My Favs" ng-if="false">
                 <ion-nav-view class="profile-tab-content">
                     <div class="list more dark-list" ng-if="profile.likes.results.length">
                         <a class="item item-thumbnail-left" ng-repeat="like in profile.likes.results" ng-click="profile.submitSong($index)">
@@ -26,9 +26,23 @@
                     <p ng-if="!profile.likes.results.length" class="center" style="margin-top:50px;">It seems you havn't liked any songs yet.</p>
                 </ion-nav-view>
             </ion-tab>
-            <ion-tab title="My Playlist" ng-if="false">
-                <ion-nav-view class="padding profile-tab-content">
-                    More
+            <ion-tab title="My Playlist">
+                <ion-nav-view class="profile-tab-content">
+                    <div class="add_new_playlist">
+                        <button class="button button-outline button-dark" ng-href="#/app/playlist">New Playlist</button>
+                    </div>
+                    <div class="list genre_list">
+                        <!--<a href="app/genre/{{genre.name}}" class="item item-icon-left animated fadeIn delay-{{$index}}" collection-repeat="genre in discover.genres" item-height="91px">
+                            <div class="list_content">
+                                <i class="icon ion-social-youtube-outline"></i>
+                                #{{genre.get('name')}}
+                                <span>
+                                    <strong>96</strong> Songs
+                                </span>
+                            </div>
+                            <img class="BGImage" ng-src="{{genre.get('image')._url}}" style="margin-top:{{genre.get('position') + 'px'}}" />
+                        </a>-->
+                    </div>
                 </ion-nav-view>
             </ion-tab>
         </ion-tabs>

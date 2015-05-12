@@ -94,3 +94,12 @@
         top: 35px;
     }
 }
+.add_new_playlist {
+    display:block;
+    margin-top:10px;
+    button {
+        float: right;
+        margin-right:15px;
+        border-color: $coloredLinksActivated!important;
+    }
+}

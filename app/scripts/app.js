@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'pubnub.angular.service'])
+angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'pubnub.angular.service', 'monospaced.elastic'])
 .run(function($ionicPlatform, $cordovaSplashscreen) {
 	$ionicPlatform.ready(function() {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -60,7 +60,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 		}
 	};
 })
-.factory('MusicService', function($rootScope, $state, $cordovaDialogs, $http, $ionicLoading, PubNub, lodash) {
+.factory('MusicService', function($rootScope, $state, $ionicScrollDelegate, $cordovaDialogs, $http, $ionicLoading, PubNub, lodash) {
 	return {
 		storeDB: function(artistInfo) {
 			/*jshint camelcase: false */
@@ -204,6 +204,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			}
 			if (!found) {
 				$rootScope.chats.push(obj);
+				$ionicScrollDelegate.scrollBottom(true);
 			}
 		}
 	};
@@ -312,6 +313,15 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			'menuContent': {
 				templateUrl: 'templates/profile.html',
 				controller: 'ProfileCtrl'
+			}
+		}
+	})
+	.state('app.playlist', {
+		url: '/playlist',
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/playlist.html',
+				controller: 'PlaylistCtrl'
 			}
 		}
 	})

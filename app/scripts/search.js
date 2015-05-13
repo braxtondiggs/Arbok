@@ -161,11 +161,11 @@ angular.module('Alma.controllers')
 		};
 		$scope.search.getKeys = function($event) {
 			if($event.which === 13){
-				/*if (window.cordova && window.cordova.plugins.Keyboard) {
+				if (window.cordova && window.cordova.plugins.Keyboard) {
 					if ($cordovaKeyboard.isVisible()) {
 						$cordovaKeyboard.close();
 					}
-				}*/
+				}
 			}
 		};
 		$scope.search.checkImage = function(img) {

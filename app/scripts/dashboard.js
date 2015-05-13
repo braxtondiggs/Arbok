@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('DashboardCtrl', ['$scope', '$rootScope', '$timeout', '$state', '$localStorage', '$ionicScrollDelegate', '$cordovaDialogs', '$ionicLoading', '$ionicActionSheet', '$cordovaCamera', '$cordovaKeyboard', '$cordovaClipboard', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $timeout, $state, $localStorage, $ionicScrollDelegate, $cordovaDialogs, $ionicLoading, $ionicActionSheet, $cordovaCamera, $cordovaKeyboard, $cordovaClipboard, lodash, PubNub, MusicService) {
+	.controller('DashboardCtrl', ['$scope', '$rootScope', '$timeout', '$state', '$localStorage', '$ionicScrollDelegate', '$cordovaDialogs', '$cordovaVibration', '$ionicLoading', '$ionicActionSheet', '$cordovaCamera', '$cordovaKeyboard', '$cordovaClipboard', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $timeout, $state, $localStorage, $ionicScrollDelegate, $cordovaDialogs, $cordovaVibration, $ionicLoading, $ionicActionSheet, $cordovaCamera, $cordovaKeyboard, $cordovaClipboard, lodash, PubNub, MusicService) {
 		$scope.dashboard = {
 			chat: {}
 		};
@@ -104,6 +104,10 @@ angular.module('Alma.controllers')
 			}
 		};
 		$scope.dashboard.onMessageHold = function(e, itemIndex, message) {
+			/*global ionic*/
+			if (ionic.Platform.isWebView()) {
+				$cordovaVibration.vibrate(100);
+			}
 			$ionicActionSheet.show({
 				buttons: [{
 					text: 'Copy Text'
@@ -130,11 +134,11 @@ angular.module('Alma.controllers')
 		};
 		$scope.dashboard.getKeys = function($event) {
 			if($event.which === 13){
-				/*if (window.cordova && window.cordova.plugins.Keyboard) {
+				if (window.cordova && window.cordova.plugins.Keyboard) {
 					if ($cordovaKeyboard.isVisible()) {
 						$cordovaKeyboard.close();
 					}
-				}*/
+				}
 				$scope.dashboard.sendChat($scope.dashboard.chat.chatMsg);
 				$scope.dashboard.chat.chatMsg = '';
 			}

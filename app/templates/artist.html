@@ -59,7 +59,7 @@
             <ion-tab title="Related" on-select="artist.getRelated()">
                 <ion-nav-view>
                     <div class="row" ng-repeat="related in artist.info.related" ng-if="$index % 2 == 0" ng-init="relatedIndex = $index">
-                        <a href="#/app/artist/slug/{{artist.slug}}" class="col col-50 related" ng-repeat="i in [0,1]" ng-if="(relatedIndex + i)<artist.info.related.length">
+                        <a href="#/app/artist/slug/{{artist.info.related[relatedIndex+i].slug}}" class="col col-50 related" ng-repeat="i in [0,1]" ng-if="(relatedIndex + i)<artist.info.related.length">
                             <img src="images/logo_missing.png" />
                             <span>{{artist.info.related[relatedIndex+i].name}}</span>
                         </a>

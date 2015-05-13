@@ -7,18 +7,7 @@
             </ion-nav-buttons>
         </ion-nav-bar>
         <ion-nav-view name="menuContent"></ion-nav-view>
-        <!--<div class="votePanel" on-swipe-up="onSwipeAction(true)" on-swipe-down="onSwipeAction(false)" ng-if="vote.panel">
-            <div class="vote-help" ng-if="vote.action == null">
-                <img src="images/upvote.png" class="upvote"/>
-                <img src="images/downvote.png" class="downvote"/>
-            </div>
-            <div class="tick" ng-class="{'active': vote.action == true}"></div>
-            <div class="cross" ng-class="{'active': vote.action == false}"></div>
-            <div class="defaultbgColor" ng-show="vote.action == null"></div>
-            <div class="bgColorTick bgColor" ng-class="{'active': vote.action == true}"></div>
-            <div class="bgColorCross bgColor" ng-class="{'active': vote.action == false}"></div>
-        </div>-->
-        <canvas id="canvas" class="votePanel" ng-show="vote.panel" ng-mousemove="canvas.mousemove($event)" ng-mouseup="canvas.gestureEnd(true)" ng-mousedown="canvas.mousedown($event)" on-touch="canvas.touchstart($event)" on-drag="canvas.touchmove($event)" on-release="canvas.gestureEnd(false)" ng-init="canvas.init()" on-swipe-up="voteAction(true)" on-swipe-down="voteAction(false)"></canvas>
+        <div ng-include="'templates/vote.html'"></div>
         <div ng-include="'templates/footer.html'"></div>
     </ion-side-menu-content>
 

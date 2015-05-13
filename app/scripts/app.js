@@ -107,6 +107,8 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 											video.set('trackInfo', artistInfo.song_title);
 											video.set('year', artistInfo.year);
 											video.set('youtubeId', youtubeKey);
+											video.set('upVotes', 0);
+											video.set('downVotes', 0);
 											video.save(null, {
 												success: function() {
 													relation.add(video);

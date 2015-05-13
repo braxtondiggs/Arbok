@@ -1,16 +1,21 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('QueueCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$ionicSideMenuDelegate', 'PubNub', function($scope, $rootScope, $cordovaDialogs, $ionicSideMenuDelegate, PubNub) {
+	.controller('QueueCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$ionicSideMenuDelegate', 'PubNub', 'lodash', function($scope, $rootScope, $cordovaDialogs, $ionicSideMenuDelegate, PubNub, lodash) {
 		/*global Parse*/
 		$rootScope.queue = [];
 		var user = Parse.User.current();
 		function getVideos(player) {
-			player.relation('playerVideo').query().ascending('createdAt').find({
+			player.relation('playerVideo').query().find({
 				success: function(queue) {
-					$rootScope.queue = queue;
 					console.log(queue);
+					//$rootScope.queue = $filter('orderBy')(queue, value);
+					$scope.$broadcast('sorted');
+					console.log($rootScope.queue);
 					$scope.$apply();
 				}
+			});
+			$scope.$on('sorted', function() {
+				//$rootScope.queue
 			});
 		}
 		if (user) {
@@ -49,5 +54,8 @@ angular.module('Alma.controllers')
 					});
 				}
 			});
+		};
+		$scope.queuePage = function() {
+			console.log('hi');
 		};
 	}]);

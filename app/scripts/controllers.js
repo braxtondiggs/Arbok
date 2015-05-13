@@ -4,8 +4,9 @@ angular.module('Alma.controllers', [])
 	.controller('AppCtrl', ['$scope', '$rootScope', '$state', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicScrollDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaKeyboard', '$cordovaToast', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $state, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicScrollDelegate, $cordovaDialogs, $cordovaVibration, $cordovaKeyboard, $cordovaToast, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService) {
 		/*global Parse*/
 		/*global ionic*/
+		/* global DollarRecognizer */
+		/* global Point */
 		/*jshint camelcase: false */
-		/* exported PubNub */
 		$rootScope.currentUser = Parse.User.current();
 		$scope.vote = {
 			panel:false,
@@ -45,55 +46,105 @@ angular.module('Alma.controllers', [])
 			if ($ionicSideMenuDelegate.isOpenRight() === true) {
 				$ionicSideMenuDelegate.toggleRight();
 			}
-			if ($scope.queue[index]) {
-				var track = $scope.queue[index];
-				var action = null;
-				$scope.vote = {
-					panel: true,
-					track: track,
-					action: action
-				};
-			}
-			$ionicSideMenuDelegate.canDragContent(false);
+			var Vote = Parse.Object.extend('Vote');
+			var query = new Parse.Query(Vote);
+			query.equalTo('userId', user);
+			query.equalTo('videoId', $scope.queue[index]);
+			query.limit(1);
+			query.find({
+				success: function(vote) {
+					if ($scope.queue[index]) {
+						if (!lodash.isEmpty(vote)) {
+							$scope.queue[index].vote = vote[0].get('vote');
+						}
+						var track = $scope.queue[index];
+						var action = (track.vote === true || track.vote === false)?track.vote:null;
+						$scope.vote = {
+							panel: true,
+							track: track,
+							action: action,
+							isSet: (track.vote === true || track.vote === false)?true:false,
+							index: index,
+							isChanged: (track.vote === true || track.vote === false)?true:false
+						};
+						$scope.$apply();
+					}
+					$ionicSideMenuDelegate.canDragContent(false);
+				}
+			});
 		};
 		$scope.voteAction = function(action) {
 			$scope.vote.action = action;
+			$scope.vote.isChanged = false;
 			var Vote = Parse.Object.extend('Vote');
 			var vote = new Vote();
-			var relation = $scope.vote.track.relation('trackVotes');
-			var relation2 = user.get('connectedPlayer').relation('playerVotes');
-			vote.set('userId', user);
-			vote.set('playerId', user.get('connectedPlayer'));
-			vote.set('videoId', $scope.vote.track);
-			vote.set('image', $scope.vote.track.get('image'));
-			vote.set('artistName', $scope.vote.track.get('artistInfo'));
-			vote.set('trackTitle', $scope.vote.track.get('trackInfo'));
-			vote.set('trackId', $scope.vote.track.get('IMVDBtrackId'));
-			vote.set('artistSlug', $scope.vote.track.get('IMVDBartistId'));
-			vote.set('vote', action);
-			vote.save(null, {
-				success: function() {
-					relation.add(vote);
-					relation2.add(vote);
-					$scope.vote.track.save();
-					PubNub.ngPublish({
-						channel: user.get('connectedPlayer').id,
-						message: {'type': 'vote', 'id': vote.id, 'username': user.get('name'), 'image': user.get('image')._url, 'vote': action}
-					});
-					if (ionic.Platform.isWebView()) {
-						$cordovaVibration.vibrate(100);
-						$timeout(function() {
-							$cordovaToast.show('Vote successful', 'short', 'bottom');
-						}, 1000);
-					}else {
-						console.log('Vote: '  + String(action));
-					}
+			//var relation = $scope.vote.track.relation('trackVotes');
+			//var relation2 = user.get('connectedPlayer').relation('playerVotes');
+			function closeVote(voteFn) {
+				PubNub.ngPublish({
+					channel: user.get('connectedPlayer').id,
+					message: {'type': 'vote', 'id': voteFn.id, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'vote': action}
+				});
+				if (ionic.Platform.isWebView()) {
+					$cordovaVibration.vibrate(100);
+					$timeout(function() {
+						$cordovaToast.show('Vote successful', 'short', 'bottom');
+					}, 3000);
+				}else {
+					console.log('Vote: '  + String(action));
 				}
-			});
+			}
+			if (!$scope.vote.isSet) {
+				vote.set('userId', user);
+				vote.set('playerId', user.get('connectedPlayer'));
+				vote.set('videoId', $scope.vote.track);
+				vote.set('image', $scope.vote.track.get('image'));
+				vote.set('artistName', $scope.vote.track.get('artistInfo'));
+				vote.set('trackTitle', $scope.vote.track.get('trackInfo'));
+				vote.set('trackId', $scope.vote.track.get('IMVDBtrackId'));
+				vote.set('artistSlug', $scope.vote.track.get('IMVDBartistId'));
+				vote.set('vote', action);
+				vote.save(null, {
+					success: function() {
+						//relation.add(vote);
+						//relation2.add(vote);
+						var name = (action)?'upVotes':'downVotes';
+						$scope.vote.track.set(name, (parseInt($scope.vote.track.get(name)))?parseInt($scope.vote.track.get(name)) + 1:1);
+						$scope.vote.track.save();
+						closeVote(vote);
+					}
+				});
+			}else {
+				if (action !== $scope.queue[$scope.vote.index].vote) {
+					var query = new Parse.Query(Vote);
+					query.equalTo('userId', user);
+					query.equalTo('videoId', $scope.vote.track);
+					query.limit(1);
+					query.find({
+						success: function(vote) {
+							vote[0].set('vote', action);
+							vote[0].save(null, {
+								success: function() {
+									var name = (action)?'upVotes':'downVotes',
+										name2 = (action)?'downVotes':'upVotes';
+									$scope.vote.track.set(name, parseInt($scope.vote.track.get(name)) + 1);
+									$scope.vote.track.set(name2, parseInt($scope.vote.track.get(name2)) - 1);
+									$scope.vote.track.save();
+									closeVote(vote[0]);
+								}
+							});
+						}
+					});
+				}
+			}
+			$scope.queue[$scope.vote.index].vote = action;
 			$timeout(function() {
-				$scope.vote.panel = false;
 				$ionicSideMenuDelegate.canDragContent(true);
-			}, 2000);
+				$scope.vote = {
+					panel:false,
+					track: null
+				};
+			}, 3000);
 		};
 		$scope.canvas.init = function() {
 			canvas = document.getElementById('canvas');  

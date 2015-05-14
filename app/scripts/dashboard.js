@@ -89,7 +89,7 @@ angular.module('Alma.controllers')
 						MusicService.addChat(user.id, msg, user.get('name'), user.get('image'));
 						PubNub.ngPublish({
 							channel: user.get('connectedPlayer').id,
-							message: {'type': 'chat_msg', 'id': user.id, 'msg': msg, 'username': user.get('name'), 'image': user.get('image'), 'msg_image': image}
+							message: {'type': 'chat_msg', 'id': user.id, 'msg': msg, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'msg_image': image}
 						});
 					}else {
 						$cordovaDialogs.alert('You have not connected to an Alma yet.', 'Alma - Error').then(function() {

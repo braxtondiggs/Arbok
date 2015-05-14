@@ -38,6 +38,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	notify.config({duration: 8000, position: 'right'});
 	function pubNubFub() {
 		PubNub.ngSubscribe({channel: $scope.box.id});
+		PubNub.ngHereNow({channel : $scope.box.id});
 		$rootScope.$on(PubNub.ngMsgEv($scope.box.id), function(event, payload) {
 			if (payload.message.type === 'player_update') {
 				var Player = Parse.Object.extend('Player');
@@ -56,7 +57,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					submsg = (payload.message.username)?payload.message.artist + ' - ' + payload.message.track:'So we picked a song for you.';
 				notify({messageTemplate:'<img ng-src="'+payload.message.image+'"><span class="content"><h3 class="header">'+msg+'</h3><p>'+submsg+'</p></span>', classes: 'activity-modal' } );
 			}else if (payload.message.type === 'chat_msg') {
-				notify({messageTemplate:'<img ng-src="'+ payload.message.image._url+'"><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+payload.message.msg+'</p></span>', classes: 'activity-modal'} );
+				notify({messageTemplate:'<img ng-src="'+ payload.message.image+'"><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+payload.message.msg+'</p></span>', classes: 'activity-modal'} );
 			}else if (payload.message.type === 'vote') {
 				notify({messageTemplate:'<img ng-src="'+ payload.message.image +'""><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+ ((payload.message.vote)?'Liked':'Disliked') +' this song!</p></span>', classes: 'activity-modal' });
 				if (payload.message.vote){

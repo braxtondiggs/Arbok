@@ -104,7 +104,7 @@ angular.module('Alma.controllers')
 			$cordovaInAppBrowser.open(url, '_blank', {
 				location: 'yes',
 				clearcache: 'yes',
-				toolbar: 'no'
+				toolbar: 'yes'
 			});
 		};
 		$scope.doRefresh = function() {

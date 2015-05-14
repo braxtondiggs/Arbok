@@ -64,6 +64,8 @@
     "com.verso.cordova.clipboard",
     "org.apache.cordova.geolocation",
     "org.apache.cordova.statusbar",
-    "org.apache.cordova.statusbar"
+    "org.apache.cordova.device-motion",
+    "org.pushandplay.cordova.apprate",
+    "uk.co.whiteoctober.cordova.appversion"
   ]
 }

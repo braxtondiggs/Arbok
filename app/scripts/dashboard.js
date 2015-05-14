@@ -7,7 +7,6 @@ angular.module('Alma.controllers')
 		$scope.$storage = $localStorage.$default({
 			'hasSetupDashboard': false
 		});
-		var user = $rootScope.currentUser;
 		$scope.dashboard.skipTutorial = function() {
 			$scope.$storage.hasSetupDashboard = true;
 		};
@@ -43,6 +42,7 @@ angular.module('Alma.controllers')
 							duration: 2000
 						});
 					}
+					var user = Parse.User.current();
 					if (index === 0) {
 						$ionicLoading.show();
 						/* global Camera*/
@@ -83,7 +83,7 @@ angular.module('Alma.controllers')
 		};
 		$scope.dashboard.sendChat = function(msg, image) {
 			if (msg !== '') {
-				console.log(user);
+				var user = Parse.User.current();
 				if (!lodash.isEmpty(user)) {
 					if (user.get('connectedPlayer')) {
 						MusicService.addChat(user.id, msg, user.get('name'), user.get('image'));

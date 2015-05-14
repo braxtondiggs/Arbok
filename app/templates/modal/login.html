@@ -12,7 +12,7 @@
         <div class="box padding">
           <h1>Alma</h1>
           <p>Signup or use Facebook for a quicker access!</p>
-          <form id="signupForm" name="signupForm" ng-submit="doSignup(signupForm.$valid, signupForm.name.$viewValue, signupForm.email.$viewValue, null, signupForm.password.$viewValue, '/images/missingPerson.jpg', null)" novalidate>
+          <form id="signupForm" name="signupForm" ng-submit="doSignup(signupForm.$valid, signupForm.name.$viewValue, signupForm.email.$viewValue, null, signupForm.password.$viewValue, 'images/missingPerson.jpg', null)" novalidate>
             <div class="status_dropdown error animated" ng-class="signup.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="signup.hasErrors">
               <h2 class="center">Validation Error</h2>
               <p ng-show="signupForm.name.$invalid" class="help-block">- Enter a valid name.</p>

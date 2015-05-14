@@ -1,5 +1,5 @@
 <ion-view view-title="What's Playing" class="queue">
-    <ion-content><!--Need to hide footer and right menu -->
+    <ion-content ng-class="{'has-footer': $storage.connectedPlayer}"><!--Need to hide footer and right menu -->
         <ion-list class="list queue dark-list" ng-show="queue.length">
             <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{queue[0].get('IMVDBartistId')}}" on-hold="activateVote(0)">
                 <img ng-src="{{queue[0].get('image')}}">

@@ -61,7 +61,7 @@ angular.module('Alma.controllers')
 					};
 					if (obj === 'artist') {
 						$scope.search[obj].resultsTop = lodash.filter(data.results, function(item){
-							return $scope.search.convertSlug(item.name, item.slug).indexOf(term) > -1;
+							return $scope.search.convertSlug(item.name, item.slug).toLowerCase().indexOf(term.toLowerCase()) > -1;
 						});
 						if (lodash.isEmpty($scope.search[obj].resultsTop)) {
 							delete $scope.search[obj].resultsTop;

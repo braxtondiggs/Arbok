@@ -2,7 +2,7 @@
   <ion-nav-buttons side="right">
     <a class="button button-icon icon ion-plus-round" ng-click="addNewPlayer()"></a>
   </ion-nav-buttons>
-  <ion-content>
+  <ion-content ng-class="{'has-footer': $storage.connectedPlayer}">
   <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
     <div class="card animated" ng-class="!$storage.initConfig ? 'bounceInUp' : 'bounceOutDown'" ng-show="!$storage.initConfig" style="animation-duration: 1s">
       <div class="item item-text-wrap">
@@ -16,10 +16,10 @@
       <p style="margin:20px 50px;text-align:center;">To add a new Alma Player click the add button above.</p>
       <ion-list can-swipe="true" class="list" ng-if="players.length">
         <ion-item class="item item-avatar fadeInRight" ng-repeat="player in players" ng-click="editPlayer($index)">
-          <img ng-src="{{player.get('image')._url}}">
+          <img ng-src="{{(player.get('image'))?player.get('image')._url:'images/logo_missing.png'}}" err-src="images/logo_missing.png" />
           <h2>{{player.get('name')}}</h2>
           <p>{{player.get('address')}}</p>
-          <img class="BGImage" ng-src="{{player.get('image')._url}}" />
+          <img class="BGImage" ng-src="{{player.get('image')._url}}" ng-if="player.get('image')" />
           <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deletePlayer($index)"></ion-option-button>
         </ion-item>
       </ion-list>

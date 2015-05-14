@@ -1,6 +1,6 @@
 <ion-view class="artist">
     <ion-nav-title>{{artist.info.convertedSlug}}</ion-nav-title>
-    <ion-content class="animated fadeIn" ng-show="artist.loaded" ng-class="{'has-footer':  currentUser.get('connectedPlayer').id}">
+    <ion-content class="animated fadeIn" ng-show="artist.loaded" ng-class="{'has-footer': $storage.connectedPlayer}">
         <div class="profile_container">
             <div class="img-circle animated bounceIn">
                 <img alt="" ng-src="{{artist.info.checkedImage}}" ng-class="artist.info.artistStyles"/>

@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', 'MusicService', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', 'Echonest', 'lodash', function($scope, $stateParams, $http, UserService, MusicService, $ionicLoading, $cordovaDialogs, $ionicHistory, Echonest, lodash) {
+	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', 'MusicService', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', 'Echonest', 'lodash', 'LoadingService', function($scope, $stateParams, $http, UserService, MusicService, $ionicLoading, $cordovaDialogs, $ionicHistory, Echonest, lodash, LoadingService) {
 		/*jshint camelcase: false */
 		$scope.artist = {
 			info: {}
@@ -91,6 +91,7 @@ angular.module('Alma.controllers')
 		};
 		$scope.artist.getRelated = function() {
 			if ($scope.artist.info.related === null) {
+				LoadingService.showLoading();
 				Echonest.artists.get({
 					name: $scope.artist.info.convertedSlug
 				}).then(function(artist) {
@@ -98,6 +99,7 @@ angular.module('Alma.controllers')
 						$http.get(
 							'http://developer.echonest.com/api/v4/artist/similar?api_key=0NPSO7NBLICGX3CWQ&id='+artist.id+'&format=json&results=5&start=0'
 						).success(function(data) {
+							LoadingService.hideLoading();
 							$scope.artist.info.related = data.response.artists;
 							for (var i = 0; i < $scope.artist.info.related.length; i++) {
 								$scope.artist.info.related[i].slug = $scope.artist.toSlug($scope.artist.info.related[i].name);
@@ -105,6 +107,7 @@ angular.module('Alma.controllers')
 							$scope.artist.info.relatedLoaded = true;
 						});
 					}else {
+						LoadingService.hideLoading();
 						$scope.artist.info.relatedLoaded = true;
 					}
 				});

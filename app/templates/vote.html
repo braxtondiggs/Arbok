@@ -1,7 +1,7 @@
 <div class="votePanel animated" ng-show="vote.panel" ng-class="(vote.panel)?'fadeIn':'fadeOut'">
     <canvas id="canvas" ng-mousemove="canvas.mousemove($event)" ng-mouseup="canvas.gestureEnd(true)" ng-mousedown="canvas.mousedown($event)" on-touch="canvas.touchstart($event)" on-drag="canvas.touchmove($event)" on-release="canvas.gestureEnd(false)" ng-init="canvas.init()" on-swipe-up="voteAction(true)" on-swipe-down="voteAction(false)"></canvas>
     <div class="vote-msg" ng-if="vote.isChanged">
-        <img ng-src="/images/{{(vote.action)?'tick':'cross'}}.png" />
+        <img ng-src="images/{{(vote.action)?'tick':'cross'}}.png" />
         <p>You {{(vote.action)?'liked':'disliked'}} this song, you can still change your vote below.</p>
     </div>
     <div class="vote-action" ng-if="(!vote.isChanged && vote.action == false) || (!vote.isChanged && vote.action == true)">

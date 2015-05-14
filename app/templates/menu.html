@@ -18,10 +18,10 @@
             </a>
             <a class="profile_container" nav-clear menu-close ng-if="currentUser._serverData" href="#/app/profile">
                 <div class="img-circle" ng-class="{'animated bounceIn': ratio}" ng-show="ratio">
-                    <img alt="" ng-src="{{(currentUser.get('image'))?currentUser.get('image')._url:'/images/missingPerson.jpg'}}" err-src="/images/missingPerson.jpg" />
+                    <img alt="" ng-src="{{(currentUser.get('image'))?currentUser.get('image')._url:'images/missingPerson.jpg'}}" err-src="images/missingPerson.jpg" />
                 </div>
                 <h1 class="title" ng-class="{'animated fadeInLeft': ratio}" ng-show="currentUser._serverData && ratio">{{currentUser.get('name')}}</h1>
-                <div class="background" ng-style="{'background-image':'url({{(currentUser.get('image'))?currentUser.get('image')._url:'/images/missingPerson.jpg'}})'}"></div>
+                <div class="background" ng-style="{'background-image':'url({{(currentUser.get('image'))?currentUser.get('image')._url:'images/missingPerson.jpg'}})'}"></div>
             </a>
         </header>
         <ion-content class="has-header" scroll="false" ng-style="{'background-image':'url(images/BG.png)'}">

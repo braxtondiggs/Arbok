@@ -191,6 +191,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					video.set('trackInfo', imvdbTrack.song_title);
 					video.set('year', parseInt(imvdbTrack.year, 10));
 					video.set('youtubeId', youtubeKey);
+					video.set('upVotes', 0);
+					video.set('downVotes', 0);
 					video.save(null, {
 						success: function() {
 							relation.add(video);

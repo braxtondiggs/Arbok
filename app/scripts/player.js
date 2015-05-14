@@ -1,11 +1,9 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$state', '$ionicLoading', '$ionicScrollDelegate', '$ionicHistory', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'cfpLoadingBar', 'PubNub', 'lodash', function($scope, $rootScope, $localStorage, $state, $ionicLoading, $ionicScrollDelegate, $ionicHistory, $cordovaGeolocation, $cordovaDialogs, LoadingService, cfpLoadingBar, PubNub, lodash) {
+	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$state', '$ionicScrollDelegate', '$ionicHistory', '$ionicLoading', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'PubNub', 'lodash', '$timeout', function($scope, $rootScope, $localStorage, $state, $ionicScrollDelegate, $ionicHistory, $ionicLoading, $cordovaGeolocation, $cordovaDialogs, LoadingService, PubNub, lodash, $timeout) {
 		function init() {
 			/*global Parse*/
 			LoadingService.showLoading();
-			cfpLoadingBar.start();
-			cfpLoadingBar.inc();
 			$scope.players = {};
 			$scope.loaded = false;
 			$scope.lnglat = {
@@ -27,12 +25,14 @@ angular.module('Alma.controllers')
 					};
 				}, function() {
 					$scope.lnglat.err = true;
-					LoadingService.hideLoading();
-					cfpLoadingBar.complete();
 					$scope.loaded = true;
 					if ($scope.isRefresh) {
 						$scope.$broadcast('scroll.refreshComplete');
 					}
+					LoadingService.hideLoading();
+					$timeout(function() {
+						$ionicLoading.hide();
+					}, 1000);
 				});
 			$scope.$storage = $localStorage.$default({
 				'hasSetupPlayer': false
@@ -44,7 +44,7 @@ angular.module('Alma.controllers')
 		};
 		$scope.$watch('lnglat', function() {
 			if ($scope.lnglat.lat !== null && $scope.lnglat.err !== true) {
-				$ionicLoading.show();
+				LoadingService.showLoading();
 				var Player = Parse.Object.extend('Player');
 				var query = new Parse.Query(Player);
 				var point = new Parse.GeoPoint($scope.lnglat.lat, $scope.lnglat.lng);
@@ -54,8 +54,6 @@ angular.module('Alma.controllers')
 					success: function(playerObjects) {
 						$scope.players = playerObjects;
 						LoadingService.hideLoading();
-						$ionicLoading.hide();
-						cfpLoadingBar.complete();
 						$scope.loaded = true;
 						if ($scope.isRefresh) {
 							$scope.$broadcast('scroll.refreshComplete');
@@ -66,14 +64,15 @@ angular.module('Alma.controllers')
 							var enjoyhint = new EnjoyHint({});
 							var ehSteps= [
 								{
-				    				'click .demo-player' : 'Here is a list of all Alma Venues in your area, click one to get started.', onBeforeStart: function() {$scope.$storage.hasSetupPlayer = true;}
-				    			}
-				 			];
-				    		enjoyhint.set(ehSteps);
-				    		enjoyhint.run();
-				    	}
+									selector: '.demo-player',  description: 'Here is a list of all Alma Venues in your area, click one to get started.', onBeforeStart: function() {$scope.$storage.hasSetupPlayer = true;}, right: 40
+								}
+							];
+							enjoyhint.set(ehSteps);
+							enjoyhint.run();
+						}
 					},
 					error: function() {
+						$ionicLoading.hide();
 						$ionicLoading.show({
 							template: 'Error connecting to server...',
 							duration: 2000
@@ -92,6 +91,14 @@ angular.module('Alma.controllers')
 			});
 		};
 		$scope.joinServer = function(index) {
+			function getQueue(player) {
+				player.relation('playerVideo').query().find({
+					success: function(queue) {
+						$rootScope.queue = queue;
+						$scope.$apply();
+					}
+				});
+			}
 			$cordovaDialogs.confirm('Are you sure you want to connect to this player?', 'Alma', ['Connect', 'Cancel']).then(function(res) {
 				if (res ===1) {
 					var user = $scope.currentUser;
@@ -102,21 +109,17 @@ angular.module('Alma.controllers')
 					}
 					PubNub.ngSubscribe({channel: $scope.players[index].id});
 					if (!lodash.isEmpty(user)) {
+						$scope.$storage.connectedPlayer = $scope.players[index].id;
 						user.set('connectedPlayer', $scope.players[index]);
 						user.save(null, {
 							success: function() {
-								$scope.players[index].relation('playerVideo').query().find({
-									success: function(queue) {
-										$rootScope.queue = queue;
-										$scope.$apply();
-									}
-								});
+								getQueue($scope.players[index]);
+								$scope.$apply();
 							}
 						});
 					} else {
-						$scope.$storage = $localStorage.$default({
-							'connectedPlayer': $scope.players[index]
-						});
+						$scope.$storage.connectedPlayer = $scope.players[index].id;
+						getQueue($scope.players[index]);
 					}
 					/*Should unsubscribe from all*/
 					$cordovaDialogs.alert('You have succesfully connect to this player', 'Alma').then(function() {

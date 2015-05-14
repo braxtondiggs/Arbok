@@ -111,10 +111,10 @@
             position:relative;
         }
         #chat-input {
-            margin-top:-2px;
             font-size: 18px;
-            width:100%;
+            float:left;
             height:100%;
+            width: calc(100% - 70px);
             background: transparent;
             background-color: rgba(0,0,0,0.2);
             padding: 4px 15px 0;
@@ -125,8 +125,6 @@
             line-height: initial;
             &::-webkit-input-placeholder {
                 color: rgba(204, 96, 85, .2);
-                line-height: initial;
-                padding-top:4px;
             }
         }
         .chat-image {

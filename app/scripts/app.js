@@ -22,7 +22,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 	return {
 		checkImage: function(img) {
 			if (img) {
-				return (img.slice(-3) === 'jpg') ? ((img.indexOf('http://imvdb.com/') > -1)?img.substr(17):img): '/images/logo_missing.png';
+				return (img.slice(-3) === 'jpg') ? ((img.indexOf('http://imvdb.com/') > -1)?img.substr(17):img): 'images/logo_missing.png';
 			} else {
 				return;
 			}
@@ -51,6 +51,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			cfpLoadingBar.inc();
 			$ionicLoading.show({
 				animation: 'fade-in',
+				hideOnStateChange: true,
 				showBackdrop: false
 			});
 		},
@@ -137,6 +138,8 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 									$cordovaDialogs.alert('Looks like this song is already in the Queue.', 'Alma - Error');
 								}
 							});
+						}else {
+							$ionicLoading.hide();
 						}
 					});
 				}else{

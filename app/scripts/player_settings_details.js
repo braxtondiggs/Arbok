@@ -58,7 +58,7 @@ angular.module('Alma.controllers')
 				targetHeight: 150
 			};
 			$cordovaCamera.getPicture(pickerOptions).then(function(imageData) {
-				var file = new Parse.File($scope.playerSettings.new.objID + '.png', {
+				var file = new Parse.File((!lodash.isEmpty($scope.playerSettings.new))?$scope.playerSettings.new.objID:$scope.playerSettings.server.id + '.png', {
 					base64: imageData
 				});
 				$scope.playerSettings.server.set('image', file);

@@ -3,6 +3,7 @@ angular.module('Alma.controllers')
 	.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', '$cordovaEmailComposer', '$localStorage', function($scope, $rootScope, $state, $ionicLoading, $cordovaDialogs, $ionicHistory, $cordovaEmailComposer, $localStorage) {
 		/*global Parse*/
 		$scope.settingsForm = {};
+		$scope.devicePlatform = device.platform;
 		if (Parse.User.current()) {
 			var user = Parse.User.current();
 			$scope.name = user.get('name');

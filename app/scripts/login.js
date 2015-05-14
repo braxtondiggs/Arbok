@@ -134,6 +134,7 @@ angular.module('Alma.controllers')
 						query.find({
 							success: function(user) {
 								if (user.length) {
+									$scope.loginPage();
 									$scope.doLogin(true, result.data.email, result.data.id);
 								} else {
 									//result.data.picture.data.url;
@@ -142,6 +143,7 @@ angular.module('Alma.controllers')
 									var img = document.getElementById('preview');
 									ctx.drawImage(img, 10, 10);
 									var image = c.toDataURL();*/
+									$scope.signupPage();
 									$scope.doSignup(true, result.data.name, result.data.email, result.data.gender, result.data.id, null, result.data.id);
 								}
 							},

@@ -73,7 +73,7 @@ angular.module('Alma.controllers', [])
 					}
 				});
 			}else {
-				$cordovaDialogs.alert('You need to be logged inorder to vote for this song!', 'Alma - Error')
+				$cordovaDialogs.alert('You need to be logged inorder to vote for this song!', 'Alma - Error');
 			}
 		};
 		$scope.voteAction = function(action) {

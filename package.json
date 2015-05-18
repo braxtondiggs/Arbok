@@ -66,6 +66,7 @@
     "org.apache.cordova.statusbar",
     "org.apache.cordova.device-motion",
     "org.pushandplay.cordova.apprate",
-    "uk.co.whiteoctober.cordova.appversion"
+    "uk.co.whiteoctober.cordova.appversion",
+    "com.pylonproducts.wifiwizard"
   ]
 }

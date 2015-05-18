@@ -7,7 +7,7 @@
   </ion-header-bar>
   <ion-content>
     <div class="list">
-      <form name="playerForm" ng-submit="submitForm(playerForm.$valid, playerForm.name.$viewValue, playerForm.address.$viewValue)" novalidate>
+      <form name="playerForm" ng-submit="submitForm(playerForm.$valid, playerForm.name.$viewValue, playerForm.address.$viewValue, network.$viewValue, ssid.$viewValue, networkPassword.$viewValue)" novalidate>
         <div class="status_dropdown error animated" ng-class="psd.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="psd.hasErrors">
           <h2 class="center">Validation Error</h2>
           <p ng-show="playerForm.name.$invalid" class="help-block">- Enter a valid name.</p>
@@ -26,6 +26,31 @@
           <span class="input-label">Address</span>
           <input type="text" name="address" placeholder="Address" ng-model="address" ng-minlength="4" ng-required="true" ng-change="inputChange('address', address)">
           <i class="ion ion-close-round animated delay-4" ng-class="address.length ? 'fadeIn' : 'fadeOut'" ng-click="address = ''" ng-show="address.length">&nbsp;</i>
+        </div>
+        <ul class="list custom-checkbox network">
+          <li class="item item-checkbox label-checkbox">
+            Network
+          </li>
+          <li class="item item-checkbox">
+            <label class="checkbox">
+                <input type="radio" name="network" ng-model="network" ng-change="network = false" value="false">
+            </label>
+            Ethernet
+          </li>
+          <li class="item item-checkbox">
+            <label class="checkbox">
+                <input type="radio" name="network" ng-model="network" ng-chnage="wifiNotification()" value="true">
+            </label>
+            WiFi
+          </li>
+        </ul>
+        <div class="item item-input item-floating-label" ng-if="network">
+          <span class="input-label">Wifi Network</span>
+          <input type="text" name="ssid" placeholder="Wifi Network" ng-model="ssid" disabled="disabled">
+        </div>
+        <div class="item item-input item-floating-label" ng-if="network && ssid">
+          <span class="input-label">Wifi Password</span>
+          <input type="password" name="networkPassword" placeholder="Wifi Password" ng-model="networkPassword" >
         </div>
         <div class="upload_image animated bounceIn" ng-click="getImage()" ng-class="{ 'has-image': playerSettings.server.get('image')}">
           <img ng-src="{{playerSettings.server.get('image')._url}}">

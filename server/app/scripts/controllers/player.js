@@ -60,15 +60,18 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				notify({messageTemplate:'<img ng-src="'+ payload.message.image+'"><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+payload.message.msg+'</p></span>', classes: 'activity-modal'} );
 			}else if (payload.message.type === 'vote') {
 				notify({messageTemplate:'<img ng-src="'+ payload.message.image +'""><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+ ((payload.message.vote)?'Liked':'Disliked') +' this song!</p></span>', classes: 'activity-modal' });
-				if (payload.message.vote){
-					$scope.vote.upvote++;
-				}else {
-					$scope.vote.downvote++;
-				}
-				$scope.vote.total++;
-				if($scope.vote.downvote > 2) {
-					activateSongChange();
-				}
+				var Vote = Parse.Object.extend('Vote');
+				var query = new Parse.Query(Vote);
+				query.equalTo('videoId', {__type: 'Pointer', className: 'Videos', objectId: $scope.track.id});
+				query.equalTo('vote', false);
+				query.find({
+					success: function(vote) {
+						var activeUsers = parseInt(PubNub.ngListPresence($scope.box.id).length, 10) - 1;//Minus Player
+						if (vote.length / activeUsers > 0.5) {
+							activateSongChange();
+						}
+					}
+				});
 			}
 		});
 	}
@@ -143,7 +146,6 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	function initalizePlayer() {
 		getSong(function(track) {
 			$scope.track = track;
-			console.log($scope.track);
 			if ($scope.track) {
 				if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtubeId')) {
 					$scope.playerEvent.target.loadVideoById($scope.track.get('youtubeId'));
@@ -244,6 +246,36 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				}
 			});
 		}
+		function getAsFeatured(callback) {
+			$http.get(
+				'http://imvdb.com/api/v1/search/entities?q=' + $scope.last_track.get('IMVDBartistId')
+			).success(function(data) {
+				if (data.results.length) {
+					for (var i = 0; i < data.results.length; i++) {
+						if (data.results[i].slug === $scope.last_track.get('IMVDBartistId')) {
+							return $http.get(
+								'http://imvdb.com/api/v1/entity/' + data.results[i].id + '?include=featured_videos'
+							).success(function(data) {
+								if (data.featured_artist_videos) {
+									if (data.featured_artist_videos.videos) {
+										var ran = Math.floor(Math.random()*data.featured_artist_videos.videos.length);
+										saveTrack(data.featured_artist_videos.videos[ran], function(track) {
+											callback(track);
+										});
+									}else {
+										callback();
+									}
+								}else {
+									callback();
+								}
+							});
+						}
+					}
+				}else {
+					callback();
+				}
+			});
+		}
 		function getEchoNest(callback) {
 			var artist = ($scope.last_track)?$scope.last_track.get('artistInfo') : 'Drake',
 				promise = $q.all(null);
@@ -293,8 +325,14 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			if (track) {
 				emptycallback(track);
 			}else {
-				randomTopSong(function(track) {
-					emptycallback(track);
+				getAsFeatured(function(track) {
+					if (track) {
+						emptycallback(track);
+					}else {
+						randomTopSong(function(track) {
+							emptycallback(track);
+						});
+					}
 				});
 			}
 		});

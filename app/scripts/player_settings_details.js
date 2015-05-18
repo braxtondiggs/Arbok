@@ -1,17 +1,19 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('PlayerSettingsDetailCtrl', ['$scope', '$cordovaCamera', '$ionicLoading', 'PubNub', 'lodash', function($scope, $cordovaCamera, $ionicLoading, PubNub, lodash) {
+	.controller('PlayerSettingsDetailCtrl', ['$scope', '$cordovaCamera', '$cordovaDialogs', '$cordovaToast', '$ionicLoading', 'PubNub', 'lodash', function($scope, $cordovaCamera, $cordovaDialogs, $cordovaToast, $ionicLoading, PubNub, lodash) {
 		/*global Parse*/
 		$scope.psd = {
 			hasErrors: false
 		};
-		$scope.submitForm = function(isValid, name, address) {
+		$scope.submitForm = function(isValid, name, address, isWifi, SSID, password) {
 			if (isValid) {
 				$scope.psd.hasErrors = false;
 				$scope.psd.geoCode(address, function(geocode) {
 					$scope.playerSettings.server.set('isSetup', true);
 					$scope.playerSettings.server.set('userId', Parse.User.current());
 					$scope.playerSettings.server.set('latlng', new Parse.GeoPoint({latitude: geocode.latitude, longitude: geocode.longitude}));
+					$scope.playerSettings.server.set('isWifi', isWifi);
+					$scope.playerSettings.server.set('SSID', SSID);
 					$scope.playerSettings.server.save();
 					$scope.modal.hide();
 					$ionicLoading.show({
@@ -24,7 +26,7 @@ angular.module('Alma.controllers')
 					var id = (!lodash.isEmpty($scope.playerSettings.new))?$scope.playerSettings.new.objID:$scope.playerSettings.server.id;
 					PubNub.ngPublish({
 						channel: id,
-						message: {'type': 'player_update', 'id': id}
+						message: {'type': 'player_update', 'id': id, 'isWifi': isWifi, 'SSID': SSID, 'password': password}
 					});
 					$scope.playerSettings.server = null;
 				});
@@ -68,6 +70,40 @@ angular.module('Alma.controllers')
 					template: 'Error, could not load photo...',
 					duration: 2000
 				});
+			});
+		};
+		$scope.wifiNotification = function() {
+			$cordovaDialogs.alert('It is very important that you are on the same WiFi network that you want to setup your Alma player.', 'Alma').then(function() {
+				$scope.network = true;
+				if (WifiWizard) {
+					function WifiSetup() {
+						WifiWizard.isWifiEnabled(function(status) {
+							if (status) {
+								WifiWizard.getCurrentSSID(function(ssid) {
+									$scope.ssid = ssid;
+									$scope.$apply();
+								});
+							}else {
+								$cordovaDialogs.confirm('Your Wifi is not turned on, do want us to try and enable it for you?', 'Alma', ['Yes','Cancel']).then(function(res) {
+									if (res === 1) {
+										function enableSuccess() {
+											WifiSetup();
+											$cordovaToast.show('Wifi enabled successfully', 'short', 'bottom');
+										}
+										function enableFail() {
+											$scope.network = false;
+											$cordovaDialogs.alert('Could not enable WiFi, please enable your WiFi in your phone\'s system settings', 'Alma - Error');
+										} 
+										WifiWizard.setWifiEnabled(true, enableSuccess, enableFail);
+									}else {
+										$scope.network = false;
+										$cordovaDialogs.alert('Could not enable WiFi, please enable your WiFi in your phone\'s system settings', 'Alma - Error');
+									}
+								});
+							}
+						});
+					}
+				}
 			});
 		};
 	}]);

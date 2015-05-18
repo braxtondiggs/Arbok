@@ -33,24 +33,24 @@
           </li>
           <li class="item item-checkbox">
             <label class="checkbox">
-                <input type="radio" name="network" ng-model="network" ng-change="network = false" value="false">
+                <input type="radio" name="network" ng-model="network" ng-change="Ethernet()" value="false" ng-checked="network === false"/>
             </label>
             Ethernet
           </li>
           <li class="item item-checkbox">
             <label class="checkbox">
-                <input type="radio" name="network" ng-model="network" ng-chnage="wifiNotification()" value="true">
+                <input type="radio" name="network" ng-model="network" ng-change="wifiNotification()" value="true" ng-checked="network === true" />
             </label>
             WiFi
           </li>
         </ul>
-        <div class="item item-input item-floating-label" ng-if="network">
+        <div class="item item-input item-floating-label" ng-if="network == 'true'">
           <span class="input-label">Wifi Network</span>
           <input type="text" name="ssid" placeholder="Wifi Network" ng-model="ssid" disabled="disabled">
         </div>
-        <div class="item item-input item-floating-label" ng-if="network && ssid">
+        <div class="item item-input item-floating-label" ng-if="network == 'true' && ssid.length">
           <span class="input-label">Wifi Password</span>
-          <input type="password" name="networkPassword" placeholder="Wifi Password" ng-model="networkPassword" >
+          <input type="password" name="wifiPassword" placeholder="Wifi Password" ng-model="wifiPassword" >
         </div>
         <div class="upload_image animated bounceIn" ng-click="getImage()" ng-class="{ 'has-image': playerSettings.server.get('image')}">
           <img ng-src="{{playerSettings.server.get('image')._url}}">

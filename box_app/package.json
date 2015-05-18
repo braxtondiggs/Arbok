@@ -55,9 +55,11 @@
     "org.apache.cordova.network-information",
     "org.apache.cordova.statusbar",
     "com.tsubik.cordova.start_on_boot",
-    "com.tsubik.cordova.start_on_boot",
-    "org.apache.cordova.console",
-    "org.apache.cordova.network-information",
-    "org.apache.cordova.statusbar"
+    "org.apache.cordova.inappbrowser",
+    "com.mesmotronic.plugins.fullscreen",
+    "com.pylonproducts.wifiwizard",
+    "uk.co.whiteoctober.cordova.appversion",
+    "org.apache.cordova.filetransfer.FileTransfer",
+    "io.github.pwlin.cordova.plugins.fileopener2"
   ]
 }

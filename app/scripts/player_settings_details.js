@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('PlayerSettingsDetailCtrl', ['$scope', '$cordovaCamera', '$cordovaDialogs', '$cordovaToast', '$ionicLoading', 'PubNub', 'lodash', function($scope, $cordovaCamera, $cordovaDialogs, $cordovaToast, $ionicLoading, PubNub, lodash) {
+	.controller('PlayerSettingsDetailCtrl', ['$scope', '$cordovaCamera', '$cordovaDialogs', '$cordovaToast', '$ionicLoading', '$timeout', 'PubNub', 'lodash', function($scope, $cordovaCamera, $cordovaDialogs, $cordovaToast, $ionicLoading, $timeout, PubNub, lodash) {
 		/*global Parse*/
 		$scope.psd = {
 			hasErrors: false
@@ -24,16 +24,36 @@ angular.module('Alma.controllers')
 						$scope.players.push($scope.playerSettings.server);
 					}
 					var id = (!lodash.isEmpty($scope.playerSettings.new))?$scope.playerSettings.new.objID:$scope.playerSettings.server.id;
-					PubNub.ngPublish({
-						channel: id,
-						message: {'type': 'player_update', 'id': id, 'isWifi': isWifi, 'SSID': SSID, 'password': password}
-					});
+					if (isWifi) {
+						PubNub.ngPublish({
+							channel: id + 'WiFi',
+							message: {'type': 'setWifi', 'ssid': SSID, 'isWifi': isWifi, 'password': wifiPassword}
+						});
+					}else {
+						PubNub.ngPublish({
+							channel: id,
+							message: {'type': 'player_update', 'id': id, 'isWifi': isWifi}
+						});
+					}
 					$scope.playerSettings.server = null;
 				});
 			}else {
 				$scope.psd.hasErrors = true;
 			}
 		};
+		$rootScope.$on(PubNub.ngMsgEv($scope.$storage.connectedPlayer), function(event, payload) {
+			if (payload.message.type === 'setWifiConfirm') {
+				if (payload.message.status) {
+					PubNub.ngPublish({
+						channel: id,
+						message: {'type': 'player_update', 'id': id, 'isWifi': isWifi}
+					});
+				}else {
+					$cordovaDialogs.alert('Your WiFi password was incorrect', 'Alma - Error');
+				}
+			}
+		});
+
 		$scope.psd.geoCode = function(address, callback) {
 			/*global GeocoderJS*/
 			var googleGeocoder = new GeocoderJS.createGeocoder({'provider': 'google'});
@@ -72,22 +92,27 @@ angular.module('Alma.controllers')
 				});
 			});
 		};
+		$scope.Ethernet = function() {
+			$scope.network = false;
+		};
 		$scope.wifiNotification = function() {
 			$cordovaDialogs.alert('It is very important that you are on the same WiFi network that you want to setup your Alma player.', 'Alma').then(function() {
 				$scope.network = true;
-				if (WifiWizard) {
+				//if (WifiWizard) {
 					function WifiSetup() {
 						WifiWizard.isWifiEnabled(function(status) {
 							if (status) {
 								WifiWizard.getCurrentSSID(function(ssid) {
-									$scope.ssid = ssid;
+									$scope.ssid = ssid.replace(/['"]+/g, '');
 									$scope.$apply();
 								});
 							}else {
 								$cordovaDialogs.confirm('Your Wifi is not turned on, do want us to try and enable it for you?', 'Alma', ['Yes','Cancel']).then(function(res) {
 									if (res === 1) {
 										function enableSuccess() {
-											WifiSetup();
+											$timeout(function() {
+												WifiSetup();
+											}, 4000);
 											$cordovaToast.show('Wifi enabled successfully', 'short', 'bottom');
 										}
 										function enableFail() {
@@ -103,7 +128,8 @@ angular.module('Alma.controllers')
 							}
 						});
 					}
-				}
+					WifiSetup();
+				//}
 			});
 		};
 	}]);

@@ -60,6 +60,8 @@ angular.module('Alma.controllers')
 										$scope.name = $scope.playerSettings.server.get('name');
 										$scope.address = $scope.playerSettings.server.get('address');
 										$scope.image = ($scope.playerSettings.server.get('image'))?$scope.playerSettings.server.get('image')._url: null;
+										$scope.ssid = $scope.playerSettings.server.get('SSID');
+										$scope.network = $scope.playerSettings.server.get('isWifi')?$scope.playerSettings.server.get('isWifi'):false;
 										$scope.modal.show();
 									}else {
 										showPrompt();
@@ -77,6 +79,8 @@ angular.module('Alma.controllers')
 			$scope.name = $scope.playerSettings.server.get('name');
 			$scope.address = $scope.playerSettings.server.get('address');
 			$scope.image = ($scope.playerSettings.server.get('image'))?$scope.playerSettings.server.get('image')._url: null;
+			$scope.ssid = $scope.playerSettings.server.get('SSID');
+			$scope.network = $scope.playerSettings.server.get('isWifi')?$scope.playerSettings.server.get('isWifi'):false;
 			$scope.modal.show();
 		};
 		$scope.deletePlayer = function(index) {

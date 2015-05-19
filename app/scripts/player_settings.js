@@ -75,6 +75,7 @@ angular.module('Alma.controllers')
 			showPrompt();
 		};
 		$scope.editPlayer = function(index) {
+			delete $scope.network; //reset
 			$scope.playerSettings.server = $scope.players[index];
 			$scope.name = $scope.playerSettings.server.get('name');
 			$scope.address = $scope.playerSettings.server.get('address');

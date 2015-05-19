@@ -59,7 +59,8 @@
     "com.mesmotronic.plugins.fullscreen",
     "com.pylonproducts.wifiwizard",
     "uk.co.whiteoctober.cordova.appversion",
-    "org.apache.cordova.filetransfer.FileTransfer",
+    "org.apache.cordova.file",
+    "org.apache.cordova.file-transfer",
     "io.github.pwlin.cordova.plugins.fileopener2"
   ]
 }

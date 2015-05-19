@@ -1,13 +1,14 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('PlayerSettingsDetailCtrl', ['$scope', '$cordovaCamera', '$cordovaDialogs', '$cordovaToast', '$ionicLoading', '$timeout', 'PubNub', 'lodash', function($scope, $cordovaCamera, $cordovaDialogs, $cordovaToast, $ionicLoading, $timeout, PubNub, lodash) {
+	.controller('PlayerSettingsDetailCtrl', ['$scope', '$rootScope', '$cordovaCamera', '$cordovaDialogs', '$cordovaToast', '$ionicLoading', '$timeout', 'PubNub', 'lodash', function($scope, $rootScope, $cordovaCamera, $cordovaDialogs, $cordovaToast, $ionicLoading, $timeout, PubNub, lodash) {
 		/*global Parse*/
 		$scope.psd = {
 			hasErrors: false
 		};
-		$scope.submitForm = function(isValid, name, address, isWifi, SSID, password) {
+		$scope.submitForm = function(isValid, name, address, isWifi, SSID, wifiPassword) {
 			if (isValid) {
 				$scope.psd.hasErrors = false;
+				isWifi = (isWifi.toLowerCase() === 'true')?true:false
 				$scope.psd.geoCode(address, function(geocode) {
 					$scope.playerSettings.server.set('isSetup', true);
 					$scope.playerSettings.server.set('userId', Parse.User.current());

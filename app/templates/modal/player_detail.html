@@ -7,7 +7,7 @@
   </ion-header-bar>
   <ion-content>
     <div class="list">
-      <form name="playerForm" ng-submit="submitForm(playerForm.$valid, playerForm.name.$viewValue, playerForm.address.$viewValue, network.$viewValue, ssid.$viewValue, networkPassword.$viewValue)" novalidate>
+      <form name="playerForm" ng-submit="submitForm(playerForm.$valid, playerForm.name.$viewValue, playerForm.address.$viewValue, playerForm.network.$viewValue, playerForm.ssid.$viewValue, playerForm.wifiPassword.$viewValue)" novalidate>
         <div class="status_dropdown error animated" ng-class="psd.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="psd.hasErrors">
           <h2 class="center">Validation Error</h2>
           <p ng-show="playerForm.name.$invalid" class="help-block">- Enter a valid name.</p>

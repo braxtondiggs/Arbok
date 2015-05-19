@@ -1,0 +1,108 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "res/xml/config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"AndroidFullScreen\"><param name=\"android-package\" value=\"com.mesmotronic.plugins.FullScreenPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"WifiWizard\"><param name=\"android-package\" value=\"com.pylonproducts.wifiwizard.WifiWizard\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"FileOpener2\"><param name=\"android-package\" value=\"io.github.pwlin.cordova.plugins.fileopener2.FileOpener2\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"NetworkStatus\"><param name=\"android-package\" value=\"org.apache.cordova.networkinformation.NetworkManager\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"StatusBar\"><param name=\"android-package\" value=\"org.apache.cordova.statusbar.StatusBar\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"AppVersion\"><param name=\"android-package\" value=\"uk.co.whiteoctober.cordova.AppVersion\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/manifest": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\" />",
+                            "count": 1
+                        }
+                    ],
+                    "/manifest/application": [
+                        {
+                            "xml": "<receiver android:name=\"com.tsubik.cordova.start_on_boot.StartOnBootReceiver\"><intent-filter><action android:name=\"android.intent.action.BOOT_COMPLETED\" /></intent-filter></receiver>",
+                            "count": 1
+                        }
+                    ],
+                    "/*": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "com.mesmotronic.plugins.fullscreen": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        },
+        "com.pylonproducts.wifiwizard": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        },
+        "com.tsubik.cordova.start_on_boot": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        },
+        "io.github.pwlin.cordova.plugins.fileopener2": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        },
+        "org.apache.cordova.console": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        },
+        "org.apache.cordova.inappbrowser": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        },
+        "org.apache.cordova.network-information": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        },
+        "org.apache.cordova.statusbar": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        },
+        "uk.co.whiteoctober.cordova.appversion": {
+            "PACKAGE_NAME": "com.cymbit.AlmaBox"
+        }
+    },
+    "dependent_plugins": {}
+}

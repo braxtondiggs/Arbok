@@ -23,27 +23,30 @@ angular.module('Alma.controllers', [])
 		document.addEventListener('deviceready', function() {
 			$rootScope.$on('$cordovaNetwork:online', function(event, networkState){
 				var onlineState = networkState;
-			  	$cordovaInAppBrowser.open('http://quilava.herokuapp.com/#/player/box', '_self', options).then(function() {
-					// success
+				$cordovaInAppBrowser.open('http://quilava.herokuapp.com/#/player/box', '_blank', options).then(function() {
+
 				}).catch(function(event) {
 					window.alert('error', event);
 				});
-				$cordovaAppVersion.getAppVersion().then(function (version) {
-	        		var Server = Parse.Object.extend('Server');
+				/*$cordovaAppVersion.getAppVersion().then(function (version) {
+					var Server = Parse.Object.extend('Server');
 					var query = new Parse.Query(Server);
 					query.find({
 						success: function(serverInfo) {
+							console.log(serverInfo.get('version') +"!=="+ version);
 							if (serverInfo.get('version') !== version) {
-								$cordovaFileTransfer.download(serverInfo.get('file')._url, cordova.file.documentsDirectory + 'Alma.apk', {}, true).then(function(result) {
-									console.log(result);
-									$cordovaFileOpener2.open(cordova.file.documentsDirectory + 'Alma.apk', 'application/vnd.android.package-archive').then(function() {
-										window.location.reload();
+								if (serverInfo.get('url')) {
+									$cordovaFileTransfer.download(serverInfo.get('url'), cordova.file.documentsDirectory + 'Alma.apk', {}, true).then(function(result) {
+										console.log(result);
+										$cordovaFileOpener2.open(cordova.file.documentsDirectory + 'Alma.apk', 'application/vnd.android.package-archive').then(function() {
+											window.location.reload();
+										});
 									});
-								});
+								}
 							}
 						}
 					});
-	      		});
+				});*/
 
 			});
 			$rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
@@ -73,27 +76,29 @@ angular.module('Alma.controllers', [])
 				});
 			}
 			$cordovaInAppBrowser.executeScript({
-				code: 'localStorage.getItem(ngStorage-boxCode)'
-			}, function(value) {
-				$rootScope.boxCode = value;
-				window.alert(value);
-				if ($scope.$storage.connectedPlayer) {
-					PubNub.ngSubscribe({channel: $rootScope.boxCode+'WiFi'});
-					$rootScope.$on(PubNub.ngMsgEv($rootScope.boxCode+'WiFi'), function(event, payload) {
-						if (payload.message.type === 'setWifi') {
-							if (WifiWizard) {
-								WifiSetup(payload);
+				code: "localStorage.getItem('ngStorage-boxCode');"
+			}).then(function(value) {
+				if (value) {
+					$rootScope.boxCode = value[0].replace(/"/g, "");
+					console.log($rootScope.boxCode);
+					if ($rootScope.boxCode) {
+						PubNub.ngSubscribe({channel: $rootScope.boxCode+'WiFi'});
+						$rootScope.$on(PubNub.ngMsgEv($rootScope.boxCode+'WiFi'), function(event, payload) {
+							if (payload.message.type === 'setWifi') {
+								if (WifiWizard) {
+									WifiSetup(payload);
+								}
+							}else if (payload.message.type === 'setEthernet') {
+								if (WifiWizard) {
+									WifiWizard.isWifiEnabled(function(status) {
+										if (status) {
+											WifiWizard.setWifiEnabled(false);
+										}
+									});
+								}
 							}
-						}else if (payload.message.type === 'setEthernet') {
-							if (WifiWizard) {
-								WifiWizard.isWifiEnabled(function(status) {
-									if (status) {
-										WifiWizard.setWifiEnabled(false);
-									}
-								});
-							}
-						}
-					});
+						});
+					}
 				}
 			});
 		});

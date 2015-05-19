@@ -1,0 +1,22 @@
+{
+    "version": "1.0.2",
+    "name": "com.tsubik.cordova.start_on_boot",
+    "cordova_name": "Start App on Boot",
+    "description": "Start App on Boot plugin",
+    "license": "MIT",
+    "repo": "https://github.com/tsubik/cordova-plugin-start-on-boot.git",
+    "issue": "https://github.com/tsubik/cordova-plugin-start-on-boot/issues",
+    "keywords": [
+        "phonegap",
+        "startup"
+    ],
+    "platforms": [
+        "android"
+    ],
+    "engines": [
+        {
+            "name": "cordova",
+            "version": ">=2.7.0"
+        }
+    ]
+}

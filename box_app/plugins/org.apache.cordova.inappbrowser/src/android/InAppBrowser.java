@@ -618,6 +618,10 @@ public class InAppBrowser extends CordovaPlugin {
                 settings.setJavaScriptCanOpenWindowsAutomatically(true);
                 settings.setBuiltInZoomControls(true);
                 settings.setPluginState(android.webkit.WebSettings.PluginState.ON);
+                thatWebView.getSettings().setUserAgentString("Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0");
+                inAppWebView.getSettings().setUserAgentString(thatWebView.getSettings().getUserAgentString());
+                thatWebView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+                inAppWebView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 
                 //Toggle whether this is enabled or not!
                 Bundle appSettings = cordova.getActivity().getIntent().getExtras();

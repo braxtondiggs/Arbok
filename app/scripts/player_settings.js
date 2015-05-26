@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('PlayerSettingsCtrl', ['$scope', '$ionicLoading', '$cordovaDialogs', '$ionicModal', '$localStorage', '$ionicListDelegate', '$cordovaInAppBrowser', 'PubNub', function($scope, $ionicLoading, $cordovaDialogs, $ionicModal, $localStorage, $ionicListDelegate, $cordovaInAppBrowser, PubNub) {
+	.controller('PlayerSettingsCtrl', ['$scope', '$rootScope', '$ionicLoading', '$cordovaDialogs', '$ionicModal', '$localStorage', '$ionicListDelegate', '$cordovaInAppBrowser', 'PubNub', function($scope, $rootScope, $ionicLoading, $cordovaDialogs, $ionicModal, $localStorage, $ionicListDelegate, $cordovaInAppBrowser, PubNub) {
 		$scope.$storage = $localStorage.$default({
 			initConfig: false
 		});
@@ -18,20 +18,22 @@ angular.module('Alma.controllers')
 		}).then(function(modal) {
 			$scope.modal = modal;
 		});
-		var user = Parse.User.current();
+		var user = $rootScope.currentUser;
 		function refreshList() {
-			$scope.players = null;
-			var relation = user.relation('userPlayer');
-			var query = relation.query();
-			query.equalTo('isSetup', true);
-			query.equalTo('isBox', true);
-			query.find({
-				success:function(list) {
-					$scope.players = list;
-					$scope.$broadcast('scroll.refreshComplete');
-					$scope.$apply();
-				}
-			});
+			if (user) {
+				$scope.players = null;
+				var relation = user.relation('userPlayer');
+				var query = relation.query();
+				query.equalTo('isSetup', true);
+				query.equalTo('isBox', true);
+				query.find({
+					success:function(list) {
+						$scope.players = list;
+						$scope.$broadcast('scroll.refreshComplete');
+						$scope.$apply();
+					}
+				});
+			}
 		}
 		refreshList();
 		$scope.addNewPlayer = function() {

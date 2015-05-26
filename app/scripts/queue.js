@@ -4,17 +4,16 @@ angular.module('Alma.controllers')
 		/*global Parse*/
 		$rootScope.queue = [];
 		function getVideos(player) {
-			player.relation('playerVideo').query().find({
+			player.relation('playerVideo').query().ascending('createdAt').find({
 				success: function(queue) {
-					//console.log(queue);
-					//$rootScope.queue = $filter('orderBy')(queue, value);
 					$rootScope.queue = queue;
-					$scope.$broadcast('sorted');
+					if (queue.length) {
+						for (var i = 0;i < queue.length;i++) {
+							$rootScope.queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
+						}
+					}
 					$scope.$apply();
 				}
-			});
-			$scope.$on('sorted', function() {
-				//$rootScope.queue
 			});
 		}
 		if ($scope.$storage.connectedPlayer) {
@@ -46,8 +45,5 @@ angular.module('Alma.controllers')
 					});
 				}
 			});
-		};
-		$scope.queuePage = function() {
-			console.log('hi');
 		};
 	}]);

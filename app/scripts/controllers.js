@@ -38,7 +38,14 @@ angular.module('Alma.controllers', [])
 				PubNub.ngUnsubscribe({channel: $scope.$storage.connectedPlayer});
 			}
 		}
-		$scope.activateVote = function(index) {
+		$scope.activateVote = function(videoObj) {
+			var index = 0;
+			for (var i = 0; i < $scope.queue.length; i++) {
+				if ($scope.queue[i].id === videoObj.id) {
+					index = i;
+					break;
+				}
+			}
 			if (!lodash.isEmpty(user)) {
 				if (ionic.Platform.isWebView()) {
 					$cordovaVibration.vibrate(100);
@@ -309,6 +316,19 @@ angular.module('Alma.controllers', [])
 		}).then(function(modal) {
 			$scope.modal = modal;
 		});
+		function getVideos(player) {
+			player.relation('playerVideo').query().ascending('createdAt').find({
+				success: function(queue) {
+					$rootScope.queue = queue;
+					if (queue.length) {
+						for (var i = 0;i < queue.length;i++) {
+							$rootScope.queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
+						}
+					}
+					$scope.$apply();
+				}
+			});
+		}
 		if ($scope.$storage.connectedPlayer) {
 			PubNub.ngSubscribe({channel: $scope.$storage.connectedPlayer});
 			$rootScope.$on(PubNub.ngMsgEv($scope.$storage.connectedPlayer), function(event, payload) {
@@ -332,7 +352,24 @@ angular.module('Alma.controllers', [])
 					for (var i = 0; i < $rootScope.queue.length; i++) {
 						if ($rootScope.queue[i].id === payload.message.id) {
 							$rootScope.queue.splice(i, 1);
+							$rootScope.queue[i].set('isActive', true);
 							$scope.$apply();
+						}
+					}
+				}
+				if (payload.message.type === 'vote') {
+					if ($scope.$storage.connectedPlayer) {
+						if (!$scope.queue.length) {
+							var Player = Parse.Object.extend('Player'),
+								query = new Parse.Query(Player),
+								myPlayer;
+							query.get($scope.$storage.connectedPlayer, {
+								success: function(player) {
+									myPlayer = player;
+								}
+							}).then(function(player) {
+								getVideos(player);
+							});
 						}
 					}
 				}
@@ -348,6 +385,6 @@ angular.module('Alma.controllers', [])
 				}
 			});
 		}
-		//document.addEventListener('resume', onResume, false);
+		document.addEventListener('resume', onResume, false);
 		//document.addEventListener('pause', onPause, false);
 	}]);

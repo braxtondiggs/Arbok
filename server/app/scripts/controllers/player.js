@@ -58,7 +58,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				notify({messageTemplate:'<img ng-src="'+payload.message.image+'"><span class="content"><h3 class="header">'+msg+'</h3><p>'+submsg+'</p></span>', classes: 'activity-modal' } );
 			}else if (payload.message.type === 'chat_msg') {
 				notify({messageTemplate:'<img ng-src="'+ payload.message.image+'"><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+payload.message.msg+'</p></span>', classes: 'activity-modal'} );
-			}else if (payload.message.type === 'vote') {
+			}else if (payload.message.type === 'vote' && payload.message.id === $scope.track.id) {
 				notify({messageTemplate:'<img ng-src="'+ payload.message.image +'""><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+ ((payload.message.vote)?'Liked':'Disliked') +' this song!</p></span>', classes: 'activity-modal' });
 				var Vote = Parse.Object.extend('Vote');
 				var query = new Parse.Query(Vote);
@@ -72,6 +72,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 						}
 					}
 				});
+			}else if (payload.message.type === 'vote' && payload.message.id !== $scope.track.id) {
+				//Vote off in Queue
 			}
 		});
 	}
@@ -127,10 +129,13 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		}
 	}
 	function getSong(callback) {
-		$scope.box.relation('playerVideo').query().limit(1).ascending('createdAt').find({
+		$scope.box.relation('playerVideo').query().ascending('createdAt').find({
 			success: function(queue) {
 				if (!lodash.isEmpty(queue)) {
-					callback(queue[0]);
+					for (var i = 0;i < queue.length;i++) {
+						queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
+					}
+					callback(lodash.sortByOrder(queue, ['counter'], false)[0]);
 				} else {
 					emptyQueue(function(randomTrack) {
 						PubNub.ngPublish({
@@ -153,6 +158,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					activateBar();
 					$scope.box.set('playingImg', $scope.track.get('image'));
 					$scope.box.save();
+					$scope.track.set('isActive', true);
+					$scope.track.save();
 					$scope.$apply();
 				}
 			}
@@ -175,10 +182,14 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				'http://imvdb.com/api/v1/video/' + String(imvdbTrack.id) + '?include=sources'
 			).success(function(data) {
 				var sources = data.sources,
-					youtubeKey = null;
+					youtubeKey = null,
+					youtubeKey2 = null;
 				for (var key in sources) {
 					if (sources[key].source === 'youtube') {
 						youtubeKey = sources[key].source_data;
+					}
+					if (sources[key].source === 'youtube' && youtubeKey !== null && youtubeKey !== sources[key].source_data) {
+						youtubeKey2 = sources[key].source_data;
 						break;
 					}
 				}
@@ -194,6 +205,9 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					video.set('trackInfo', imvdbTrack.song_title);
 					video.set('year', parseInt(imvdbTrack.year, 10));
 					video.set('youtubeId', youtubeKey);
+					if (youtubeKey2 !== null) {
+						video.set('youtubeBackupId', youtubeKey2);
+					}
 					video.set('upVotes', 0);
 					video.set('downVotes', 0);
 					video.save(null, {
@@ -370,9 +384,15 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		}, 10000);
 	}
 	$scope.onError = function() {
-		//Find Another Song
-		songEnded();
-		notify({messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>', classes: 'activity-modal'});
+		$scope.track = track;
+		if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtubeBackupId')) {
+			$scope.playerEvent.target.loadVideoById($scope.track.get('youtubeBackupId'));
+			$scope.playerEvent.target.setPlaybackQuality('small');
+		}else {
+			//Find Another Song
+			songEnded();
+			notify({messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>', classes: 'activity-modal'});
+		}
 	};
 	$scope.onStateChange = function(event) {
 		if (event.data === YT.PlayerState.ENDED) {

@@ -1,18 +1,18 @@
 <ion-view view-title="What's Playing" class="queue">
     <ion-content ng-class="{'has-footer': $storage.connectedPlayer}"><!--Need to hide footer and right menu -->
         <ion-list class="list queue dark-list" ng-show="queue.length">
-            <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{queue[0].get('IMVDBartistId')}}" on-hold="activateVote(0)">
-                <img ng-src="{{queue[0].get('image')}}">
-                <i class="icon ion-chevron-right icon-accessory"></i>
-                <h2>{{queue[0].get('artistInfo')}}</h2>
-                <p>{{queue[0].get('trackInfo')}}</p>
-            </ion-item>
-            <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" ng-repeat="video in queue" on-hold="activateVote($index)" ng-if="!$first">
+            <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" on-hold="activateVote(video)" ng-repeat="video in queue" ng-if="video.get('isActive')">
                 <img ng-src="{{video.get('image')}}">
                 <i class="icon ion-chevron-right icon-accessory"></i>
                 <h2>{{video.get('artistInfo')}}</h2>
                 <p>{{video.get('trackInfo')}}</p>
-                <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong($index)" ng-if="video.get('userId').id === currentUser.id && $index !== 0"></ion-option-button>
+            </ion-item>
+            <ion-item class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" ng-repeat="video in queue | orderBy: '-counter'" on-hold="activateVote(video)" ng-if="!video.get('isActive')">
+                <img ng-src="{{video.get('image')}}">
+                <i class="icon ion-chevron-right icon-accessory"></i>
+                <h2>{{video.get('artistInfo')}}</h2>
+                <p>{{video.get('trackInfo')}}</p>
+                <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong($index)" ng-if="video.get('userId').id === currentUser.id"></ion-option-button>
             </ion-item>
         </ion-list>
         <p ng-show="!queue.length" class="empty-list">Is it quiet in here? No music is playing. Be the first!</p>

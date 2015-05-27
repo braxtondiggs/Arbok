@@ -39,6 +39,7 @@ angular.module('Alma.controllers', [])
 			}
 		}
 		$scope.activateVote = function(videoObj) {
+			var user = $rootScope.currentUser;
 			var index = 0;
 			for (var i = 0; i < $scope.queue.length; i++) {
 				if ($scope.queue[i].id === videoObj.id) {
@@ -93,7 +94,7 @@ angular.module('Alma.controllers', [])
 			function closeVote(voteFn) {
 				PubNub.ngPublish({
 					channel: $scope.$storage.connectedPlayer,
-					message: {'type': 'vote', 'id': voteFn.id, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'vote': action}
+					message: {'type': 'vote', 'id': voteFn.id, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'vote': action, 'selectedTrack': vote.get('artistName') + ' - ' + vote.get('trackTitle')}
 				});
 				if (ionic.Platform.isWebView()) {
 					$cordovaVibration.vibrate(100);
@@ -316,10 +317,26 @@ angular.module('Alma.controllers', [])
 		}).then(function(modal) {
 			$scope.modal = modal;
 		});
-		function getVideos(player) {
+		function getVideos(player, payload) {
 			player.relation('playerVideo').query().ascending('createdAt').find({
 				success: function(queue) {
 					$rootScope.queue = queue;
+					var obj = {
+						self: (payload.message.id === user.id) ? true : false,
+						type: 'vote',
+						image: payload.message.image,
+						username: payload.message.username + ' ' + ((payload.message.vote)?'Liked':'Disliked'),
+						msg: payload.message.selectedTrack,
+						createdAt: moment().format('dddd, MMMM Do YYYY, h:mma')
+					};
+					if (!$rootScope.chats) {
+						$rootScope.chats = [];
+						$rootScope.dashboard = {
+							count: 0
+						};
+					}
+					$rootScope.chats.push(obj);
+					$ionicScrollDelegate.scrollBottom(true);
 					if (queue.length) {
 						for (var i = 0;i < queue.length;i++) {
 							$rootScope.queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
@@ -342,6 +359,7 @@ angular.module('Alma.controllers', [])
 							query.find({
 								success: function(video) {
 									$rootScope.queue.push(video[0]);
+									MusicService.videoDashboard(payload.message.id, (payload.message.username)?payload.message.username:'Alma Player', (payload.message.image)?payload.message.image:null, video[0]);
 									$scope.$apply();
 								}
 							});
@@ -352,7 +370,15 @@ angular.module('Alma.controllers', [])
 					for (var i = 0; i < $rootScope.queue.length; i++) {
 						if ($rootScope.queue[i].id === payload.message.id) {
 							$rootScope.queue.splice(i, 1);
-							$rootScope.queue[i].set('isActive', true);
+							for(var ii = 0; ii < $rootScope.chats; ii++) {
+								if ($rootScope.chats[ii].type === 'video') {
+									if ($rootScope.chats[ii].videoId) {
+										if ($rootScope.chats[ii].videoId === payload.message.id) {
+											$rootScope.chats.splice(ii, 1);
+										}
+									}
+								}
+							}
 							$scope.$apply();
 						}
 					}
@@ -368,7 +394,7 @@ angular.module('Alma.controllers', [])
 									myPlayer = player;
 								}
 							}).then(function(player) {
-								getVideos(player);
+								getVideos(player, payload);
 							});
 						}
 					}

@@ -120,6 +120,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 													that.inQueue(video.id, function(found) {
 														if (!found) {
 															$rootScope.queue.push(video);
+															that.videoDashboard(user.id, user.get('username'), user.get('image'), video);
 														}
 													});
 												},
@@ -173,6 +174,27 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			}
 			callback(found);
 		},
+		videoDashboard: function(id, name, image, video) {
+			var user = Parse.User.current();
+			var obj = {
+				self: (id === user.id) ? true : false,
+				type: 'video',
+				videoId: video.id,
+				image: image,
+				videoImage: video.get('image'),
+				username: name + ' added:',
+				msg: video.get('artistInfo') + ' - ' + video.get('trackInfo'),
+				createdAt: moment().format('dddd, MMMM Do YYYY, h:mma')
+			};
+			if (!$rootScope.chats) {
+				$rootScope.chats = [];
+				$rootScope.dashboard = {
+					count: 0
+				};
+			}
+			$rootScope.chats.push(obj);
+			$ionicScrollDelegate.scrollBottom(true);
+		},
 		inTrackQueue: function(id, callback) {
 			var queue = $rootScope.queue,
 				found = false;
@@ -195,6 +217,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			/*global moment*/
 			var obj = {
 				self: (id === user.id) ? true : false,
+				type: 'chat',
 				createdAt: moment().format('dddd, MMMM Do YYYY, h:mma'),
 				msg: msg,
 				username: name,

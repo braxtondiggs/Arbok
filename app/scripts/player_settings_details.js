@@ -2,13 +2,14 @@
 angular.module('Alma.controllers')
 	.controller('PlayerSettingsDetailCtrl', ['$scope', '$rootScope', '$cordovaCamera', '$cordovaDialogs', '$cordovaToast', '$ionicLoading', '$timeout', 'PubNub', 'lodash', function($scope, $rootScope, $cordovaCamera, $cordovaDialogs, $cordovaToast, $ionicLoading, $timeout, PubNub, lodash) {
 		/*global Parse*/
+		/*global WifiWizard*/
 		$scope.psd = {
 			hasErrors: false
 		};
 		$scope.submitForm = function(isValid, name, address, isWifi, SSID, wifiPassword) {
 			if (isValid) {
 				$scope.psd.hasErrors = false;
-				isWifi = (isWifi.toLowerCase() === 'true')?true:false
+				isWifi = (isWifi.toLowerCase() === 'true')?true:false;
 				$scope.psd.geoCode(address, function(geocode) {
 					$scope.playerSettings.server.set('isSetup', true);
 					$scope.playerSettings.server.set('userId', Parse.User.current());
@@ -45,10 +46,10 @@ angular.module('Alma.controllers')
 		$rootScope.$on(PubNub.ngMsgEv($scope.$storage.connectedPlayer), function(event, payload) {
 			if (payload.message.type === 'setWifiConfirm') {
 				if (payload.message.status) {
-					PubNub.ngPublish({
+					/*PubNub.ngPublish({
 						channel: id,
 						message: {'type': 'player_update', 'id': id, 'isWifi': isWifi}
-					});
+					});*/
 				}else {
 					$cordovaDialogs.alert('Your WiFi password was incorrect', 'Alma - Error');
 				}
@@ -101,6 +102,16 @@ angular.module('Alma.controllers')
 				$scope.network = true;
 				//if (WifiWizard) {
 					function WifiSetup() {
+						function enableSuccess() {
+							$timeout(function() {
+								WifiSetup();
+							}, 4000);
+							$cordovaToast.show('Wifi enabled successfully', 'short', 'bottom');
+						}
+						function enableFail() {
+							$scope.network = false;
+							$cordovaDialogs.alert('Could not enable WiFi, please enable your WiFi in your phone\'s system settings', 'Alma - Error');
+						} 
 						WifiWizard.isWifiEnabled(function(status) {
 							if (status) {
 								WifiWizard.getCurrentSSID(function(ssid) {
@@ -110,16 +121,6 @@ angular.module('Alma.controllers')
 							}else {
 								$cordovaDialogs.confirm('Your Wifi is not turned on, do want us to try and enable it for you?', 'Alma', ['Yes','Cancel']).then(function(res) {
 									if (res === 1) {
-										function enableSuccess() {
-											$timeout(function() {
-												WifiSetup();
-											}, 4000);
-											$cordovaToast.show('Wifi enabled successfully', 'short', 'bottom');
-										}
-										function enableFail() {
-											$scope.network = false;
-											$cordovaDialogs.alert('Could not enable WiFi, please enable your WiFi in your phone\'s system settings', 'Alma - Error');
-										} 
 										WifiWizard.setWifiEnabled(true, enableSuccess, enableFail);
 									}else {
 										$scope.network = false;

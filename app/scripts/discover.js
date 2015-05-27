@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('DiscoverCtrl', ['$scope', '$ionicLoading', '$cordovaDialogs', '$http', 'LoadingService', 'MusicService', 'cfpLoadingBar', function($scope, $ionicLoading, $cordovaDialogs, $http, LoadingService, MusicService, cfpLoadingBar) {
+	.controller('DiscoverCtrl', ['$scope', '$ionicLoading', '$cordovaDialogs', '$http', '$timeout', 'LoadingService', 'MusicService', 'cfpLoadingBar', function($scope, $ionicLoading, $cordovaDialogs, $http, $timeout, LoadingService, MusicService, cfpLoadingBar) {
 		/*global Parse*/
 		$scope.discover = {
 			top:{
@@ -91,6 +91,8 @@ angular.module('Alma.controllers')
 			}else {
 				discoverObj.limitMax = true;
 			}
-			$scope.$broadcast('scroll.infiniteScrollComplete');
+			$timeout(function() {
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			}, 500);
 		};
 	}]);

@@ -24,7 +24,7 @@ angular.module('Alma.controllers')
 			enjoyhint.run();
 		};
 		$scope.$on('$ionicView.enter', function() {
-			//getMessages
+			$ionicScrollDelegate.scrollBottom(true);
 		});
 		$scope.dashboard.uploadImage = function(msg) {
 			var hideSheet = $ionicActionSheet.show({
@@ -42,11 +42,11 @@ angular.module('Alma.controllers')
 							duration: 2000
 						});
 					}
+					/*global Parse*/
 					var user = Parse.User.current();
 					if (index === 0) {
 						$ionicLoading.show();
 						/* global Camera*/
-						/*global Parse*/
 						var cameraOptions = {
 							quality: 50,
 							destinationType: Camera.DestinationType.DATA_URL,
@@ -86,7 +86,7 @@ angular.module('Alma.controllers')
 				var user = Parse.User.current();
 				if (!lodash.isEmpty(user)) {
 					if (user.get('connectedPlayer')) {
-						MusicService.addChat(user.id, msg, user.get('name'), user.get('image'));
+						MusicService.addChat(user.id, msg, user.get('name'), (user.get('image'))?user.get('image')._url:undefined);
 						PubNub.ngPublish({
 							channel: user.get('connectedPlayer').id,
 							message: {'type': 'chat_msg', 'id': user.id, 'msg': msg, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'msg_image': image}

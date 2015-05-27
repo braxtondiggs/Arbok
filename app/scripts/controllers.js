@@ -20,6 +20,9 @@ angular.module('Alma.controllers', [])
 			'connectedPlayer': null
 		});
 		var user = $rootScope.currentUser;
+		if (user.get('connectedPlayer')) {
+			$scope.$storage.connectedPlayer = user.get('connectedPlayer').id;
+		}
 		var _r = new DollarRecognizer();
 		var _points = [];
 		var canvas;
@@ -33,11 +36,11 @@ angular.module('Alma.controllers', [])
 				PubNub.ngSubscribe({channel: $scope.$storage.connectedPlayer});
 			}
 		}
-		function onPause() {
+		/*function onPause() {
 			if ($scope.$storage.connectedPlayer) {
 				PubNub.ngUnsubscribe({channel: $scope.$storage.connectedPlayer});
 			}
-		}
+		}*/
 		$scope.activateVote = function(videoObj) {
 			var user = $rootScope.currentUser;
 			var index = 0;
@@ -91,10 +94,10 @@ angular.module('Alma.controllers', [])
 			var vote = new Vote();
 			//var relation = $scope.vote.track.relation('trackVotes');
 			//var relation2 = user.get('connectedPlayer').relation('playerVotes');
-			function closeVote(voteFn) {
+			function closeVote(voteFn, trackId) {
 				PubNub.ngPublish({
 					channel: $scope.$storage.connectedPlayer,
-					message: {'type': 'vote', 'id': voteFn.id, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'vote': action, 'selectedTrack': vote.get('artistName') + ' - ' + vote.get('trackTitle')}
+					message: {'type': 'vote', 'id': trackId, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'vote': action, 'selectedTrack': vote.get('artistName') + ' - ' + vote.get('trackTitle')}
 				});
 				if (ionic.Platform.isWebView()) {
 					$cordovaVibration.vibrate(100);
@@ -122,7 +125,7 @@ angular.module('Alma.controllers', [])
 						var name = (action)?'upVotes':'downVotes';
 						$scope.vote.track.set(name, (parseInt($scope.vote.track.get(name), 10))?parseInt($scope.vote.track.get(name), 10) + 1:1);
 						$scope.vote.track.save();
-						closeVote(vote);
+						closeVote(vote, $scope.vote.track.id);
 					}
 				});
 			}else {
@@ -317,100 +320,18 @@ angular.module('Alma.controllers', [])
 		}).then(function(modal) {
 			$scope.modal = modal;
 		});
-		function getVideos(player, payload) {
-			player.relation('playerVideo').query().ascending('createdAt').find({
-				success: function(queue) {
-					$rootScope.queue = queue;
-					var obj = {
-						self: (payload.message.id === user.id) ? true : false,
-						type: 'vote',
-						image: payload.message.image,
-						username: payload.message.username + ' ' + ((payload.message.vote)?'Liked':'Disliked'),
-						msg: payload.message.selectedTrack,
-						createdAt: moment().format('dddd, MMMM Do YYYY, h:mma')
-					};
-					if (!$rootScope.chats) {
-						$rootScope.chats = [];
-						$rootScope.dashboard = {
-							count: 0
-						};
-					}
-					$rootScope.chats.push(obj);
-					$ionicScrollDelegate.scrollBottom(true);
-					if (queue.length) {
-						for (var i = 0;i < queue.length;i++) {
-							$rootScope.queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
-						}
-					}
-					$scope.$apply();
-				}
-			});
-		}
 		if ($scope.$storage.connectedPlayer) {
-			PubNub.ngSubscribe({channel: $scope.$storage.connectedPlayer});
-			$rootScope.$on(PubNub.ngMsgEv($scope.$storage.connectedPlayer), function(event, payload) {
-				if (payload.message.type === 'song_added') {
-					MusicService.inQueue(payload.message.id, function(found) {
-						if (!found) {
-							var Videos = Parse.Object.extend('Videos');
-							var query = new Parse.Query(Videos);
-							query.equalTo('objectId', payload.message.id);
-							query.limit(1);
-							query.find({
-								success: function(video) {
-									$rootScope.queue.push(video[0]);
-									MusicService.videoDashboard(payload.message.id, (payload.message.username)?payload.message.username:'Alma Player', (payload.message.image)?payload.message.image:null, video[0]);
-									$scope.$apply();
-								}
-							});
-						}
-					});
-				}
-				if (payload.message.type === 'song_delete') {
-					for (var i = 0; i < $rootScope.queue.length; i++) {
-						if ($rootScope.queue[i].id === payload.message.id) {
-							$rootScope.queue.splice(i, 1);
-							for(var ii = 0; ii < $rootScope.chats; ii++) {
-								if ($rootScope.chats[ii].type === 'video') {
-									if ($rootScope.chats[ii].videoId) {
-										if ($rootScope.chats[ii].videoId === payload.message.id) {
-											$rootScope.chats.splice(ii, 1);
-										}
-									}
-								}
-							}
-							$scope.$apply();
-						}
-					}
-				}
-				if (payload.message.type === 'vote') {
-					if ($scope.$storage.connectedPlayer) {
-						if (!$scope.queue.length) {
-							var Player = Parse.Object.extend('Player'),
-								query = new Parse.Query(Player),
-								myPlayer;
-							query.get($scope.$storage.connectedPlayer, {
-								success: function(player) {
-									myPlayer = player;
-								}
-							}).then(function(player) {
-								getVideos(player, payload);
-							});
-						}
-					}
-				}
-				if (payload.message.type === 'chat_msg') {
-					var obj = payload.message;
-					MusicService.addChat(obj.id, obj.msg, obj.username, obj.image);
-					var current = $ionicHistory.currentView();
-					if (current.stateName !== 'app.dashboard') {
-						$rootScope.dashboard.count++;
-					}
-					$scope.$apply();
-					$ionicScrollDelegate.scrollBottom();
-				}
-			});
+			MusicService.subscribeToPlayer($scope.$storage.connectedPlayer);
 		}
+		$rootScope.$watch('queue', function() {
+			for (var i = 0; i < $rootScope.queue.length; i++) {
+				if ($rootScope.queue[i].get('isActive') === true) {
+					$rootScope.firstQueue = $rootScope.queue[i];
+					$rootScope.firstQueue.index = i;
+					break;
+				}
+			}
+	   	});
 		document.addEventListener('resume', onResume, false);
 		//document.addEventListener('pause', onPause, false);
 	}]);

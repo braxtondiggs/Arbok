@@ -61,11 +61,12 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 		}
 	};
 })
-.factory('MusicService', function($rootScope, $state, $ionicScrollDelegate, $cordovaDialogs, $http, $ionicLoading, PubNub, lodash) {
+.factory('MusicService', function($rootScope, $state, $ionicScrollDelegate, $ionicHistory, $cordovaDialogs, $http, $ionicLoading, PubNub, lodash) {
 	return {
 		storeDB: function(artistInfo) {
 			/*jshint camelcase: false */
 			/*global Parse*/
+			/*global moment*/
 			var user = Parse.User.current(),
 				that = this;
 			if (!lodash.isEmpty(user)) {
@@ -120,7 +121,8 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 													that.inQueue(video.id, function(found) {
 														if (!found) {
 															$rootScope.queue.push(video);
-															that.videoDashboard(user.id, user.get('username'), user.get('image'), video);
+															that.getActiveSong();
+															that.videoDashboard(user.id, user.get('name'), user.get('image')._url, video);
 														}
 													});
 												},
@@ -174,6 +176,15 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			}
 			callback(found);
 		},
+		getActiveSong: function() {
+			for (var i = 0; i < $rootScope.queue.length; i++) {
+				if ($rootScope.queue[i].get('isActive') === true) {
+					$rootScope.firstQueue = $rootScope.queue[i];
+					$rootScope.firstQueue.index = i;
+					break;
+				}
+			}
+		},
 		videoDashboard: function(id, name, image, video) {
 			var user = Parse.User.current();
 			var obj = {
@@ -193,7 +204,6 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 				};
 			}
 			$rootScope.chats.push(obj);
-			$ionicScrollDelegate.scrollBottom(true);
 		},
 		inTrackQueue: function(id, callback) {
 			var queue = $rootScope.queue,
@@ -214,7 +224,6 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 					count: 0
 				};
 			}
-			/*global moment*/
 			var obj = {
 				self: (id === user.id) ? true : false,
 				type: 'chat',
@@ -225,7 +234,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			};
 			var found = false;
 			for (var i = 0;i < $rootScope.chats.length; i++) {
-				if ($rootScope.chats[i].createdAt === obj.createdAt && $rootScope.chats[i].id === obj.id) {
+				if ($rootScope.chats[i].createdAt === obj.createdAt && $rootScope.chats[i].id === obj.id && $rootScope.chats[i].msg === obj.msg) {
 					found = true;
 					break;
 				}
@@ -234,6 +243,113 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 				$rootScope.chats.push(obj);
 				$ionicScrollDelegate.scrollBottom(true);
 			}
+		},
+		subscribeToPlayer: function(connectedPlayer) {
+			var user = Parse.User.current(),
+				that = this;
+			function getVideos(player, payload) {
+				player.relation('playerVideo').query().ascending('createdAt').find({
+					success: function(queue) {
+						$rootScope.queue = queue;
+						var obj = {
+							self: (payload.message.id === user.id) ? true : false,
+							type: 'vote',
+							image: payload.message.image,
+							username: payload.message.username + ' ' + ((payload.message.vote)?'Liked':'Disliked'),
+							msg: payload.message.selectedTrack,
+							createdAt: moment().format('dddd, MMMM Do YYYY, h:mma')
+						};
+						if (!$rootScope.chats) {
+							$rootScope.chats = [];
+							$rootScope.dashboard = {
+								count: 0
+							};
+						}
+						$rootScope.chats.push(obj);
+						if (current.stateName === 'app.dashboard') {
+							$ionicScrollDelegate.scrollBottom(true);
+						}
+						if (queue.length) {
+							for (var i = 0;i < queue.length;i++) {
+								$rootScope.queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
+							}
+						}
+						$rootScope.$apply();
+					}
+				});
+			}
+			PubNub.ngSubscribe({channel: connectedPlayer});
+			$rootScope.$on(PubNub.ngMsgEv(connectedPlayer), function(event, payload) {
+				if (payload.message.type === 'song_added') {
+					that.inQueue(payload.message.id, function(found) {
+						if (!found) {
+							var Videos = Parse.Object.extend('Videos');
+							var query = new Parse.Query(Videos);
+							query.equalTo('objectId', payload.message.id);
+							query.limit(1);
+							query.find({
+								success: function(video) {
+									$rootScope.queue.push(video[0]);
+									that.getActiveSong();
+									that.videoDashboard(payload.message.id, (payload.message.username)?payload.message.username:'Alma Player', (payload.message.image)?payload.message.image:undefined, video[0]);
+									var current = $ionicHistory.currentView();
+									if (current.stateName === 'app.dashboard') {
+										$ionicScrollDelegate.scrollBottom(true);
+									}
+									$rootScope.$apply();
+								}
+							});
+						}
+					});
+				}
+				if (payload.message.type === 'song_delete') {
+					for (var i = 0; i < $rootScope.queue.length; i++) {
+						if ($rootScope.queue[i].id === payload.message.id) {
+							$rootScope.queue.splice(i, 1);
+							if ($rootScope.queue.length) {
+								$rootScope.queue[0].set('isActive', true);
+							}
+							for(var ii = 0; ii < $rootScope.chats; ii++) {
+								if ($rootScope.chats[ii].type === 'video') {
+									if ($rootScope.chats[ii].videoId) {
+										if ($rootScope.chats[ii].videoId === payload.message.id) {
+											$rootScope.chats.splice(ii, 1);
+										}
+									}
+								}
+							}
+							$rootScope.$apply();
+						}
+					}
+				}
+				if (payload.message.type === 'vote') {
+					if (connectedPlayer) {
+						if (!$rootScope.queue.length) {
+							var Player = Parse.Object.extend('Player'),
+								query = new Parse.Query(Player),
+								myPlayer;
+							query.get(connectedPlayer, {
+								success: function(player) {
+									myPlayer = player;
+								}
+							}).then(function(player) {
+								getVideos(player, payload);
+							});
+						}
+					}
+				}
+				if (payload.message.type === 'chat_msg') {
+					var obj = payload.message;
+					that.addChat(obj.id, obj.msg, obj.username, obj.image);
+					var current = $ionicHistory.currentView();
+					if (current.stateName !== 'app.dashboard') {
+						$rootScope.dashboard.count++;
+					}else {
+						$ionicScrollDelegate.scrollBottom(true);
+					}
+					$rootScope.$apply()
+				}
+			});
 		}
 	};
 })

@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('SearchCtrl', ['$scope', '$http', '$ionicLoading', '$cordovaDialogs', '$cordovaKeyboard', 'UserService', 'MusicService', '$localStorage', 'lodash', function($scope, $http, $ionicLoading, $cordovaDialogs, $cordovaKeyboard, UserService, MusicService, $localStorage, lodash) {
+	.controller('SearchCtrl', ['$scope', '$http', '$ionicLoading', '$cordovaDialogs', '$cordovaKeyboard', 'UserService', 'MusicService', '$localStorage', '$timeout', 'lodash', function($scope, $http, $ionicLoading, $cordovaDialogs, $cordovaKeyboard, UserService, MusicService, $localStorage, $timeout, lodash) {
 		/*jshint camelcase: false */
 		/*global Parse*/
 		$scope.search = {};
@@ -157,7 +157,9 @@ angular.module('Alma.controllers')
 			}else {
 				searchParse($scope.search.term, action, obj);
 			}
-			$scope.$broadcast('scroll.infiniteScrollComplete');
+			$timeout(function() {
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			}, 500);
 		};
 		$scope.search.getKeys = function($event) {
 			if($event.which === 13){

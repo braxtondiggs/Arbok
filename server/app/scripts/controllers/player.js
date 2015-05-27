@@ -67,6 +67,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				query.find({
 					success: function(vote) {
 						var activeUsers = parseInt(PubNub.ngListPresence($scope.box.id).length, 10) - 1;//Minus Player
+						console.log(activeUsers);
 						if (vote.length / activeUsers > 0.5) {
 							activateSongChange();
 						}
@@ -185,7 +186,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					youtubeKey = null,
 					youtubeKey2 = null;
 				for (var key in sources) {
-					if (sources[key].source === 'youtube') {
+					if (sources[key].source === 'youtube' && youtubeKey === null) {
 						youtubeKey = sources[key].source_data;
 					}
 					if (sources[key].source === 'youtube' && youtubeKey !== null && youtubeKey !== sources[key].source_data) {
@@ -383,8 +384,19 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			detonate();
 		}, 10000);
 	}
+	function watchVideo() {
+		if ($scope.videoInterval) {
+			$interval.cancel($scope.videoInterval);
+		}
+		var duration = parseInt($scope.playerEvent.target.getDuration(), 10);
+		$scope.videoInterval = $interval(function() {
+			var time = parseInt($scope.playerEvent.target.getCurrentTime(), 10); 
+			if (time >= (duration - 5)) {
+				$scope.loading = true;
+			}
+		}, 1000);
+	}
 	$scope.onError = function() {
-		$scope.track = track;
 		if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtubeBackupId')) {
 			$scope.playerEvent.target.loadVideoById($scope.track.get('youtubeBackupId'));
 			$scope.playerEvent.target.setPlaybackQuality('small');
@@ -405,6 +417,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				$timeout.cancel($scope.detonate);
 				$scope.detonate = null;
 			}
+			watchVideo();
 			$scope.$apply();
 		}
 	};

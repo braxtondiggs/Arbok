@@ -1,11 +1,11 @@
-<ion-footer-bar align-title="left" class="footer-bar animated" ng-class="video.get('isActive')? 'bounceInUp':'bounceOutDown'" ng-show="queue.length" on-hold="activateVote(video)" ng-repeat="video in queue" ng-if="video.get('isActive')">
+<ion-footer-bar align-title="left" class="footer-bar animated" ng-class="firstQueue? 'bounceInUp':'bounceOutDown'" ng-show="firstQueue" on-hold="activateVote(firstQueue.index)">
   <div class="row">
   	<a href="#/app/queue" class="col-20 col">
-  		<img ng-src="{{video.get('image')}}" />
+  		<img ng-src="{{firstQueue.get('image')}}" />
   	</a>
   	<a href="#/app/queue" class="col col-50">
-  		<h2>{{video.get('artistInfo')}}</h2>
-      <p>{{video.get('trackInfo')}}</p>
+  		<h2>{{firstQueue.get('artistInfo')}}</h2>
+      <p>{{firstQueue.get('trackInfo')}}</p>
   	</a>
   	<div class="col-30 col"></div>
   </div>

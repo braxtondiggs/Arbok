@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('QueueCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$ionicSideMenuDelegate', 'PubNub', function($scope, $rootScope, $cordovaDialogs, $ionicSideMenuDelegate, PubNub) {
+	.controller('QueueCtrl', ['$scope', '$rootScope', '$cordovaDialogs', '$ionicSideMenuDelegate', 'PubNub', 'MusicService', function($scope, $rootScope, $cordovaDialogs, $ionicSideMenuDelegate, PubNub, MusicService) {
 		/*global Parse*/
 		$rootScope.queue = [];
 		function getVideos(player) {
@@ -38,6 +38,7 @@ angular.module('Alma.controllers')
 						message: {'type': 'song_delete', 'id': $rootScope.queue[index].id}
 					});
 					$rootScope.queue[index].destroy();
+					MusicService.getActiveSong();
 					$cordovaDialogs.alert('Your video has successfully been removed from the queue', 'Alma').then(function() {
 						if ($ionicSideMenuDelegate.isOpenRight() === true) {
 							$ionicSideMenuDelegate.toggleRight();

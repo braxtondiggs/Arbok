@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$state', '$ionicScrollDelegate', '$ionicHistory', '$ionicLoading', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'PubNub', 'lodash', '$timeout', function($scope, $rootScope, $localStorage, $state, $ionicScrollDelegate, $ionicHistory, $ionicLoading, $cordovaGeolocation, $cordovaDialogs, LoadingService, PubNub, lodash, $timeout) {
+	.controller('PlayerCtrl', ['$scope', '$rootScope', '$localStorage', '$state', '$ionicScrollDelegate', '$ionicHistory', '$ionicLoading', '$cordovaGeolocation', '$cordovaDialogs', 'LoadingService', 'PubNub', 'MusicService', 'lodash', '$timeout', function($scope, $rootScope, $localStorage, $state, $ionicScrollDelegate, $ionicHistory, $ionicLoading, $cordovaGeolocation, $cordovaDialogs, LoadingService, PubNub, MusicService, lodash, $timeout) {
 		function init() {
 			/*global Parse*/
 			LoadingService.showLoading();
@@ -107,7 +107,7 @@ angular.module('Alma.controllers')
 							PubNub.ngUnsubscribe({channel: $scope.currentUser.get('connectedPlayer').id});
 						}
 					}
-					PubNub.ngSubscribe({channel: $scope.players[index].id});
+					MusicService.subscribeToPlayer($scope.players[index].id);
 					if (!lodash.isEmpty(user)) {
 						$scope.$storage.connectedPlayer = $scope.players[index].id;
 						user.set('connectedPlayer', $scope.players[index]);

@@ -1,5 +1,5 @@
 {
-    "version": "0.1.5",
+    "version": "0.1.7",
     "name": "uk.co.whiteoctober.cordova.appversion",
     "cordova_name": "AppVersion",
     "description": "\n        This plugin will return the version of your App that you have set in\n        packaging it. I.e. it will always match the version in the app store.\n    ",

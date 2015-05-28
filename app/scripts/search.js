@@ -63,6 +63,9 @@ angular.module('Alma.controllers')
 						$scope.search[obj].resultsTop = lodash.filter(data.results, function(item){
 							return $scope.search.convertSlug(item.name, item.slug).toLowerCase().indexOf(term.toLowerCase()) > -1;
 						});
+						$scope.search[obj].results = lodash.filter(data.results, function(item){
+							return $scope.search.convertSlug(item.name, item.slug).toLowerCase().indexOf(term.toLowerCase()) === -1;
+						});
 						if (lodash.isEmpty($scope.search[obj].resultsTop)) {
 							delete $scope.search[obj].resultsTop;
 						}

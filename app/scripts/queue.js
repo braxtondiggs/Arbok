@@ -7,6 +7,7 @@ angular.module('Alma.controllers')
 			player.relation('playerVideo').query().ascending('createdAt').find({
 				success: function(queue) {
 					$rootScope.queue = queue;
+					MusicService.getActiveSong();
 					if (queue.length) {
 						for (var i = 0;i < queue.length;i++) {
 							$rootScope.queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);

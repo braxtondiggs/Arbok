@@ -20,8 +20,10 @@ angular.module('Alma.controllers', [])
 			'connectedPlayer': null
 		});
 		var user = $rootScope.currentUser;
-		if (user.get('connectedPlayer')) {
-			$scope.$storage.connectedPlayer = user.get('connectedPlayer').id;
+		if (!lodash.isEmpty(user)) {
+			if (user.get('connectedPlayer')) {
+				$scope.$storage.connectedPlayer = user.get('connectedPlayer').id;
+			}
 		}
 		var _r = new DollarRecognizer();
 		var _points = [];
@@ -107,6 +109,16 @@ angular.module('Alma.controllers', [])
 				}else {
 					console.log('Vote: '  + String(action));
 				}
+				var Player = Parse.Object.extend('Player'),
+					query = new Parse.Query(Player),
+					myPlayer;
+				query.get($scope.$storage.connectedPlayer, {
+					success: function(player) {
+						myPlayer = player;
+					}
+				}).then(function(player) {
+					MusicService.updateVideo(player);
+				});
 			}
 			if (!$scope.vote.isSet) {
 				vote.set('userId', user);
@@ -323,15 +335,6 @@ angular.module('Alma.controllers', [])
 		if ($scope.$storage.connectedPlayer) {
 			MusicService.subscribeToPlayer($scope.$storage.connectedPlayer);
 		}
-		$rootScope.$watch('queue', function() {
-			for (var i = 0; i < $rootScope.queue.length; i++) {
-				if ($rootScope.queue[i].get('isActive') === true) {
-					$rootScope.firstQueue = $rootScope.queue[i];
-					$rootScope.firstQueue.index = i;
-					break;
-				}
-			}
-	   	});
 		document.addEventListener('resume', onResume, false);
 		//document.addEventListener('pause', onPause, false);
 	}]);

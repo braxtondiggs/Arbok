@@ -244,6 +244,14 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 				$ionicScrollDelegate.scrollBottom(true);
 			}
 		},
+		updateVideo: function(player) {
+			player.relation('playerVideo').query().ascending('createdAt').find({
+				success: function(queue) {
+					$rootScope.queue = queue;
+					$rootScope.$apply();
+				}
+			});
+		},
 		subscribeToPlayer: function(connectedPlayer) {
 			var user = Parse.User.current(),
 				that = this;
@@ -266,6 +274,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 							};
 						}
 						$rootScope.chats.push(obj);
+						var current = $ionicHistory.currentView();
 						if (current.stateName === 'app.dashboard') {
 							$ionicScrollDelegate.scrollBottom(true);
 						}
@@ -308,6 +317,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 							$rootScope.queue.splice(i, 1);
 							if ($rootScope.queue.length) {
 								$rootScope.queue[0].set('isActive', true);
+								that.getActiveSong();
 							}
 							for(var ii = 0; ii < $rootScope.chats; ii++) {
 								if ($rootScope.chats[ii].type === 'video') {
@@ -347,7 +357,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 					}else {
 						$ionicScrollDelegate.scrollBottom(true);
 					}
-					$rootScope.$apply()
+					$rootScope.$apply();
 				}
 			});
 		}

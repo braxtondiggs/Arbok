@@ -15,7 +15,7 @@
             <ion-tab title="My Favs">
                 <ion-nav-view class="profile-tab-content">
                     <div class="list more dark-list" ng-if="profile.likes.results.length">
-                        <a class="item item-thumbnail-left" ng-repeat="like in profile.likes.results" ng-click="profile.submitSong($index)">
+                        <a class="item item-thumbnail-left" collection-repeat="like in profile.likes.results" item-height="91px" ng-click="profile.submitSong($index)">
                             <img ng-src="{{like.get('image')}}" err-src="images/logo_missing.png" />
                             <i class="icon ion-play icon-accessory"></i>
                             <h2>{{like.get('artistName')}}</h2>

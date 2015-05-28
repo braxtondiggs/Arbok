@@ -67,7 +67,6 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				query.find({
 					success: function(vote) {
 						var activeUsers = parseInt(PubNub.ngListPresence($scope.box.id).length, 10) - 1;//Minus Player
-						console.log(activeUsers);
 						if (vote.length / activeUsers > 0.5) {
 							activateSongChange();
 						}
@@ -384,15 +383,63 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			detonate();
 		}, 10000);
 	}
+	function distance(lat1, lon1, lat2, lon2, unit) {
+		var radlat1 = Math.PI * lat1/180,
+			radlat2 = Math.PI * lat2/180,
+			radlon1 = Math.PI * lon1/180,
+			radlon2 = Math.PI * lon2/180,
+			theta = lon1-lon2,
+			radtheta = Math.PI * theta/180,
+			dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+		dist = dist * 60 * 1.1515;
+		if (unit=="K") { dist = dist * 1.609344; }
+		if (unit=="N") { dist = dist * 0.8684; }
+		return dist;
+	}
+
 	function watchVideo() {
+		var isConcert = true;
 		if ($scope.videoInterval) {
 			$interval.cancel($scope.videoInterval);
+			isConcert = true;
 		}
 		var duration = parseInt($scope.playerEvent.target.getDuration(), 10);
 		$scope.videoInterval = $interval(function() {
 			var time = parseInt($scope.playerEvent.target.getCurrentTime(), 10); 
 			if (time >= (duration - 5)) {
 				$scope.loading = true;
+			}
+			if (time >= 60 && isConcert) {
+				isConcert = false;
+				$http({
+					method: 'get',
+			      	url: 'http://api.songkick.com/api/3.0/search/artists.json',
+			      	params: {
+			        	apikey: 'LFxJG3ohVpIBASF5',
+			        	query: $scope.track.get('artistInfo')
+			      	}
+			    }).then(function(data) {
+			    	var artistObj  = data.data.resultsPage.results.artist;
+			    	for (var i = 0; i < artistObj.length; i++) {
+			    		if (artistObj[i].displayName.toLowerCase() === $scope.track.get('artistInfo').toLowerCase()) {
+			    			var id = artistObj[i].id;
+			    			$http({
+								method: 'GET',
+						      	url: 'http://api.songkick.com/api/3.0/artists/' + id + '/calendar.json?callback=JSON_CALLBACK&apikey=LFxJG3ohVpIBASF5',
+						    }).success(function(data) {
+						    	var eventObj  = data.resultsPage.results.event;
+						    	for (var i = 0; i < eventObj.length; i++) {
+						    		if(distance(eventObj[i].location.lat, eventObj[i].location.lng, $scope.box.get('latlng').latitude, $scope.box.get('latlng').longitude, 'M') <= 50) {
+						    			notify({messageTemplate:'<img ng-src="images/songkick-logo.png"><span class="content"><h3 class="header">'+$scope.track.get('artistInfo')+'is coming to your area!</h3><p>'+eventObj[i].venue.displayName+'</p><p>'+ eventObj[i].venue.metroArea.displayName+', ' + eventObj[i].venue.metroArea.state.displayName +' '+ eventObj[i].venue.metroArea.country.displayName +'</p><p>'+ eventObj[i].start.datetime +'</p></span>', classes: 'activity-modal', duration: 25000, position: 'left'} );
+						    			break;
+						    		}
+						    	}
+						    });
+			    		}
+			    	}
+			    });
 			}
 		}, 1000);
 	}

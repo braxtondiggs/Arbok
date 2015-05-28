@@ -12,6 +12,7 @@ angular.module('Alma.controllers')
 			query = new Parse.Query(Votes);
 		query.equalTo('userId', user);
 		query.equalTo('vote', true);
+		query.limit(15);
 		query.ascending('createdAt');
 		query.find({
 			success: function(results) {

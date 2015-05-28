@@ -1,8 +1,9 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', '$cordovaEmailComposer', '$localStorage', function($scope, $rootScope, $state, $ionicLoading, $cordovaDialogs, $ionicHistory, $cordovaEmailComposer, $localStorage) {
+	.controller('SettingsCtrl', ['$scope', '$rootScope', '$state', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', '$cordovaEmailComposer', '$cordovaAppVersion', '$localStorage', function($scope, $rootScope, $state, $ionicLoading, $cordovaDialogs, $ionicHistory, $cordovaEmailComposer, $cordovaAppVersion, $localStorage) {
 		/*global Parse*/
 		/*global device*/
+		/*global ionic*/
 		$scope.settingsForm = {};
 		if (typeof device !== 'undefined') {
 			$scope.devicePlatform = device.platform;
@@ -123,29 +124,34 @@ angular.module('Alma.controllers')
 			}
 		};
 		$scope.featureRequest = function() {
-			var email = {
-				to: 'admin@cymbit.com',
-				/*global ionic*/
-				subject: ionic.Platform.device() + ': ' + ionic.Platform.platform() + '-' + ionic.Platform.version() + ' Feature Request',
-				app: 'gmail'
-			};
-			$cordovaEmailComposer.isAvailable().then(function() {
-				$cordovaEmailComposer.addAlias('gmail', 'com.google.android.gm');
-				$cordovaEmailComposer.open(email).then(function() {
-					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'Alma - Email Sent');
+			$cordovaAppVersion.getAppVersion().then(function (version) {
+				var deviceInfo = ionic.Platform.device();
+				var email = {
+					to: 'admin@cymbit.com',
+					subject:  deviceInfo.platform + ' Feature Request',
+					body: '<p>Alma Version: ' + version + '</p><p>' + deviceInfo.platform + ' OS: ' + deviceInfo.version + '</p><p>Phone Model: ' + deviceInfo.model + '</p>',
+					isHtml: true
+				};
+				$cordovaEmailComposer.isAvailable().then(function() {
+					$cordovaEmailComposer.open(email).then(function() {
+						$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'Alma - Email Sent');
+					});
 				});
 			});
 		};
 		$scope.bugReport = function() {
-			var email = {
-				to: 'admin@cymbit.com',
-				subject: ionic.Platform.device() + ': ' + ionic.Platform.platform() + '-' + ionic.Platform.version() + ' Bug Report',
-				app: 'gmail'
-			};
-			$cordovaEmailComposer.isAvailable().then(function() {
-				$cordovaEmailComposer.addAlias('gmail', 'com.google.android.gm');
-				$cordovaEmailComposer.open(email).then(function() {
-					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'Alma - Email Sent');
+			$cordovaAppVersion.getAppVersion().then(function (version) {
+				var deviceInfo = ionic.Platform.device();
+				var email = {
+					to: 'admin@cymbit.com',
+					subject: deviceInfo.platform + ' Bug Report',
+					body: '<p>Alma Version: ' + version + '</p><p>' + deviceInfo.platform + ' OS: ' + deviceInfo.version + '</p><p>Phone Model: ' + deviceInfo.model + '</p>',
+					isHtml: true
+				};
+				$cordovaEmailComposer.isAvailable().then(function() {
+					$cordovaEmailComposer.open(email).then(function() {
+						$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'Alma - Email Sent');
+					});
 				});
 			});
 		};

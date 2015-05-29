@@ -34,7 +34,6 @@ module.exports = function(config) {
       'bower_components/eventie/eventie.js',
       'bower_components/imagesloaded/imagesloaded.js',
       'bower_components/enquire/dist/enquire.js',
-      'bower_components/owl.carousel/src/js/owl.carousel.js',
       'bower_components/jquery.transit/jquery.transit.js',
       'bower_components/bootstrap-sass/assets/javascripts/bootstrap.js',
       'bower_components/ngstorage/ngStorage.js',
@@ -44,6 +43,7 @@ module.exports = function(config) {
       'bower_components/pubnub/web/pubnub.min.js',
       'bower_components/pubnub-angular/lib/pubnub-angular.js',
       'bower_components/ng-lodash/build/ng-lodash.js',
+      'bower_components/moment/moment.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",

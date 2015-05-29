@@ -1,12 +1,13 @@
 'use strict';
-angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', function ($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash) {
+angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', function($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash) {
 	/*global $:false */
 	/*global Parse*/
 	/*global YT*/
+	/*global moment*/
 	/*jshint camelcase: false */
 	PubNub.init({
-		publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',// jshint ignore:line
-		subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'// jshint ignore:line
+		publish_key: 'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2', // jshint ignore:line
+		subscribe_key: 'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe' // jshint ignore:line
 	});
 	$rootScope.bodyClass = 'Player';
 	$scope.isBox = ($location.path().indexOf('box') > -1) ? true : false;
@@ -17,7 +18,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	});
 	$scope.vote = {
 		upvote: 0,
-		downvote:0,
+		downvote: 0,
 		total: 0,
 		status: false,
 		counter: 10
@@ -31,14 +32,22 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			disablekb: 0,
 			showinfo: 0,
 			rel: 0,
-			iv_load_policy: 3,// jshint ignore:line
+			iv_load_policy: 3, // jshint ignore:line
 			autoplay: 0
 		}
 	};
-	notify.config({duration: 8000, position: 'right'});
+	notify.config({
+		duration: 8000,
+		position: 'right'
+	});
+
 	function pubNubFub() {
-		PubNub.ngSubscribe({channel: $scope.box.id});
-		PubNub.ngHereNow({channel : $scope.box.id});
+		PubNub.ngSubscribe({
+			channel: $scope.box.id
+		});
+		PubNub.ngHereNow({
+			channel: $scope.box.id
+		});
 		$rootScope.$on(PubNub.ngMsgEv($scope.box.id), function(event, payload) {
 			if (payload.message.type === 'player_update') {
 				var Player = Parse.Object.extend('Player');
@@ -52,31 +61,45 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				}, function(error) {
 					$window.alert('Failed to initalize new player, with error code: ' + error.message);
 				});
-			}else if (payload.message.type === 'song_added') {
-				var msg = (payload.message.username)?payload.message.username + ' just added a song':'The queue was empty!',
-					submsg = (payload.message.username)?payload.message.artist + ' - ' + payload.message.track:'So we picked a song for you.';
-				notify({messageTemplate:'<img ng-src="'+payload.message.image+'"><span class="content"><h3 class="header">'+msg+'</h3><p>'+submsg+'</p></span>', classes: 'activity-modal' } );
-			}else if (payload.message.type === 'chat_msg') {
-				notify({messageTemplate:'<img ng-src="'+ payload.message.image+'"><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+payload.message.msg+'</p></span>', classes: 'activity-modal'} );
-			}else if (payload.message.type === 'vote' && payload.message.id === $scope.track.id) {
-				notify({messageTemplate:'<img ng-src="'+ payload.message.image +'""><span class="content"><h3 class="header">'+payload.message.username+'</h3><p>'+ ((payload.message.vote)?'Liked':'Disliked') +' this song!</p></span>', classes: 'activity-modal' });
+			} else if (payload.message.type === 'song_added') {
+				var msg = (payload.message.username) ? payload.message.username + ' just added a song' : 'The queue was empty!',
+					submsg = (payload.message.username) ? payload.message.artist + ' - ' + payload.message.track : 'So we picked a song for you.';
+				notify({
+					messageTemplate: '<img ng-src="' + payload.message.image + '"><span class="content"><h3 class="header">' + msg + '</h3><p>' + submsg + '</p></span>',
+					classes: 'activity-modal'
+				});
+			} else if (payload.message.type === 'chat_msg') {
+				notify({
+					messageTemplate: '<img ng-src="' + payload.message.image + '"><span class="content"><h3 class="header">' + payload.message.username + '</h3><p>' + payload.message.msg + '</p></span>',
+					classes: 'activity-modal'
+				});
+			} else if (payload.message.type === 'vote' && payload.message.id === $scope.track.id) {
+				notify({
+					messageTemplate: '<img ng-src="' + payload.message.image + '""><span class="content"><h3 class="header">' + payload.message.username + '</h3><p>' + ((payload.message.vote) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
+					classes: 'activity-modal'
+				});
 				var Vote = Parse.Object.extend('Vote');
 				var query = new Parse.Query(Vote);
-				query.equalTo('videoId', {__type: 'Pointer', className: 'Videos', objectId: $scope.track.id});
+				query.equalTo('videoId', {
+					__type: 'Pointer',
+					className: 'Videos',
+					objectId: $scope.track.id
+				});
 				query.equalTo('vote', false);
 				query.find({
 					success: function(vote) {
-						var activeUsers = parseInt(PubNub.ngListPresence($scope.box.id).length, 10) - 1;//Minus Player
+						var activeUsers = parseInt(PubNub.ngListPresence($scope.box.id).length, 10) - 1; //Minus Player
 						if (vote.length / activeUsers > 0.5) {
 							activateSongChange();
 						}
 					}
 				});
-			}else if (payload.message.type === 'vote' && payload.message.id !== $scope.track.id) {
+			} else if (payload.message.type === 'vote' && payload.message.id !== $scope.track.id) {
 				//Vote off in Queue
 			}
 		});
 	}
+
 	function activateSongChange() {
 		$scope.vote.status = true;
 		var counter = $interval(function() {
@@ -90,6 +113,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			}
 		}, 1000, 10);
 	}
+
 	function openModal() {
 		ngDialog.open({
 			template: 'boxSetupTmpl',
@@ -101,6 +125,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		});
 		pubNubFub();
 	}
+
 	function getID() {
 		var Player = Parse.Object.extend('Player');
 		var player = new Player();
@@ -117,7 +142,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			}
 		});
 	}
-	function youtubeURL(url) {// jshint ignore:line
+
+	function youtubeURL(url) { // jshint ignore:line
 		if (url !== undefined) {
 			var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
 			var match = url.match(regExp);
@@ -128,11 +154,12 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			return false;
 		}
 	}
+
 	function getSong(callback) {
 		$scope.box.relation('playerVideo').query().ascending('createdAt').find({
 			success: function(queue) {
 				if (!lodash.isEmpty(queue)) {
-					for (var i = 0;i < queue.length;i++) {
+					for (var i = 0; i < queue.length; i++) {
 						queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
 					}
 					callback(lodash.sortByOrder(queue, ['counter'], false)[0]);
@@ -140,7 +167,14 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					emptyQueue(function(randomTrack) {
 						PubNub.ngPublish({
 							channel: $scope.box.id,
-							message: {'type': 'song_added', 'id': randomTrack.id, 'username': undefined, 'image': randomTrack.get('image'), 'artist': randomTrack.get('artistInfo'), 'track': randomTrack.get('trackInfo')}
+							message: {
+								'type': 'song_added',
+								'id': randomTrack.id,
+								'username': undefined,
+								'image': randomTrack.get('image'),
+								'artist': randomTrack.get('artistInfo'),
+								'track': randomTrack.get('trackInfo')
+							}
 						});
 						callback(randomTrack);
 					});
@@ -148,6 +182,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			}
 		});
 	}
+
 	function initalizePlayer() {
 		getSong(function(track) {
 			$scope.track = track;
@@ -165,6 +200,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			}
 		});
 	}
+
 	function deleteSong(callback) {
 		$scope.last_track = $scope.track;
 		$scope.track.destroy({
@@ -176,6 +212,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			}
 		});
 	}
+
 	function emptyQueue(emptycallback) {
 		function saveTrack(imvdbTrack, callback) {
 			$http.get(
@@ -221,6 +258,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				}
 			});
 		}
+
 		function getSongInfo(parseTrack, callback) {
 			$http.get(
 				'http://imvdb.com/api/v1/search/videos?q=' + parseTrack.get('artistTitle')
@@ -238,7 +276,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 							console.log('failed');
 							callback(track);
 						});
-					}else {
+					} else {
 						saveTrack(data.results[i], function(savedTrack) {
 							callback(savedTrack);
 						});
@@ -246,6 +284,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				}
 			});
 		}
+
 		function randomTopSong(callback) {
 			var Browse = Parse.Object.extend('Browse');
 			var query = new Parse.Query(Browse);
@@ -253,13 +292,14 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			query.ascending('artistOrder');
 			query.find({
 				success: function(results) {
-					getSongInfo(results[Math.floor(Math.random()*results.length)], function(trackInfo) {
+					getSongInfo(results[Math.floor(Math.random() * results.length)], function(trackInfo) {
 						callback(trackInfo);
 					});
 					$scope.$apply();
 				}
 			});
 		}
+
 		function getAsFeatured(callback) {
 			$http.get(
 				'http://imvdb.com/api/v1/search/entities?q=' + $scope.last_track.get('IMVDBartistId')
@@ -272,44 +312,45 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 							).success(function(data) {
 								if (data.featured_artist_videos) {
 									if (data.featured_artist_videos.videos) {
-										var ran = Math.floor(Math.random()*data.featured_artist_videos.videos.length);
+										var ran = Math.floor(Math.random() * data.featured_artist_videos.videos.length);
 										saveTrack(data.featured_artist_videos.videos[ran], function(track) {
 											callback(track);
 										});
-									}else {
+									} else {
 										callback();
 									}
-								}else {
+								} else {
 									callback();
 								}
 							});
 						}
 					}
-				}else {
+				} else {
 					callback();
 				}
 			});
 		}
+
 		function getEchoNest(callback) {
-			var artist = ($scope.last_track)?$scope.last_track.get('artistInfo') : 'Drake',
+			var artist = ($scope.last_track) ? $scope.last_track.get('artistInfo') : 'Drake',
 				promise = $q.all(null);
 			Echonest.artists.get({
 				name: artist,
 			}).then(function(artist) {
 				$http.get(
-					'http://developer.echonest.com/api/v4/artist/similar?api_key=0NPSO7NBLICGX3CWQ&id='+artist.id+'&format=json&results=5&start=0'
+					'http://developer.echonest.com/api/v4/artist/similar?api_key=0NPSO7NBLICGX3CWQ&id=' + artist.id + '&format=json&results=5&start=0'
 				).success(function(data) {
 					var similar = data.response.artists,
 						found = false;
 					angular.forEach(similar, function() {
-						promise = promise.then(function(){
+						promise = promise.then(function() {
 							if (!found) {
-								var ran = Math.floor(Math.random()*similar.length);
+								var ran = Math.floor(Math.random() * similar.length);
 								return $http.get(
 									'http://imvdb.com/api/v1/search/videos?q=' + encodeURI(similar[ran].name)
 								).success(function(data) {
 									if (data.total_results !== 0) {
-										var ran2 = Math.floor(Math.random()*data.results.length);
+										var ran2 = Math.floor(Math.random() * data.results.length);
 										for (var i = 0; i < data.results.length; i++) {
 											if (data.results[ran2].artists[0].name.toLowerCase() === similar[ran].name.toLowerCase()) {
 												saveTrack(data.results[ran2], function(track) {
@@ -324,7 +365,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 							}
 						});
 					});
-					promise.then(function(){
+					promise.then(function() {
 						if (!found) {
 							console.log('not found');
 							callback();
@@ -338,11 +379,11 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		getEchoNest(function(track) {
 			if (track) {
 				emptycallback(track);
-			}else {
+			} else {
 				getAsFeatured(function(track) {
 					if (track) {
 						emptycallback(track);
-					}else {
+					} else {
 						randomTopSong(function(track) {
 							emptycallback(track);
 						});
@@ -357,23 +398,28 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			$('#currentlyPlaying').removeClass('active');
 		}, 60000);
 	}
+
 	function songEnded() {
 		$scope.loading = true;
 		$scope.vote = {
 			upvote: 0,
-			downvote:0,
+			downvote: 0,
 			total: 0,
 			status: false,
 			counter: 10
 		};
 		PubNub.ngPublish({
 			channel: $scope.box.id,
-			message: {type: 'song_delete', id: $scope.track.id}
+			message: {
+				type: 'song_delete',
+				id: $scope.track.id
+			}
 		});
 		deleteSong(function() {
 			initalizePlayer();
 		});
 	}
+
 	function detonate() {
 		if ($scope.detonate !== null) {
 			$timeout.cancel($scope.detonate);
@@ -383,19 +429,22 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			detonate();
 		}, 10000);
 	}
+
 	function distance(lat1, lon1, lat2, lon2, unit) {
-		var radlat1 = Math.PI * lat1/180,
-			radlat2 = Math.PI * lat2/180,
-			radlon1 = Math.PI * lon1/180,
-			radlon2 = Math.PI * lon2/180,
-			theta = lon1-lon2,
-			radtheta = Math.PI * theta/180,
+		var radlat1 = Math.PI * lat1 / 180,
+			radlat2 = Math.PI * lat2 / 180,
+			theta = lon1 - lon2,
+			radtheta = Math.PI * theta / 180,
 			dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
 		dist = Math.acos(dist);
-		dist = dist * 180/Math.PI;
+		dist = dist * 180 / Math.PI;
 		dist = dist * 60 * 1.1515;
-		if (unit=="K") { dist = dist * 1.609344; }
-		if (unit=="N") { dist = dist * 0.8684; }
+		if (unit === 'K') {
+			dist = dist * 1.609344;
+		}
+		if (unit === 'N') {
+			dist = dist * 0.8684;
+		}
 		return dist;
 	}
 
@@ -407,39 +456,39 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		}
 		var duration = parseInt($scope.playerEvent.target.getDuration(), 10);
 		$scope.videoInterval = $interval(function() {
-			var time = parseInt($scope.playerEvent.target.getCurrentTime(), 10); 
+			var time = parseInt($scope.playerEvent.target.getCurrentTime(), 10);
 			if (time >= (duration - 5)) {
 				$scope.loading = true;
 			}
-			if (time >= 60 && isConcert) {
+			if (time >= 6 && isConcert) {
 				isConcert = false;
-				$http({
-					method: 'get',
-			      	url: 'http://api.songkick.com/api/3.0/search/artists.json',
-			      	params: {
-			        	apikey: 'LFxJG3ohVpIBASF5',
-			        	query: $scope.track.get('artistInfo')
-			      	}
-			    }).then(function(data) {
-			    	var artistObj  = data.data.resultsPage.results.artist;
-			    	for (var i = 0; i < artistObj.length; i++) {
-			    		if (artistObj[i].displayName.toLowerCase() === $scope.track.get('artistInfo').toLowerCase()) {
-			    			var id = artistObj[i].id;
-			    			$http({
-								method: 'GET',
-						      	url: 'http://api.songkick.com/api/3.0/artists/' + id + '/calendar.json?callback=JSON_CALLBACK&apikey=LFxJG3ohVpIBASF5',
-						    }).success(function(data) {
-						    	var eventObj  = data.resultsPage.results.event;
-						    	for (var i = 0; i < eventObj.length; i++) {
-						    		if(distance(eventObj[i].location.lat, eventObj[i].location.lng, $scope.box.get('latlng').latitude, $scope.box.get('latlng').longitude, 'M') <= 50) {
-						    			notify({messageTemplate:'<img ng-src="images/songkick-logo.png"><span class="content"><h3 class="header">'+$scope.track.get('artistInfo')+'is coming to your area!</h3><p>'+eventObj[i].venue.displayName+'</p><p>'+ eventObj[i].venue.metroArea.displayName+', ' + eventObj[i].venue.metroArea.state.displayName +' '+ eventObj[i].venue.metroArea.country.displayName +'</p><p>'+ eventObj[i].start.datetime +'</p></span>', classes: 'activity-modal', duration: 25000, position: 'left'} );
-						    			break;
-						    		}
-						    	}
-						    });
-			    		}
-			    	}
-			    });
+				window.artistSearch = function(data) {
+					var artistObj = data.resultsPage.results.artist;
+					for (var i = 0; i < artistObj.length; i++) {
+						if (artistObj[i].displayName.toLowerCase() === $scope.track.get('artistInfo').toLowerCase()) {
+							var id = artistObj[i].id;
+							window.artistEventSearch = function(data) {
+								if (!lodash.isEmpty(data.resultsPage.results)) {
+									var eventObj = data.resultsPage.results.event;
+									for (var i = 0; i < eventObj.length; i++) {
+										if (distance(eventObj[i].location.lat, eventObj[i].location.lng, $scope.box.get('latlng').latitude, $scope.box.get('latlng').longitude, 'M') <= 50) {
+											console.log(eventObj[i].start.date + ' ' + eventObj[i].start.time);
+											notify({
+												messageTemplate: '<img ng-src="/images/songkick-logo.png"><span class="content"><h3 class="header">' + $scope.track.get('artistInfo') + ' is coming to your area!</h3><p>' + eventObj[i].venue.displayName + '</p><p>' + eventObj[i].venue.metroArea.displayName + ', ' + eventObj[i].venue.metroArea.state.displayName + ' ' + eventObj[i].venue.metroArea.country.displayName + '</p><p>' + moment(eventObj[i].start.date + ' ' + eventObj[i].start.time).format('dddd, MMMM Do YYYY, h:mm a') + '</p></span>',
+												classes: 'activity-modal',
+												duration: 25000,
+												position: 'left'
+											});
+											break;
+										}
+									}
+								}
+							};
+							$http.jsonp('http://api.songkick.com/api/3.0/artists/' + id + '/calendar.json?jsoncallback=artistEventSearch&apikey=LFxJG3ohVpIBASF5');
+						}
+					}
+				};
+				$http.jsonp('http://api.songkick.com/api/3.0/search/artists.json?jsoncallback=artistSearch&apikey=LFxJG3ohVpIBASF5&query=' + $scope.track.get('artistInfo'));
 			}
 		}, 1000);
 	}
@@ -447,10 +496,13 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtubeBackupId')) {
 			$scope.playerEvent.target.loadVideoById($scope.track.get('youtubeBackupId'));
 			$scope.playerEvent.target.setPlaybackQuality('small');
-		}else {
+		} else {
 			//Find Another Song
 			songEnded();
-			notify({messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>', classes: 'activity-modal'});
+			notify({
+				messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>',
+				classes: 'activity-modal'
+			});
 		}
 	};
 	$scope.onStateChange = function(event) {
@@ -470,7 +522,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	};
 	$scope.onReady = function(event) {
 		$scope.playerEvent = event;
-		if($scope.isBox) {
+		if ($scope.isBox) {
 			$scope.openPlayerSetupDialog();
 		}
 	};
@@ -480,7 +532,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	$scope.openPlayerSetupDialog = function() {
 		if ($scope.$storage.boxCode === null) {
 			getID();
-		}else {
+		} else {
 			var Player = Parse.Object.extend('Player');
 			var query = new Parse.Query(Player);
 			query.equalTo('objectId', $scope.$storage.boxCode);
@@ -492,10 +544,10 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 						if ($scope.box.get('isSetup')) {
 							pubNubFub();
 							initalizePlayer();
-						}else {
+						} else {
 							openModal();
 						}
-					}else {
+					} else {
 						getID();
 					}
 				},

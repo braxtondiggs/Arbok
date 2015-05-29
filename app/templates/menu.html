@@ -56,19 +56,23 @@
         </header>
         <ion-content class="has-header" ng-controller="QueueCtrl">
             <ion-list class="list queue dark-list" ng-show="queue.length">
-                <ion-item menu-close class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" on-hold="activateVote(video)" ng-repeat="video in queue" ng-if="video.get('isActive')">
-                    <img ng-src="{{video.get('image')}}">
-                    <i class="icon ion-chevron-right icon-accessory"></i>
-                    <h2>{{video.get('artistInfo')}}</h2>
-                    <p>{{video.get('trackInfo')}}</p>
-                </ion-item>
-                <ion-item menu-close class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" ng-repeat="video in queue | orderBy: '-counter'" on-hold="activateVote(video)" ng-if="!video.get('isActive')">
-                    <img ng-src="{{video.get('image')}}">
-                    <i class="icon ion-chevron-right icon-accessory"></i>
-                    <h2>{{video.get('artistInfo')}}</h2>
-                    <p>{{video.get('trackInfo')}}</p>
-                    <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong($index);$event.stopPropagation();" ng-if="video.get('userId').id === currentUser.id"></ion-option-button>
-                </ion-item>
+                <div ng-repeat="video in queue">
+                    <ion-item menu-close class="item item-thumbnail-left" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" on-hold="activateVote(video)" ng-if="video.get('isActive')">
+                        <img ng-src="{{video.get('image')}}" on-hold="activateVote(video)">
+                        <i class="icon ion-chevron-right icon-accessory"></i>
+                        <h2>{{video.get('artistInfo')}}</h2>
+                        <p>{{video.get('trackInfo')}}</p>
+                    </ion-item>
+                </div>
+                <div ng-repeat="video in queue | orderBy: '-counter'">
+                    <ion-item menu-close class="item item-thumbnail-left item-remove-animate" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" on-hold="activateVote(video)" ng-if="!video.get('isActive')">
+                        <img ng-src="{{video.get('image')}}">
+                        <i class="icon ion-chevron-right icon-accessory"></i>
+                        <h2>{{video.get('artistInfo')}}</h2>
+                        <p>{{video.get('trackInfo')}}</p>
+                        <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong($index);$event.stopPropagation();" ng-if="video.get('userId').id === currentUser.id"></ion-option-button>
+                    </ion-item>
+                </div>
             </ion-list>
             <p ng-show="!queue.length" class="empty-list">Is it quiet in here? No music is playing. Be the first!</p>
         </ion-content>

@@ -8,6 +8,23 @@
     <pl.droidsonroids.gif.GifImageView
         android:layout_width="250dp"
         android:layout_height="250dp"
-        android:src="@drawable/loading" />
+        android:src="@drawable/loading"
+        android:id="@+id/loading"
+        android:visibility="visible" />
+    <TextView
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:id="@+id/loadingText"
+        android:layout_centerVertical="true" />
+
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" />
 
 </RelativeLayout>

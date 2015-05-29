@@ -2,6 +2,7 @@ node_modules
 /www
 .idea
 .temp
+.metadata
 .sass-cache
 app/lib
 app/bower_components

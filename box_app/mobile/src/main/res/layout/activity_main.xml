@@ -22,15 +22,19 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:id="@+id/loadingText"
+            android:layout_below="@+id/loading"
             android:layout_centerVertical="true" />
+        <ProgressBar
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_below="@+id/loading" />
     </RelativeLayout>
-
     <WebView
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:visibility="gone" />
-
-
-
 </RelativeLayout>

@@ -1,13 +1,20 @@
 package com.cymbit.almabox;
 
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.webkit.JavascriptInterface;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,18 +26,19 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.pubnub.api.*;
 
 import java.io.File;
 
 
 public class MainActivity extends ActionBarActivity {
-    WebView mWebView = (WebView) findViewById(R.id.webview);
-    TextView loadingText = (TextView) findViewById(R.id.loadingText);
-    RelativeLayout loadingContainer = (RelativeLayout) findViewById(R.id.loadingContainer);
-
     private View mDecorView;
     private DownloadManager downloadManager;
     private long downloadReference;
+    Animation animationFadeOut;
+    WebView mWebView;
+    TextView loadingText;
+    RelativeLayout loadingContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +46,21 @@ public class MainActivity extends ActionBarActivity {
         mDecorView = getWindow().getDecorView();
         mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
 
+        setContentView(R.layout.activity_main);
+
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k", "oh8eC3w1vnRfBHpAaRljovwzVNaQJnrbh65ei7Wf");
 
-        setContentView(R.layout.activity_main);
+        mWebView = (WebView) findViewById(R.id.webview);
+        loadingText = (TextView) findViewById(R.id.loadingText);
+        loadingContainer = (RelativeLayout) findViewById(R.id.loadingContainer);
+        animationFadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+
         checkVersion();
 
-        /*@JavascriptInterface
-        public void getLocalStorage() {
-            print.
-        }*/
+        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
-    public static void InstallAPK(String filename){
+    public void InstallAPK(String filename){
         File file = new File(filename);
         if(file.exists()){
             try {
@@ -57,9 +68,16 @@ public class MainActivity extends ActionBarActivity {
                 command = "pm install -r " + filename;//pm or adb install
                 Process proc = Runtime.getRuntime().exec(new String[] { "su", "-c", command });
                 proc.waitFor();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);;
             } catch (Exception e) {
                 e.printStackTrace();
+                //Should Start Player
             }
+        }else {
+            System.out.println("File Error");
+            //Should Start Player
         }
     }
     public void checkVersion() {
@@ -71,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
                 if (e == null) {
                     if (serverInfo.getString("version").equals(versionName)) {
                         loadPlayer();
-                    }else {
+                    } else {
                         updatePlayer(serverInfo.getString("url"));
                     }
                 } else {
@@ -82,16 +100,51 @@ public class MainActivity extends ActionBarActivity {
         });
     }
     public void loadPlayer() {
-        WebSettings webSettings = mWebView.getSettings();
         loadingText.setText("Please Wait...");
+
+        mWebView.setWebViewClient(new CustomWebViewClient());
+        mWebView.loadUrl("http://quilava.herokuapp.com/#/player/box");
+
+        WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
-        mWebView.loadUrl("http://quilava.herokuapp.com/#/player/box");
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setDatabasePath("/data/data/" + mWebView.getContext().getPackageName() + "/databases/");
+
         mWebView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
                 loadingText.setText("");
                 loadingContainer.setVisibility(View.GONE);
+                //mWebView.setVisibility(View.VISIBLE);
+                loadingContainer.startAnimation(animationFadeOut);
+                try {
+                    Thread.sleep(10000);
+                    Log.d("", "All the cookies in a string:" + getCookie(url, "boxCode"));
+                    Pubnub pubnub = new Pubnub("pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2", "sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe");
+
+                    try {
+                        pubnub.subscribe(getCookie(url, "boxCode WIFI"), new Callback() {
+                            @Override
+                            public void connectCallback(String channel, Object message) {
+                                System.out.println("SUBSCRIBE : CONNECT on channel:" + channel
+                                        + " : " + message.getClass() + " : "
+                                        + message.toString());
+                            }
+
+                            @Override
+                            public void successCallback(String channel, Object message) {
+                                System.out.println("SUBSCRIBE : " + channel + " : "
+                                        + message.getClass() + " : " + message.toString());
+                            }
+                        });
+                    } catch (PubnubException e) {
+                        System.out.println(e.toString());
+                    }
+                } catch (InterruptedException e) {
+
+                }
             }
         });
     }
@@ -100,6 +153,9 @@ public class MainActivity extends ActionBarActivity {
         Uri Download_Uri = Uri.parse(url);
 
         loadingText.setText("Updating Player... Please Wait");
+        if(isFileExists(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/AlmaBox.apk")) {
+            deleteExistingFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/AlmaBox.apk");
+        }
 
         DownloadManager.Request r = new DownloadManager.Request(Download_Uri);
 
@@ -108,8 +164,99 @@ public class MainActivity extends ActionBarActivity {
 
         downloadReference = downloadManager.enqueue(r);
 
-        //DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
-        //SharedPreferences mSharedPref = activity.getSharedPreferences("package", Context.MODE_PRIVATE);
-        //mSharedPref.edit().putLong("downloadID", dm.enqueue(r)).commit();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                boolean downloading = true;
+                while (downloading) {
+                    try {
+                        Thread.sleep(10000);
+                        DownloadManager.Query q = new DownloadManager.Query();
+                        q.setFilterById(downloadReference);
+
+                        Cursor cursor = downloadManager.query(q);
+                        cursor.moveToFirst();
+                        int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                        int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+
+                        if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                            downloading = false;
+                        }
+
+                        final int dl_progress = (int) ((double)bytes_downloaded / (double)bytes_total * 100f);
+
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                Log.d("Prog", Integer.toString(dl_progress));
+                            }
+                        });
+
+                        cursor.close();
+                    } catch (InterruptedException e) {
+
+                    }
+                }
+            }
+        }).start();
+    }
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(downloadReference);
+                Cursor c = downloadManager.query(query);
+                if (c.moveToFirst()) {
+                    int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                    if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
+                        if(downloadId == c.getInt(0)) {
+                            String uriString = c.getString(c.getColumnIndex("local_uri"));
+                            InstallAPK(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/AlmaBox.apk");
+                        }else {
+                            //Should Start Player
+                        }
+                    }else {
+                        //Should Start Player
+                    }
+                }else {
+                    //Should Start Player
+                }
+            }
+        }
+    };
+    private class CustomWebViewClient extends WebViewClient {
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+    }
+    public String getCookie(String siteName, String CookieName){
+        String CookieValue = null;
+
+        CookieManager cookieManager = CookieManager.getInstance();
+        String cookies = cookieManager.getCookie(siteName);
+        String[] temp=cookies.split(";");
+        for (String ar1 : temp ){
+            if(ar1.contains(CookieName)){
+                String[] temp1=ar1.split("=");
+                CookieValue = temp1[1];
+            }
+        }
+        return CookieValue;
+    }
+    private boolean isFileExists(String filename){
+        File folder1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + filename);
+        return folder1.exists();
+    }
+
+    private boolean deleteExistingFile(String filename){
+        File folder1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + filename);
+        return folder1.delete();
     }
 }

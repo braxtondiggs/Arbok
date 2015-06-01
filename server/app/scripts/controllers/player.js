@@ -547,6 +547,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 						} else {
 							openModal();
 						}
+						document.cookie='boxCode='+ $scope.$storage.boxCode +'; expires=Thu, 18 Dec 2020 12:00:00 UTC';
 					} else {
 						getID();
 					}

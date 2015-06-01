@@ -8,8 +8,8 @@ android {
         applicationId "com.cymbit.almabox"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 100
+        versionName "0.1.0"
     }
     buildTypes {
         release {

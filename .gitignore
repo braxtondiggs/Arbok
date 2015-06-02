@@ -11,6 +11,7 @@ platforms
 *.swp
 *.swo
 *.log
+*.iml
 *.DS_Store
 server/node_modules
 app/scripts/config.js

@@ -1,21 +1,31 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'reddittv'
+            keyPassword 'Blackbad882003'
+            storeFile file('/Users/braxtondiggs/Documents/Sites/Quilava/keys/release.keystore')
+            storePassword 'Blackbad882003'
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         applicationId "com.cymbit.almabox"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 22
         versionCode 100
         versionName "0.1.0"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 

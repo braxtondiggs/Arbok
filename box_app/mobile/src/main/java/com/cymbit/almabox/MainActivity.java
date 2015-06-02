@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.CookieManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -42,6 +43,12 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try {
+            Process root = Runtime.getRuntime().exec("su");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         super.onCreate(savedInstanceState);
         mDecorView = getWindow().getDecorView();
         mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
@@ -60,6 +67,14 @@ public class MainActivity extends ActionBarActivity {
 
         registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            mDecorView = getWindow().getDecorView();
+            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
     public void InstallAPK(String filename){
         File file = new File(filename);
         if(file.exists()){
@@ -68,9 +83,7 @@ public class MainActivity extends ActionBarActivity {
                 command = "pm install -r " + filename;//pm or adb install
                 Process proc = Runtime.getRuntime().exec(new String[] { "su", "-c", command });
                 proc.waitFor();
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);;
+                rebootPhone();
             } catch (Exception e) {
                 e.printStackTrace();
                 //Should Start Player
@@ -78,6 +91,15 @@ public class MainActivity extends ActionBarActivity {
         }else {
             System.out.println("File Error");
             //Should Start Player
+        }
+    }
+    public void rebootPhone() {
+        try {
+            String command = "reboot";
+            Process proc = Runtime.getRuntime().exec(new String[] { "su", "-c", command });
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
     public void checkVersion() {
@@ -99,27 +121,26 @@ public class MainActivity extends ActionBarActivity {
             }
         });
     }
+
     public void loadPlayer() {
         loadingText.setText("Please Wait...");
-
-        mWebView.setWebViewClient(new CustomWebViewClient());
-        mWebView.loadUrl("http://quilava.herokuapp.com/#/player/box");
 
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
-        webSettings.setDatabaseEnabled(true);
         webSettings.setDomStorageEnabled(true);
-        webSettings.setDatabasePath("/data/data/" + mWebView.getContext().getPackageName() + "/databases/");
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
 
+        mWebView.setWebChromeClient(new WebChromeClient());
+        mWebView.loadUrl("http://quilava.herokuapp.com/#/player/box");
         mWebView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
                 loadingText.setText("");
                 loadingContainer.setVisibility(View.GONE);
-                //mWebView.setVisibility(View.VISIBLE);
+                mWebView.setVisibility(View.VISIBLE);
                 loadingContainer.startAnimation(animationFadeOut);
-                try {
+                /*try {
                     Thread.sleep(10000);
                     Log.d("", "All the cookies in a string:" + getCookie(url, "boxCode"));
                     Pubnub pubnub = new Pubnub("pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2", "sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe");
@@ -144,7 +165,7 @@ public class MainActivity extends ActionBarActivity {
                     }
                 } catch (InterruptedException e) {
 
-                }
+                }*/
             }
         });
     }
@@ -230,12 +251,6 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     };
-    private class CustomWebViewClient extends WebViewClient {
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
-        }
-    }
     public String getCookie(String siteName, String CookieName){
         String CookieValue = null;
 
@@ -251,12 +266,12 @@ public class MainActivity extends ActionBarActivity {
         return CookieValue;
     }
     private boolean isFileExists(String filename){
-        File folder1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + filename);
+        File folder1 = new File(filename);
         return folder1.exists();
     }
 
     private boolean deleteExistingFile(String filename){
-        File folder1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + filename);
+        File folder1 = new File(filename);
         return folder1.delete();
     }
 }

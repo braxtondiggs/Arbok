@@ -10,15 +10,16 @@
         android:id="@+id/loadingContainer"
         android:gravity="center">
         <pl.droidsonroids.gif.GifImageView
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="250dp"
             android:src="@drawable/loading"
             android:id="@+id/loading"
             android:visibility="visible" />
         <TextView
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
+            android:textSize="20sp"
             android:gravity="center"
             android:textColor="@color/white"
             android:id="@+id/loadingText"
@@ -36,5 +37,5 @@
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 </RelativeLayout>

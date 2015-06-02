@@ -12,6 +12,8 @@
                 <i class="icon ion-chevron-right icon-accessory"></i>
                 <h2>{{video.get('artistInfo')}}</h2>
                 <p>{{video.get('trackInfo')}}</p>
+                <ion-option-button class="button-balanced">&#10003;</ion-option-button>
+                <ion-option-button class="button-assertive">&#10007;</ion-option-button>
                 <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong($index)" ng-if="video.get('userId').id === currentUser.id"></ion-option-button>
             </ion-item>
         </ion-list>

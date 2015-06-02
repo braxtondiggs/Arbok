@@ -1,3 +1,4 @@
+@import '_colors.scss';
 .votePanel {
 	position: absolute;
 	top: 0;
@@ -52,10 +53,10 @@
 	    }
 	}
 	.cross {
-		background:url(http://cl.ly/image/0B0E1b0z003I/cross.png) no-repeat;
+		background:url(../images/cross.png) no-repeat;
 	}
 	.tick {
-		background:url(http://cl.ly/image/0v3Y1M1D2l1f/tick.png) no-repeat;
+		background:url(../images/tick.png) no-repeat;
 	}
 	.bgColor { 
 		transition: all .5s ease-in-out;
@@ -87,4 +88,12 @@
   		position: absolute;
   		z-index: 10;
 	}
+}
+.close-vote {
+	position: absolute;
+    right: 5px;
+    font-size: 32px;
+    top: 5px;
+    color: $coloredLinks;
+    z-index: 15;
 }

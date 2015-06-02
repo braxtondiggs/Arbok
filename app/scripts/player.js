@@ -49,6 +49,7 @@ angular.module('Alma.controllers')
 				var query = new Parse.Query(Player);
 				var point = new Parse.GeoPoint($scope.lnglat.lat, $scope.lnglat.lng);
 				query.equalTo('isSetup' , true);
+				query.equalTo('isActive' , true);
 				query.withinMiles('latlng', point, 50);
 				query.find({
 					success: function(playerObjects) {

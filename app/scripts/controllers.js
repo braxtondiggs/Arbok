@@ -43,6 +43,12 @@ angular.module('Alma.controllers', [])
 				PubNub.ngUnsubscribe({channel: $scope.$storage.connectedPlayer});
 			}
 		}*/
+		$scope.closeVote = function() {
+			$scope.vote = {
+				panel:false,
+				track: null
+			};
+		};
 		$scope.activateVote = function(videoObj) {
 			var user = $rootScope.currentUser;
 			var index = 0;

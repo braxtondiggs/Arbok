@@ -61,6 +61,12 @@ body,
 h1 {
     font-family: 'helvetica_neue_lt_pro47LtCn';
 }
+.queue,
+.queue-menu {
+    .dark-list .item-thumbnail-left > a.item-content {
+        background-color: $darkBG;
+    }
+}
 .tabs-top {
     .tabs {
         top:0;

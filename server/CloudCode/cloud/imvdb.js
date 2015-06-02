@@ -4,13 +4,11 @@ var cheerio = require('cloud/modules/cheerio.js');
 var trim = require('cloud/modules/trim.min.js');
 /*global Parse*/
 Parse.Cloud.define('Logger', function(request, response) {
-	console.log(request.params);
 	response.success();
 });
-Parse.Cloud.job('IMVDB', function(response) {
+Parse.Cloud.job('IMVDB', function(request, response) {
 	// Set up to modify user data
 	Parse.Cloud.useMasterKey();
-	console.log(response.params);
 	var IMVDBurls = {
 		0: {
 			url: 'http://imvdb.com/charts/new',
@@ -47,6 +45,7 @@ Parse.Cloud.job('IMVDB', function(response) {
 					callback();
 				}
 			});
+			response.success('Success: Rows Affected - ' + result.length.toString());
 		},
 		error: function() {
 			response.error('Lookup Failed');

@@ -65,17 +65,17 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				var msg = (payload.message.username) ? payload.message.username + ' just added a song' : 'The queue was empty!',
 					submsg = (payload.message.username) ? payload.message.artist + ' - ' + payload.message.track : 'So we picked a song for you.';
 				notify({
-					messageTemplate: '<img ng-src="' + payload.message.image + '"><span class="content"><h3 class="header">' + msg + '</h3><p>' + submsg + '</p></span>',
+					messageTemplate: '<img ng-src="' + payload.message.image + '" err-src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg + '</h3><p>' + submsg + '</p></span>',
 					classes: 'activity-modal'
 				});
 			} else if (payload.message.type === 'chat_msg') {
 				notify({
-					messageTemplate: '<img ng-src="' + payload.message.image + '"><span class="content"><h3 class="header">' + payload.message.username + '</h3><p>' + payload.message.msg + '</p></span>',
+					messageTemplate: '<img ng-src="' + payload.message.image + '" err-src="images/logo_missing.png"><span class="content"><h3 class="header">' + payload.message.username + '</h3><p>' + payload.message.msg + '</p></span>',
 					classes: 'activity-modal'
 				});
 			} else if (payload.message.type === 'vote' && payload.message.id === $scope.track.id) {
 				notify({
-					messageTemplate: '<img ng-src="' + payload.message.image + '""><span class="content"><h3 class="header">' + payload.message.username + '</h3><p>' + ((payload.message.vote) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
+					messageTemplate: '<img ng-src="' + payload.message.image + '" err-src="images/logo_missing.png"><span class="content"><h3 class="header">' + payload.message.username + '</h3><p>' + ((payload.message.vote) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
 					classes: 'activity-modal'
 				});
 				var Vote = Parse.Object.extend('Vote');
@@ -542,6 +542,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					if (obj !== undefined) {
 						$scope.box = obj;
 						if ($scope.box.get('isSetup')) {
+							$scope.box.set('isActive', true);
+							$scope.box.save();
 							pubNubFub();
 							initalizePlayer();
 						} else {

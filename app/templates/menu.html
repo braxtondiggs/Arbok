@@ -54,7 +54,7 @@
         <header class="bar bar-header bar-stable">
             <h1 class="title"><i class="ion-music-note"></i>What's Playing</h1>
         </header>
-        <ion-content class="has-header" ng-controller="QueueCtrl">
+        <ion-content class="has-header queue-menu" ng-controller="QueueCtrl">
             <ion-list class="list queue dark-list" ng-show="queue.length">
                 <div ng-repeat="video in queue">
                     <ion-item menu-close class="item item-thumbnail-left" href="#/app/artist/slug/{{video.get('IMVDBartistId')}}" on-hold="activateVote(video)" ng-if="video.get('isActive')">
@@ -62,6 +62,7 @@
                         <i class="icon ion-chevron-right icon-accessory"></i>
                         <h2>{{video.get('artistInfo')}}</h2>
                         <p>{{video.get('trackInfo')}}</p>
+                        <ion-option-button class="button-balanced" ng-click="activateVote(video)"><i class="ion-arrow-graph-up-left icon"></i></ion-option-button>
                     </ion-item>
                 </div>
                 <div ng-repeat="video in queue | orderBy: '-counter'">
@@ -70,6 +71,7 @@
                         <i class="icon ion-chevron-right icon-accessory"></i>
                         <h2>{{video.get('artistInfo')}}</h2>
                         <p>{{video.get('trackInfo')}}</p>
+                        <ion-option-button class="button-balanced" ng-click="activateVote(video)"><i class="ion-arrow-graph-up-left icon"></i></ion-option-button>
                         <ion-option-button class="button-assertive icon ion-trash-a" ng-click="deleteSong($index);$event.stopPropagation();" ng-if="video.get('userId').id === currentUser.id"></ion-option-button>
                     </ion-item>
                 </div>

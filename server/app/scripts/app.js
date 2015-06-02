@@ -1,5 +1,17 @@
 'use strict';
 angular.module('MVPlayer', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlayer', 'ngStorage', 'ngDialog', 'pubnub.angular.service', 'angular-echonest', 'cgNotify', 'ngLodash'])
+  	.directive('errSrc', function() {
+		return {
+		  	link: function(scope, element, attrs) {
+		    	element.bind('error', function() {
+		      		if (attrs.src !== attrs.errSrc) {
+		        		attrs.$set('src', attrs.errSrc);
+		        		attrs.$set('class', 'missingImage');
+		      		}
+		    	});
+		  	}
+		};
+	})
   	.config(function ($routeProvider, $locationProvider, EchonestProvider) {
 		$routeProvider.when('/', {
 			templateUrl: 'views/main.html',

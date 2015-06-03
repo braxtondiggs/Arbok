@@ -26,7 +26,7 @@ angular.module('Alma.controllers')
 		$scope.$on('$ionicView.enter', function() {
 			$ionicScrollDelegate.scrollBottom(true);
 		});
-		$scope.dashboard.uploadImage = function(msg) {
+		$scope.dashboard.attachImage = function() {
 			var hideSheet = $ionicActionSheet.show({
 				buttons: [{
 					text: 'Take Photo'
@@ -34,63 +34,67 @@ angular.module('Alma.controllers')
 				titleText: 'Photo Upload',
 				cancelText: 'Cancel',
 				buttonClicked: function(index) {
-					function imageError() {
-						hideSheet();
-						$ionicLoading.hide();
-						$ionicLoading.show({
-							template: 'Error, could not load photo...',
-							duration: 2000
-						});
-					}
-					/*global Parse*/
-					var user = Parse.User.current();
-					if (index === 0) {
-						$ionicLoading.show();
-						/* global Camera*/
-						var cameraOptions = {
-							quality: 50,
-							destinationType: Camera.DestinationType.DATA_URL,
-							sourceType: Camera.PictureSourceType.CAMERA,
-							encodingType: Camera.EncodingType.PNG,
-							correctOrientation: true,
-							targetWidth: 150,
-							allowEdit: true
-						};
-						$cordovaCamera.getPicture(cameraOptions).then(function(imageData) {
-							var file = new Parse.File(user.id + '.png', {
-								base64: imageData
-							});
-							user.set('image', file);
-							user.save(null, {
-								success: function(image) {
-									console.log(image);
-									$scope.dashboard.sendChat(msg, image._url);
-								},
-								error: function() {
-									$ionicLoading.show({
-										template: 'Error, we could not upload your photo...',
-										duration: 2000
-									});
-								}
-							});
-							
-						}, function() {
-							imageError();
-						});
-					}
+					$scope.dashboard.uploadImage();
+					return true;
 				}
 			});
 		};
-		$scope.dashboard.sendChat = function(msg, image) {
+		$scope.dashboard.changeImage = function() {
+			var hideSheet = $ionicActionSheet.show({
+				buttons: [{
+					text: 'Change Photo',
+				},{
+					text: 'Remove Photo',
+				}],
+				titleText: 'Photo Options',
+				cancelText: 'Cancel',
+				buttonClicked: function(index) {
+					switch (index) {
+						case 0:
+							$scope.dashboard.uploadImage();
+							break;
+						case 1:
+							delete $scope.dashboard.image;
+							break;
+					}
+					return true;
+				}
+			});
+		};
+		$scope.dashboard.uploadImage = function() {
+			$ionicLoading.show();
+			/* global Camera*/
+			var cameraOptions = {
+				quality: 50,
+				destinationType: Camera.DestinationType.DATA_URL,
+				sourceType: Camera.PictureSourceType.CAMERA,
+				encodingType: Camera.EncodingType.PNG,
+				correctOrientation: true,
+				targetWidth: 150,
+				allowEdit: true
+			};
+			$cordovaCamera.getPicture(cameraOptions).then(function(imageData) {
+				$scope.dashboard.image = imageData;					
+			}, function() {
+				hideSheet();
+				$ionicLoading.hide();
+				$ionicLoading.show({
+					template: 'Error, could not load photo...',
+					duration: 2000
+				});
+			});
+		}
+		$scope.dashboard.sendChat = function(msg) {
 			if (msg !== '') {
 				var user = Parse.User.current();
 				if (!lodash.isEmpty(user)) {
 					if (user.get('connectedPlayer')) {
-						MusicService.addChat(user.id, msg, user.get('name'), (user.get('image'))?user.get('image')._url:undefined);
+						MusicService.addChat(user.id, msg, user.get('name'), (user.get('image'))?user.get('image')._url:undefined, ($scope.dashboard.image)?$scope.dashboard.image:undefined);
 						PubNub.ngPublish({
 							channel: user.get('connectedPlayer').id,
-							message: {'type': 'chat_msg', 'id': user.id, 'msg': msg, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'msg_image': image}
+							message: {'type': 'chat_msg', 'id': user.id, 'msg': msg, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'msg_image': ($scope.dashboard.image)?$scope.dashboard.image:undefined}
 						});
+						delete $scope.dashboard.image;
 					}else {
 						$cordovaDialogs.alert('You have not connected to an Alma yet.', 'Alma - Error').then(function() {
 							$state.transitionTo('app.player');
@@ -143,18 +147,4 @@ angular.module('Alma.controllers')
 				$scope.dashboard.chat.chatMsg = '';
 			}
 		};
-		/*$scope.$on('taResize', function(e, ta) {
-			console.log('taResize');
-			if (!ta) return;
-
-			var taHeight = ta[0].offsetHeight;
-			console.log('taHeight: ' + taHeight);
-			if (!footerBar) return;
-
-			var newFooterHeight = taHeight + 10;
-			newFooterHeight = (newFooterHeight > 44) ? newFooterHeight : 44;
-
-			footerBar.style.height = newFooterHeight + 'px';
-			scroller.style.bottom = newFooterHeight + 'px'; 
-		});*/
 	}]);

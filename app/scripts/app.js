@@ -77,7 +77,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 								if (!found) {
 									$ionicLoading.show();
 									$http.get(
-										'http://imvdb.com/api/v1/video/' + String(artistInfo.id) + '?include=sources'
+										'http://imvdb.com/api/v1/video/' + String(artistInfo.id) + '?include=sources,featured'
 									).success(function(data) {
 										var sources = data.sources,
 											youtubeKey = null;
@@ -99,6 +99,12 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 												video.set('artistInfo', artistInfo.convertedSlug);
 											}else {
 												video.set('artistInfo', artistInfo.artists[0].name);
+												var featuredArtist = [artistInfo.artists[0].name];
+												for (var i = 0; i < data.featured_artists.length; i++) {
+													featuredArtist.push(data.featured_artists[i].name);
+												}
+												video.set('featuredArtist', featuredArtist);
+
 											}
 											if (artistInfo.slug) {
 												video.set('IMVDBartistId', artistInfo.slug);
@@ -122,7 +128,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 														if (!found) {
 															$rootScope.queue.push(video);
 															that.getActiveSong();
-															that.videoDashboard(user.id, user.get('name'), user.get('image')._url, video);
+															that.videoDashboard(user.id, user.get('name'), (user.get('image'))?user.get('image')._url:'', video);
 														}
 													});
 												},
@@ -205,6 +211,36 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			}
 			$rootScope.chats.push(obj);
 		},
+		voteDashboard: function(id, name, image, action, msg) {
+			var user = Parse.User.current();
+			var obj = {
+				self: (id === user.id) ? true : false,
+				style: {'background-color': ((action)?'rgba(39, 174, 96, .3)':'rgba(192, 57, 43, .3)')},
+				type: 'video',
+				image: image,
+				username: name + ' ' + ((action) ? 'Liked' : 'Disliked') + ':',
+				msg: msg,
+				createdAt: moment().format('dddd, MMMM Do YYYY, h:mma')
+			};
+			if (!$rootScope.chats) {
+				$rootScope.chats = [];
+			}
+			$rootScope.chats.push(obj);
+		},
+		concertDashboard: function(title, msg, image) {
+			var obj = {
+				self: false,
+				type: 'concert',
+				image: image,
+				username: name + ' added:',
+				msg: msg,
+				createdAt: moment().format('dddd, MMMM Do YYYY, h:mma')
+			};
+			if (!$rootScope.chats) {
+				$rootScope.chats = [];
+			}
+			$rootScope.chats.push(obj);
+		},
 		inTrackQueue: function(id, callback) {
 			var queue = $rootScope.queue,
 				found = false;
@@ -216,7 +252,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 			}
 			callback(found);
 		},
-		addChat: function(id, msg, name, image) {
+		addChat: function(id, msg, name, image, imageMsg) {
 			var user = Parse.User.current();
 			if (!$rootScope.chats) {
 				$rootScope.chats = [];
@@ -230,7 +266,8 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 				createdAt: moment().format('dddd, MMMM Do YYYY, h:mma'),
 				msg: msg,
 				username: name,
-				image: image
+				image: image,
+				imageMsg: imageMsg
 			};
 			var found = false;
 			for (var i = 0;i < $rootScope.chats.length; i++) {
@@ -344,6 +381,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 								}
 							}).then(function(player) {
 								getVideos(player, payload);
+								MusicService.voteDashboard(payload.message.id, payload.message.username, (payload.message.image)?payload.message.image:undefined, payload.message.vote, payload.message.selectedTrack);
 							});
 						}
 					}
@@ -351,6 +389,17 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 				if (payload.message.type === 'chat_msg') {
 					var obj = payload.message;
 					that.addChat(obj.id, obj.msg, obj.username, obj.image);
+					var current = $ionicHistory.currentView();
+					if (current.stateName !== 'app.dashboard') {
+						$rootScope.dashboard.count++;
+					}else {
+						$ionicScrollDelegate.scrollBottom(true);
+					}
+					$rootScope.$apply();
+				}
+				if (payload.message.type === 'concert') {
+					var obj = payload.message;
+					that.concertDashboard(obj.title, obj.msg, obj.image);
 					var current = $ionicHistory.currentView();
 					if (current.stateName !== 'app.dashboard') {
 						$rootScope.dashboard.count++;

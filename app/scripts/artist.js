@@ -1,6 +1,6 @@
 'use strict';
 angular.module('Alma.controllers')
-	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', 'MusicService', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', 'Echonest', 'lodash', 'LoadingService', function($scope, $stateParams, $http, UserService, MusicService, $ionicLoading, $cordovaDialogs, $ionicHistory, Echonest, lodash, LoadingService) {
+	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', 'MusicService', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', '$cordovaEmailComposer', 'Echonest', 'lodash', 'LoadingService', function($scope, $stateParams, $http, UserService, MusicService, $ionicLoading, $cordovaDialogs, $ionicHistory, $cordovaEmailComposer, Echonest, lodash, LoadingService) {
 		/*jshint camelcase: false */
 		$scope.artist = {
 			info: {}
@@ -40,17 +40,26 @@ angular.module('Alma.controllers')
 				$http.get(
 					'http://imvdb.com/api/v1/search/entities?q=' + param.artistId
 				).success(function(data) {
+					function notFound() {
+						$cordovaDialogs.alert('We are having trouble getting this artists information right now. Our data is constantly changing, so check back later', 'Alma - Error').then(function() {
+							$ionicHistory.goBack(-1);
+							$ionicLoading.hide();
+						});
+					}
+					var found = false;
 					if (data.results.length) {
 						for (var i = 0; i < data.results.length; i++) {
 							if (data.results[i].slug === param.artistId) {
 								getArtistInfo(data.results[i].id);
+								found = true;
 								break;
 							}
 						}
+						if (!found) {
+							notFound()
+						}
 					}else {
-						$cordovaDialogs.alert('We are having trouble getting this artists information right now. Our data is constantly changing, so check back later', 'Alma - Error').then(function() {
-							$ionicHistory.goBack(-1);
-						});
+						notFound()
 					}
 				});
 			}
@@ -69,7 +78,6 @@ angular.module('Alma.controllers')
 				Echonest.artists.get({
 					name: $scope.artist.info.convertedSlug
 				}).then(function(artist) {
-					console.log(artist);
 					if (!lodash.isEmpty(artist)) {
 						return artist.getBiographies();
 					}else {
@@ -112,6 +120,19 @@ angular.module('Alma.controllers')
 					}
 				});
 			}
+		};
+		$scope.artist.emailSong = function(artistName) {
+			var email = {
+				to: 'admin@cymbit.com',
+				subject:  'Song Request',
+				body: '<br /><br /><p>Artist Name: ' + artistName + '</p><p>Artist Track Name: </p>',
+				isHtml: true
+			};
+			$cordovaEmailComposer.isAvailable().then(function() {
+				$cordovaEmailComposer.open(email).then(function() {
+					$cordovaDialogs.alert('Your email was succefully sent, we will get back to you with in 12-24 hours.', 'Alma - Email Sent');
+				});
+			});
 		};
 		$scope.artist.toSlug = function(artist) {
 			return artist.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'');

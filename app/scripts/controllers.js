@@ -105,7 +105,7 @@ angular.module('Alma.controllers', [])
 			function closeVote(voteFn, trackId) {
 				PubNub.ngPublish({
 					channel: $scope.$storage.connectedPlayer,
-					message: {'type': 'vote', 'id': trackId, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'vote': action, 'selectedTrack': vote.get('artistName') + ' - ' + vote.get('trackTitle')}
+					message: {'type': 'vote', 'id': trackId, 'username': user.get('name'), 'image': (user.get('image'))?user.get('image')._url:'/images/missingPerson.jpg', 'vote': action, 'selectedTrack': voteFn.get('artistName') + ' - ' + voteFn.get('trackTitle')}
 				});
 				if (ionic.Platform.isWebView()) {
 					$cordovaVibration.vibrate(100);
@@ -124,6 +124,7 @@ angular.module('Alma.controllers', [])
 					}
 				}).then(function(player) {
 					MusicService.updateVideo(player);
+					MusicService.voteDashboard(user.id, user.get('name'), (user.get('image'))?user.get('image')._url:'', action, voteFn.get('artistName') + ' - ' + voteFn.get('trackTitle'));
 				});
 			}
 			if (!$scope.vote.isSet) {

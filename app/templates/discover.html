@@ -5,7 +5,7 @@
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list animated fadeIn ordered" ng-show="discover.new.videos.length">
-                            <a class="item item-thumbnail-left animated fadeIn" collection-repeat="new in discover.new.videos | limitTo: discover.new.limit" item-height="91px" ng-click="discover.queueSong(new)">
+                            <a class="item item-thumbnail-left animated fadeIn" collection-repeat="new in discover.new.videos | limitTo: discover.new.limit" item-height="91px" item-width="100%" ng-click="discover.queueSong(new)">
                                 <img ng-src="{{new.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" err-src="images/logo_missing.png">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{new.get('artistName')}}</h2>
@@ -23,7 +23,7 @@
                 <ion-nav-view>
                     <ion-content>
                         <div class="list more dark-list animated fadeIn ordered" ng-show="discover.top.week.videos.length">
-                            <a class="item item-thumbnail-left animated fadeIn" collection-repeat="top in discover.top.week.videos | limitTo: discover.top.week.limit" item-height="91px" ng-click="discover.queueSong(top)">
+                            <a class="item item-thumbnail-left animated fadeIn" collection-repeat="top in discover.top.week.videos | limitTo: discover.top.week.limit" item-height="91px" item-width="100%" ng-click="discover.queueSong(top)">
                                 <img ng-src="{{top.get('artistImage').replace('tv.jpg', 'ov.jpg')}}" err-src="images/logo_missing.png">
                                 <i class="icon ion-play icon-accessory"></i>
                                 <h2>{{top.get('artistName')}}</h2>
@@ -48,7 +48,7 @@
                 <ion-nav-view>
                     <ion-content>
                         <div class="list genre_list">
-        					<a href="app/genre/{{genre.name}}" class="item item-icon-left animated fadeIn delay-{{$index}}" collection-repeat="genre in discover.genres" item-height="91px">
+        					<a href="app/genre/{{genre.name}}" class="item item-icon-left animated fadeIn delay-{{$index}}" collection-repeat="genre in discover.genres" item-height="91px" item-width="100%">
         						<div class="list_content">
     	    						<i class="icon ion-social-youtube-outline"></i>
     	    						#{{genre.get('name')}}

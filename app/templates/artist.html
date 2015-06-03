@@ -23,6 +23,8 @@
                             </a>
                         </div>
                         <p ng-if="!artist.info.videography.length" class="center" style="margin-top:50px;">It looks like we do not have any songs for this artist right now, check back later</p>
+                        <br />
+                        <button class="button button-outline dark-button" ng-click="artist.emailSong();"> Are we missing a music video?</button>
                     </div>
                 </ion-nav-view>
             </ion-tab>
@@ -31,7 +33,7 @@
                     <div class="featured animated bounceInUp">
                         <div class="list card dark-list" ng-repeat="video in artist.info.featured" ng-click="queueSong($index, 'featured')">
                             <div class="item item-divider list-title">
-                                {{video.song_title}}
+                                {{video.artists[0].name}} - {{video.song_title}}
                             </div>
                             <div class="item item-image">
                                 <img ng-src="{{video.image.l}}" err-src="images/logo_missing.png" />
@@ -41,6 +43,8 @@
                             </a>
                         </div>
                         <p ng-if="!artist.info.featured.length" class="center" style="margin-top:50px;">It looks like we do not have any songs for this artist right now, check back later</p>
+                        <br />
+                        <button class="button button-outline dark-button" ng-click="artist.emailSong();"> Are we missing a music video?</button>
                     </div>
                 </ion-nav-view>
             </ion-tab>

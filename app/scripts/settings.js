@@ -129,7 +129,7 @@ angular.module('Alma.controllers')
 				var email = {
 					to: 'admin@cymbit.com',
 					subject:  deviceInfo.platform + ' Feature Request',
-					body: '<p>Alma Version: ' + version + '</p><p>' + deviceInfo.platform + ' OS: ' + deviceInfo.version + '</p><p>Phone Model: ' + deviceInfo.model + '</p>',
+					body: '<br /><br /><br /><p>Alma Version: ' + version + '</p><p>' + deviceInfo.platform + ' OS: ' + deviceInfo.version + '</p><p>Phone Model: ' + deviceInfo.model + '</p>',
 					isHtml: true
 				};
 				$cordovaEmailComposer.isAvailable().then(function() {
@@ -145,7 +145,7 @@ angular.module('Alma.controllers')
 				var email = {
 					to: 'admin@cymbit.com',
 					subject: deviceInfo.platform + ' Bug Report',
-					body: '<p>Alma Version: ' + version + '</p><p>' + deviceInfo.platform + ' OS: ' + deviceInfo.version + '</p><p>Phone Model: ' + deviceInfo.model + '</p>',
+					body: '<br /><br /><br /><p>Alma Version: ' + version + '</p><p>' + deviceInfo.platform + ' OS: ' + deviceInfo.version + '</p><p>Phone Model: ' + deviceInfo.model + '</p>',
 					isHtml: true
 				};
 				$cordovaEmailComposer.isAvailable().then(function() {

@@ -134,7 +134,7 @@
             font-size: 18px;
             float:left;
             height:100%;
-            width: calc(100% - 70px);
+            width: calc(100% - 95px);
             background: transparent;
             background-color: rgba(0,0,0,0.2);
             padding: 4px 15px 0;
@@ -153,9 +153,14 @@
         	color: $coloredLinks;;
         	padding:5px;
         }
+        .dashbord-image {
+            float: left;
+            height: 31px;
+        }
         .button {
             display:inline-block;
             margin-left:5px;
+            line-height:31px;
         }
     }
 }

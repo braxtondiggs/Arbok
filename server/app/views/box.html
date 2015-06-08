@@ -18,7 +18,10 @@
     </div>
 </div>
 <div class="loading animated" ng-class="(loading)?'fadeIn':'fadeOut'" ng-show="loading">
-    <img src="images/loading.jpg" class="animated" ng-class="(loading)?'bounceIn delay-2':'bounceOut'" />
+    <div class="loading_container">
+        <img src="images/loading.jpg" class="animated" ng-class="(loading)?'bounceIn delay-2':'bounceOut'" />
+        <p class="loading_txt animated" ng-class="(loadingTxt)?'bounceInLeft':bounceOutRight">{{loadingTxt}}</p>
+    </div>
 </div>
 <script type="text/ng-template" id="boxSetupTmpl">
     <h1>Lets Get Setup...</h1>

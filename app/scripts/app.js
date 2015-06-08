@@ -83,8 +83,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 											youtubeKey = null;
 										for (var key in sources) {
 											if (sources[key].source === 'youtube') {
-												youtubeKey = sources[key].source_data;
-												break;
+												youtubeKey.push(sources[key].source_data;
 											}
 										}
 										if (key !== null) {

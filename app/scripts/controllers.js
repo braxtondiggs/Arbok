@@ -38,11 +38,11 @@ angular.module('Alma.controllers', [])
 				PubNub.ngSubscribe({channel: $scope.$storage.connectedPlayer});
 			}
 		}
-		/*function onPause() {
+		function onPause() {
 			if ($scope.$storage.connectedPlayer) {
 				PubNub.ngUnsubscribe({channel: $scope.$storage.connectedPlayer});
 			}
-		}*/
+		}
 		$scope.closeVote = function() {
 			$scope.vote = {
 				panel:false,
@@ -343,5 +343,5 @@ angular.module('Alma.controllers', [])
 			MusicService.subscribeToPlayer($scope.$storage.connectedPlayer);
 		}
 		document.addEventListener('resume', onResume, false);
-		//document.addEventListener('pause', onPause, false);
+		document.addEventListener('pause', onPause, false);
 	}]);

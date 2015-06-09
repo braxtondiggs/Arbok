@@ -187,8 +187,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		getSong(function(track) {
 			$scope.track = track;
 			if ($scope.track) {
-				if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtubeId')[0]) {
-					$scope.playerEvent.target.loadVideoById($scope.track.get('youtubeId')[0]);
+				if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtube')[0]) {
+					$scope.playerEvent.target.loadVideoById($scope.track.get('youtube')[0]);
 					$scope.playerEvent.target.setPlaybackQuality('small');
 					activateBar();
 					$scope.box.set('playingImg', $scope.track.get('image'));
@@ -216,7 +216,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	function emptyQueue(emptycallback) {
 		function saveTrack(imvdbTrack, callback) {
 			$http.get(
-				'http://imvdb.com/api/v1/video/' + String(imvdbTrack.id) + '?include=sources', 
+				'http://imvdb.com/api/v1/video/' + String(imvdbTrack.id) + '?include=sources,featured',
 				{
 					timeout: 8000
 				}
@@ -235,11 +235,16 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					video.set('image', imvdbTrack.image.l);
 					video.set('IMVDBtrackId', String(imvdbTrack.id));
 					video.set('artistInfo', imvdbTrack.artists[0].name);
+					var featuredArtist = [imvdbTrack.artists[0].name];
+					for (var i = 0; i < data.featured_artists.length; i++) {
+						featuredArtist.push(data.featured_artists[i].name);
+					}
+					video.set('featuredArtist', featuredArtist);
 					video.set('IMVDBartistId', imvdbTrack.artists[0].slug);
 					video.set('playerId', $scope.box);
 					video.set('trackInfo', imvdbTrack.song_title);
 					video.set('year', parseInt(imvdbTrack.year, 10));
-					video.set('youtubeId', youtubeKey);
+					video.set('youtube', youtubeKey);
 					video.set('upVotes', 0);
 					video.set('downVotes', 0);
 					video.save(null, {
@@ -467,27 +472,26 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			isConcert = true;
 		}
 		var duration = parseInt($scope.playerEvent.target.getDuration(), 10),
-			multipler = 1;
+			multipler = 0;
 		$scope.videoInterval = $interval(function() {
 			var time = parseInt($scope.playerEvent.target.getCurrentTime(), 10);
 			if (time >= (duration - 3)) {
 				$scope.loading = true;
 			}
 			if ($scope.track.get('featuredArtist')) {
-				if (Math.ceil(time) === (30 * multipler) && $scope.track.get('featuredArtist').length < multipler) {
+				if (Math.ceil(time) === (30 * (multipler + 1)) && $scope.track.get('featuredArtist').length > multipler) {
 					window.artistSearch = function(data) {
 						var artistObj = data.resultsPage.results.artist;
 						for (var i = 0; i < artistObj.length; i++) {
-							if (artistObj[i].displayName.toLowerCase() === $scope.track.get('featuredArtist')[multipler + 1].toLowerCase()) {
+							if (artistObj[i].displayName.toLowerCase() === $scope.track.get('featuredArtist')[multipler].toLowerCase()) {
 								var id = artistObj[i].id;
 								window.artistEventSearch = function(data) {
 									if (!lodash.isEmpty(data.resultsPage.results)) {
 										var eventObj = data.resultsPage.results.event;
 										for (var i = 0; i < eventObj.length; i++) {
 											if (distance(eventObj[i].location.lat, eventObj[i].location.lng, $scope.box.get('latlng').latitude, $scope.box.get('latlng').longitude, 'M') <= 50) {
-												console.log(eventObj[i].start.date + ' ' + eventObj[i].start.time);
 												notify({
-													messageTemplate: '<img ng-src="/images/songkick-logo.png"><span class="content"><h3 class="header">' + $scope.track.get('featuredArtist')[multipler + 1] + ' is coming to your area!</h3><p>' + eventObj[i].venue.displayName + '</p><p>' + eventObj[i].venue.metroArea.displayName + ', ' + eventObj[i].venue.metroArea.state.displayName + ' ' + eventObj[i].venue.metroArea.country.displayName + '</p><p>' + moment(eventObj[i].start.date + ' ' + eventObj[i].start.time).format('dddd, MMMM Do YYYY, h:mm a') + '</p></span>',
+													messageTemplate: '<img ng-src="/images/songkick-logo.png"><span class="content"><h3 class="header">' + eventObj[i].performance[0].artist.displayName + ' is coming to your area!</h3><p>' + eventObj[i].venue.displayName + '</p><p>' + eventObj[i].venue.metroArea.displayName + ', ' + eventObj[i].venue.metroArea.state.displayName + ' ' + eventObj[i].venue.metroArea.country.displayName + '</p><p>' + moment(eventObj[i].start.date + ' ' + eventObj[i].start.time).format('dddd, MMMM Do YYYY, h:mm a') + '</p></span>',
 													classes: 'activity-modal',
 													duration: 25000,
 													position: 'left'
@@ -496,8 +500,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 													channel: $scope.box.id,
 													message: {
 														'type': 'concert',
-														'title': $scope.track.get('featuredArtist')[multipler + 1] + ' is coming to your area!',
-														'msg': '<p>' + eventObj[i].venue.displayName + '</p><p>' + eventObj[i].venue.metroArea.displayName + ', ' + eventObj[i].venue.metroArea.state.displayName + ' ' + eventObj[i].venue.metroArea.country.displayName + '</p><p>' + moment(eventObj[i].start.date + ' ' + eventObj[i].start.time).format('dddd, MMMM Do YYYY, h:mm a') + '</p>',
+														'title': eventObj[i].performance[0].artist.displayName + ' is coming to your area!',
+														'msg': eventObj[i].venue.displayName + '\n' + eventObj[i].venue.metroArea.displayName + ', ' + eventObj[i].venue.metroArea.state.displayName + ' ' + eventObj[i].venue.metroArea.country.displayName + '\n' + moment(eventObj[i].start.date + ' ' + eventObj[i].start.time).format('dddd, MMMM Do YYYY, h:mm a'),
 														'image': $location.protocol() + $location.host() + '/images/songkick-logo.png'
 													}
 												});
@@ -509,18 +513,18 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 								$http.jsonp('http://api.songkick.com/api/3.0/artists/' + id + '/calendar.json?jsoncallback=artistEventSearch&apikey=LFxJG3ohVpIBASF5');
 							}
 						}
+						multipler++;
 					};
-					$http.jsonp('http://api.songkick.com/api/3.0/search/artists.json?jsoncallback=artistSearch&apikey=LFxJG3ohVpIBASF5&query=' + $scope.track.get('featuredArtist')[multipler + 1]);
-					multipler++;
+					$http.jsonp('http://api.songkick.com/api/3.0/search/artists.json?jsoncallback=artistSearch&apikey=LFxJG3ohVpIBASF5&query=' + $scope.track.get('featuredArtist')[multipler]);
 				}
 			}
 		}, 1000);
 	}
 	$scope.onError = function() {
-		delete $scope.track.get('youtubeId')[0];
+		$scope.track.get('youtube').splice(0, 1);
 		$scope.track.save();
-		if ($scope.track.get('youtubeId')) {
-			$scope.playerEvent.target.loadVideoById($scope.track.get('youtubeBackupId'));
+		if ($scope.track.get('youtube')) {
+			$scope.playerEvent.target.loadVideoById($scope.track.get('youtube')[0]);
 			$scope.playerEvent.target.setPlaybackQuality('small');
 		} else {
 			//Find Another Song
@@ -537,7 +541,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			videoErrors.set('playerId', $scope.track.get('playerId'));
 			videoErrors.set('trackInfo', $scope.track.get('trackInfo'));
 			videoErrors.set('userId', $scope.track.get('userId'));
-			videoErrors.set('youtubeId', $scope.track.get('youtubeId'));
+			videoErrors.set('youtube', $scope.track.get('youtube'));
 
 			videoErrors.save();
 		}

@@ -77,13 +77,14 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 								if (!found) {
 									$ionicLoading.show();
 									$http.get(
-										'http://imvdb.com/api/v1/video/' + String(artistInfo.id) + '?include=sources,featured'
+										'http://imvdb.com/api/v1/video/' + String(artistInfo.id) + '?include=sources,featured',
+										{timeout: 8000}
 									).success(function(data) {
 										var sources = data.sources,
-											youtubeKey = null;
+											youtubeKey = [];
 										for (var key in sources) {
 											if (sources[key].source === 'youtube') {
-												youtubeKey.push(sources[key].source_data;
+												youtubeKey.push(sources[key].source_data);
 											}
 										}
 										if (key !== null) {
@@ -113,7 +114,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 											video.set('playerId', user.get('connectedPlayer'));
 											video.set('trackInfo', artistInfo.song_title);
 											video.set('year', artistInfo.year);
-											video.set('youtubeId', youtubeKey);
+											video.set('youtube', youtubeKey);
 											video.set('upVotes', 0);
 											video.set('downVotes', 0);
 											video.save(null, {
@@ -435,20 +436,20 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 })
 .directive('errSrc', function() {
 	return {
-	  	link: function(scope, element, attrs) {
-	    	element.bind('error', function() {
-	      		if (attrs.src !== attrs.errSrc) {
-	        		attrs.$set('src', attrs.errSrc);
-	        		attrs.$set('class', 'missingImage');
-	      		}
-	    	});
-	  	}
+		link: function(scope, element, attrs) {
+			element.bind('error', function() {
+				if (attrs.src !== attrs.errSrc) {
+					attrs.$set('src', attrs.errSrc);
+					attrs.$set('class', 'missingImage');
+				}
+			});
+		}
 	};
 })
 .config(['EchonestProvider', function(EchonestProvider) {
 	EchonestProvider.setApiKey('0NPSO7NBLICGX3CWQ');
 }])
-.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaAppRateProvider) {
 	$stateProvider
 
 		.state('app', {
@@ -567,4 +568,17 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 	$urlRouterProvider.otherwise('/app/dashboard');
 	$ionicConfigProvider.tabs.position('top');
 	$ionicConfigProvider.views.swipeBackEnabled(true);
+	var prefs = {
+		language: 'en',
+		appName: 'Alma',
+		iosURL: 'id992255249',
+		usesUntilPrompt: 5,
+		promptForNewVersion: true,
+		androidURL: 'market://details?id=com.cymbit.Alma'
+	};
+	/*global ionic*/
+	if (ionic.Platform.isWebView()) {
+		$cordovaAppRateProvider.setPreferences(prefs);
+	}
+
 });

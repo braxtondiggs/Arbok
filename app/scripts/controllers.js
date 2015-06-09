@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('Alma.controllers', [])
-	.controller('AppCtrl', ['$scope', '$rootScope', '$state', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicScrollDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaKeyboard', '$cordovaToast', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $state, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicScrollDelegate, $cordovaDialogs, $cordovaVibration, $cordovaKeyboard, $cordovaToast, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService) {
+	.controller('AppCtrl', ['$scope', '$rootScope', '$state', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicScrollDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaKeyboard', '$cordovaToast', '$cordovaAppRate', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $state, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicScrollDelegate, $cordovaDialogs, $cordovaVibration, $cordovaKeyboard, $cordovaToast, $cordovaAppRate, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService) {
 		/*global Parse*/
 		/*global ionic*/
 		/* global DollarRecognizer */
@@ -33,6 +33,30 @@ angular.module('Alma.controllers', [])
 			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
 			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'
 		});
+		
+		if (ionic.Platform.isWebView()) {
+			$cordovaAppRate.promptForRating(false);
+			$cordovaAppVersion.getAppVersion().then(function (version) {
+				function _n(n){
+					return n > 9 ? '' + n: '0' + n;
+				}
+				var appSplit = version.split('.'),
+					appVersion = _n(appSplit[0]) + _n(appSplit[1]) + _n(appSplit[2]);
+				var Server = Parse.Object.extend('Server');
+				var query = new Parse.Query(Server);
+				query.greaterThanOrEqualTo('mobileVersion', parseInt(appVersion, 10));
+				query.find({
+					success: function(results) {
+						if (!results) {
+							$cordovaDialogs.alert('Your version of Alma is out of date please update to the newest version in the app store', 'Alma - Error', 'button name').then(function() {
+								$cordovaAppRate.navigateToAppStore();
+							});
+						}
+					}
+				});
+			});
+		}
+
 		function onResume() {
 			if ($scope.$storage.connectedPlayer) {
 				PubNub.ngSubscribe({channel: $scope.$storage.connectedPlayer});

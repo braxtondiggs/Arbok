@@ -43,9 +43,12 @@ Parse.Cloud.job('IMVDB', function(request, response) {
 						getIMVDB(key, IMVDBurls[key].url);
 					}
 					callback();
+				},
+				finish: function(callback) {
+					//response.success('Success: Rows Affected - ' + result.length.toString());
+					callback();
 				}
 			});
-			response.success('Success: Rows Affected - ' + result.length.toString());
 		},
 		error: function() {
 			response.error('Lookup Failed');
@@ -54,6 +57,7 @@ Parse.Cloud.job('IMVDB', function(request, response) {
 
 	function getIMVDB(id, url) {
 		Parse.Cloud.httpRequest({
+			method: 'GET',
 			url: url,
 			success: function(httpResponse) {
 				if (httpResponse.status === 200) {//check status

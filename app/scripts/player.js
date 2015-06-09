@@ -96,6 +96,7 @@ angular.module('Alma.controllers')
 				player.relation('playerVideo').query().find({
 					success: function(queue) {
 						$rootScope.queue = queue;
+						MusicService.getActiveSong();
 						$scope.$apply();
 					}
 				});

@@ -449,7 +449,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 .config(['EchonestProvider', function(EchonestProvider) {
 	EchonestProvider.setApiKey('0NPSO7NBLICGX3CWQ');
 }])
-.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaAppRateProvider) {
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 	$stateProvider
 
 		.state('app', {
@@ -568,6 +568,8 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 	$urlRouterProvider.otherwise('/app/dashboard');
 	$ionicConfigProvider.tabs.position('top');
 	$ionicConfigProvider.views.swipeBackEnabled(true);
+
+}).config(function ($cordovaAppRateProvider) {
 	var prefs = {
 		language: 'en',
 		appName: 'Alma',
@@ -576,9 +578,8 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 		promptForNewVersion: true,
 		androidURL: 'market://details?id=com.cymbit.Alma'
 	};
-	/*global ionic*/
-	if (ionic.Platform.isWebView()) {
-		$cordovaAppRateProvider.setPreferences(prefs);
-	}
 
+  document.addEventListener("deviceready", function () {
+    $cordovaAppRateProvider.setPreferences(prefs)
+  }, false);
 });

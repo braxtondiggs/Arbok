@@ -1,5 +1,5 @@
 <ion-view view-title="Settings" ng-style="{'background-image':'url(images/BG.png)'}" class="settings">
-  <ion-content ng-class="{'has-footer': $storage.connectedPlayer}">
+  <ion-content>
     <div class="list">
       <form name="settingsForm" ng-submit="submitForm(settingsForm.$valid, settingsForm.name, settingsForm.email, settingsForm.gender, settingsForm.password, settingsForm.confirmPassword)" novalidate>
         <div class="status_dropdown error animated" ng-class="settings.hasErrors ? 'bounceInDown' : 'bounceOutUp'" ng-show="settings.hasErrors">

@@ -125,7 +125,7 @@ angular.module('Alma.controllers')
 			var email = {
 				to: 'admin@cymbit.com',
 				subject:  'Song Request',
-				body: '<br /><br /><p>Artist Name: ' + artistName + '</p><p>Artist Track Name: </p>',
+				body: '<br />Artist Name: ' + artistName + '<br />Artist Track Name: ',
 				isHtml: true
 			};
 			$cordovaEmailComposer.isAvailable().then(function() {

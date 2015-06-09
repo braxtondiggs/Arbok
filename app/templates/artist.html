@@ -1,6 +1,6 @@
 <ion-view class="artist">
     <ion-nav-title>{{artist.info.convertedSlug}}</ion-nav-title>
-    <ion-content class="animated fadeIn" ng-show="artist.loaded" ng-class="{'has-footer': $storage.connectedPlayer}">
+    <ion-content class="animated fadeIn" ng-show="artist.loaded" ng-class="{'has-footer': queue.length}">
         <div class="profile_container">
             <div class="img-circle animated bounceIn">
                 <img alt="" ng-src="{{artist.info.checkedImage}}" ng-class="artist.info.artistStyles"/>
@@ -24,7 +24,7 @@
                         </div>
                         <p ng-if="!artist.info.videography.length" class="center" style="margin-top:50px;">It looks like we do not have any songs for this artist right now, check back later</p>
                         <br />
-                        <button class="button button-outline dark-button" ng-click="artist.emailSong();"> Are we missing a music video?</button>
+                        <button class="button button-outline dark-button" ng-click="artist.emailSong(artist.info.convertedSlug);"> Are we missing a music video?</button>
                     </div>
                 </ion-nav-view>
             </ion-tab>
@@ -44,7 +44,7 @@
                         </div>
                         <p ng-if="!artist.info.featured.length" class="center" style="margin-top:50px;">It looks like we do not have any songs for this artist right now, check back later</p>
                         <br />
-                        <button class="button button-outline dark-button" ng-click="artist.emailSong();"> Are we missing a music video?</button>
+                        <button class="button button-outline dark-button" ng-click="artist.emailSong(artist.info.convertedSlug);"> Are we missing a music video?</button>
                     </div>
                 </ion-nav-view>
             </ion-tab>

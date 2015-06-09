@@ -1,5 +1,5 @@
 <ion-view view-title="Profile" ng-style="{'background-image':'url(images/BG.png)'}" class="profile">
-    <ion-content class="profile_page" ng-class="{'has-footer': $storage.connectedPlayer}">
+    <ion-content class="profile_page" ng-class="{'has-footer': queue.length}">
         <div class="profile_container">
             <a class="profile_settings" href="#/app/settings">
                 <i class="icon ion-gear-b animated bounceIn"></i>

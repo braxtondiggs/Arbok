@@ -2,7 +2,7 @@
   <ion-nav-buttons side="right">
     <a class="button button-icon icon ion-plus-round" ng-click="addNewPlayer()"></a>
   </ion-nav-buttons>
-  <ion-content ng-class="{'has-footer': $storage.connectedPlayer}">
+  <ion-content>
   <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
     <div class="card animated" ng-class="!$storage.initConfig ? 'bounceInUp' : 'bounceOutDown'" ng-show="!$storage.initConfig" style="animation-duration: 1s">
       <div class="item item-text-wrap">

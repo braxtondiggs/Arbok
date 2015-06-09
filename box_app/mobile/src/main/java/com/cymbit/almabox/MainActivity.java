@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cymbit.almabox.WifiAP;
+
 import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -33,6 +36,8 @@ import java.io.File;
 
 
 public class MainActivity extends ActionBarActivity {
+    static WifiAP wifiAp;
+    private WifiManager wifi;
     private View mDecorView;
     private DownloadManager downloadManager;
     private long downloadReference;
@@ -50,6 +55,8 @@ public class MainActivity extends ActionBarActivity {
         }
 
         super.onCreate(savedInstanceState);
+        wifiAp = new WifiAP();
+        wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         mDecorView = getWindow().getDecorView();
         mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
 
@@ -123,6 +130,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void loadPlayer() {
+        wifiAp.toggleWiFiAP(wifi, MainActivity.this);
         loadingText.setText("Please Wait...");
 
         WebSettings webSettings = mWebView.getSettings();
@@ -264,6 +272,13 @@ public class MainActivity extends ActionBarActivity {
             }
         }
         return CookieValue;
+    }
+    public static void updateStatusDisplay() {
+        if (wifiAp.getWifiAPState()==wifiAp.WIFI_AP_STATE_ENABLED || wifiAp.getWifiAPState()==wifiAp.WIFI_AP_STATE_ENABLING) {
+            Log.v("Alma PLayer", "Turn off");
+        } else {
+            Log.v("Alma PLayer", "Turn on");
+        }
     }
     private boolean isFileExists(String filename){
         File folder1 = new File(filename);

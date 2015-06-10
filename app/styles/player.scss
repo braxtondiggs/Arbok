@@ -46,6 +46,22 @@ div.input {
             font-weight: bold;
         }
     }
+    .offline-player {
+        .item-image:after {
+            content: "Currently Offline";
+        }
+        &:after {
+            display: block;
+            background-color:rgba(#95a5a6, 0.5);
+            content: '';
+            z-index:50;
+            position:absolute;
+            top: 0;
+            bottom:0;
+            right:0;
+            left:0;
+        }
+    }
     .item-avatar > img:first-child {
         padding: 2px;
         border: 2px solid $coloredLinks;

@@ -2,10 +2,18 @@
 angular.module('Alma.controllers')
 	.controller('ArtistCtrl', ['$scope', '$stateParams', '$http', 'UserService', 'MusicService', '$ionicLoading', '$cordovaDialogs', '$ionicHistory', '$cordovaEmailComposer', 'Echonest', 'lodash', 'LoadingService', function($scope, $stateParams, $http, UserService, MusicService, $ionicLoading, $cordovaDialogs, $ionicHistory, $cordovaEmailComposer, Echonest, lodash, LoadingService) {
 		/*jshint camelcase: false */
+		/*global ionic*/
 		$scope.artist = {
 			info: {}
 		};
+		$scope.showEmail = false;
 		$ionicLoading.show();
+		document.addEventListener('deviceready', function () {
+			if ((ionic.Platform.device().version.substring(0, 2) !== '8.' && ionic.Platform.device().platform === 'iOS') || ionic.Platform.device().platform !== 'iOS') {
+				$scope.showEmail = true;
+				$scope.$apply();
+			}
+		}, false);
 		function getArtistInfo(id) {
 			$http.get(
 				'http://imvdb.com/api/v1/entity/' + id + '?include=artist_videos,featured_videos'
@@ -56,10 +64,10 @@ angular.module('Alma.controllers')
 							}
 						}
 						if (!found) {
-							notFound()
+							notFound();
 						}
 					}else {
-						notFound()
+						notFound();
 					}
 				});
 			}

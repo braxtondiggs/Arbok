@@ -381,7 +381,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 								}
 							}).then(function(player) {
 								getVideos(player, payload);
-								MusicService.voteDashboard(payload.message.id, payload.message.username, (payload.message.image)?payload.message.image:undefined, payload.message.vote, payload.message.selectedTrack);
+								that.voteDashboard(payload.message.id, payload.message.username, (payload.message.image)?payload.message.image:undefined, payload.message.vote, payload.message.selectedTrack);
 							});
 						}
 					}
@@ -398,10 +398,10 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 					$rootScope.$apply();
 				}
 				if (payload.message.type === 'concert') {
-					var obj = payload.message;
-					that.concertDashboard(obj.title, obj.msg, obj.image);
-					var current = $ionicHistory.currentView();
-					if (current.stateName !== 'app.dashboard') {
+					var objConcert = payload.message;
+					that.concertDashboard(objConcert.title, objConcert.msg, objConcert.image);
+					var currentConcert = $ionicHistory.currentView();
+					if (currentConcert.stateName !== 'app.dashboard') {
 						$rootScope.dashboard.count++;
 					}else {
 						$ionicScrollDelegate.scrollBottom(true);
@@ -573,13 +573,13 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 	var prefs = {
 		language: 'en',
 		appName: 'Alma',
-		iosURL: 'id992255249',
+		iosURL: '992255249',
 		usesUntilPrompt: 5,
 		promptForNewVersion: true,
 		androidURL: 'market://details?id=com.cymbit.Alma'
 	};
 
-  document.addEventListener("deviceready", function () {
-    $cordovaAppRateProvider.setPreferences(prefs)
+  document.addEventListener('deviceready', function () {
+    $cordovaAppRateProvider.setPreferences(prefs);
   }, false);
 });

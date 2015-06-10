@@ -14,6 +14,7 @@ angular.module('Alma.controllers')
 			$scope.gender = user.get('gender');
 			$scope.mobileNotifications = user.get('mobileNotifications') || true;
 			$scope.email = user.getEmail();
+			$scope.showEmail = false;
 			$scope.settings = {
 				error: null,
 				hasErrors: false,
@@ -26,7 +27,12 @@ angular.module('Alma.controllers')
 				historyRoot: true
 			});
 		}
-
+		document.addEventListener('deviceready', function () {
+			if ((ionic.Platform.device().version.substring(0, 2) !== '8.' && ionic.Platform.device().platform === 'iOS') || ionic.Platform.device().platform !== 'iOS') {
+				$scope.showEmail = true;
+				$scope.$apply();
+			}
+		}, false);
 		function initChanged() {
 			$scope.isChanged = {
 				name: false,

@@ -33,12 +33,12 @@ angular.module('Alma.controllers', [])
 			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
 			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'
 		});
-		document.addEventListener("deviceready", function () {
+		document.addEventListener('deviceready', function () {
 			checkVersion();
 			$cordovaAppRate.promptForRating(false);
 		}, false);
 		function checkVersion() {
-			document.addEventListener("deviceready", function () {
+			document.addEventListener('deviceready', function () {
 				$cordovaAppVersion.getAppVersion().then(function (version) {
 					function _n(n){
 						return n > 9 ? '' + n: '0' + n;

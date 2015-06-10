@@ -2,7 +2,7 @@
     <ion-content ng-class="{'has-footer': queue.length}">
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
         <div class="animated" ng-show="players.length" ng-class="players.length ? 'fadeIn' : 'fadeOut'">
-            <div class="list card dark-list" ng-repeat="player in players" ng-click="joinServer($index)">
+            <div class="list card dark-list" ng-repeat="player in players" ng-click="joinServer($index)" ng-class="{'offline-player': !player.get('isActive')}">
                 <div class="item item-avatar list-title animated fadeIn" ng-class="{'demo-player':$index === 0}">
                     <img ng-src="{{(player.get('image'))?player.get('image')._url:'images/logo_missing.png'}}" err-src="images/logo_missing.png">
                     <h2>{{player.get('name')}}&nbsp;<span>(~{{getDistance(player.get('latlng')._latitude, player.get('latlng')._longitude, lnglat.lat, lnglat.lng, 'm')}} miles)</span></h2>
@@ -11,7 +11,7 @@
                 <div class="item item-image animated fadeIn" ng-if="player.get('playingImg')">
                     <img ng-src="{{player.get('playingImg')}}" err-src="images/logo_missing.png">
                 </div>
-                <a class="item item-icon-left assertive animated fadeIn">
+                <a class="item item-icon-left assertive animated fadeIn" ng-if="player.get('isActive')">
                     <i class="icon ion-music-note"></i> Join The Party
                 </a>
             </div>

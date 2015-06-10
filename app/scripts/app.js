@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'pubnub.angular.service', 'monospaced.elastic'])
+angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controllers', 'angular-loading-bar', 'cfp.loadingBar', 'angular-echonest', 'ngStorage', 'ngTextTruncate', 'ngCordovaOauth', 'ngLodash', 'pubnub.angular.service', 'monospaced.elastic', 'ionic.service.core', 'ionic.service.deploy'])
 .run(function($ionicPlatform, $cordovaSplashscreen) {
 	$ionicPlatform.ready(function() {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -64,7 +64,6 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 .factory('MusicService', function($rootScope, $state, $ionicScrollDelegate, $ionicHistory, $cordovaDialogs, $http, $ionicLoading, PubNub, lodash) {
 	return {
 		storeDB: function(artistInfo) {
-			/*jshint camelcase: false */
 			/*global Parse*/
 			/*global moment*/
 			var user = Parse.User.current(),
@@ -449,7 +448,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 .config(['EchonestProvider', function(EchonestProvider) {
 	EchonestProvider.setApiKey('0NPSO7NBLICGX3CWQ');
 }])
-.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+.config(['$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 	$stateProvider
 
 		.state('app', {
@@ -569,7 +568,7 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 	$ionicConfigProvider.tabs.position('top');
 	$ionicConfigProvider.views.swipeBackEnabled(true);
 
-}).config(function ($cordovaAppRateProvider) {
+}]).config(['$cordovaAppRateProvider', function ($cordovaAppRateProvider) {
 	var prefs = {
 		language: 'en',
 		appName: 'Alma',
@@ -580,6 +579,37 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 	};
 
   document.addEventListener('deviceready', function () {
-    $cordovaAppRateProvider.setPreferences(prefs);
+	$cordovaAppRateProvider.setPreferences(prefs);
   }, false);
-});
+}]).config(['$ionicAppProvider', function($ionicAppProvider) {
+	$ionicAppProvider.identify({
+		app_id: 'e1f80125',
+		api_key: '78e1608ca9a8dad91cc3b4f896981b65d82055083a70cee2'
+	});
+}]).run(['$scope', '$ionicDeploy', function($scope, $ionicDeploy) {
+	$ionicDeploy.check().then(function(response) {
+			if (response) {
+				$ionicDeploy.download().then(function() {
+					$ionicDeploy.extract().then(function() {
+						$ionicDeploy.load();
+					}, function(error) {
+						// Error extracting
+						console.log(error);
+					}, function(progress) {
+						$scope.extraction_progress = progress;
+					});
+				}, function(error) {
+					// Error downloading the updates
+					console.log(error);
+				}, function(progress) {
+					$scope.download_progress = progress;
+				});
+			} else {
+				$ionicDeploy.load();
+			}
+		},
+		function(error) {
+			// Error checking for updates
+			console.log(error);
+		});
+}]);

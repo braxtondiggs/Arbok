@@ -53,7 +53,7 @@ public class WifiAP extends Activity {
         }
 
         //disable wireless
-        /*if (enabled && wifi.getConnectionInfo() != null) {
+        if (enabled && wifi.getConnectionInfo() != null) {
             Log.d(TAG, "disable wifi: calling");
             wifi.setWifiEnabled(false);
             int loopMax = 10;
@@ -67,7 +67,7 @@ public class WifiAP extends Activity {
                 }
             }
             Log.d(TAG, "disable wifi: done, pass: " + (10 - loopMax));
-        }*/
+        }
 
         //enable/disable wifi ap
         int state = WIFI_AP_STATE_UNKNOWN;

@@ -5,8 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
@@ -23,8 +26,6 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cymbit.almabox.WifiAP;
-
 import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -33,10 +34,11 @@ import com.parse.ParseQuery;
 import com.pubnub.api.*;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
-    static WifiAP wifiAp;
     private WifiManager wifi;
     private View mDecorView;
     private DownloadManager downloadManager;
@@ -48,16 +50,14 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
+        /*try {
             Process root = Runtime.getRuntime().exec("su");
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         super.onCreate(savedInstanceState);
-        wifiAp = new WifiAP();
-        wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        mDecorView = getWindow().getDecorView();
+        /*mDecorView = getWindow().getDecorView();
         mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
 
         setContentView(R.layout.activity_main);
@@ -72,14 +72,80 @@ public class MainActivity extends ActionBarActivity {
 
         checkVersion();
 
-        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));*/
+
+        createWifiAccessPoint();
     }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             mDecorView = getWindow().getDecorView();
             mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+    private void createWifiAccessPoint() {
+        WifiManager wifiManager = (WifiManager)getBaseContext().getSystemService(Context.WIFI_SERVICE);
+        if(wifiManager.isWifiEnabled())
+        {
+            wifiManager.setWifiEnabled(false);
+        }
+        Method[] wmMethods = wifiManager.getClass().getDeclaredMethods();
+        boolean methodFound=false;
+        for(Method method: wmMethods){
+            if(method.getName().equals("setWifiApEnabled")){
+                methodFound=true;
+                WifiConfiguration netConfig = new WifiConfiguration();
+                netConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+                netConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+                netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+                netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+                netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+                netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+                netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+                try {
+                    boolean apstatus=(Boolean) method.invoke(wifiManager, netConfig,true);
+                    //statusView.setText("Creating a Wi-Fi Network \""+netConfig.SSID+"\"");
+                    for (Method isWifiApEnabledmethod: wmMethods)
+                    {
+                        if(isWifiApEnabledmethod.getName().equals("isWifiApEnabled")){
+                            while(!(Boolean)isWifiApEnabledmethod.invoke(wifiManager)){
+                            };
+                            for(Method method1: wmMethods){
+                                if(method1.getName().equals("getWifiApState")){
+                                    int apstate;
+                                    apstate=(Integer)method1.invoke(wifiManager);
+                                    //                    netConfig=(WifiConfiguration)method1.invoke(wifi);
+                                    //statusView.append("\nSSID:"+netConfig.SSID+"\nPassword:"+netConfig.preSharedKey+"\n");
+                                }
+                            }
+                        }
+                    }
+                    if(apstatus)
+                    {
+                        System.out.println("SUCCESSdddd");
+                        //statusView.append("\nAccess Point Created!");
+                        //finish();
+                        //Intent searchSensorsIntent = new Intent(this,SearchSensors.class);
+                        //startActivity(searchSensorsIntent);
+                    }else
+                    {
+                        System.out.println("FAILED");
+                        //statusView.append("\nAccess Point Creation failed!");
+                    }
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(!methodFound){
+            Log.v("WIFI", "Your phone's API does not contain setWifiApEnabled method to configure an access point");
         }
     }
     public void InstallAPK(String filename){
@@ -130,7 +196,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void loadPlayer() {
-        wifiAp.toggleWiFiAP(wifi, MainActivity.this);
         loadingText.setText("Please Wait...");
 
         WebSettings webSettings = mWebView.getSettings();
@@ -273,13 +338,7 @@ public class MainActivity extends ActionBarActivity {
         }
         return CookieValue;
     }
-    public static void updateStatusDisplay() {
-        if (wifiAp.getWifiAPState()==wifiAp.WIFI_AP_STATE_ENABLED || wifiAp.getWifiAPState()==wifiAp.WIFI_AP_STATE_ENABLING) {
-            Log.v("Alma PLayer", "Turn off");
-        } else {
-            Log.v("Alma PLayer", "Turn on");
-        }
-    }
+
     private boolean isFileExists(String filename){
         File folder1 = new File(filename);
         return folder1.exists();

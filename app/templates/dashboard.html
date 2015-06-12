@@ -33,8 +33,8 @@
        
     </ion-content>
     <ion-subfooter-bar align-title="left" class="bar chat-write animated flipInX delay-6" ng-class="queue.length > 0? 'bar-subfooter' : 'bar-footer'">
-        <i class="icon ion-ios-camera-outline chat-image" ng-click="dashboard.attachImage()" ng-if="!dashboard.image"></i>
-        <img ng-src="{{dashboard.image}}" ng-if="dashboard.image" class="dashbord-image" ng-click="dashboard.changeImage()" />
+        <i class="icon ion-ios-camera-outline chat-image" ng-click="dashboard.attachImage()" ng-if="!dashboard.image && false"></i>
+        <img ng-src="{{dashboard.image}}" ng-if="dashboard.image && false" class="dashbord-image" ng-click="dashboard.changeImage()" />
         <input type="text" id="chat-input" placeholder="Tap to write message..." ng-model="dashboard.chat.chatMsg" ng-keyup="dashboard.getKeys($event)">
         <button class="button button-small button-outline dark-button" ng-click="dashboard.sendChat(dashboard.chat.chatMsg);dashboard.chat.chatMsg = '';" ng-disabled="!dashboard.chat.chatMsg || dashboard.chat.chatMsg === ''">Send</button>
     </ion-subfooter-bar>

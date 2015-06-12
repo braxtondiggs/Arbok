@@ -25,15 +25,15 @@
 				@include transition-delay(0s);
 				 -webkit-backface-visibility: hidden; 
 				&:hover {
-					color: $textColor;
-					opacity: 0.3;
+					color: $selectedColor;
+					opacity: 0.6;
 					@include scale(0.95); 
 				}
 			}
 			&.active {
 				a {
-					color: $textColor;
-					opacity: 0.3;
+					color: $selectedColor;
+					opacity: 0.6;
 					@include scale(0.95);
 				}
 			}

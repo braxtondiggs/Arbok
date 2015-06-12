@@ -160,8 +160,9 @@ var home = {// jshint ignore:line
 		owl.owlCarousel({
 			items: 1,
 			loop: true,
+			autoplay: true,
+			autoplaySpeed: true,
 			merge: true,
-			slideSpeed: 2000,
 			callbacks: true,
 			navText: ['<i class="fa fa-arrow-left"></i>', '<i class="fa fa-arrow-right"></i>'],
 			dots: true,

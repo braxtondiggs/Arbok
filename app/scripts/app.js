@@ -586,30 +586,4 @@ angular.module('Alma', ['ionic', 'ngCordova', 'config', 'filter', 'Alma.controll
 		app_id: 'e1f80125',
 		api_key: '78e1608ca9a8dad91cc3b4f896981b65d82055083a70cee2'
 	});
-}]).run(['$scope', '$ionicDeploy', function($scope, $ionicDeploy) {
-	$ionicDeploy.check().then(function(response) {
-			if (response) {
-				$ionicDeploy.download().then(function() {
-					$ionicDeploy.extract().then(function() {
-						$ionicDeploy.load();
-					}, function(error) {
-						// Error extracting
-						console.log(error);
-					}, function(progress) {
-						$scope.extraction_progress = progress;
-					});
-				}, function(error) {
-					// Error downloading the updates
-					console.log(error);
-				}, function(progress) {
-					$scope.download_progress = progress;
-				});
-			} else {
-				$ionicDeploy.load();
-			}
-		},
-		function(error) {
-			// Error checking for updates
-			console.log(error);
-		});
 }]);

@@ -53,10 +53,10 @@
                     @include transition(color .3s);
                 }
                 &:hover {
-                    border: 2px solid fade-in($textColor, .6);
+                    border: 2px solid fade-in($selectedColor, .6);
                     @include scale(0.98);
                     span {
-                        color: fadep-in($textColor, .8);
+                        color: fadep-in($selectedColor, .8);
                     }
                     img {
                         @include opacity(0);

@@ -28,7 +28,7 @@
 			left: 50%;
 			margin-left: -100px; 
 			&:first-child {
-				color: $highlightColor;
+				color: $topBorder;
 				@include translate(0, 0);
 				@include opacity(1);
 				@include transition(color .3s, opacity .3s, transform .3s .1s);
@@ -38,12 +38,13 @@
 		.icon-hover {
 			@include opacity(0);
 			@include transition(opacity .5s .2s);
-			color: $textColor;
+			color: $topBorder;
 			z-index: -1;
 		}
 
 	}
 	h3 {
 		margin-bottom: 40px;
+		color: $headerColor;
 	}
 }

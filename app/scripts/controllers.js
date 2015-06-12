@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('Alma.controllers', [])
-	.controller('AppCtrl', ['$scope', '$rootScope', '$state', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicScrollDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaKeyboard', '$cordovaToast', '$cordovaAppRate', '$cordovaAppVersion', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', function($scope, $rootScope, $state, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicScrollDelegate, $cordovaDialogs, $cordovaVibration, $cordovaKeyboard, $cordovaToast, $cordovaAppRate, $cordovaAppVersion, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService) {
+	.controller('AppCtrl', ['$scope', '$rootScope', '$state', '$ionicModal', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicScrollDelegate', '$cordovaDialogs', '$cordovaVibration', '$cordovaKeyboard', '$cordovaToast', '$cordovaAppRate', '$cordovaAppVersion', '$ionicLoading', '$ionicHistory', '$localStorage', '$timeout', 'lodash', 'PubNub', 'MusicService', '$ionicDeploy', '$ionicPlatform', function($scope, $rootScope, $state, $ionicModal, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicScrollDelegate, $cordovaDialogs, $cordovaVibration, $cordovaKeyboard, $cordovaToast, $cordovaAppRate, $cordovaAppVersion, $ionicLoading, $ionicHistory, $localStorage, $timeout, lodash, PubNub, MusicService, $ionicDeploy, $ionicPlatform) {
 		/*global Parse*/
 		/*global ionic*/
 		/* global DollarRecognizer */
@@ -33,12 +33,29 @@ angular.module('Alma.controllers', [])
 			publish_key:'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2',
 			subscribe_key:'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe'
 		});
-		document.addEventListener('deviceready', function () {
+		$ionicPlatform.ready(function() {
+			$ionicDeploy.check().then(function(hasUpdate) {
+				console.log('Ionic Deploy: Update available: ' + hasUpdate);
+			   	$scope.hasUpdate = hasUpdate;
+			    if (hasUpdate) {
+			    	$ionicDeploy.update().then(function(res) {
+			    		console.log('Ionic Deploy: Update Success! ', res);
+			    	}, function(err) {
+			    		console.log('Ionic Deploy: Update error! ', err);
+			    	}, function(prog) {
+			    		console.log('Ionic Deploy: Progress... ', prog);
+			    	});
+			    }
+			}, function(err) {
+			    console.error('Ionic Deploy: Unable to check for updates', err);
+			});
+		});
+		$ionicPlatform.ready(function() {
 			checkVersion();
 			$cordovaAppRate.promptForRating(false);
-		}, false);
+		});
 		function checkVersion() {
-			document.addEventListener('deviceready', function () {
+			$ionicPlatform.ready(function() {
 				$cordovaAppVersion.getAppVersion().then(function (version) {
 					function _n(n){
 						return n > 9 ? '' + n: '0' + n;
@@ -58,7 +75,7 @@ angular.module('Alma.controllers', [])
 						}
 					});
 				});
-			}, false);
+			});
 		}
 
 		function onResume() {

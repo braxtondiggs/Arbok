@@ -67,6 +67,7 @@
     "org.apache.cordova.device-motion",
     "org.pushandplay.cordova.apprate",
     "uk.co.whiteoctober.cordova.appversion",
-    "com.pylonproducts.wifiwizard"
+    "com.pylonproducts.wifiwizard",
+    "com.ionic.deploy"
   ]
 }

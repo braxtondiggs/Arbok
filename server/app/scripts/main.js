@@ -161,6 +161,8 @@ var home = {// jshint ignore:line
 			items: 1,
 			loop: true,
 			autoplay: true,
+			autoplayTimeout: 6000,
+			autoplayHoverPause: true,
 			autoplaySpeed: true,
 			merge: true,
 			callbacks: true,
@@ -212,7 +214,8 @@ var overlay = {// jshint ignore:line
 			var controls = $(this).find('.owl-controls');
 			controls.prependTo($('.controls'));
 			if(current !== undefined) {
-				$(owl).trigger('jumpTo.owl', current);
+				console.log(current);
+				owl.trigger('to.owl.carousel', [current, 500]);
 			}
 			
 			if($(owl).find('.item').length === 1){
@@ -272,6 +275,7 @@ var overlay = {// jshint ignore:line
 			owl.owlCarousel({
 				items: 1,
 				loop: loop,
+				startPosition: current,
 				merge: true,
 				nav: true,
 				slideSpeed: 2000,
@@ -404,13 +408,13 @@ var features = {
 			autoHeight: false,
 			loop: true,
 			merge: true,
-			nav: false,
+			nav: true,
 			center: true,
 			slideSpeed: 2000,
 			dots: true,
 			callbacks: true,
 //			navText: ['<i class="arrow-left"></i>', '<i class="arrow-right"></i>'],
-			responsiveClass: false,
+			responsiveClass: false
 		});
 	},
 	

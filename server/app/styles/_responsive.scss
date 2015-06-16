@@ -405,6 +405,12 @@
 			}
 		}
 	}
+	.screenshot a{
+		width: 30%!important;
+		img {
+		    min-width: 55%!important;
+		}
+	}
 }
 
 @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
@@ -430,7 +436,6 @@
 	#home-carousel .item {
 		padding-bottom: 50px;
 	}
-
 }
 @media (max-width: $screen-xs-max) {
 	.equal {

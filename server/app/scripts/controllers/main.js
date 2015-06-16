@@ -18,15 +18,20 @@ angular.module('MVPlayer').controller('MainCtrl', ['$scope', '$window', 'ngDialo
 					
 					newsLetter.save(null, {
 						success: function(newsLetter) {
-							//output success
-						    console.log(newsLetter);
+							ngDialog.open({
+						        template: 'newsLetterTmpl',
+						        className: 'ngdialog-newsletter ngdialog-theme-default'
+						    });
 					  	},
 					  	error: function(gameScore, error) {
 						    $window.alert('Failed to create new object, with error code: ' + error.message);
 					  	}
 					});
 				}else {
-					//output already registered
+					ngDialog.open({
+					    template: 'newsLetterTmpl',
+					    className: 'ngdialog-newsletter ngdialog-theme-default'
+					});
 				}
 		  	}
 		});
@@ -42,9 +47,5 @@ angular.module('MVPlayer').controller('MainCtrl', ['$scope', '$window', 'ngDialo
 		});
 	};
 	$scope.onlinePlayer = function() {
-		ngDialog.open({
-	        template: 'newsLetterTmpl',
-	        className: 'ngdialog-newsletter ngdialog-theme-default'
-	    });
 	};
 }]);

@@ -35,6 +35,8 @@ module.exports = function(config) {
       'bower_components/imagesloaded/imagesloaded.js',
       'bower_components/enquire/dist/enquire.js',
       'bower_components/owl.carousel/src/js/owl.carousel.js',
+      'bower_components/owl.carousel/src/js/owl.autoplay.js',
+      'bower_components/owl.carousel/src/js/owl.navigation.js',
       'bower_components/jquery.transit/jquery.transit.js',
       'bower_components/bootstrap-sass/assets/javascripts/bootstrap.js',
       'bower_components/ngstorage/ngStorage.js',

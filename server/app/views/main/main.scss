@@ -98,15 +98,19 @@
         }
     }
 }
-.controls-home {
+.owl-nav {
     position: relative;
     z-index: 99;
     bottom: 150px;
+    margin-left: 50px;
     .owl-prev, .owl-next {
         height: 50px;
         position: absolute;
         top: 50%;
         margin-top: -25px;
+        &:hover {
+            color: $selectedColor;
+        }
     }
     .owl-next { left: 70px;}
     .owl-prev { left: 0;}
@@ -204,16 +208,16 @@ p { font-size: 20px; line-height: 1.5em; }
 }
 .btn-default {
     color: #ffffff;
-    background-color: #2a2a30;
-    border-color: #2a2a30;
+    background-color: $selectedColor;
+    border-color: $selectedColorActive;
 }
 .btn-lg, .btn-group-lg > .btn {
     padding: 10px 60px;
     font-size: 28px;
     &:hover {
         color: #ffffff;
-        background-color: #17171a;
-        border-color: #0d0d0f;
+        background-color: $selectedColorActive;
+        border-color: $selectedColorActive;
     }
 }
 .btn-radius-none {

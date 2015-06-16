@@ -13,7 +13,7 @@
     "modernizr": "~2.8.3",
     "imagesloaded": "~3.1.8",
     "enquire": "~2.1.2",
-    "owl.carousel": "https://github.com/braxtondiggs/OwlCarousel2.git#b7d88e0443519962caa1873e771072868f82485a",
+    "owl.carousel": "https://github.com/braxtondiggs/OwlCarousel2.git#ac7d359bc004cb636e8b3df9657347f3fc4a42cd",
     "jquery.transit": "~0.9.12",
     "bootstrap-sass": "~3.3.4",
     "ngstorage": "~0.3.0",

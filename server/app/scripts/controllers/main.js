@@ -1,5 +1,5 @@
 'use strict';
-angular.module('MVPlayer').controller('MainCtrl', ['$scope', '$window', 'ngDialog', function ($scope, $window, ngDialog) {
+angular.module('Alma').controller('MainCtrl', ['$scope', '$window', 'ngDialog', function ($scope, $window, ngDialog) {
 	/*global Parse*/
 	$scope.contact = {};
 	$scope.newsletter = {};
@@ -17,7 +17,7 @@ angular.module('MVPlayer').controller('MainCtrl', ['$scope', '$window', 'ngDialo
 				    newsLetter.set('email', $scope.newsletter.email);
 					
 					newsLetter.save(null, {
-						success: function(newsLetter) {
+						success: function() {
 							ngDialog.open({
 						        template: 'newsLetterTmpl',
 						        className: 'ngdialog-newsletter ngdialog-theme-default'
@@ -45,7 +45,5 @@ angular.module('MVPlayer').controller('MainCtrl', ['$scope', '$window', 'ngDialo
 		  	$window.alert(error);
 		  }
 		});
-	};
-	$scope.onlinePlayer = function() {
 	};
 }]);

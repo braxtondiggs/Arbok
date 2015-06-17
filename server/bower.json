@@ -2,14 +2,14 @@
   "name": "server",
   "version": "0.0.0",
   "dependencies": {
-    "angular": "^1.3.0",
-    "angular-sanitize": ">=1.2.*",
-    "angular-route": ">=1.2.*",
+    "angular": "^1.4.2",
+    "angular-sanitize": "^1.4.2",
+    "angular-route": "^1.4.2",
     "angular-youtube-player": "https://github.com/braxtondiggs/angular-youtube-player.git#69da6d104fbb2c43b46fcbbf5ae567c92ce7dc5d",
     "angular-notify": "~2.5.0",
-    "jquery": "~1.11.0",
-    "parse-js-sdk": "~1.3.1",
-    "font-awesome": "~4.2.0",
+    "jquery": "*",
+    "parse-js-sdk": "*",
+    "font-awesome": "*",
     "modernizr": "~2.8.3",
     "imagesloaded": "~3.1.8",
     "enquire": "~2.1.2",
@@ -20,16 +20,19 @@
     "angularjs-geolocation": "~0.1.1",
     "simple-line-icons": "~1.0.0",
     "angular-echonest": "*",
-    "ngDialog": "~0.3.12",
-    "pubnub": "~3.7.10",
-    "pubnub-angular": "~1.1.0",
-    "animate.css": "~3.2.6",
+    "ngDialog": "~0.4.0",
+    "pubnub": "*",
+    "pubnub-angular": "*",
+    "animate.css": "*",
     "ng-lodash": "~0.2.2",
-    "moment": "~2.10.3"
+    "moment": "~2.10.3",
+    "angular-material": "~0.10.0",
+    "angular-messages": "~1.4.1",
+    "ng-idle": "~1.1.0"
   },
   "devDependencies": {
-    "angular-mocks": "^1.3.0"
+    "angular-mocks": "^1.4.2"
   },
   "appPath": "app",
-  "moduleName": "MVPlayer"
+  "moduleName": "Alma"
 }

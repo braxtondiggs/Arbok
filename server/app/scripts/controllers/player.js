@@ -1,10 +1,85 @@
 'use strict';
-angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', function($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash) {
+angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', '$mdDialog', '$mdSidenav', 'Idle', function($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash, $mdDialog, $mdSidenav, Idle) {
 	/*global $:false */
 	/*global Parse*/
 	/*global YT*/
 	/*global moment*/
 	/*jshint camelcase: false */
+
+	/*$mdDialog.show({
+      controller: 'LoginCtrl',
+      templateUrl: 'views/modals/login.tmpl.html',
+      parent: angular.element(document.body),
+      escapeToClose: false
+
+    })*/
+
+	$scope.isActive = true;
+	Idle.watch();
+	Idle.setIdle(2);
+	$scope.$on('IdleStart', function() {
+        if (!$mdSidenav('left').isOpen()) {
+	    	$scope.isActive = false;
+	    	$scope.$apply();
+	    }
+    });
+    $scope.$on('IdleEnd', function() {
+    	$scope.isActive = true;
+    	$scope.$apply();
+    });
+  	$scope.closeMenu = function () {
+      $mdSidenav('left').close();
+    };
+    $scope.openMenu = function () {
+      $mdSidenav('left').open();
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	PubNub.init({
 		publish_key: 'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2', // jshint ignore:line
 		subscribe_key: 'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe' // jshint ignore:line

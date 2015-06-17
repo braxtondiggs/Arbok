@@ -96,4 +96,12 @@
 			}
 		}
 	}
+	#team-carousel {
+		.owl-dots {
+			text-align: center;
+		}
+		&.owl-carousel {
+			display: block!important;
+		}
+	}
 }

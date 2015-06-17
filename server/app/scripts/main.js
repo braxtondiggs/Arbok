@@ -405,13 +405,15 @@ var features = {
 		var owl = $('#features-carousel');
 		owl.owlCarousel({
 			items: 1,
-			autoHeight: false,
 			loop: true,
-			merge: true,
 			nav: true,
+			autoplay: false,
+			autoplayHoverPause: false,
+			merge: true,
 			center: true,
-			slideSpeed: 2000,
 			dots: true,
+			autoHeight: false,
+			slideSpeed: 2000,
 			callbacks: true,
 //			navText: ['<i class="arrow-left"></i>', '<i class="arrow-right"></i>'],
 			responsiveClass: false
@@ -440,6 +442,8 @@ var team = {
 		owl.owlCarousel({
 			items: 1,
 			autoHeight: false,
+			autoplay: false,
+			autoplayHoverPause: false,
 			loop: true,
 			merge: true,
 			nav: false,

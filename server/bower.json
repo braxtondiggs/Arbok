@@ -5,7 +5,7 @@
     "angular": "^1.4.2",
     "angular-sanitize": "^1.4.2",
     "angular-route": "^1.4.2",
-    "angular-youtube-player": "https://github.com/braxtondiggs/angular-youtube-player.git#69da6d104fbb2c43b46fcbbf5ae567c92ce7dc5d",
+    "angular-youtube-player": "*",
     "angular-notify": "~2.5.0",
     "jquery": "*",
     "parse-js-sdk": "*",
@@ -13,7 +13,7 @@
     "modernizr": "~2.8.3",
     "imagesloaded": "~3.1.8",
     "enquire": "~2.1.2",
-    "owl.carousel": "https://github.com/braxtondiggs/OwlCarousel2.git#ac7d359bc004cb636e8b3df9657347f3fc4a42cd",
+    "owl.carousel": "*",
     "jquery.transit": "~0.9.12",
     "bootstrap-sass": "~3.3.4",
     "ngstorage": "~0.3.0",
@@ -32,6 +32,31 @@
   },
   "devDependencies": {
     "angular-mocks": "^1.4.2"
+  },
+  "overrides": {
+    "simple-line-icons": {
+      "main": [
+        "css/simple-line-icons.css",
+        "less/simple-line-icons.less",
+        "fonts/Simple-Line-Icons.eot",
+        "fonts/Simple-Line-Icons.svg",
+        "fonts/Simple-Line-Icons.ttf",
+        "fonts/Simple-Line-Icons.woff"
+      ]
+    },
+    "owl.carousel": {
+      "main": [
+        "src/js/owl.carousel.js",
+        "src/js/owl.autoplay.js",
+        "src/js/owl.navigation.js",
+        "src/css/owl.carousel.css"
+      ]
+    },
+    "angular-youtube-player": {
+      "main": [
+        "build/angularYoutubePlayer.min.js"
+      ]
+    }
   },
   "appPath": "app",
   "moduleName": "Alma"

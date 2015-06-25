@@ -88,6 +88,8 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 	$scope.isBox = ($location.path().indexOf('box') > -1) ? true : false;
 	$scope.detonate = null;
 	$scope.loading = false;
+	$scope.isLoadingPlayer1 = true;
+	$scope.isLoadingPlayer2 = true;
 	$scope.$storage = $localStorage.$default({
 		boxCode: null
 	});
@@ -103,7 +105,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 		height: $(window).height(),
 		videoId: 'UpRssA0CQ0E',
 		playerVars: {
-			controls: 0,
+			controls: 1,
 			disablekb: 0,
 			showinfo: 0,
 			rel: 0,
@@ -257,23 +259,49 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			}
 		});
 	}
-
-	function initalizePlayer() {
-		getSong(function(track) {
-			$scope.track = track;
-			if ($scope.track) {
-				if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtube')[0]) {
-					$scope.playerEvent.target.loadVideoById($scope.track.get('youtube')[0]);
-					$scope.playerEvent.target.setPlaybackQuality('small');
-					activateBar();
-					$scope.box.set('playingImg', $scope.track.get('image'));
-					$scope.box.save();
-					$scope.track.set('isActive', true);
-					$scope.track.save();
-					$scope.$apply();
-				}
+	function bufferNext(player) {
+		$scope.last_track = $scope.track;
+		emptyQueue(function(randomTrack) {
+			if (youtubeURL(player.target.getVideoUrl()) !== randomTrack.get('youtube')[0]) {
+				console.log('track buffer:');
+				console.log(randomTrack);
+				player.target.loadVideoById($scope.track.get('youtube')[0]);
+				player.target.setPlaybackQuality('small');
+				player.target.playVideo();
+				player.target.pauseVideo();
 			}
 		});
+	}
+	function initalizePlayer() {
+		$scope.partyMode = true;
+		$scope.alphaPlayer = ($scope.playerEvent2.target.getPlayerState() === YT.PlayerState.ENDED || $scope.playerEvent.target.getPlayerState() === YT.PlayerState.CUED)?$scope.playerEvent:$scope.playerEvent2;
+		$scope.betaPlayer = ($scope.playerEvent.target.getPlayerState() === YT.PlayerState.ENDED || $scope.playerEvent.target.getPlayerState() === YT.PlayerState.CUED || $scope.partyMode)?$scope.playerEvent2:$scope.playerEvent;
+		console.log($scope.alphaPlayer);
+		console.log($scope.betaPlayer);
+		if ($scope.alphaPlayer.target.getPlayerState() === YT.PlayerState.PAUSED) {
+			player.target.playVideo();
+			bufferNext($scope.betaPlayer);
+		}else {
+			getSong(function(track) {
+				$scope.track = track;
+				if ($scope.track) {
+					if (youtubeURL($scope.alphaPlayer.target.getVideoUrl()) !== $scope.track.get('youtube')[0]) {
+						$scope.alphaPlayer.target.loadVideoById($scope.track.get('youtube')[0]);
+						$scope.alphaPlayer.target.setPlaybackQuality('small');
+						activateBar();
+						$scope.box.set('playingImg', $scope.track.get('image'));
+						$scope.box.save();
+						$scope.track.set('isActive', true);
+						$scope.track.save();
+						$scope.isLoadingPlayer1 = ($scope.alphaPlayer.id === 'player1')?true:false;
+						$scope.isLoadingPlayer2 = ($scope.alphaPlayer.id === 'player2')?true:false;
+						if ($scope.partyMode) {
+							bufferNext($scope.betaPlayer);
+						}
+					}
+				}
+			});
+		}
 	}
 
 	function deleteSong(callback) {
@@ -288,7 +316,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 		});
 	}
 
-	function emptyQueue(emptycallback) {
+	function emptyQueue(emptycallback, save) {
 		function saveTrack(imvdbTrack, callback) {
 			$http.get(
 				'http://imvdb.com/api/v1/video/' + String(imvdbTrack.id) + '?include=sources,featured',
@@ -299,11 +327,14 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 				var sources = data.sources,
 					youtubeKey = [];
 				for (var key in sources) {
+					console.log(sources);
 					if (sources[key].source === 'youtube') {
 						youtubeKey.push(sources[key].source_data);
 					}
 				}
-				if (key !== null) {
+				console.log(youtubeKey);
+				console.log(youtubeKey.length > 0);
+				if (key !== null && youtubeKey.length > 0) {
 					var Videos = Parse.Object.extend('Videos');
 					var video = new Videos();
 					var relation = $scope.box.relation('playerVideo');
@@ -322,14 +353,20 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 					video.set('youtube', youtubeKey);
 					video.set('upVotes', 0);
 					video.set('downVotes', 0);
-					video.save(null, {
-						success: function() {
-							relation.add(video);
-							$scope.box.save();
-							callback(video);
-							$scope.$apply();
-						}
-					});
+					//if (save) {
+						video.save(null, {
+							success: function() {
+								relation.add(video);
+								$scope.box.save();
+								callback(video);
+								$scope.$apply();
+							}
+						});
+					/*}else {
+						callback(video);
+					}*/
+				}else {
+					callback();
 				}
 			}).error(function() {
 				initalizePlayer();
@@ -546,12 +583,14 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			$interval.cancel($scope.videoInterval);
 			isConcert = true;
 		}
-		var duration = parseInt($scope.playerEvent.target.getDuration(), 10),
+		var duration = parseInt($scope.alphaPlayer.target.getDuration(), 10),
 			multipler = 0;
 		$scope.videoInterval = $interval(function() {
-			var time = parseInt($scope.playerEvent.target.getCurrentTime(), 10);
-			if (time >= (duration - 3)) {
-				$scope.loading = true;
+			var time = parseInt($scope.alphaPlayer.target.getCurrentTime(), 10);
+			if ($scope.alphaPlayer.target.getPlayerState() === YT.PlayerState.PLAYING) {
+				if (time >= (duration - 3)) {
+					$scope.loading = true;
+				}
 			}
 			if ($scope.track.get('featuredArtist')) {
 				if (Math.ceil(time) === (30 * (multipler + 1)) && $scope.track.get('featuredArtist').length > multipler) {
@@ -595,7 +634,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			}
 		}, 1000);
 	}
-	$scope.onError = function() {
+	$scope.onError = function() {//Needs to be reconfigured, should be watching Beta not Alpha
 		$scope.track.get('youtube').splice(0, 1);
 		$scope.track.save();
 		if ($scope.track.get('youtube')) {
@@ -637,10 +676,17 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 		}
 	};
 	$scope.onReady = function(event) {
+		event.id = 'player1';
 		$scope.playerEvent = event;
 		if ($scope.isBox) {
-			$scope.openPlayerSetupDialog();
+			$timeout(function() {
+				$scope.openPlayerSetupDialog();
+			}, 1000);
 		}
+	};
+	$scope.onReady2 = function(event) {
+		event.id = 'player2';
+		$scope.playerEvent2 = event;
 	};
 	$scope.onApiLoadingFailure = function(controller) {
 		controller.reload();

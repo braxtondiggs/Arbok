@@ -90,6 +90,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 	$scope.loading = false;
 	$scope.isLoadingPlayer1 = true;
 	$scope.isLoadingPlayer2 = true;
+	$scope.init = 2;
 	$scope.$storage = $localStorage.$default({
 		boxCode: null
 	});
@@ -252,7 +253,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 								'artist': randomTrack.get('artistInfo'),
 								'track': randomTrack.get('trackInfo')
 							}
-						});
+						}, true);
 						callback(randomTrack);
 					});
 				}
@@ -265,12 +266,13 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			if (youtubeURL(player.target.getVideoUrl()) !== randomTrack.get('youtube')[0]) {
 				console.log('track buffer:');
 				console.log(randomTrack);
-				player.target.loadVideoById($scope.track.get('youtube')[0]);
+				$scope.buffer = randomTrack;
+				player.target.loadVideoById(randomTrack.get('youtube')[0]);
 				player.target.setPlaybackQuality('small');
 				player.target.playVideo();
 				player.target.pauseVideo();
 			}
-		});
+		}, false);
 	}
 	function initalizePlayer() {
 		$scope.partyMode = true;
@@ -279,7 +281,18 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 		console.log($scope.alphaPlayer);
 		console.log($scope.betaPlayer);
 		if ($scope.alphaPlayer.target.getPlayerState() === YT.PlayerState.PAUSED) {
-			player.target.playVideo();
+			$scope.alphaPlayer.target.playVideo();
+			activateBar();
+			$scope.buffer.set('isActive', true);
+			$scope.buffer.save(null, {
+				success: function() {
+					var relation = $scope.box.relation('playerVideo');
+					relation.add($scope.buffer);
+					$scope.box.set('playingImg', $scope.buffer.get('image'));
+					$scope.box.save();
+					$scope.$apply();
+				}
+			});
 			bufferNext($scope.betaPlayer);
 		}else {
 			getSong(function(track) {
@@ -317,7 +330,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 	}
 
 	function emptyQueue(emptycallback, save) {
-		function saveTrack(imvdbTrack, callback) {
+		function saveTrack(imvdbTrack, callback, saved) {
 			$http.get(
 				'http://imvdb.com/api/v1/video/' + String(imvdbTrack.id) + '?include=sources,featured',
 				{
@@ -327,13 +340,10 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 				var sources = data.sources,
 					youtubeKey = [];
 				for (var key in sources) {
-					console.log(sources);
 					if (sources[key].source === 'youtube') {
 						youtubeKey.push(sources[key].source_data);
 					}
 				}
-				console.log(youtubeKey);
-				console.log(youtubeKey.length > 0);
 				if (key !== null && youtubeKey.length > 0) {
 					var Videos = Parse.Object.extend('Videos');
 					var video = new Videos();
@@ -353,7 +363,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 					video.set('youtube', youtubeKey);
 					video.set('upVotes', 0);
 					video.set('downVotes', 0);
-					//if (save) {
+					if (saved) {
 						video.save(null, {
 							success: function() {
 								relation.add(video);
@@ -362,9 +372,9 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 								$scope.$apply();
 							}
 						});
-					/*}else {
+					}else {
 						callback(video);
-					}*/
+					}
 				}else {
 					callback();
 				}
@@ -373,7 +383,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			});
 		}
 
-		function getSongInfo(parseTrack, callback) {
+		function getSongInfo(parseTrack, callback, saved) {
 			$http.get(
 				'http://imvdb.com/api/v1/search/videos?q=' + parseTrack.get('artistTitle'), 
 				{
@@ -392,11 +402,11 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 						randomTopSong(function(track) {
 							console.log('failed');
 							callback(track);
-						});
+						}, saved);
 					} else {
 						saveTrack(data.results[i], function(savedTrack) {
 							callback(savedTrack);
-						});
+						}, saved);
 					}
 				}
 			}).error(function() {
@@ -404,7 +414,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			});
 		}
 
-		function randomTopSong(callback) {
+		function randomTopSong(callback, saved) {
 			var Browse = Parse.Object.extend('Browse');
 			var query = new Parse.Query(Browse);
 			query.equalTo('section', 1);
@@ -413,7 +423,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 				success: function(results) {
 					getSongInfo(results[Math.floor(Math.random() * results.length)], function(trackInfo) {
 						callback(trackInfo);
-					});
+					}, saved);
 					$scope.$apply();
 				}, error:function() {
 					initalizePlayer();
@@ -421,7 +431,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			});
 		}
 
-		function getAsFeatured(callback) {
+		function getAsFeatured(callback, saved) {
 			$http.get(
 				'http://imvdb.com/api/v1/search/entities?q=' + $scope.last_track.get('IMVDBartistId'), 
 				{
@@ -439,7 +449,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 										var ran = Math.floor(Math.random() * data.featured_artist_videos.videos.length);
 										saveTrack(data.featured_artist_videos.videos[ran], function(track) {
 											callback(track);
-										});
+										}, saved);
 									} else {
 										callback();
 									}
@@ -457,7 +467,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			});
 		}
 
-		function getEchoNest(callback) {
+		function getEchoNest(callback, saved) {
 			var artist = ($scope.last_track) ? $scope.last_track.get('artistInfo') : 'Drake',
 				promise = $q.all(null);
 			Echonest.artists.get({
@@ -484,7 +494,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 											if (data.results[ran2].artists[0].name.toLowerCase() === similar[ran].name.toLowerCase()) {
 												saveTrack(data.results[ran2], function(track) {
 													callback(track);
-												});
+												}, saved);
 												found = true;
 												break;
 											}
@@ -515,11 +525,11 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 					} else {
 						randomTopSong(function(track) {
 							emptycallback(track);
-						});
+						}, save);
 					}
-				});
+				}, save);
 			}
-		});
+		}, save);
 	}
 
 	function activateBar() {
@@ -678,16 +688,25 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 	$scope.onReady = function(event) {
 		event.id = 'player1';
 		$scope.playerEvent = event;
-		if ($scope.isBox) {
-			$timeout(function() {
-				$scope.openPlayerSetupDialog();
-			}, 1000);
-		}
+		isReady();
+		
 	};
 	$scope.onReady2 = function(event) {
 		event.id = 'player2';
 		$scope.playerEvent2 = event;
+		isReady();
 	};
+	function isReady() {
+		console.log($scope.init);
+		if ($scope.init <= 1) {
+			if ($scope.isBox) {
+				$scope.openPlayerSetupDialog();
+			}
+		}else {
+			$scope.init--;
+			console.log($scope.init);
+		}
+	}
 	$scope.onApiLoadingFailure = function(controller) {
 		controller.reload();
 	};

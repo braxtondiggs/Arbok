@@ -152,8 +152,10 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 					messageTemplate: '<img ng-src="' + payload.message.image + '" err-src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg + '</h3><p>' + submsg + '</p></span>',
 					classes: 'activity-modal'
 				});
-				if ($scope.buffer) {
-
+				if (!lodash.isEmpty($scope.buffer)) {
+					if ($scope.buffer.type === 'emptyTrack') {
+						bufferNext($scope.betaPlayer);
+					}
 				}
 			} else if (payload.message.type === 'chat_msg') {
 				notify({
@@ -256,6 +258,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 						callback(lodash.sortByOrder(queue, ['counter'], false)[count]);
 					} else {
 						emptyQueue(function(randomTrack) {
+							randomTrack.type = 'emptyTrack';
 							if (count === 0) {
 								/*PubNub.ngPublish({
 									channel: $scope.box.id,

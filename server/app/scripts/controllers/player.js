@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', '$mdDialog', '$mdSidenav', 'Idle', function($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash, $mdDialog, $mdSidenav, Idle) {
+angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', '$mdDialog', '$mdComponentRegistry', function($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash, $mdDialog, $mdComponentRegistry) {
 	/*global $:false */
 	/*global Parse*/
 	/*global YT*/
@@ -7,32 +7,38 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 	/*jshint camelcase: false */
 
 	/*$mdDialog.show({
-      controller: 'LoginCtrl',
-      templateUrl: 'views/modals/login.tmpl.html',
-      parent: angular.element(document.body),
-      escapeToClose: false
+	  controller: 'LoginCtrl',
+	  templateUrl: 'views/modals/login.tmpl.html',
+	  parent: angular.element(document.body),
+	  escapeToClose: false
 
-    })*/
+	})*/
 
-	$scope.isActive = true;
+	/*$scope.isActive = true;
 	Idle.watch();
 	Idle.setIdle(2);
 	$scope.$on('IdleStart', function() {
-        if (!$mdSidenav('left').isOpen()) {
-	    	$scope.isActive = false;
-	    	$scope.$apply();
-	    }
-    });
-    $scope.$on('IdleEnd', function() {
-    	$scope.isActive = true;
-    	$scope.$apply();
-    });
-  	$scope.closeMenu = function () {
-      $mdSidenav('left').close();
-    };
-    $scope.openMenu = function () {
-      $mdSidenav('left').open();
-    };
+		$mdComponentRegistry.when('left').then(function(leftSidenav){
+			if (!leftSidenav.isOpen()) {
+				$scope.isActive = false;
+				$scope.$apply();
+			}
+		});
+	});
+	$scope.$on('IdleEnd', function() {
+		$scope.isActive = true;
+		$scope.$apply();
+	});
+	$scope.closeMenu = function () {
+		$mdComponentRegistry.when('left').then(function(leftSidenav){
+	  		leftSidenav.close();
+	  	});
+	};
+	$scope.openMenu = function () {
+		$mdComponentRegistry.when('left').then(function(leftSidenav){
+	  		leftSidenav.open();
+	  	});
+	};*/
 
 
 
@@ -115,7 +121,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 		}
 	};
 	notify.config({
-		duration: 8000,
+		duration: 0,
 		position: 'right'
 	});
 
@@ -146,6 +152,9 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 					messageTemplate: '<img ng-src="' + payload.message.image + '" err-src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg + '</h3><p>' + submsg + '</p></span>',
 					classes: 'activity-modal'
 				});
+				if ($scope.buffer) {
+
+				}
 			} else if (payload.message.type === 'chat_msg') {
 				notify({
 					messageTemplate: '<img ng-src="' + payload.message.image + '" err-src="images/logo_missing.png"><span class="content"><h3 class="header">' + payload.message.username + '</h3><p>' + payload.message.msg + '</p></span>',
@@ -233,54 +242,72 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 		}
 	}
 
-	function getSong(callback) {
-		$scope.box.relation('playerVideo').query().ascending('createdAt').find({
-			success: function(queue) {
-				if (!lodash.isEmpty(queue)) {
-					for (var i = 0; i < queue.length; i++) {
-						queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
-					}
-					callback(lodash.sortByOrder(queue, ['counter'], false)[0]);
-				} else {
-					emptyQueue(function(randomTrack) {
-						PubNub.ngPublish({
-							channel: $scope.box.id,
-							message: {
-								'type': 'song_added',
-								'id': randomTrack.id,
-								'username': undefined,
-								'image': randomTrack.get('image'),
-								'artist': randomTrack.get('artistInfo'),
-								'track': randomTrack.get('trackInfo')
+	function getSong(callback, count) {
+		$timeout(function() {
+			$scope.box.relation('playerVideo').query().ascending('createdAt').find({
+				success: function(queue) {
+					console.log(queue);
+					console.log(count);
+					if (!lodash.isEmpty(queue) && (count === 0  || (count === 1 && queue.length > 1))) {
+						for (var i = 0; i < queue.length; i++) {
+							queue.type = 'queue';
+							queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
+						}
+						callback(lodash.sortByOrder(queue, ['counter'], false)[count]);
+					} else {
+						emptyQueue(function(randomTrack) {
+							if (count === 0) {
+								/*PubNub.ngPublish({
+									channel: $scope.box.id,
+									message: {
+										'type': 'song_added',
+										'id': randomTrack.id,
+										'username': undefined,
+										'image': randomTrack.get('image'),
+										'artist': randomTrack.get('artistInfo'),
+										'track': randomTrack.get('trackInfo')
+									}
+								});*/
 							}
-						}, true);
-						callback(randomTrack);
-					});
+							callback(randomTrack);
+						}, (count === 0)?true:false);
+					}
 				}
-			}
-		});
+			});
+		}, 1000);
 	}
 	function bufferNext(player) {
 		$scope.last_track = $scope.track;
-		emptyQueue(function(randomTrack) {
-			if (youtubeURL(player.target.getVideoUrl()) !== randomTrack.get('youtube')[0]) {
+		getSong(function(track) {
+			if (youtubeURL(player.target.getVideoUrl()) !== track.get('youtube')[0]) {
 				console.log('track buffer:');
-				console.log(randomTrack);
-				$scope.buffer = randomTrack;
-				player.target.loadVideoById(randomTrack.get('youtube')[0]);
-				player.target.setPlaybackQuality('small');
+				console.log(track);
+				$scope.buffer = track;
+				player.target.cueVideoById(track.get('youtube')[0], 2, 'default');
 				player.target.playVideo();
-				player.target.pauseVideo();
+				$timeout(function() {
+					player.target.pauseVideo();
+				}, 1000);
 			}
-		}, false);
+		}, 1);
 	}
 	function initalizePlayer() {
 		$scope.partyMode = true;
-		$scope.alphaPlayer = ($scope.playerEvent2.target.getPlayerState() === YT.PlayerState.ENDED || $scope.playerEvent.target.getPlayerState() === YT.PlayerState.CUED)?$scope.playerEvent:$scope.playerEvent2;
-		$scope.betaPlayer = ($scope.playerEvent.target.getPlayerState() === YT.PlayerState.ENDED || $scope.playerEvent.target.getPlayerState() === YT.PlayerState.CUED || $scope.partyMode)?$scope.playerEvent2:$scope.playerEvent;
-		console.log($scope.alphaPlayer);
-		console.log($scope.betaPlayer);
-		if ($scope.alphaPlayer.target.getPlayerState() === YT.PlayerState.PAUSED) {
+		if ($scope.playerEvent.target.getPlayerState() === YT.PlayerState.PAUSED || $scope.playerEvent.target.getPlayerState() === -1 || $scope.alphaPlayer === undefined) {
+			$scope.alphaPlayer = $scope.playerEvent;
+		}else if($scope.playerEvent2.target.getPlayerState() === YT.PlayerState.PAUSED || $scope.playerEvent2.target.getPlayerState() === -1) {
+			$scope.alphaPlayer = $scope.playerEvent2;
+		}
+		if ($scope.playerEvent.target.getPlayerState() === YT.PlayerState.ENDED) {
+			$scope.betaPlayer = $scope.playerEvent;
+		}else if($scope.playerEvent2.target.getPlayerState() === YT.PlayerState.ENDED || $scope.betaPlayer === undefined) {
+			$scope.betaPlayer = $scope.playerEvent2;
+		}
+		$scope.loading = false;
+		$scope.isLoadingPlayer1 = ($scope.alphaPlayer.id === 'player1')?false:true;
+		$scope.isLoadingPlayer2 = ($scope.alphaPlayer.id === 'player2')?false:true;
+		if ($scope.alphaPlayer.target.getPlayerState() === YT.PlayerState.PAUSED || $scope.alphaPlayer.target.getPlayerState() === -1) {
+			console.log('unpause alpha')
 			$scope.alphaPlayer.target.playVideo();
 			activateBar();
 			$scope.buffer.set('isActive', true);
@@ -290,47 +317,44 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 					relation.add($scope.buffer);
 					$scope.box.set('playingImg', $scope.buffer.get('image'));
 					$scope.box.save();
+					$scope.track =  $scope.buffer;
+					watchVideo();
 					$scope.$apply();
 				}
 			});
 			bufferNext($scope.betaPlayer);
 		}else {
+			console.log('initalize alpha');
 			getSong(function(track) {
 				$scope.track = track;
 				if ($scope.track) {
 					if (youtubeURL($scope.alphaPlayer.target.getVideoUrl()) !== $scope.track.get('youtube')[0]) {
-						$scope.alphaPlayer.target.loadVideoById($scope.track.get('youtube')[0]);
-						$scope.alphaPlayer.target.setPlaybackQuality('small');
+						$scope.alphaPlayer.target.loadVideoById($scope.track.get('youtube')[0], 0, 'default');
+						$scope.alphaPlayer.target.setPlaybackQuality('default');
 						activateBar();
 						$scope.box.set('playingImg', $scope.track.get('image'));
 						$scope.box.save();
+						console.log('track:');
+						console.log($scope.track);
 						$scope.track.set('isActive', true);
 						$scope.track.save();
-						$scope.isLoadingPlayer1 = ($scope.alphaPlayer.id === 'player1')?true:false;
-						$scope.isLoadingPlayer2 = ($scope.alphaPlayer.id === 'player2')?true:false;
+						watchVideo();
 						if ($scope.partyMode) {
 							bufferNext($scope.betaPlayer);
 						}
 					}
 				}
-			});
+			}, 0);
 		}
 	}
 
-	function deleteSong(callback) {
+	function deleteSong() {
 		$scope.last_track = $scope.track;
-		$scope.track.destroy({
-			success: function() {
-				callback();
-			},
-			error: function() {
-				callback();
-			}
-		});
+		$scope.track.destroy();
 	}
 
 	function emptyQueue(emptycallback, save) {
-		function saveTrack(imvdbTrack, callback, saved) {
+		function saveTrack(imvdbTrack, callback) {
 			$http.get(
 				'http://imvdb.com/api/v1/video/' + String(imvdbTrack.id) + '?include=sources,featured',
 				{
@@ -363,7 +387,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 					video.set('youtube', youtubeKey);
 					video.set('upVotes', 0);
 					video.set('downVotes', 0);
-					if (saved) {
+					if (save) {
 						video.save(null, {
 							success: function() {
 								relation.add(video);
@@ -383,7 +407,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			});
 		}
 
-		function getSongInfo(parseTrack, callback, saved) {
+		function getSongInfo(parseTrack, callback) {
 			$http.get(
 				'http://imvdb.com/api/v1/search/videos?q=' + parseTrack.get('artistTitle'), 
 				{
@@ -402,11 +426,11 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 						randomTopSong(function(track) {
 							console.log('failed');
 							callback(track);
-						}, saved);
+						});
 					} else {
 						saveTrack(data.results[i], function(savedTrack) {
 							callback(savedTrack);
-						}, saved);
+						});
 					}
 				}
 			}).error(function() {
@@ -414,7 +438,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			});
 		}
 
-		function randomTopSong(callback, saved) {
+		function randomTopSong(callback) {
 			var Browse = Parse.Object.extend('Browse');
 			var query = new Parse.Query(Browse);
 			query.equalTo('section', 1);
@@ -423,7 +447,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 				success: function(results) {
 					getSongInfo(results[Math.floor(Math.random() * results.length)], function(trackInfo) {
 						callback(trackInfo);
-					}, saved);
+					});
 					$scope.$apply();
 				}, error:function() {
 					initalizePlayer();
@@ -431,7 +455,8 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			});
 		}
 
-		function getAsFeatured(callback, saved) {
+		function getAsFeatured(callback) {
+			console.log($scope.last_track);
 			$http.get(
 				'http://imvdb.com/api/v1/search/entities?q=' + $scope.last_track.get('IMVDBartistId'), 
 				{
@@ -449,7 +474,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 										var ran = Math.floor(Math.random() * data.featured_artist_videos.videos.length);
 										saveTrack(data.featured_artist_videos.videos[ran], function(track) {
 											callback(track);
-										}, saved);
+										});
 									} else {
 										callback();
 									}
@@ -467,7 +492,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			});
 		}
 
-		function getEchoNest(callback, saved) {
+		function getEchoNest(callback) {
 			var artist = ($scope.last_track) ? $scope.last_track.get('artistInfo') : 'Drake',
 				promise = $q.all(null);
 			Echonest.artists.get({
@@ -494,7 +519,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 											if (data.results[ran2].artists[0].name.toLowerCase() === similar[ran].name.toLowerCase()) {
 												saveTrack(data.results[ran2], function(track) {
 													callback(track);
-												}, saved);
+												});
 												found = true;
 												break;
 											}
@@ -525,11 +550,11 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 					} else {
 						randomTopSong(function(track) {
 							emptycallback(track);
-						}, save);
+						});
 					}
-				}, save);
+				});
 			}
-		}, save);
+		});
 	}
 
 	function activateBar() {
@@ -539,6 +564,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 	}
 
 	function songEnded() {
+		initalizePlayer();
 		$scope.loading = true;
 		$scope.vote = {
 			upvote: 0,
@@ -554,9 +580,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 				id: $scope.track.id
 			}
 		});
-		deleteSong(function() {
-			initalizePlayer();
-		});
+		deleteSong();
 	}
 
 	function detonate() {
@@ -597,11 +621,6 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			multipler = 0;
 		$scope.videoInterval = $interval(function() {
 			var time = parseInt($scope.alphaPlayer.target.getCurrentTime(), 10);
-			if ($scope.alphaPlayer.target.getPlayerState() === YT.PlayerState.PLAYING) {
-				if (time >= (duration - 3)) {
-					$scope.loading = true;
-				}
-			}
 			if ($scope.track.get('featuredArtist')) {
 				if (Math.ceil(time) === (30 * (multipler + 1)) && $scope.track.get('featuredArtist').length > multipler) {
 					window.artistSearch = function(data) {
@@ -617,7 +636,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 												notify({
 													messageTemplate: '<img ng-src="/images/songkick-logo.png"><span class="content"><h3 class="header">' + eventObj[i].performance[0].artist.displayName + ' is coming to your area!</h3><p>' + eventObj[i].venue.displayName + '</p><p>' + eventObj[i].venue.metroArea.displayName + ', ' + eventObj[i].venue.metroArea.state.displayName + ' ' + eventObj[i].venue.metroArea.country.displayName + '</p><p>' + moment(eventObj[i].start.date + ' ' + eventObj[i].start.time).format('dddd, MMMM Do YYYY, h:mm a') + '</p></span>',
 													classes: 'activity-modal',
-													duration: 25000,
+													duration: 0,
 													position: 'left'
 												});
 												PubNub.ngPublish({
@@ -645,7 +664,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 		}, 1000);
 	}
 	$scope.onError = function() {//Needs to be reconfigured, should be watching Beta not Alpha
-		$scope.track.get('youtube').splice(0, 1);
+		/*$scope.track.get('youtube').splice(0, 1);
 		$scope.track.save();
 		if ($scope.track.get('youtube')) {
 			$scope.playerEvent.target.loadVideoById($scope.track.get('youtube')[0]);
@@ -668,7 +687,7 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			videoErrors.set('youtube', $scope.track.get('youtube'));
 
 			videoErrors.save();
-		}
+		}*/
 	};
 	$scope.onStateChange = function(event) {
 		if (event.data === YT.PlayerState.ENDED) {
@@ -676,12 +695,11 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 			detonate();
 		} else if (event.data === YT.PlayerState.PLAYING) {
 			$('#currentlyPlaying').addClass('active');
-			$scope.loading = false;
 			if ($scope.detonate !== null) {
 				$timeout.cancel($scope.detonate);
 				$scope.detonate = null;
 			}
-			watchVideo();
+			//watchVideo();
 			$scope.$apply();
 		}
 	};
@@ -697,14 +715,12 @@ angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$locat
 		isReady();
 	};
 	function isReady() {
-		console.log($scope.init);
 		if ($scope.init <= 1) {
 			if ($scope.isBox) {
 				$scope.openPlayerSetupDialog();
 			}
 		}else {
 			$scope.init--;
-			console.log($scope.init);
 		}
 	}
 	$scope.onApiLoadingFailure = function(controller) {

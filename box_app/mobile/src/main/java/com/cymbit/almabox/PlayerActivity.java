@@ -34,7 +34,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
-public class MainActivity extends ActionBarActivity {
+public class PlayerActivity extends ActionBarActivity {
     Animation animationFadeOut;
     WebView mWebView;
     TextView loadingText;
@@ -97,7 +97,7 @@ public class MainActivity extends ActionBarActivity {
         /*mDecorView = getWindow().getDecorView();
         mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_player);
 
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k", "oh8eC3w1vnRfBHpAaRljovwzVNaQJnrbh65ei7Wf");

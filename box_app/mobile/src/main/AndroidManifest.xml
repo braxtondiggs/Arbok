@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".SetupActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:launchMode="singleTask"
@@ -20,15 +20,24 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.HOME" />
+                <!--<category android:name="android.intent.category.HOME" />-->
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <receiver android:name=".OnBootReceiver">
+        <activity
+            android:name=".PlayerActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTask"
+            android:stateNotNeeded="true"
+            android:configChanges="orientation|keyboardHidden"
+            >
+        </activity>
+        <!--<receiver android:name=".OnBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

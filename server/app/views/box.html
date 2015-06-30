@@ -2,9 +2,9 @@
 <div youtube-video video-id="{{player.videoId}}" media-content-url="{{player.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player.videoParameters" player-vars="player.playerVars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure(controller)" ng-hide="isLoadingPlayer1"></div>
 
 <div youtube-video video-id="{{player.videoId}}" media-content-url="{{player2.mediaContentUrl}}" width="{{player.width}}" height="{{player.height}}" video-parameters="player2.videoParameters" player-vars="player.playerVars" on-ready="onReady2(event)" on-state-change="onStateChange(event)" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)" on-error="onError(event)" on-api-change="onApiChange(event)" on-controller-ready="onControllerReady2(controller)" on-api-loading-failure="onApiLoadingFailure(controller)" ng-hide="isLoadingPlayer2"></div>
-<!--<video autoplay loop id="bgvid" ng-if="!box.get('isSetup')">
+<video autoplay loop id="bgvid" ng-if="!box.get('isSetup')">
 	<source ng-src="videos/box-background.mp4" type="video/mp4">
-</video>-->
+</video>
 <div id="popUps">
     <div id="currentlyPlaying">
         <div class="album-cover">
@@ -19,12 +19,12 @@
         I guess nobody liked this song! Song Changing in <span class="countdown">{{vote.counter}}</span>
     </div>
 </div>
-<!--<div class="loading animated" ng-show="loading" ng-class="(loading == true)?'fadeIn':'fadeOut'" ng-show="loading">
+<div class="loading animated" ng-show="loading" ng-class="loading?'fadeIn':'fadeOut'" ng-if="loading">
     <div class="loading_container">
-        <img src="images/loading.jpg" class="animated" ng-class="(loading)?'bounceIn delay-2':'bounceOut'" />
+        <img src="images/loading.jpg" class="animated" ng-class="loading?'bounceIn delay-2':'bounceOut'" />
         <p class="loading_txt animated" ng-class="(loadingTxt)?'bounceInLeft':bounceOutRight">{{loadingTxt}}</p>
     </div>
-</div>-->
+</div>
 <script type="text/ng-template" id="boxSetupTmpl">
     <h1>Lets Get Setup...</h1>
     <p>Inside your Alma mobile app, goto Settings > Configure Physical Alma Player and enter the code below:</p>

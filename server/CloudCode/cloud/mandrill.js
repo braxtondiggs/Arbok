@@ -12,7 +12,7 @@ Parse.Cloud.define('sendEmail', function(request, response) {
 			from_name: request.params.name,
 			to: [{
 				email: 'braxtondiggs@gmail.com',
-				name: 'MVPlayer | Braxton Diggs'
+				name: 'Alma | Braxton Diggs'
 			}]
 		},
 		async: true

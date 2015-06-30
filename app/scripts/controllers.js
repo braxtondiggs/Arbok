@@ -51,8 +51,10 @@ angular.module('Alma.controllers', [])
 			});
 		});
 		$ionicPlatform.ready(function() {
-			checkVersion();
-			$cordovaAppRate.promptForRating(false);
+			if (ionic.Platform.isWebView()) {
+				checkVersion();
+				$cordovaAppRate.promptForRating(false);
+			}
 		});
 		function checkVersion() {
 			$ionicPlatform.ready(function() {

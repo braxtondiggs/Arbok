@@ -21,6 +21,12 @@ body.Player {
   			}
 		}
 	}
+	div[ng-view] {
+		height: 100%;
+		.player_container {
+			height:100%;
+		}
+	}
 }
 #currentlyPlaying {
 	opacity: .8;

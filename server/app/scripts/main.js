@@ -161,7 +161,9 @@ var home = {// jshint ignore:line
 			items: 1,
 			loop: true,
 			autoplay: true,
-			autoplaySpeed: true,
+			autoplayTimeout: 8000,
+			autoplayHoverPause: true,
+			autoplaySpeed: 625,
 			merge: true,
 			callbacks: true,
 			navText: ['<i class="fa fa-arrow-left"></i>', '<i class="fa fa-arrow-right"></i>'],
@@ -212,7 +214,8 @@ var overlay = {// jshint ignore:line
 			var controls = $(this).find('.owl-controls');
 			controls.prependTo($('.controls'));
 			if(current !== undefined) {
-				$(owl).trigger('jumpTo.owl', current);
+				console.log(current);
+				owl.trigger('to.owl.carousel', [current, 500]);
 			}
 			
 			if($(owl).find('.item').length === 1){
@@ -272,6 +275,7 @@ var overlay = {// jshint ignore:line
 			owl.owlCarousel({
 				items: 1,
 				loop: loop,
+				startPosition: current,
 				merge: true,
 				nav: true,
 				slideSpeed: 2000,
@@ -401,16 +405,18 @@ var features = {
 		var owl = $('#features-carousel');
 		owl.owlCarousel({
 			items: 1,
-			autoHeight: false,
 			loop: true,
+			nav: true,
+			autoplay: false,
+			autoplayHoverPause: false,
 			merge: true,
-			nav: false,
 			center: true,
-			slideSpeed: 2000,
 			dots: true,
+			autoHeight: false,
+			slideSpeed: 2000,
 			callbacks: true,
 //			navText: ['<i class="arrow-left"></i>', '<i class="arrow-right"></i>'],
-			responsiveClass: false,
+			responsiveClass: false
 		});
 	},
 	
@@ -436,6 +442,8 @@ var team = {
 		owl.owlCarousel({
 			items: 1,
 			autoHeight: false,
+			autoplay: false,
+			autoplayHoverPause: false,
 			loop: true,
 			merge: true,
 			nav: false,

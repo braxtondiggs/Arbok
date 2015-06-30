@@ -1,0 +1,39 @@
+<md-dialog aria-label="Alma - Login" class="animated bounceInDown">
+  <form name="userForm">
+    <md-toolbar class="md-alma">
+      <div class="md-toolbar-tools">
+        <img src="images/alma_logo.png" class="logo" />
+        <span flex></span>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout="column">
+      <md-content layout-padding class="autoScroll">
+        <p>Login to your Alma account or use Facebook for a quicker login!</p>
+        <md-input-container class="md-icon-float" >
+          <!-- Use floating label instead of placeholder -->
+          <label>Email</label>
+          <md-icon>email</md-icon>
+          <input required ng-model="user.email" type="email">
+          <div ng-messages="userForm.email.$error">
+            <div ng-message="required">This is required.</div>
+            <div ng-message="email">Your email address is invalid</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-icon-float" >
+          <!-- Use floating label instead of placeholder -->
+          <label>Password</label>
+          <md-icon>lock</md-icon>
+          <input required ng-model="user.password" type="password" ng-minlength="3">
+          <div ng-messages="userForm.password.$error">
+            <div ng-message="required">This is required.</div>
+            <div ng-message="minlength">Password must be longer than 3 characters</div>
+          </div>
+        </md-input-container>
+        <div class="button_container">
+          <md-button class="md-raised md-alma">Login</md-button>
+        </div>
+        <p>Don't have an account? <a ng-click="">Sign up</a></p>
+      </md-content>
+    </md-dialog-content>
+  </form>
+</md-dialog>

@@ -47,4 +47,12 @@
 		margin-bottom: 40px;
 		color: $headerColor;
 	}
+	#features-carousel {
+		.owl-dots {
+			text-align: center;
+		}
+		&.owl-carousel {
+			display: block!important;
+		}
+	}
 }

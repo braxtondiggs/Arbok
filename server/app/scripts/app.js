@@ -1,5 +1,5 @@
 'use strict';
-angular.module('MVPlayer', ['ngSanitize', 'ngRoute', 'ngSanitize', 'youtubePlayer', 'ngStorage', 'ngDialog', 'pubnub.angular.service', 'angular-echonest', 'cgNotify', 'ngLodash'])
+angular.module('Alma', ['ngSanitize', 'ngRoute', 'ngSanitize', 'ngMessages', 'youtubePlayer', 'ngStorage', 'ngDialog', 'pubnub.angular.service', 'angular-echonest', 'cgNotify', 'ngLodash', 'ngMaterial', 'ngIdle'])
   	.directive('errSrc', function() {
 		return {
 		  	link: function(scope, element, attrs) {

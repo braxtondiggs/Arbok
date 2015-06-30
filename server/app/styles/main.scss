@@ -1,16 +1,13 @@
 $text-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
 $header-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
-$simple-line-font-path: "../bower_components/simple-line-icons/fonts/" !default;
-$fa-font-path: "../bower_components/font-awesome/fonts/" !default;
 
 // bower:scss
 @import 'bootstrap-sass/assets/stylesheets/_bootstrap.scss';
-@import 'simple-line-icons/scss/simple-line-icons.scss';
 // endbower
 
-@import 'owl.carousel/src/scss/owl.carousel.scss';
 @import '_colors.scss';
 @import 'player.scss';
+@import 'material.scss';
 @import '../views/main/about.scss';
 @import '../views/main/main.scss';
 @import '../views/main/contact.scss';
@@ -28,13 +25,16 @@ $fa-font-path: "../bower_components/font-awesome/fonts/" !default;
 html {
   font-size: 62.5%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background-color: transparent;
+  color: #333;
 }
 body {
   font-family: $text-font-family;
   font-size: 20px;
   line-height: 1.42857143;
-  color: #333333;
-  background-color: #ffffff;
+  color: #333;
+  background-color: #fff;
 }
 @import '_animations.scss';
 @import '_responsive.scss';
+@import '_transitions.scss'

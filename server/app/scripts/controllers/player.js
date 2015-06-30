@@ -1,10 +1,91 @@
 'use strict';
-angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', function($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash) {
+angular.module('Alma').controller('PlayerCtrl', ['$scope', '$rootScope', '$location', '$localStorage', 'ngDialog', 'PubNub', 'Echonest', '$window', '$timeout', '$interval', '$http', '$q', 'notify', 'lodash', '$mdDialog', '$mdComponentRegistry', 'Idle', function($scope, $rootScope, $location, $localStorage, ngDialog, PubNub, Echonest, $window, $timeout, $interval, $http, $q, notify, lodash, $mdDialog, $mdComponentRegistry, Idle) {
 	/*global $:false */
 	/*global Parse*/
 	/*global YT*/
 	/*global moment*/
 	/*jshint camelcase: false */
+
+	/*$mdDialog.show({
+	  controller: 'LoginCtrl',
+	  templateUrl: 'views/modals/login.tmpl.html',
+	  parent: angular.element(document.body),
+	  escapeToClose: false
+
+	})*/
+
+	$scope.isActive = true;
+	Idle.watch();
+	Idle.setIdle(2);
+	$scope.$on('IdleStart', function() {
+		$mdComponentRegistry.when('left').then(function(leftSidenav){
+			if (!leftSidenav.isOpen()) {
+				$scope.isActive = false;
+				$scope.$apply();
+			}
+		});
+	});
+	$scope.$on('IdleEnd', function() {
+		$scope.isActive = true;
+		$scope.$apply();
+	});
+	$scope.closeMenu = function () {
+		$mdComponentRegistry.when('left').then(function(leftSidenav){
+	  		leftSidenav.close();
+	  	});
+	};
+	$scope.openMenu = function () {
+		$mdComponentRegistry.when('left').then(function(leftSidenav){
+	  		leftSidenav.open();
+	  	});
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	PubNub.init({
 		publish_key: 'pub-c-4f48d6d6-c09d-4297-82a5-cc6f659e4aa2', // jshint ignore:line
 		subscribe_key: 'sub-c-351bb442-e24f-11e4-a12f-02ee2ddab7fe' // jshint ignore:line
@@ -13,6 +94,9 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	$scope.isBox = ($location.path().indexOf('box') > -1) ? true : false;
 	$scope.detonate = null;
 	$scope.loading = false;
+	$scope.isLoadingPlayer1 = true;
+	$scope.isLoadingPlayer2 = true;
+	$scope.init = 2;
 	$scope.$storage = $localStorage.$default({
 		boxCode: null
 	});
@@ -68,6 +152,11 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					messageTemplate: '<img ng-src="' + payload.message.image + '" err-src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg + '</h3><p>' + submsg + '</p></span>',
 					classes: 'activity-modal'
 				});
+				if (!lodash.isEmpty($scope.buffer)) {
+					if ($scope.buffer.type === 'emptyTrack') {
+						bufferNext($scope.betaPlayer);
+					}
+				}
 			} else if (payload.message.type === 'chat_msg') {
 				notify({
 					messageTemplate: '<img ng-src="' + payload.message.image + '" err-src="images/logo_missing.png"><span class="content"><h3 class="header">' + payload.message.username + '</h3><p>' + payload.message.msg + '</p></span>',
@@ -96,6 +185,18 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				});
 			} else if (payload.message.type === 'vote' && payload.message.id !== $scope.track.id) {
 				//Vote off in Queue
+				$scope.box.relation('playerVideo').query().ascending('createdAt').find({
+					success: function(queue) {
+						if (!lodash.isEmpty(queue) && queue.length > 1) {
+							for (var i = 0; i < queue.length; i++) {
+								queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
+							}
+							if (lodash.sortByOrder(queue, ['counter'], false)[1].id !== $scope.buffer.id) {
+								bufferNext($scope.betaPlayer);
+							}
+						}
+					}
+				});
 			}
 		});
 	}
@@ -155,65 +256,110 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 		}
 	}
 
-	function getSong(callback) {
-		$scope.box.relation('playerVideo').query().ascending('createdAt').find({
-			success: function(queue) {
-				if (!lodash.isEmpty(queue)) {
-					for (var i = 0; i < queue.length; i++) {
-						queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
-					}
-					callback(lodash.sortByOrder(queue, ['counter'], false)[0]);
-				} else {
-					emptyQueue(function(randomTrack) {
-						PubNub.ngPublish({
-							channel: $scope.box.id,
-							message: {
-								'type': 'song_added',
-								'id': randomTrack.id,
-								'username': undefined,
-								'image': randomTrack.get('image'),
-								'artist': randomTrack.get('artistInfo'),
-								'track': randomTrack.get('trackInfo')
+	function getSong(callback, count) {
+		$timeout(function() {
+			$scope.box.relation('playerVideo').query().ascending('createdAt').find({
+				success: function(queue) {
+					if (!lodash.isEmpty(queue) && (count === 0  || (count === 1 && queue.length > 1))) {
+						for (var i = 0; i < queue.length; i++) {
+							queue.type = 'queue';
+							queue[i].counter = parseInt(queue[i].get('upVotes'), 10) - parseInt(queue[i].get('downVotes'), 10);
+						}
+						callback(lodash.sortByOrder(queue, ['counter'], false)[count]);
+					} else {
+						emptyQueue(function(randomTrack) {
+							randomTrack.type = 'emptyTrack';
+							if (count === 0) {
+								/*PubNub.ngPublish({
+									channel: $scope.box.id,
+									message: {
+										'type': 'song_added',
+										'id': randomTrack.id,
+										'username': undefined,
+										'image': randomTrack.get('image'),
+										'artist': randomTrack.get('artistInfo'),
+										'track': randomTrack.get('trackInfo')
+									}
+								});*/
 							}
-						});
-						callback(randomTrack);
-					});
+							callback(randomTrack);
+						}, (count === 0)?true:false);
+					}
 				}
-			}
-		});
+			});
+		}, 1000);
 	}
-
-	function initalizePlayer() {
+	function bufferNext(player) {
+		$scope.last_track = $scope.track;
 		getSong(function(track) {
-			$scope.track = track;
-			if ($scope.track) {
-				if (youtubeURL($scope.playerEvent.target.getVideoUrl()) !== $scope.track.get('youtube')[0]) {
-					$scope.playerEvent.target.loadVideoById($scope.track.get('youtube')[0]);
-					$scope.playerEvent.target.setPlaybackQuality('small');
-					activateBar();
-					$scope.box.set('playingImg', $scope.track.get('image'));
+			if (youtubeURL(player.target.getVideoUrl()) !== track.get('youtube')[0]) {
+				$scope.buffer = track;
+				player.target.cueVideoById(track.get('youtube')[0], 0, 'default');
+				player.target.playVideo();
+				$timeout(function() {
+					player.target.pauseVideo();
+				}, 250);
+			}
+		}, 1);
+	}
+	function initalizePlayer() {
+		$scope.partyMode = true;
+		if ($scope.playerEvent.target.getPlayerState() === YT.PlayerState.PAUSED || $scope.playerEvent.target.getPlayerState() === -1 || $scope.alphaPlayer === undefined) {
+			$scope.alphaPlayer = $scope.playerEvent;
+		}else if($scope.playerEvent2.target.getPlayerState() === YT.PlayerState.PAUSED || $scope.playerEvent2.target.getPlayerState() === -1) {
+			$scope.alphaPlayer = $scope.playerEvent2;
+		}
+		if ($scope.playerEvent.target.getPlayerState() === YT.PlayerState.ENDED) {
+			$scope.betaPlayer = $scope.playerEvent;
+		}else if($scope.playerEvent2.target.getPlayerState() === YT.PlayerState.ENDED || $scope.betaPlayer === undefined) {
+			$scope.betaPlayer = $scope.playerEvent2;
+		}
+		$scope.isLoadingPlayer1 = ($scope.alphaPlayer.id === 'player1')?false:true;
+		$scope.isLoadingPlayer2 = ($scope.alphaPlayer.id === 'player2')?false:true;
+		if ($scope.alphaPlayer.target.getPlayerState() === YT.PlayerState.PAUSED || $scope.alphaPlayer.target.getPlayerState() === -1) {
+			$scope.alphaPlayer.target.playVideo();
+			activateBar();
+			$scope.buffer.set('isActive', true);
+			$scope.buffer.save(null, {
+				success: function() {
+					var relation = $scope.box.relation('playerVideo');
+					relation.add($scope.buffer);
+					$scope.box.set('playingImg', $scope.buffer.get('image'));
 					$scope.box.save();
-					$scope.track.set('isActive', true);
-					$scope.track.save();
+					$scope.track =  $scope.buffer;
+					watchVideo();
 					$scope.$apply();
 				}
-			}
-		});
+			});
+			bufferNext($scope.betaPlayer);
+		}else {
+			getSong(function(track) {
+				$scope.track = track;
+				if ($scope.track) {
+					if (youtubeURL($scope.alphaPlayer.target.getVideoUrl()) !== $scope.track.get('youtube')[0]) {
+						$scope.alphaPlayer.target.loadVideoById($scope.track.get('youtube')[0], 0, 'default');
+						$scope.alphaPlayer.target.setPlaybackQuality('default');
+						activateBar();
+						$scope.box.set('playingImg', $scope.track.get('image'));
+						$scope.box.save();
+						$scope.track.set('isActive', true);
+						$scope.track.save();
+						watchVideo();
+						if ($scope.partyMode) {
+							bufferNext($scope.betaPlayer);
+						}
+					}
+				}
+			}, 0);
+		}
 	}
 
-	function deleteSong(callback) {
+	function deleteSong() {
 		$scope.last_track = $scope.track;
-		$scope.track.destroy({
-			success: function() {
-				callback();
-			},
-			error: function() {
-				callback();
-			}
-		});
+		$scope.track.destroy();
 	}
 
-	function emptyQueue(emptycallback) {
+	function emptyQueue(emptycallback, save) {
 		function saveTrack(imvdbTrack, callback) {
 			$http.get(
 				'http://imvdb.com/api/v1/video/' + String(imvdbTrack.id) + '?include=sources,featured',
@@ -228,7 +374,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 						youtubeKey.push(sources[key].source_data);
 					}
 				}
-				if (key !== null) {
+				if (key !== null && youtubeKey.length > 0) {
 					var Videos = Parse.Object.extend('Videos');
 					var video = new Videos();
 					var relation = $scope.box.relation('playerVideo');
@@ -247,14 +393,20 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					video.set('youtube', youtubeKey);
 					video.set('upVotes', 0);
 					video.set('downVotes', 0);
-					video.save(null, {
-						success: function() {
-							relation.add(video);
-							$scope.box.save();
-							callback(video);
-							$scope.$apply();
-						}
-					});
+					if (save) {
+						video.save(null, {
+							success: function() {
+								relation.add(video);
+								$scope.box.save();
+								callback(video);
+								$scope.$apply();
+							}
+						});
+					}else {
+						callback(video);
+					}
+				}else {
+					callback();
 				}
 			}).error(function() {
 				initalizePlayer();
@@ -278,7 +430,6 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					}
 					if (failed) {
 						randomTopSong(function(track) {
-							console.log('failed');
 							callback(track);
 						});
 					} else {
@@ -384,7 +535,6 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 					});
 					promise.then(function() {
 						if (!found) {
-							console.log('not found');
 							callback();
 						}
 					});
@@ -417,6 +567,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 	}
 
 	function songEnded() {
+		initalizePlayer();
 		$scope.loading = true;
 		$scope.vote = {
 			upvote: 0,
@@ -432,9 +583,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 				id: $scope.track.id
 			}
 		});
-		deleteSong(function() {
-			initalizePlayer();
-		});
+		deleteSong();
 	}
 
 	function detonate() {
@@ -471,15 +620,12 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			$interval.cancel($scope.videoInterval);
 			isConcert = true;
 		}
-		var duration = parseInt($scope.playerEvent.target.getDuration(), 10),
+		var duration = parseInt($scope.alphaPlayer.target.getDuration(), 10),
 			multipler = 0;
 		$scope.videoInterval = $interval(function() {
-			var time = parseInt($scope.playerEvent.target.getCurrentTime(), 10);
-			if (time >= (duration - 3)) {
-				$scope.loading = true;
-			}
+			var time = parseInt($scope.alphaPlayer.target.getCurrentTime(), 10);
 			if ($scope.track.get('featuredArtist')) {
-				if (Math.ceil(time) === (30 * (multipler + 1)) && $scope.track.get('featuredArtist').length > multipler) {
+				if (Math.ceil(time) === (45 * (multipler + 1)) && $scope.track.get('featuredArtist').length > multipler) {
 					window.artistSearch = function(data) {
 						var artistObj = data.resultsPage.results.artist;
 						for (var i = 0; i < artistObj.length; i++) {
@@ -491,7 +637,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 										for (var i = 0; i < eventObj.length; i++) {
 											if (distance(eventObj[i].location.lat, eventObj[i].location.lng, $scope.box.get('latlng').latitude, $scope.box.get('latlng').longitude, 'M') <= 50) {
 												notify({
-													messageTemplate: '<img ng-src="/images/songkick-logo.png"><span class="content"><h3 class="header">' + eventObj[i].performance[0].artist.displayName + ' is coming to your area!</h3><p>' + eventObj[i].venue.displayName + '</p><p>' + eventObj[i].venue.metroArea.displayName + ', ' + eventObj[i].venue.metroArea.state.displayName + ' ' + eventObj[i].venue.metroArea.country.displayName + '</p><p>' + moment(eventObj[i].start.date + ' ' + eventObj[i].start.time).format('dddd, MMMM Do YYYY, h:mm a') + '</p></span>',
+													messageTemplate: '<img ng-src="/images/songkick-logo.png"><span class="content"><h3 class="header">' + $scope.track.get('featuredArtist')[multipler - 1] + ' is coming to your area!</h3><p>' + eventObj[i].venue.displayName + '</p><p>' + eventObj[i].venue.metroArea.displayName + ', ' + eventObj[i].venue.metroArea.state.displayName + ' ' + eventObj[i].venue.metroArea.country.displayName + '</p><p>' + moment(eventObj[i].start.date + ' ' + eventObj[i].start.time).format('dddd, MMMM Do YYYY, h:mm a') + '</p></span>',
 													classes: 'activity-modal',
 													duration: 25000,
 													position: 'left'
@@ -520,8 +666,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			}
 		}, 1000);
 	}
-	$scope.onError = function() {
-		$scope.track.get('youtube').splice(0, 1);
+	$scope.onError = function() {//Needs to be reconfigured, should be watching Beta not Alpha
+		/*$scope.track.get('youtube').splice(0, 1);
 		$scope.track.save();
 		if ($scope.track.get('youtube')) {
 			$scope.playerEvent.target.loadVideoById($scope.track.get('youtube')[0]);
@@ -544,7 +690,7 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			videoErrors.set('youtube', $scope.track.get('youtube'));
 
 			videoErrors.save();
-		}
+		}*/
 	};
 	$scope.onStateChange = function(event) {
 		if (event.data === YT.PlayerState.ENDED) {
@@ -552,21 +698,34 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 			detonate();
 		} else if (event.data === YT.PlayerState.PLAYING) {
 			$('#currentlyPlaying').addClass('active');
-			$scope.loading = false;
 			if ($scope.detonate !== null) {
 				$timeout.cancel($scope.detonate);
 				$scope.detonate = null;
 			}
-			watchVideo();
+			$scope.loading = false;
 			$scope.$apply();
 		}
 	};
 	$scope.onReady = function(event) {
+		event.id = 'player1';
 		$scope.playerEvent = event;
-		if ($scope.isBox) {
-			$scope.openPlayerSetupDialog();
-		}
+		isReady();
+		
 	};
+	$scope.onReady2 = function(event) {
+		event.id = 'player2';
+		$scope.playerEvent2 = event;
+		isReady();
+	};
+	function isReady() {
+		if ($scope.init <= 1) {
+			if ($scope.isBox) {
+				$scope.openPlayerSetupDialog();
+			}
+		}else {
+			$scope.init--;
+		}
+	}
 	$scope.onApiLoadingFailure = function(controller) {
 		controller.reload();
 	};
@@ -585,6 +744,8 @@ angular.module('MVPlayer').controller('PlayerCtrl', ['$scope', '$rootScope', '$l
 						if ($scope.box.get('isSetup')) {
 							$scope.box.set('isActive', true);
 							$scope.box.save();
+							$scope.loading = true;
+							$scope.$apply();
 							pubNubFub();
 							initalizePlayer();
 						} else {

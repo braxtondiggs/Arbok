@@ -27,23 +27,15 @@
 			
 		}
 		.button-send {
-			margin: 15px;
+			margin: 15px 0;
 			font-weight: 100;
 			letter-spacing: 1px;
-			float: none !important;
 		}
-		.inputs {
-			text-align: center;
-			display: table;
-			vertical-align: middle;
-			margin: auto;
+		.button-submit {
+			padding:0 5px;
 			input {
-				display: table-cell;
-				vertical-align: middle;
-			}
-			> div {
-				display: table-cell;
-				vertical-align: middle;
+				width:100%;
+				padding:10px;
 			}
 		}
 		input[type=text] {
@@ -59,19 +51,19 @@
 		font-size: 28px;
 		cursor: default;
 		color: $textColor;
-		width:500px;
 		padding:10px;
 	}
 }
 .newslettermodal {
 	text-align: center;
 	h1 {
-		margin:10px 0 40px;
+		margin:10px 0 30px;
+		color: $selectedColor;
 	}
 	p {
-		font-size: 14px;
+		font-size: 16px;
 		line-height: normal;
-		margin: 15px 0;
+		margin: 5px 0;
 	}
 	.button-mail,
 	.button-submit {

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="black" type="color">#000</item>
-    <item name="white" type="color">#fff</item>
-    <color name="primary">#2196F3</color>
-    <color name="primaryDark">#0D47A1</color>
-    <color name="accent">#1565C0</color>
+    <item name="background" type="color">#2f3238</item>
+    <item name="accent" type="color">#cc6055</item>
 
     <integer-array name="androidcolors">
-        <item>@color/black</item>
-        <item>@color/white</item>
+        <item>@android:color/black</item>
+        <item>@android:color/white</item>
     </integer-array>
 </resources>

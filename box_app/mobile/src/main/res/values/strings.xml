@@ -1,16 +1,10 @@
 <resources>
     <string name="app_name">Alma Box</string>
+    <string name="app_description">Search, request and watch music videos based on your individual unique taste. Let the people in room contribute to a pre-existing queue of music videos</string>
+    <string name="app_network_description">Inorder to get started using the Alma player we will need to get it connected to an internet source.</string>
+    <string name="app_network_description2">Please selected one of the options below:</string>
+    <string name="step1_button">Press \"OK\" on remote to begin</string>
 
-    <string name="next">Next</string>
-    <string name="prev">Previous</string>
-    <string name="finish">Submit order</string>
-
-    <string name="submit_confirm_message">Place the order with the deli? You will receive an email
-        confirmation.</string>
-    <string name="submit_confirm_button">Place order</string>
-
-    <string name="label_your_name">Name</string>
-    <string name="hint_your_name">e.g. Larry</string>
-    <string name="label_your_email">Email</string>
-    <string name="hint_your_email">Optional</string>
+    <string name="ethernet">Ethernet (Wired Network)</string>
+    <string name="wifi">Wi-Fi (Wireless Network)</string>
 </resources>

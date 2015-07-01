@@ -7,4 +7,6 @@
 
     <string name="ethernet">Ethernet (Wired Network)</string>
     <string name="wifi">Wi-Fi (Wireless Network)</string>
+    <string name="ssid">Wireless Network:</string>
+    <string name="password">Password:</string>
 </resources>

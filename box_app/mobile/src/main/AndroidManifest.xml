@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".pages.IntroPage"
+            android:name=".pages.IntroActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:launchMode="singleTask"
@@ -23,6 +23,15 @@
                 <!--<category android:name="android.intent.category.HOME" />-->
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".pages.NetworkActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".pages.IntroActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".pages.IntroActivity" />
         </activity>
         <activity
             android:name=".PlayerActivity"

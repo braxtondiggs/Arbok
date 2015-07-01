@@ -2,6 +2,9 @@
 <resources>
     <item name="background" type="color">#2f3238</item>
     <item name="accent" type="color">#cc6055</item>
+    <item name="selected_item" type="color">#25000000</item>
+    <item name="separator" type="color">#CC000000</item>
+    <item name="checkbox" type="color">#BFFFFFFF</item>
 
     <integer-array name="androidcolors">
         <item>@android:color/black</item>

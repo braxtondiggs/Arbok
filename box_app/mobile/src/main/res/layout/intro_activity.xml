@@ -41,6 +41,12 @@
             android:text="@string/step1_button"
             android:textColor="@color/accent"
             android:textSize="20sp" />
+        <com.rey.material.widget.SnackBar
+            android:id="@+id/step1_snackbar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"/>
     </RelativeLayout>
 
 </LinearLayout>

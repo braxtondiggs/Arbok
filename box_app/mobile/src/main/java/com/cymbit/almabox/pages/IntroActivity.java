@@ -14,9 +14,16 @@ public class IntroActivity extends ActionBarActivity {
     SnackBar mSnackBar;
     Button mGetStarted;
     Intent intent;
+    View mDecorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.intro_activity);
+
+        mDecorView = getWindow().getDecorView();
+        mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
         mSnackBar = (SnackBar)findViewById(R.id.step1_snackbar);
         mGetStarted = (Button)findViewById(R.id.step1_button);
         intent = new Intent(this, NetworkActivity.class);
@@ -27,9 +34,6 @@ public class IntroActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.intro_activity);
     }
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -45,7 +49,7 @@ public class IntroActivity extends ActionBarActivity {
             case KeyEvent.KEYCODE_BACK:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
             case KeyEvent.KEYCODE_VOLUME_UP:
-                mSnackBar.text("Invalid input, press 'OK' to begin!" ).actionText(null).singleLine(true).duration(1000);
+                mSnackBar.text("Invalid input, press 'OK' to begin!" ).actionText(null).duration(2000).show(this);
                 break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 mGetStarted.performClick();

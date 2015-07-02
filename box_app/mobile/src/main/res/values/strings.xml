@@ -9,4 +9,5 @@
     <string name="wifi">Wi-Fi (Wireless Network)</string>
     <string name="ssid">Wireless Network:</string>
     <string name="password">Password:</string>
+    <string name="checking">Checking Network Configuration…</string>
 </resources>

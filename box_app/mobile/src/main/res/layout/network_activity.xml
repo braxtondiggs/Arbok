@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:text="@string/ethernet"
             android:textColor="@color/accent"
             android:textSize="20sp" />
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:text="@string/wifi"
             android:textColor="@color/accent"
             android:textSize="20sp" />
@@ -130,8 +130,11 @@
         <com.rey.material.widget.SnackBar
             android:id="@+id/step2_snackbar"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="fill_parent"
             android:layout_alignParentBottom="true"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:sb_backgroundColor="@color/selected_item"
+            app:sb_textColor="@android:color/white"
+            app:sb_verticalPadding="20dp"/>
     </RelativeLayout>
 </LinearLayout>

@@ -19,10 +19,17 @@ public class WiFiActivity extends ActionBarActivity {
     Spinner mSSIDSpinner;
     EditText mPasswordTxt;
     Intent SetupIntent;
+    View mDecorView;
     String selected = "SSID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.wifi_activity);
+
+        mDecorView = getWindow().getDecorView();
+        mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
         mSnackBar = (SnackBar)findViewById(R.id.step3_snackbar);
         mSSID = (RelativeLayout)findViewById(R.id.SSID);
         mSSIDSpinner = (Spinner)findViewById(R.id.SSIDSpinner);
@@ -30,9 +37,6 @@ public class WiFiActivity extends ActionBarActivity {
         mPassword = (RelativeLayout)findViewById(R.id.Password);
 
         SetupIntent = new Intent(this, IntroActivity.class);
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.wifi_activity);
     }
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -44,7 +48,7 @@ public class WiFiActivity extends ActionBarActivity {
             case KeyEvent.KEYCODE_MENU:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
             case KeyEvent.KEYCODE_VOLUME_UP:
-                mSnackBar.text("Invalid input, insert network info with the 'Up'/'Down' keys!").actionText(null).singleLine(true).duration(1000);
+                mSnackBar.text("Invalid input, insert network info with the 'Up'/'Down' keys!").actionText(null).singleLine(true).duration(1000).show();
                 break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 if (selected.equals("SSID")) {

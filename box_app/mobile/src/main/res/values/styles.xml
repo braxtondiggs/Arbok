@@ -1,9 +1,22 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:windowNoTitle">true</item> <!-- Hides the Action Bar -->
-        <item name="android:windowFullscreen">true</item> <!-- Hides the status bar -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- Hides the Action Bar -->
+        <item name="android:windowFullscreen">true</item>
+        <!-- Hides the status bar -->
     </style>
 
+    <style name="SimpleDialog" parent="Material.App.Dialog.Simple">
+        <item name="di_inAnimation">@anim/anim_scale_in</item>
+        <item name="di_outAnimation">@anim/anim_scale_out</item>
+    </style>
+
+    <style name="InOutColorsCircularProgressDrawableStyle" parent="Material.Drawable.CircularProgress">
+        <item name="cpd_inAnimDuration">800</item>
+        <item name="cpd_inStepPercent">0.5</item>
+        <item name="cpd_inStepColors">@array/in_colors</item>
+        <item name="cpd_outAnimDuration">400</item>
+        <item name="cpd_strokeColors">@array/progress_colors</item>
+    </style>
 </resources>

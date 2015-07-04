@@ -30,7 +30,7 @@
     <RelativeLayout
         android:id="@+id/SSID"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="40dp"
@@ -49,14 +49,15 @@
 
         <com.rey.material.widget.Spinner
             android:id="@+id/SSIDSpinner"
-            style="@style/Material.Widget.Spinner"
+            style="@style/Material.Widget.Spinner.Custom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="10dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
-            android:textColor="@color/accent"
+            android:clickable="true"
             android:textSize="20sp"
             app:rd_style="@style/Material.Drawable.Ripple.Wave"
             app:spn_arrowColor="@android:color/white"
@@ -74,7 +75,7 @@
     <RelativeLayout
         android:id="@+id/Password"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:clickable="true">
@@ -93,8 +94,11 @@
             android:id="@+id/PasswordTxt"
             style="@style/Material.Widget.EditText.Light"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:clickable="true"
             android:inputType="textPassword"
             android:textColor="@android:color/white"
             android:textSize="20sp"
@@ -102,9 +106,6 @@
             app:et_inputId="@+id/textfield_et_label_input"
             app:et_labelEnable="false"
             app:et_supportMode="none" />
-        <!--
-        android:hint="Input with helper"
-            app:et_helper="Enter password"-->
     </RelativeLayout>
 
     <View
@@ -118,6 +119,20 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent">
+
+        <Button
+            android:id="@+id/step3_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/button_border"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/step3_button"
+            android:textColor="@color/accent"
+            android:textSize="20sp" />
 
         <com.rey.material.widget.SnackBar
             android:id="@+id/step3_snackbar"

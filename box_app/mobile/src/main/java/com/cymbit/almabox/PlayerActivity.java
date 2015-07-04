@@ -4,9 +4,10 @@ import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,7 +16,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.inputmethod.InputConnection;
+import android.view.animation.AnimationUtils;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -24,14 +25,14 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cymbit.almabox.pages.IntroActivity;
 import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 
 public class PlayerActivity extends ActionBarActivity {
@@ -87,29 +88,30 @@ public class PlayerActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /*try {
-            Process root = Runtime.getRuntime().exec("su");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getApplicationContext().getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        Boolean isNetworkConfig = sharedPref.getBoolean("isNetworkConfig", false);
+        if (isNetworkConfig) {
 
-        super.onCreate(savedInstanceState);
-        /*mDecorView = getWindow().getDecorView();
-        mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            super.onCreate(savedInstanceState);
+            mDecorView = getWindow().getDecorView();
+            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_player);
+            setContentView(R.layout.activity_player);
 
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k", "oh8eC3w1vnRfBHpAaRljovwzVNaQJnrbh65ei7Wf");
+            Parse.enableLocalDatastore(this);
+            Parse.initialize(this, "GxJOG4uIVYMnkSuRguq8rZhTAW1f72eOQ2uXWP0k", "oh8eC3w1vnRfBHpAaRljovwzVNaQJnrbh65ei7Wf");
 
-        mWebView = (WebView) findViewById(R.id.webview);
-        loadingText = (TextView) findViewById(R.id.loadingText);
-        loadingContainer = (RelativeLayout) findViewById(R.id.loadingContainer);
-        animationFadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+            mWebView = (WebView) findViewById(R.id.webview);
+            loadingText = (TextView) findViewById(R.id.loadingText);
+            loadingContainer = (RelativeLayout) findViewById(R.id.loadingContainer);
+            animationFadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
 
-        checkVersion();
+            checkVersion();
 
-        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));*/
+            registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        } else {
+            startActivity(new Intent(getApplicationContext(), IntroActivity.class));
+        }
     }
 
     @Override

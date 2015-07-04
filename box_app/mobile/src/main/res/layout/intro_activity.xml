@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
-        android:maxWidth="600dp"
+        android:maxWidth="700dp"
         android:text="@string/app_description"
         android:textColor="@android:color/white"
         android:textSize="26sp" />

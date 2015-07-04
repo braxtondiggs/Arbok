@@ -1,5 +1,6 @@
 package com.cymbit.almabox.pages;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -10,7 +11,7 @@ import android.widget.Button;
 import com.cymbit.almabox.R;
 import com.rey.material.widget.SnackBar;
 
-public class IntroActivity extends ActionBarActivity {
+public class IntroActivity extends Activity {
     SnackBar mSnackBar;
     Button mGetStarted;
     Intent intent;
@@ -22,11 +23,17 @@ public class IntroActivity extends ActionBarActivity {
         setContentView(R.layout.intro_activity);
 
         mDecorView = getWindow().getDecorView();
-        mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
 
         mSnackBar = (SnackBar)findViewById(R.id.step1_snackbar);
         mGetStarted = (Button)findViewById(R.id.step1_button);
-        intent = new Intent(this, NetworkActivity.class);
+        intent = new Intent(IntroActivity.this, NetworkActivity.class);
+
+        try {
+            Process root = Runtime.getRuntime().exec("su");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         mGetStarted.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +56,7 @@ public class IntroActivity extends ActionBarActivity {
             case KeyEvent.KEYCODE_BACK:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
             case KeyEvent.KEYCODE_VOLUME_UP:
-                mSnackBar.text("Invalid input, press 'OK' to begin!" ).actionText(null).duration(2000).show(this);
+                mSnackBar.text("Invalid input, press 'OK' to begin!" ).actionText(null).duration(2000).show(IntroActivity.this);
                 break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 mGetStarted.performClick();

@@ -4,10 +4,17 @@
     <string name="app_network_description">Inorder to get started using the Alma player we will need to get it connected to an internet source.</string>
     <string name="app_network_description2">Please selected one of the options below:</string>
     <string name="step1_button">Press \"OK\" on remote to begin</string>
+    <string name="step3_button">Press \"OK\" to save Wi-Fi settings</string>
 
     <string name="ethernet">Ethernet (Wired Network)</string>
     <string name="wifi">Wi-Fi (Wireless Network)</string>
     <string name="ssid">Wireless Network:</string>
     <string name="password">Password:</string>
     <string name="checking">Checking Network Configuration…</string>
+    <string name="ethernet_error">Please make sure the ethernet cable is attached to the Alma box and an internet enabled router or modem.</string>
+    <string name="ethernet_error2">Press \"OK\" to try to reconfigure your network settings again.</string>
+    <string name="wifi_error">It seems your password id incorrect fot this wireless network, please try again.</string>
+    <string name="network_success">You have successfully configured your internet network.</string>
+    <string name="network_success2">Press \"OK\" to continue setup.</string>
+    <string name="preference_file_key">AlmaPref</string>
 </resources>

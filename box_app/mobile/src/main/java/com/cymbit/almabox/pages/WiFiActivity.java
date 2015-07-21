@@ -169,7 +169,6 @@ public class WiFiActivity extends Activity {
                 mSSIDSpinner.setSelection(mSSIDSpinner.getSelectedItemPosition());
                 break;
             case KeyEvent.KEYCODE_DPAD_UP:
-                Keyboard
                 if (selected.equals("Password")) {
                     setSelected("SSID");
                 }else if(selected.equals("OK")) {

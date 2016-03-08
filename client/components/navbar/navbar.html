@@ -1,20 +1,78 @@
-<div class="navbar navbar-default navbar-static-top" ng-controller="NavbarController">
-  <div class="container">
-    <div class="navbar-header">
-      <button class="navbar-toggle" type="button" ng-click="nav.isCollapsed = !nav.isCollapsed">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a href="/" class="navbar-brand">arbok</a>
+<!--Navbar-Mini-->
+<section id="mini-navbar" class="main-navbar hidden-xs hidden-sm">
+    <div class="nav">
+      <div class="container">
+        <div class="row">
+          <nav class="col-md-12">
+            <div class="logo pull-left">
+              <a href="#home">
+                <figure>
+                  <img src="assets/images/alma_logo.png" alt="App Logo"/>
+                </figure>
+              </a>
+            </div>
+            <ul class="main-nav pull-right nav-height">
+              <li>
+                <a href="#features" data-target="#features" data-hover="features" class="home-page">features</a>
+              </li>
+              <li>
+                <a href="#about" data-target="#about" data-hover="about" class="home-page">about</a>
+              </li>
+              <li>
+                <a href="#screenshot" data-target="#screenshot" data-hover="gallery" class="home-page"> press kit</a>
+              </li>
+              <li>
+                <a href="#team" data-target="#team" data-hover="team" class="home-page">team</a>
+              </li>
+              <li>
+                <a href="#contact" data-target="#contact" data-hover="contact" class="home-page">contact</a>  
+              </li>
+              <li>
+                <a href="/player">online player</a>  
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
     </div>
-    <div collapse="nav.isCollapsed" class="navbar-collapse collapse" id="navbar-main">
-      <ul class="nav navbar-nav">
-        <li ng-repeat="item in nav.menu" ng-class="{active: nav.isActive(item.link)}">
-            <a ng-href="{{item.link}}">{{item.title}}</a>
+</section>
+<!--Navbar-Mini-->
+<!--Navbar-Mobile-->
+<div id="mobile-nav" class="visible-xs visible-sm">
+  <div class="" id="flyout-container">
+    <ul id="menu-mobile" class="nav flyout-menu main-nav nav-height">
+      <li class="menu-item">
+        <a title="" href="#" data-target="#features" class="home-page">Features</a>
+      </li>
+      <li class="menu-item">
+        <a title="" href="#" data-target="#about" class="home-page">About</a>
+      </li>
+      <li class="menu-item">
+        <a title="" href="#" data-target="#screenshot" class="home-page">Press Kit</a>
+      </li>
+      <li class="menu-item">
+        <a title="" href="#" data-target="#team" class="home-page">Team</a>
+      </li>
+      <li class="menu-item">
+        <a title="" href="#" data-target="#contact" class="home-page">Contact</a>
+      </li>
+    </ul>
+  </div>
+  <header>
+    <div class="container">
+      <ul class="menu-header">
+        <li class="pull-left">    
+          <a href="#" class="logo">
+            <figure>
+              <img src="assets/images/alma_logo.png" alt="App Logo"/>
+            </figure>
+          </a>
+        </li>
+        <li class="reorder pull-right">
+          <a href="#" title=""><i class="fa fa-bars"></i></a>
         </li>
       </ul>
     </div>
-  </div>
+  </header> 
 </div>
+<!--Navbar-Mobile-->

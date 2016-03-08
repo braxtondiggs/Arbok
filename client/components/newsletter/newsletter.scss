@@ -1,0 +1,73 @@
+#newsletter {
+	background: $bgSecondColor;
+	text-align: center;
+	position: relative;
+	h2 {
+		color: $secondHeaderColor;
+	}
+}
+#newsletter, .ngdialog-newsletter{
+	#newsletter-form {
+		margin-top: 45px;
+		margin-bottom: 45px;
+		overflow: hidden;
+		.input-wrapper {
+			width: 300px;
+			input {
+				background: $inputColor;
+				border: 2px solid $inputColor;
+				height: 60px;
+				padding: 15px;
+				@include placeholder($inputTxtColor);
+				font-size: 26px;
+				font-weight: 300;
+				width: 100%;
+				border-radius: 6px;
+			}
+			
+		}
+		.button-send {
+			margin: 15px 0;
+			font-weight: 100;
+			letter-spacing: 1px;
+		}
+		.button-submit {
+			padding:0 5px;
+			input {
+				width:100%;
+				padding:10px;
+			}
+		}
+		input[type=text] {
+			-webkit-appearance: none;
+		  	-moz-appearance: none;
+		 	appearance: none;
+		}
+	}
+	.button-mail {
+		background: $bgColor;
+		border: 2px solid $bgColor;
+		border-radius: 6px !important; 
+		font-size: 28px;
+		cursor: default;
+		color: $textColor;
+		padding:10px;
+	}
+}
+.newslettermodal {
+	text-align: center;
+	h1 {
+		margin:10px 0 30px;
+		color: $selectedColor;
+	}
+	p {
+		font-size: 16px;
+		line-height: normal;
+		margin: 5px 0;
+	}
+	.button-mail,
+	.button-submit {
+		display:block!important;
+		width:98%;
+	}
+}

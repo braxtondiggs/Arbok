@@ -7,12 +7,22 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <base href="/">
-    <title></title>
+    <title>Alma</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
+      <link rel="stylesheet" href="bower_components/angular-notify/dist/angular-notify.css" />
+      <link rel="stylesheet" href="bower_components/owl.carousel/src/css/owl.carousel.css" />
+      <link rel="stylesheet" href="bower_components/simple-line-icons/css/simple-line-icons.css" />
+      <link rel="stylesheet" href="bower_components/ngDialog/css/ngDialog.css" />
+      <link rel="stylesheet" href="bower_components/ngDialog/css/ngDialog-theme-default.css" />
+      <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
+      <link rel="stylesheet" href="bower_components/animate.css/animate.css" />
+      <link rel="stylesheet" href="bower_components/angular-fx/dist/angular-fx.min.css" />
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,client}) app/app.css -->
@@ -21,16 +31,14 @@
       <!-- endinjector -->
     <!-- endbuild -->
   </head>
-  <body ng-app="arbokApp">
+  <body ng-app="arbokApp" class="yo-anim-enabled">
     <!--[if lt IE 7]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <navbar></navbar>
     <div ng-view=""></div>
-    <footer></footer>
-
+    
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -48,11 +56,65 @@
     <![endif]-->
     <!-- build:js({client,node_modules}) app/vendor.js -->
       <!-- bower:js -->
+      <script src="bower_components/modernizr/modernizr.js"></script>
+      <script src="bower_components/jquery/dist/jquery.js"></script>
+      <script src="bower_components/angular/angular.js"></script>
+      <script src="bower_components/angular-route/angular-route.js"></script>
+      <script src="bower_components/ng-lodash/build/ng-lodash.js"></script>
+      <script src="bower_components/angular-youtube-player/build/angularYoutubePlayer.min.js"></script>
+      <script src="bower_components/angular-notify/dist/angular-notify.js"></script>
+      <script src="bower_components/eventEmitter/EventEmitter.js"></script>
+      <script src="bower_components/eventie/eventie.js"></script>
+      <script src="bower_components/imagesloaded/imagesloaded.js"></script>
+      <script src="bower_components/enquire/dist/enquire.js"></script>
+      <script src="bower_components/owl.carousel/src/js/owl.carousel.js"></script>
+      <script src="bower_components/owl.carousel/src/js/owl.autoplay.js"></script>
+      <script src="bower_components/owl.carousel/src/js/owl.navigation.js"></script>
+      <script src="bower_components/jquery.transit/jquery.transit.js"></script>
+      <script src="bower_components/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
+      <script src="bower_components/ngstorage/ngStorage.js"></script>
+      <script src="bower_components/angularjs-geolocation/src/geolocation.js"></script>
+      <script src="bower_components/ngDialog/js/ngDialog.js"></script>
+      <script src="bower_components/angular-messages/angular-messages.js"></script>
+      <script src="bower_components/angular-animate/angular-animate.js"></script>
+      <script src="bower_components/angular-aria/angular-aria.js"></script>
+      <script src="bower_components/angular-material/angular-material.js"></script>
+      <script src="bower_components/ng-idle/angular-idle.js"></script>
+      <script src="bower_components/moment/moment.js"></script>
+      <script src="bower_components/angular-moment/angular-moment.js"></script>
+      <script src="bower_components/angular-fx/dist/angular-fx.min.js"></script>
+      <script src="bower_components/waypoints/lib/jquery.waypoints.js"></script>
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:js(.tmp) app/app.js -->
       <script src="app/app.js"></script>
       <!-- injector:js -->
+      <script src="components/util/util.module.js"></script>
+      <script src="components/features/features.directive.js"></script>
+      <script src="app/login/login.js"></script>
+      <script src="app/main.js"></script>
+      <script src="app/main/main.controller.js"></script>
+      <script src="app/main/main.js"></script>
+      <script src="app/player/player.controller.js"></script>
+      <script src="app/player/player.js"></script>
+      <script src="app/signup/signup.controller.js"></script>
+      <script src="app/signup/signup.js"></script>
+      <script src="components/about/about.directive.js"></script>
+      <script src="components/contact/contact.directive.js"></script>
+      <script src="components/errSrc/errSrc.directive.js"></script>
+      <script src="app/login/login.controller.js"></script>
+      <script src="components/footer/footer.directive.js"></script>
+      <script src="components/gallery/gallery.directive.js"></script>
+      <script src="components/home/home.directive.js"></script>
+      <script src="components/navbar/navbar.controller.js"></script>
+      <script src="components/navbar/navbar.directive.js"></script>
+      <script src="components/newsletter/newsletter.directive.js"></script>
+      <script src="components/social/social.directive.js"></script>
+      <script src="components/team/team.directive.js"></script>
+      <script src="components/testimonials/testimonials.directive.js"></script>
+      <script src="app/app.constant.js"></script>
+      <script src="components/util/util.service.js"></script>
+      <script src="components/video/video.directive.js"></script>
       <!-- endinjector -->
     <!-- endbuild -->
   </body>

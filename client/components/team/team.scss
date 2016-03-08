@@ -1,0 +1,107 @@
+#team {
+	.team-member {
+		overflow: hidden;
+		float: left;
+		position: relative;
+		padding-left: 0;
+		padding-right: 0; 
+		> .personal-data {
+			padding: 20px;
+		}
+		a {
+			display: block;
+			figure, img {
+				width: 100%;
+			}
+			img {
+				height: auto;
+			}
+		}
+		&:hover { 
+			.team-hover {
+				opacity: 1;
+				@include translate(0,0);
+			}
+		}
+	}
+	.team-hover {
+		position: absolute;
+		top: 0;
+		left: 0;
+		background: $bgSecondColor;
+		color: $secondHeaderColor;
+		height: 100%;
+		opacity: 0;
+		padding: 20px;
+		@include translate(40px, 40px);
+		@include opacity(0);
+		@include transition(opacity .3s, transform .3s .1s);
+	}
+	.personal-data {
+		overflow: hidden;
+		.name {
+			margin-top: 0;
+			margin-bottom: 0;
+			padding-right: 5px;
+			width: 100%;
+		}
+		.name, .status-member {
+			line-height: 30px;
+		}
+		.status-member {
+			font-style: italic;
+			padding-left: 5px;
+			font-size: 16px;
+		}
+	}
+	.team-description {
+		clear: both;
+		padding: 10px 0;
+		font-size: 16px;
+		overflow: hidden;
+	}
+	.social-media {
+		overflow: hidden;
+		position: absolute;
+		bottom: 20px;
+		padding: 0;
+		margin: 0; 
+		li {
+			float: left; 
+			a {
+				color: $secondHeaderColor;
+				padding-right: 17px;
+				font-size: 16px;
+				position: relative;
+				@include scale(1);
+				@include opacity(1);
+				@include transition(color .3s, opacity .3s, transform .3s .1s);
+				-webkit-backface-visibility: hidden;
+				&:after {
+					content: "/";
+					position: absolute;
+					right: 5px; top: 0;
+					@include scale(1);
+					color: $secondHeaderColor;
+				}
+				&:hover {
+					opacity: 0.3;
+					color: $textColor;
+				}
+			}
+			&:last-child { 
+				a:after {
+					display: none;
+				}
+			}
+		}
+	}
+	#team-carousel {
+		.owl-dots {
+			text-align: center;
+		}
+		&.owl-carousel {
+			display: block!important;
+		}
+	}
+}

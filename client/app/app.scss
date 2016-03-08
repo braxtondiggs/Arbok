@@ -1,27 +1,47 @@
 $fa-font-path: "../bower_components/font-awesome/fonts";
+$text-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
+$header-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
 @import '../bower_components/font-awesome/scss/font-awesome';
+@import '../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap';
 
 /**
  * App-wide Styles
  */
 
-.browserupgrade {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
+html {
+  font-size: 62.5%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background-color: transparent;
+  color: #333;
 }
-
-/* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
-  .container {
-    max-width: 730px;
-  }
+body {
+  font-family: $text-font-family;
+  font-size: 20px;
+  line-height: 1.42857143;
+  color: #333;
+  background-color: #fff;
 }
 
 // Component styles are injected through grunt
 // injector
-@import 'account/login/login.scss';
-@import 'admin/admin.scss';
+@import '_animations.scss';
+@import '_colors.scss';
+@import '_responsive.scss';
+@import 'login/login.scss';
 @import 'main/main.scss';
+@import 'material.scss';
+@import 'player/player.scss';
+@import 'signup/signup.scss';
+@import '../components/about/about.scss';
+@import '../components/contact/contact.scss';
+@import '../components/features/features.scss';
+@import '../components/footer/footer.scss';
+@import '../components/gallery/gallery.scss';
+@import '../components/home/home.scss';
+@import '../components/navbar/navbar.scss';
+@import '../components/newsletter/newsletter.scss';
+@import '../components/social/social.scss';
+@import '../components/team/team.scss';
+@import '../components/testimonials/testimonials.scss';
+@import '../components/video/video.scss';
 // endinjector

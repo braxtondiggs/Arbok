@@ -1,6 +1,50 @@
-footer.footer {
-  text-align: center;
-  padding: 30px 0;
-  margin-top: 70px;
-  border-top: 1px solid #E5E5E5;
+#footer {
+	background: $bgSecondColor;
+	position: relative;
+	margin-bottom: 0;
+	margin-top: 0; 
+	nav {
+		overflow: hidden;
+	}
+	.footer-nav{
+		height: 50px;
+		margin: 0;
+		padding: 0;
+		display: table;
+		text-align: center;
+		li {
+			line-height: 50px;
+			position: relative;
+			display: table-cell;
+			vertical-align: middle; 
+			a {
+				color: $textColor2;
+				font-size: 20px;
+				display: block;
+				padding: 0 5px;
+				margin: 0 20px;
+				font-weight: 300;
+				position: relative;
+				line-height: 50px;
+				@include scale(1);
+				@include transition(color 0.3s, opacity .3s, transform .3s .1s);
+				-webkit-backface-visibility: hidden; 
+				white-space: nowrap;
+				&:hover { 
+					color: $textColor;
+					opacity: 0.3;
+					@include scale(0.95);
+				}
+			}
+		}
+	}
+	.copyright {
+		line-height: 50px;
+		font-size: 16px;
+		color: $textColor2;
+		a {
+			color: $secondHeaderColor;
+			font-weight: 900;
+		}
+	}
 }

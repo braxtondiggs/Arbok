@@ -2,10 +2,16 @@
 
 angular.module('arbokApp', [
   'arbokApp.constants',
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'ngRoute'
+  'ngRoute',
+  'ngMessages',
+  'ngStorage',
+  'ngDialog',
+  'ngMaterial',
+  'ngIdle',
+  'cgNotify',
+  'ngLodash',
+  'angularMoment',
+  'youtubePlayer'
 ])
   .config(function($routeProvider, $locationProvider) {
     $routeProvider

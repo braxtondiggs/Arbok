@@ -1,0 +1,35 @@
+<!--Newsletter-->
+<section id="newsletter" class="main-section section-color">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <header>
+          <h2>Sign up for our newsletter!</h2>
+        </header>
+        <form name="newsletter-form" id="newsletter-form" ng-submit="newsletterAdd()">
+          <div class="inputs">
+            <input type="text" placeholder="Get the Latest Alma News" class="button-send btn-lg button-mail newsletter-form form-email-error col-md-9 col-sm-9" ng-model="newsletter.email" name="email" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" required/>
+            <div class="button-submit col-md-3 col-sm-3">
+              <input type="submit" value="Subscribe" class="btn btn-default pull-right button-send btn-lg"/>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <svg id="bg-triangle-top2" class="bg-polygon hidden-xs" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="80" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <polygon points="0,0 70,40 100,100 0,100"></polygon>
+  </svg>
+  <svg id="bg-triangle-xs" class="bg-polygon visible-xs" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <polygon points="0,0 100,0 100,100"></polygon>
+  </svg>
+</section>
+<script type="text/ng-template" id="newsLetterTmpl">
+  <div class="newslettermodal">
+    <h1>Thank You</h1>
+    <p>Thank you for subscribing to our newsletter.</p>
+    <p>Your subscripition is now complete.</p>
+  </div>
+</script>
+<!--Newsletter-->

@@ -1,0 +1,52 @@
+<md-dialog aria-label="Alma - Setup" flex="35" id="playerSetupModal">
+    <md-toolbar class="md-alma">
+        <div class="md-toolbar-tools">
+            <img src="assets/images/alma_logo.png" class="logo" />
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <md-dialog-content layout="column">
+        <md-content layout-padding>
+            <div class="intro-section" ngfx-bounce-in="intro === true">
+                <h3 class="center-text">Lets setup up an Alma player!</h3>
+                <p>This allows all of your users to stream their favorite music videos.</p>
+                <md-button class="md-raised md-alma intro-button" ng-click="startForm()">Let's Get Started</md-button>
+            </div>
+            <form id="theForm" class="simform" autocomplete="off" ngfx-bounce-in="intro === false" name="playerForm">
+                <div class="simform-inner">
+                    <ol class="questions">
+                        <li>
+                            <span>
+                                <label for="q1">What would you like to name you player?</label>
+                                <!--<p>This is the name that your users will be able to see when connecting via their mobile devices.</p>-->
+                            </span>
+                            <input id="q1" name="q1" type="text" ng-model="name" />
+                        </li>
+                        <li>
+                            <span>
+                                <label for="q2">Where are you located?</label>
+                                <!--<p>This is used to allowed your users to easily find your player via geolocation.</p>-->
+                            </span>
+                            <input id="q2" name="q2" type="text" ng-model="address" />
+                        </li>
+                    </ol>
+                    <!-- /questions -->
+                    <button class="submit" type="submit">Send answers</button>
+                    <div class="controls">
+                        <button class="next"></button>
+                        <div class="progress"></div>
+                        <span class="number">
+                                <span class="number-current"></span>
+                        <span class="number-total"></span>
+                        </span>
+                        <span class="error-message"></span>
+                    </div>
+                    <!-- / controls -->
+                </div>
+                <!-- /simform-inner -->
+                <span class="final-message"></span>
+            </form>
+            <img src="assets/images/loading.jpg" class="center-xy loading"  ngfx-bounce-in="playerLoading" />
+        </md-content>
+    </md-dialog-content>
+</md-dialog>

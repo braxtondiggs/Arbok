@@ -17,7 +17,6 @@
       <!-- bower:css -->
       <link rel="stylesheet" href="bower_components/angular-notify/dist/angular-notify.css" />
       <link rel="stylesheet" href="bower_components/owl.carousel/src/css/owl.carousel.css" />
-      <link rel="stylesheet" href="bower_components/simple-line-icons/css/simple-line-icons.css" />
       <link rel="stylesheet" href="bower_components/ngDialog/css/ngDialog.css" />
       <link rel="stylesheet" href="bower_components/ngDialog/css/ngDialog-theme-default.css" />
       <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
@@ -61,7 +60,7 @@
       <script src="bower_components/angular/angular.js"></script>
       <script src="bower_components/angular-route/angular-route.js"></script>
       <script src="bower_components/ng-lodash/build/ng-lodash.js"></script>
-      <script src="bower_components/angular-youtube-player/build/angularYoutubePlayer.min.js"></script>
+      <script src="bower_components/angular-youtube-player/build/angularYoutubePlayer.js"></script>
       <script src="bower_components/angular-notify/dist/angular-notify.js"></script>
       <script src="bower_components/eventEmitter/EventEmitter.js"></script>
       <script src="bower_components/eventie/eventie.js"></script>
@@ -84,27 +83,27 @@
       <script src="bower_components/angular-moment/angular-moment.js"></script>
       <script src="bower_components/angular-fx/dist/angular-fx.min.js"></script>
       <script src="bower_components/waypoints/lib/jquery.waypoints.js"></script>
+      <script src="bower_components/firebase/firebase.js"></script>
+      <script src="bower_components/angularfire/dist/angularfire.js"></script>
+      <script src="bower_components/classie/classie.js"></script>
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:js(.tmp) app/app.js -->
       <script src="app/app.js"></script>
       <!-- injector:js -->
-      <script src="components/util/util.module.js"></script>
-      <script src="components/features/features.directive.js"></script>
-      <script src="app/login/login.js"></script>
-      <script src="app/main.js"></script>
+      <script src="components/gallery/gallery.directive.js"></script>
+      <script src="app/app.constant.js"></script>
       <script src="app/main/main.controller.js"></script>
       <script src="app/main/main.js"></script>
       <script src="app/player/player.controller.js"></script>
       <script src="app/player/player.js"></script>
-      <script src="app/signup/signup.controller.js"></script>
-      <script src="app/signup/signup.js"></script>
+      <script src="app/player/stepsForm.js"></script>
       <script src="components/about/about.directive.js"></script>
       <script src="components/contact/contact.directive.js"></script>
       <script src="components/errSrc/errSrc.directive.js"></script>
-      <script src="app/login/login.controller.js"></script>
+      <script src="components/features/features.directive.js"></script>
       <script src="components/footer/footer.directive.js"></script>
-      <script src="components/gallery/gallery.directive.js"></script>
+      <script src="app/main.js"></script>
       <script src="components/home/home.directive.js"></script>
       <script src="components/navbar/navbar.controller.js"></script>
       <script src="components/navbar/navbar.directive.js"></script>
@@ -112,9 +111,10 @@
       <script src="components/social/social.directive.js"></script>
       <script src="components/team/team.directive.js"></script>
       <script src="components/testimonials/testimonials.directive.js"></script>
-      <script src="app/app.constant.js"></script>
-      <script src="components/util/util.service.js"></script>
-      <script src="components/video/video.directive.js"></script>
+      <script src="components/videos/videos.directive.js"></script>
+      <script src="services/Auth/Auth.service.js"></script>
+      <script src="services/Player/Player.service.js"></script>
+      <script src="services/User/User.service.js"></script>
       <!-- endinjector -->
     <!-- endbuild -->
   </body>

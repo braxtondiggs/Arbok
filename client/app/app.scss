@@ -1,8 +1,16 @@
 $fa-font-path: "../bower_components/font-awesome/fonts";
-$text-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
-$header-font-family: 'Roboto Slab', Helvetica, Arial, sans-serif;
+$simple-line-font-path: '../bower_components/simple-line-icons/fonts/';
+$text-font-family: 'Roboto Slab',
+Helvetica,
+Arial,
+sans-serif;
+$header-font-family: 'Roboto Slab',
+Helvetica,
+Arial,
+sans-serif;
 @import '../bower_components/font-awesome/scss/font-awesome';
 @import '../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap';
+@import '../bower_components/simple-line-icons/scss/simple-line-icons';
 
 /**
  * App-wide Styles
@@ -14,12 +22,16 @@ html {
   background-color: transparent;
   color: #333;
 }
+
 body {
   font-family: $text-font-family;
   font-size: 20px;
   line-height: 1.42857143;
   color: #333;
   background-color: #fff;
+  > div[ng-view] {
+    height: 100%;
+  }
 }
 
 // Component styles are injected through grunt
@@ -27,11 +39,9 @@ body {
 @import '_animations.scss';
 @import '_colors.scss';
 @import '_responsive.scss';
-@import 'login/login.scss';
 @import 'main/main.scss';
 @import 'material.scss';
 @import 'player/player.scss';
-@import 'signup/signup.scss';
 @import '../components/about/about.scss';
 @import '../components/contact/contact.scss';
 @import '../components/features/features.scss';
@@ -43,5 +53,7 @@ body {
 @import '../components/social/social.scss';
 @import '../components/team/team.scss';
 @import '../components/testimonials/testimonials.scss';
-@import '../components/video/video.scss';
+@import '../components/videos/videos.scss';
 // endinjector
+
+@import '_responsive.scss';

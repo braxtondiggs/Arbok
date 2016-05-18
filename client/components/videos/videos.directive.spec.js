@@ -1,10 +1,10 @@
 'use strict';
 
-describe('Directive: video', function () {
+describe('Directive: videos', function () {
 
   // load the directive's module and view
   beforeEach(module('arbokApp'));
-  beforeEach(module('components/video/video.html'));
+  beforeEach(module('components/videos/videos.html'));
 
   var element, scope;
 
@@ -13,9 +13,9 @@ describe('Directive: video', function () {
   }));
 
   it('should make hidden element visible', inject(function ($compile) {
-    element = angular.element('<video></video>');
+    element = angular.element('<videos></videos>');
     element = $compile(element)(scope);
     scope.$apply();
-    expect(element.text()).toBe('this is the video directive');
+    expect(element.text()).toBe('this is the videos directive');
   }));
 });

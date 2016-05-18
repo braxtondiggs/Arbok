@@ -1,0 +1,51 @@
+<md-dialog aria-label="Alma - Login" flex="35">
+    <form name="loginForm" ng-submit="logInSubmit()" novalidate>
+        <md-toolbar class="md-alma">
+            <div class="md-toolbar-tools">
+                <img src="assets/images/alma_logo.png" class="logo" />
+                <span flex></span>
+            </div>
+        </md-toolbar>
+        <md-dialog-content layout="column">
+            <md-content layout-padding class="autoScroll">
+                <p>Login to your Alma account or use Facebook for a quicker login!</p>
+                <md-input-container md-no-float class="md-block">
+                    <!-- Use floating label instead of placeholder -->
+                    <md-icon>email</md-icon>
+                    <input required ng-model="email" type="email" placeholder="Email" name="email   ">
+                    <div ng-messages="loginForm.email.$error" role="alert">
+                        <div ng-message="required">This is required.</div>
+                        <div ng-message="email">Your email address is invalid</div>
+                    </div>
+                </md-input-container>
+                <md-input-container  md-no-float class="md-block">
+                    <!-- Use floating label instead of placeholder -->
+                    <md-icon>lock</md-icon>
+                    <input required ng-model="password" type="password" ng-minlength="3" placeholder="Password" name="password">
+                    <div ng-messages="loginForm.password.$error" role="alert">
+                        <div ng-message="required">This is required.</div>
+                        <div ng-message="minlength">Password must be longer than 3 characters</div>
+                    </div>
+                </md-input-container>
+                <div class="button_container">
+                    <md-button type="submit" class="md-raised md-alma">Login</md-button>
+                </div>
+                <p>Don't have an account? <a ng-click="hide()">Sign up</a></p>
+                <div class="social-login">
+                    <div class="facebook" ng-click="facebookLogin()">
+                        <i class="fa fa-facebook-square"></i>&nbsp;&nbsp;Sign in with Facebook
+                        <div class="icon-holder">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    <div class="twitter" ng-click="twitterLogin()">
+                        <i class="fa fa-twitter-square"></i>&nbsp;&nbsp;Sign in with Twitter&nbsp;&nbsp;&nbsp;
+                        <div class="icon-holder">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </md-content>
+        </md-dialog-content>
+    </form>
+</md-dialog>

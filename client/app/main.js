@@ -162,7 +162,6 @@ var home = { // jshint ignore:line
             autoplay: true,
             autoplayTimeout: 6000,
             autoplayHoverPause: true,
-            autoplaySpeed: true,
             merge: true,
             callbacks: true,
             navText: ['<i class="fa fa-arrow-left"></i>', '<i class="fa fa-arrow-right"></i>'],
@@ -523,7 +522,6 @@ function waypoints_init() { // jshint ignore:line
 	    $(this).waypoint({
 	        handler: function() {
 	            if (delay) {
-	                console.log(_this.attr('class'));
 	                setTimeout(function() {
 	                    _this.addClass('yo-anim-start');
 	                }, delay);

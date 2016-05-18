@@ -17,7 +17,7 @@ module.exports = function(config) {
       'client/bower_components/angular/angular.js',
       'client/bower_components/angular-route/angular-route.js',
       'client/bower_components/ng-lodash/build/ng-lodash.js',
-      'client/bower_components/angular-youtube-player/build/angularYoutubePlayer.min.js',
+      'client/bower_components/angular-youtube-player/build/angularYoutubePlayer.js',
       'client/bower_components/angular-notify/dist/angular-notify.js',
       'client/bower_components/eventEmitter/EventEmitter.js',
       'client/bower_components/eventie/eventie.js',
@@ -40,6 +40,9 @@ module.exports = function(config) {
       'client/bower_components/angular-moment/angular-moment.js',
       'client/bower_components/angular-fx/dist/angular-fx.min.js',
       'client/bower_components/waypoints/lib/jquery.waypoints.js',
+      'client/bower_components/firebase/firebase.js',
+      'client/bower_components/angularfire/dist/angularfire.js',
+      'client/bower_components/classie/classie.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'client/app/app.js',

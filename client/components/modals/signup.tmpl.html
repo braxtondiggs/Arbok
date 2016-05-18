@@ -1,0 +1,70 @@
+<md-dialog aria-label="Alma - Signup" flex="35">
+    <form name="signupForm" ng-submit="signUpSubmit()" novalidate>
+        <md-toolbar class="md-alma">
+            <div class="md-toolbar-tools">
+                <img src="assets/images/alma_logo.png" class="logo" />
+                <span flex></span>
+            </div>
+        </md-toolbar>
+        <md-dialog-content layout="column">
+            <md-content layout-padding class="autoScroll">
+                <p>Login to your Alma account or use Facebook for a quicker login!</p>
+                <md-input-container md-no-float class="md-block">
+                    <!-- Use floating label instead of placeholder -->
+                    <md-icon>person_outline</md-icon>
+                    <input required ng-model="name" type="text" placeholder="Full Name" name="name" ng-minlength="5" ng-maxlength="35">
+                    <div ng-messages="signupForm.name.$error" role="alert">
+                        <div ng-message="required">This is required.</div>
+                        <div ng-message-exp="['minlength', 'maxlength']">Name must be between 5 and 35 characters</div>
+                    </div>
+                </md-input-container>
+                <md-input-container md-no-float class="md-block">
+                    <!-- Use floating label instead of placeholder -->
+                    <md-icon>email</md-icon>
+                    <input required ng-model="email" type="email" placeholder="Email" name="email">
+                    <div ng-messages="signupForm.email.$error" role="alert">
+                        <div ng-message="required">This is required.</div>
+                        <div ng-message="email">Your email address is invalid</div>
+                    </div>
+                </md-input-container>
+                <md-input-container  md-no-float class="md-block">
+                    <!-- Use floating label instead of placeholder -->
+                    <md-icon>lock</md-icon>
+                    <input required ng-model="password" type="password" ng-minlength="3" placeholder="Password" name="password">
+                    <div ng-messages="signupForm.password.$error" role="alert">
+                        <div ng-message="required">This is required.</div>
+                        <div ng-message="minlength">Password must be longer than 3 characters</div>
+                    </div>
+                </md-input-container>
+                <md-input-container  md-no-float class="md-block">
+                    <!-- Use floating label instead of placeholder -->
+                    <md-icon>lock</md-icon>
+                    <input required ng-model="confirmPassword" type="password" ng-minlength="3" placeholder="Confirm Password" name="confirmPassword" compare-to="password" >
+                    <div ng-messages="signupForm.confirmPassword.$error" role="alert">
+                        <div ng-message="required">This is required.</div>
+                        <div ng-message="minlength">Password must be longer than 3 characters</div>
+                        <div ng-message="compareTo">Password confirmation must match</div>
+                    </div>
+                </md-input-container>
+                <div class="button_container">
+                    <md-button type="submit" class="md-raised md-alma">Sign Up</md-button>
+                </div>
+                <p>Have an account already? <a ng-click="hide()">Login</a></p>
+                <div class="social-login">
+                    <div class="facebook" ng-click="facebookLogin()">
+                        <i class="fa fa-facebook-square"></i>&nbsp;&nbsp;Sign in with Facebook
+                        <div class="icon-holder">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    <div class="twitter" ng-click="twitterLogin()">
+                        <i class="fa fa-twitter-square"></i>&nbsp;&nbsp;Sign in with Twitter&nbsp;&nbsp;&nbsp;
+                        <div class="icon-holder">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </md-content>
+        </md-dialog-content>
+    </form>
+</md-dialog>

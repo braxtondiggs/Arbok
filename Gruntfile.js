@@ -1,11 +1,11 @@
-// Generated on 2016-03-07 using generator-angular-fullstack 3.3.0
+// Generated on 2016-05-24 using generator-angular-fullstack 3.7.3
 'use strict';
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   var localConfig;
   try {
     localConfig = require('./server/config/local.env');
-  } catch(e) {
+  } catch (e) {
     localConfig = {};
   }
 
@@ -26,7 +26,6 @@ module.exports = function (grunt) {
 
   // Define the configuration for all the tasks
   grunt.initConfig({
-
     // Project settings
     pkg: grunt.file.readJSON('package.json'),
     yeoman: {
@@ -176,7 +175,7 @@ module.exports = function (grunt) {
       options: {
         map: true,
         processors: [
-          require('autoprefixer')({browsers: ['last 2 version']})
+          require('autoprefixer')({ browsers: ['last 2 version'] })
         ]
       },
       dist: {
@@ -207,14 +206,14 @@ module.exports = function (grunt) {
           env: {
             PORT: process.env.PORT || 9000
           },
-          callback: function (nodemon) {
-            nodemon.on('log', function (event) {
+          callback: function(nodemon) {
+            nodemon.on('log', function(event) {
               console.log(event.colour);
             });
 
             // opens browser on initial server start
-            nodemon.on('config:update', function () {
-              setTimeout(function () {
+            nodemon.on('config:update', function() {
+              setTimeout(function() {
                 require('open')('http://localhost:8080/debug?port=5858');
               }, 500);
             });
@@ -275,6 +274,9 @@ module.exports = function (grunt) {
         ],
         // This is so we update image references in our ng-templates
         patterns: {
+          css: [
+            [/(assets\/images\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the CSS to reference our revved images']
+          ],
           js: [
             [/(assets\/images\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the JS to reference our revved images']
           ]
@@ -537,10 +539,7 @@ module.exports = function (grunt) {
     // Compiles ES6 to JavaScript using Babel
     babel: {
       options: {
-        sourceMap: true,
-        optional: [
-          'es7.classProperties'
-        ]
+        sourceMap: true
       },
       client: {
         files: [{
@@ -552,12 +551,18 @@ module.exports = function (grunt) {
       },
       server: {
         options: {
-          optional: ['runtime']
+          plugins: [
+            'transform-class-properties',
+            'transform-runtime'
+          ]
         },
         files: [{
           expand: true,
           cwd: '<%= yeoman.server %>',
-          src: ['**/*.js'],
+          src: [
+            '**/*.js',
+            '!config/local.env.sample.js'
+          ],
           dest: '<%= yeoman.dist %>/<%= yeoman.server %>'
         }]
       }
@@ -570,7 +575,7 @@ module.exports = function (grunt) {
           compass: false
         },
         files: {
-          '.tmp/app/app.css' : '<%= yeoman.client %>/app/app.scss'
+          '.tmp/app/app.css': '<%= yeoman.client %>/app/app.scss'
         }
       }
     },
@@ -587,7 +592,7 @@ module.exports = function (grunt) {
             return '<script src="' + filePath + '"></script>';
           },
           sort: function(a, b) {
-            var module = /\.module\.js$/;
+            var module = /\.module\.(js|ts)$/;
             var aMod = module.test(a);
             var bMod = module.test(b);
             // inject *.module.js first
@@ -615,8 +620,8 @@ module.exports = function (grunt) {
             filePath = filePath.replace('/' + yoClient + '/components/', '../components/');
             return '@import \'' + filePath + '\';';
           },
-          starttag: '// injector',
-          endtag: '// endinjector'
+          starttag: '/* inject:scss */',
+          endtag: '/* endinject */'
         },
         files: {
           '<%= yeoman.client %>/app/app.scss': [
@@ -648,12 +653,12 @@ module.exports = function (grunt) {
   });
 
   // Used for delaying livereload until after server has restarted
-  grunt.registerTask('wait', function () {
+  grunt.registerTask('wait', function() {
     grunt.log.ok('Waiting for server reload...');
 
     var done = this.async();
 
-    setTimeout(function () {
+    setTimeout(function() {
       grunt.log.writeln('Done waiting!');
       done();
     }, 1500);
@@ -663,7 +668,7 @@ module.exports = function (grunt) {
     this.async();
   });
 
-  grunt.registerTask('serve', function (target) {
+  grunt.registerTask('serve', function(target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
     }
@@ -696,7 +701,7 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('server', function () {
+  grunt.registerTask('server', function() {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
     grunt.task.run(['serve']);
   });
@@ -709,9 +714,7 @@ module.exports = function (grunt) {
         'mochaTest:unit',
         'mochaTest:integration'
       ]);
-    }
-
-    else if (target === 'client') {
+    } else if (target === 'client') {
       return grunt.task.run([
         'clean:server',
         'env:all',
@@ -722,10 +725,7 @@ module.exports = function (grunt) {
         'wiredep:test',
         'karma'
       ]);
-    }
-
-    else if (target === 'e2e') {
-
+    } else if (target === 'e2e') {
       if (option === 'prod') {
         return grunt.task.run([
           'build',
@@ -734,9 +734,7 @@ module.exports = function (grunt) {
           'express:prod',
           'protractor'
         ]);
-      }
-
-      else {
+      } else {
         return grunt.task.run([
           'clean:server',
           'env:all',
@@ -750,33 +748,24 @@ module.exports = function (grunt) {
           'protractor'
         ]);
       }
-    }
-
-    else if (target === 'coverage') {
-
+    } else if (target === 'coverage') {
       if (option === 'unit') {
         return grunt.task.run([
           'env:all',
           'env:test',
           'mocha_istanbul:unit'
         ]);
-      }
-
-      else if (option === 'integration') {
+      } else if (option === 'integration') {
         return grunt.task.run([
           'env:all',
           'env:test',
           'mocha_istanbul:integration'
         ]);
-      }
-
-      else if (option === 'check') {
+      } else if (option === 'check') {
         return grunt.task.run([
           'istanbul_check_coverage'
         ]);
-      }
-
-      else {
+      } else {
         return grunt.task.run([
           'env:all',
           'env:test',
@@ -784,13 +773,12 @@ module.exports = function (grunt) {
           'istanbul_check_coverage'
         ]);
       }
-
+    } else {
+      grunt.task.run([
+        'test:server',
+        'test:client'
+      ]);
     }
-
-    else grunt.task.run([
-      'test:server',
-      'test:client'
-    ]);
   });
 
   grunt.registerTask('build', [

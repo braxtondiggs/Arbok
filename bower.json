@@ -45,7 +45,7 @@
         "src/js/owl.carousel.js",
         "src/js/owl.autoplay.js",
         "src/js/owl.navigation.js",
-        "src/css/owl.carousel.css"
+        "dist/assets/owl.carousel.css"
       ]
     },
     "angular-youtube-player": {

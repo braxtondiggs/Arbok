@@ -3,7 +3,7 @@
 
 angular.module('arbokApp.constants', [])
 
-.constant('appConfig', {userRoles:['guest','user','admin']})
+.constant('appConfig', {userRoles:['guest','user','admin'],FIREBASE_URL:'https://arbok.firebaseio.com/'})
 
 ;
 })(angular);

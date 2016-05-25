@@ -1,189 +1,196 @@
 'use strict';
 
-angular.module('arbokApp')
-    .controller('PlayerCtrl', function($scope, $mdDialog, $timeout, Auth, UserService, PlayerService, Idle, $mdSidenav) {
-        $scope.auth = Auth;
-        $scope.auth.$onAuth(function(authData) {
-            $scope.authData = authData;
-            if ($scope.authData) {
-                UserService($scope.authData.uid).$loaded().then(function(data) {
-                    $scope.user = data;
-                    if (angular.isDefined($scope.user.players)) {
-                        $scope.startPlayer();
-                    } else {
-                        showPlayerModal();
+var PlayerCtrl = function($scope, $mdDialog, $timeout, Auth, Player, Idle, $mdSidenav) {
+    $scope.auth = Auth;
+    $scope.auth.$onAuth(function(authData) {
+        if (authData) {
+            if (angular.isDefined(authData.players)) {
+                //$scope.startPlayer();
+            } else {
+                showSetup($mdDialog);
+            }
+        } else {
+            showLogin($mdDialog, $timeout);
+        }
+    });
+    $scope.isIdle = true;
+    $scope.$on('IdleStart', function() {
+        if (!$mdSidenav('left').isOpen()) {
+            $scope.isIdle = false;
+            $scope.$apply();
+        }
+    });
+    $scope.$on('IdleEnd', function() {
+        $scope.isIdle = true;
+        $scope.$apply();
+    });
+    $scope.closeMenu = function() {
+        $mdSidenav('left').close();
+    };
+    $scope.openMenu = function() {
+        $mdSidenav('left').open();
+    };
+    $scope.startPlayer = function() {
+        Idle.watch();
+        Idle.setIdle(2);
+    };
+};
+var SetupCtrl = function($scope, $timeout, $http) {
+    $scope.intro = true;
+    $scope.playerLoading = false;
+    $scope.playerForm = {};
+    $timeout(function() {
+        var theForm = document.getElementById('theForm');
+        new stepsForm(theForm, {
+            onSubmit: function(form) {
+                classie.addClass(theForm.querySelector('.simform-inner'), 'hide');
+                $scope.playerLoading = true;
+                console.log($scope.user.$id);
+                $http.post('/player/create', {
+                    data: {
+                        uid: $scope.user.$id,
+                        name: $scope.playerForm.q1.$viewValue,
+                        address: $scope.playerForm.q2.$viewValue
                     }
-                }).catch(function(error) {
-                    console.log(error);
+                }).then(function() {
+
+                });
+            }
+        });
+    }, 500);
+    $scope.startForm = function() {
+        $scope.intro = false;
+    };
+};
+var AuthCtrl = function($scope, $mdDialog, $timeout, Auth, User, Error) {
+    $scope.hide = function(modal) {
+        $mdDialog.hide();
+        $timeout(function() {
+            if (modal === 'login') {
+                showSignUp($mdDialog, $timeout);
+            } else {
+                showLogin($mdDialog, $timeout);
+            }
+        }, 750);
+    };
+    $scope.loginForm = {};
+    $scope.logInSubmit = function() {
+        if ($scope.loginForm.$valid) {
+            Auth.$authWithPassword({
+                email: $scope.loginForm.email.$viewValue,
+                password: $scope.loginForm.password.$viewValue
+            }).then(function(userData) {
+                User.create(userData.password).then(function() {
+                    $mdDialog.hide();
+                    showSetup($mdDialog);
+                }).catch(function() {
+                    Error.system('Something went very wrong, please try to refresh the page!');
+                });
+            }).catch(function(error) {
+                Error.system(error);
+            });
+        }
+    };
+    $scope.facebookLogin = function() {
+        function createFacebook(authData) {
+            authData.facebook.provider = 'facebook';
+            User.create(authData.facebook).then(function() {
+                $mdDialog.hide();
+                showSetup($mdDialog);
+            }).catch(function() {
+                Error.system('Something went very wrong, please try to refresh the page!');
+            });
+        }
+        Auth.$authWithOAuthPopup('facebook', { scope: 'public_profile, email, user_friends, user_birthday' }).then(function(userData) {
+            createFacebook(userData);
+        }).catch(function(error) {
+            if (error.code === 'TRANSPORT_UNAVAILABLE') {
+                Auth.$authWithOAuthPopup('facebook', { scope: 'public_profile, email, user_friends, user_birthday' }).then(function(userData) {
+                    createFacebook(userData);
                 });
             } else {
-                showLogin();
+                Error.system('Something went very wrong, We were unable to log you in!');
             }
         });
-        $scope.isIdle = true;
-        $scope.$on('IdleStart', function() {
-            if (!$mdSidenav('left').isOpen()) {
-                $scope.isIdle = false;
-                $scope.$apply();
-            }
-        });
-        $scope.$on('IdleEnd', function() {
-            $scope.isIdle = true;
-            $scope.$apply();
-        });
-        $scope.closeMenu = function() {
-            $mdSidenav('left').close();
-        };
-        $scope.openMenu = function() {
-            $mdSidenav('left').open();
-        };
-        $scope.startPlayer = function() {
-            Idle.watch();
-            Idle.setIdle(2);
-        };
-
-        function showPlayerModal() {
-            $mdDialog.show({
-                templateUrl: 'components/modals/player.tmpl.html',
-                controller: function DialogController($scope, $timeout, $http) {
-                    $scope.intro = true;
-                    $scope.playerLoading = false;
-                    $scope.playerForm = {};
-                    $timeout(function() {
-                        var theForm = document.getElementById('theForm');
-                        console.log($scope.user.$id);
-                        new stepsForm(theForm, {
-                            onSubmit: function(form) {
-                                classie.addClass(theForm.querySelector('.simform-inner'), 'hide');
-                                $scope.playerLoading = true;
-                                console.log($scope.user.$id);
-                                $http.post('/player/create', {
-                                    data: {
-                                        uid: $scope.user.$id,
-                                        name: $scope.playerForm.q1.$viewValue,
-                                        address: $scope.playerForm.q2.$viewValue
-                                    }
-                                }).then(function() {
-
-                                });
-                            }
-                        });
-                    }, 500);
-                    $scope.startForm = function() {
-                        $scope.intro = false;
-                    };
-                },
-                clickOutsideToClose: false,
-                escapeToClose: false,
-                hasBackdrop: false,
-                preserveScope: true,
-                scope: $scope
-            });
-        }
-
-        function showLogin() {
-            $scope.login = $mdDialog.show({
-                templateUrl: 'components/modals/login.tmpl.html',
-                controller: function DialogController($scope, $mdDialog, $timeout, Auth) {
-                    $scope.hide = function() {
+    };
+    $scope.signupForm = {};
+    $scope.signUpSubmit = function() {
+        if ($scope.signupForm.$valid) {
+            Auth.$createUser({
+                email: $scope.signupForm.email.$viewValue,
+                password: $scope.signupForm.password.$viewValue
+            }).then(function(userData) {
+                Auth.$authWithPassword({
+                    email: $scope.signupForm.email.$viewValue,
+                    password: $scope.signupForm.password.$viewValue
+                }).then(function(userData) {
+                    userData.password.id = userData.uid;
+                    userData.password.accessToken = userData.token;
+                    userData.password.displayName = $scope.signupForm.name.$viewValue;
+                    userData.password.provider = 'Password';
+                    User.create(userData.password).then(function() {
                         $mdDialog.hide();
-                        $timeout(function() {
-                            showSignUp();
-                        }, 750);
-                    };
-                    $scope.loginForm = {};
-                    $scope.logInSubmit = function() {
-                        if ($scope.loginForm.$valid) {
-
-                            Auth.$authWithPassword({
-                                email: $scope.loginForm.email.$viewValue,
-                                password: $scope.loginForm.password.$viewValue
-                            }).then(function(userData) {
-                                console.log('Authenticated successfully with payload:', userData);
-                                $mdDialog.hide();
-                            }).catch(function(error) {
-                                console.log('Error logging user in:', error);
-                            });
-                        }
-                    };
-                    $scope.facebookLogin = function() {
-                        console.log('facebook');
-                        Auth.$authWithOAuthPopup('facebook', { scope: 'email' }).then(function(userData) {
-                            console.log('Authenticated successfully with payload:', userData);
-                            $mdDialog.hide();
-                        }).catch(function(error) {
-                            console.log('Error logging user in:', error);
-                        });
-                    };
-                },
-                clickOutsideToClose: false,
-                escapeToClose: false,
-                hasBackdrop: false,
-                scope: $scope,
-                onRemoving: function(element, event) {
-                    element.find('md-dialog').addClass('bounceOutDown');
-                },
-                onShowing: function(scope, element) {
-                    element.find('md-dialog').addClass('animated bounceInDown');
-                    $timeout(function() {
-                        element.find('md-dialog').removeClass('bounceInDown');
-                    }, 750);
-                }
+                        showSetup($mdDialog);
+                    }).catch(function() {
+                        Error.system('Something went very wrong, please try to refresh the page!');
+                    });
+                }).catch(function(error) {
+                    Error.system(error);
+                });
+            }).catch(function(error) {
+                Error.system(error);
             });
         }
+    };
+};
 
-        function showSignUp() {
-            $mdDialog.show({
-                templateUrl: 'components/modals/signup.tmpl.html',
-                controller: function DialogController($scope, $mdDialog, $timeout, Auth) {
-                    $scope.hide = function() {
-                        $mdDialog.hide();
-                        $timeout(function() {
-                            showLogin();
-                        }, 500);
-                    };
-                    $scope.signupForm = {};
-                    $scope.signUpSubmit = function() {
-                        if ($scope.signupForm.$valid) {
-                            Auth.$createUser({
-                                email: $scope.signupForm.email.$viewValue,
-                                password: $scope.signupForm.password.$viewValue
-                            }).then(function(userData) {
-                                var userRef = new Firebase('https://arbok.firebaseio.com/Users/' + userData.uid);
-                                var obj = {
-                                    firstName: $scope.signupForm.name.$viewValue.split(' ')[0],
-                                    lastName: $scope.signupForm.name.$viewValue.split(' ')[1],
-                                    provider: 'Email'
-                                };
-                                userRef.set(obj).then(function() {
-                                    Auth.$authWithPassword({
-                                        email: $scope.signupForm.email.$viewValue,
-                                        password: $scope.signupForm.password.$viewValue
-                                    }).then(function(userData) {
-                                        $mdDialog.hide();
-                                    }).catch(function(error) {
-                                        console.log('Error logging user in:', error);
-                                    });
-                                });
-                            }).catch(function(error) {
-                                console.log('Error logging user in:', error);
-                            });
-                        }
-                    };
-                },
-                clickOutsideToClose: false,
-                escapeToClose: false,
-                hasBackdrop: false,
-                onRemoving: function(element, event) {
-                    element.find('md-dialog').addClass('bounceOutDown');
-                },
-                onShowing: function(scope, element) {
-                    element.find('md-dialog').addClass('animated bounceInDown');
-                    $timeout(function() {
-                        element.find('md-dialog').removeClass('bounceInDown');
-                    }, 1000);
-                }
-            });
-        }
-
+function showSetup(mdDialog) {
+    mdDialog.show({
+        templateUrl: 'components/modals/player.tmpl.html',
+        controller: SetupCtrl,
+        clickOutsideToClose: false,
+        escapeToClose: false,
+        hasBackdrop: false,
+        preserveScope: true
     });
+}
+
+function showSignUp(mdDialog, timeout) {
+    mdDialog.show({
+        templateUrl: 'components/modals/signup.tmpl.html',
+        controller: AuthCtrl,
+        clickOutsideToClose: false,
+        escapeToClose: false,
+        hasBackdrop: false,
+        onRemoving: function(element) {
+            element.find('md-dialog').addClass('bounceOutDown');
+        },
+        onShowing: function(scope, element) {
+            element.find('md-dialog').addClass('animated bounceInDown');
+            timeout(function() {
+                element.find('md-dialog').removeClass('bounceInDown');
+            }, 1000);
+        }
+    });
+}
+
+function showLogin(mdDialog, timeout) {
+    mdDialog.show({
+        templateUrl: 'components/modals/login.tmpl.html',
+        controller: AuthCtrl,
+        clickOutsideToClose: false,
+        escapeToClose: false,
+        hasBackdrop: false,
+        onRemoving: function(element) {
+            element.find('md-dialog').addClass('bounceOutDown');
+        },
+        onShowing: function(scope, element) {
+            element.find('md-dialog').addClass('animated bounceInDown');
+            timeout(function() {
+                element.find('md-dialog').removeClass('bounceInDown');
+            }, 750);
+        }
+    });
+}
+
+angular.module('arbokApp').controller('PlayerCtrl', PlayerCtrl);

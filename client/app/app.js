@@ -9,7 +9,6 @@ angular.module('arbokApp', [
         'ngAnimate',
         'ngMaterial',
         'ngIdle',
-        'cgNotify',
         'ngLodash',
         'angularMoment',
         'youtubePlayer',
@@ -31,7 +30,7 @@ angular.module('arbokApp', [
             link: function(scope, element, attributes, ngModel) {
 
                 ngModel.$validators.compareTo = function(modelValue) {
-                    return modelValue == scope.otherModelValue;
+                    return modelValue === scope.otherModelValue;
                 };
 
                 scope.$watch('otherModelValue', function() {

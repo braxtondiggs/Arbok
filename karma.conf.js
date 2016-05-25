@@ -12,13 +12,13 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // bower:js
-      'client/bower_components/modernizr/modernizr.js',
       'client/bower_components/jquery/dist/jquery.js',
       'client/bower_components/angular/angular.js',
       'client/bower_components/angular-route/angular-route.js',
+      'client/bower_components/angular-messages/angular-messages.js',
+      'client/bower_components/angular-animate/angular-animate.js',
       'client/bower_components/ng-lodash/build/ng-lodash.js',
       'client/bower_components/angular-youtube-player/build/angularYoutubePlayer.js',
-      'client/bower_components/angular-notify/dist/angular-notify.js',
       'client/bower_components/eventEmitter/EventEmitter.js',
       'client/bower_components/eventie/eventie.js',
       'client/bower_components/imagesloaded/imagesloaded.js',
@@ -27,12 +27,9 @@ module.exports = function(config) {
       'client/bower_components/owl.carousel/src/js/owl.autoplay.js',
       'client/bower_components/owl.carousel/src/js/owl.navigation.js',
       'client/bower_components/jquery.transit/jquery.transit.js',
-      'client/bower_components/bootstrap-sass/assets/javascripts/bootstrap.js',
       'client/bower_components/ngstorage/ngStorage.js',
       'client/bower_components/angularjs-geolocation/src/geolocation.js',
       'client/bower_components/ngDialog/js/ngDialog.js',
-      'client/bower_components/angular-messages/angular-messages.js',
-      'client/bower_components/angular-animate/angular-animate.js',
       'client/bower_components/angular-aria/angular-aria.js',
       'client/bower_components/angular-material/angular-material.js',
       'client/bower_components/ng-idle/angular-idle.js',

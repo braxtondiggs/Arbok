@@ -16,6 +16,7 @@
   "strict": true,
   "trailing": true,
   "smarttabs": true,
+  "camelcase": false
   "ignoreDelimiters": [
     { "start": "start-non-standard", "end": "end-non-standard" }
   ],
@@ -36,6 +37,8 @@
     "browser": true,
     "element": true,
     "by": true,
-    "Firebase": true
+    "Firebase": true,
+    "classie": true,
+    "YT": true
   }
 }

@@ -1,29 +1,50 @@
 <div id="player" layout="column" presence>
-    <section layout="row" flex>
-        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
-            <md-toolbar class="md-theme-alma">
-                <h1 class="md-toolbar-tools">Sidenav Left</h1>
-            </md-toolbar>
-            <md-content layout-padding>
-                <md-button ng-click="close()" class="md-primary" hide-gt-md>
-                    Close Sidenav Left
-                </md-button>
-                <p hide-md show-gt-md>
-                    This sidenav is locked open on your device. To go back to the default behavior, narrow your display.
-                </p>
-            </md-content>
-        </md-sidenav>
-        <md-toolbar class="md-theme-alma animated" ng-class="isIdle?'bounceInDown':'bounceOutUp'">
-            <div class="md-toolbar-tools">
-                <md-button class="md-icon-button" aria-label="Settings" ng-click="openMenu()">
-                    <md-icon>menu</md-icon>
-                </md-button>
-                <h2>Alma</h2>
-                <span flex></span>
-            </div>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
+        <md-toolbar class="md-theme-alma">
+            <h1 class="md-toolbar-tools">Sidenav Left</h1>
         </md-toolbar>
-        <video autoplay loop id="bgvid">
+        <md-content layout-padding>
+            <md-button ng-click="close()" class="md-primary" hide-gt-md>
+                Close Sidenav Left
+            </md-button>
+            <p hide-md show-gt-md>
+                This sidenav is locked open on your device. To go back to the default behavior, narrow your display.
+            </p>
+        </md-content>
+    </md-sidenav>
+    <md-toolbar class="md-theme-alma animated" ng-class="isIdle?'bounceInDown':'bounceOutUp'">
+        <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" aria-label="Settings" ng-click="openMenu()">
+                <md-icon>menu</md-icon>
+            </md-button>
+            <h2>Alma</h2>
+            <span flex></span>
+        </div>
+    </md-toolbar>
+    <div id="video-container" ng-init="player.isActive = false">
+        <video autoplay loop id="bgvid" ng-if="!player.isActive">
             <source ng-src="assets/videos/box-background.mp4" type="video/mp4">
         </video>
-    </section>
+        <div youtube-video video-id="{{player.id}}" width="{{player.width}}" height="{{player.height}}" player-vars="player.vars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-error="onError(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure()" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)"></div>
+        <div class="loading animated" ng-class="(loading)?'fadeIn':'fadeOut'" ng-show="loading" ng-init="loading = true;">
+            <div class="loading_container">
+                <img src="assets/images/loading.jpg" class="animated" ng-class="(loading)?'bounceIn delay-2':'bounceOut'" />
+                <p class="loading_txt animated" ng-class="(loadingTxt)?'bounceInLeft':bounceOutRight">{{loadingTxt}}</p>
+            </div>
+        </div>
+        <div id="popups">
+            <div id="currentlyPlaying">
+                <div class="album-cover">
+                    <img alt="" ng-src="{{queue[0].image.b}}" src="images/logo_missing.png" />
+                </div>
+                <div class="music-info">
+                    <h3>{{queue[0].artists[0].name}}</h3>
+                    <p>{{queue[0].song_title}}</p>
+                </div>
+            </div>
+            <!--<div id="voteOff" class="animated" ng-class="(vote.status)?'bounceInUp':bounceOutUp" ng-show="vote.status">
+                I guess nobody liked this song! Song Changing in <span class="countdown">{{vote.counter}}</span>
+            </div>-->
+        </div>
+    </div>
 </div>

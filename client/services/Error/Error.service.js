@@ -1,7 +1,13 @@
 'use strict';
 
-function ErrorFactory(toast) {
+function ErrorFactory(toast, config, firebaseArray) {
 	return {
+		ref: function() {
+			return new Firebase(config.FIREBASE_URL + 'Error');
+		},
+		get: function() {
+			return firebaseArray(this.ref());
+		},
 		system: function(txt) {
 			toast.show(
 				toast.simple()
@@ -13,6 +19,6 @@ function ErrorFactory(toast) {
 	};
 }
 
-ErrorFactory.$inject = ['$mdToast'];
+ErrorFactory.$inject = ['$mdToast', 'appConfig', '$firebaseArray'];
 
 angular.module('arbokApp').factory('Error', ErrorFactory);

@@ -12,6 +12,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // bower:js
+      'client/bower_components/modernizr/modernizr.js',
       'client/bower_components/jquery/dist/jquery.js',
       'client/bower_components/angular/angular.js',
       'client/bower_components/angular-route/angular-route.js',
@@ -27,6 +28,7 @@ module.exports = function(config) {
       'client/bower_components/owl.carousel/src/js/owl.autoplay.js',
       'client/bower_components/owl.carousel/src/js/owl.navigation.js',
       'client/bower_components/jquery.transit/jquery.transit.js',
+      'client/bower_components/bootstrap-sass/assets/javascripts/bootstrap.js',
       'client/bower_components/ngstorage/ngStorage.js',
       'client/bower_components/angularjs-geolocation/src/geolocation.js',
       'client/bower_components/ngDialog/js/ngDialog.js',
@@ -40,6 +42,7 @@ module.exports = function(config) {
       'client/bower_components/firebase/firebase.js',
       'client/bower_components/angularfire/dist/angularfire.js',
       'client/bower_components/classie/classie.js',
+      'client/bower_components/angular-notify/dist/angular-notify.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'client/app/app.js',

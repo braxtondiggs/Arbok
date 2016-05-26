@@ -7,17 +7,13 @@ function PlayerFactory(firebaseObject, config) {
 			return new Firebase(config.FIREBASE_URL + 'Player/' + id);
 		},
 		get: function(id) {
-			if (!angular.isDefined(this.players)) {
-				return firebaseObject(this.ref(id));
-			} else {
-				return this.players;
-			}
-		},
-		set: function(player) {
-			this.players = player;
+			return firebaseObject(this.ref(id));
 		},
 		create: function(obj) {
-			this.set(obj);
+			var ref = new Firebase(config.FIREBASE_URL + 'Player');
+			return ref.push(obj);
+		},
+		update: function(obj) {
 			return this.ref(obj.id).update(obj);
 		}
 	};

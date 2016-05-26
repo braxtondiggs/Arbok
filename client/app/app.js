@@ -13,7 +13,9 @@ angular.module('arbokApp', [
         'angularMoment',
         'youtubePlayer',
         'firebase',
-        '720kb.fx'
+        '720kb.fx',
+        'youtubePlayer',
+        'cgNotify'
     ])
     .config(function($routeProvider, $locationProvider) {
         $routeProvider

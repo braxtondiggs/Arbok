@@ -5,6 +5,7 @@
 'use strict';
 
 import express from 'express';
+import cors  from 'cors';
 import config from './config/environment';
 import http from 'http';
 
@@ -12,6 +13,8 @@ import http from 'http';
 var app = express();
 var server = http.createServer(app);
 var firebase = require('firebase');
+
+app.use(cors());
 require('./config/express').default(app);
 require('./routes').default(app);
 

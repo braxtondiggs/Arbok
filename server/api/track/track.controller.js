@@ -3,6 +3,9 @@ var Echonest = require('echonestjs');
 var firebase = require('firebase');
 var request = require('request');
 var async = require('async');
+var moment = require('moment');
+var cheerio = require('cheerio');
+var trim = require('trim');
 var _ = require('lodash');
 // Gets a list of Tracks
 export function index(req, res) {
@@ -18,7 +21,6 @@ export function index(req, res) {
 				console.log('error');
 				return;
 			}
-			console.log(results);
 			res.json(results);
 		});
 	} else {
@@ -34,7 +36,7 @@ export function index(req, res) {
 				callback(null);
 			}
 		}, function() {
-			return callback(err);
+			return callback();
 		});
 	}
 
@@ -97,4 +99,45 @@ export function index(req, res) {
 		res.render('error', { error: err });
 	}
 
+}
+
+export function imvdb(req, res) {
+	var urls = {
+		fresh: 'https://imvdb.com/charts/new',
+		top: 'https://imvdb.com/charts/all'
+	};
+	if (req.params.sort && urls[req.params.sort]) {
+		var sort = req.params.sort;
+		var db = firebase.database();
+		var ref = db.ref('Discover/' + sort);
+		ref.once('value').then(function(snapshot) {
+			if (_.isEmpty(snapshot.val()) || moment(new Date(snapshot.val().date)).isBefore(new Date(), 'day')) {
+				ref.remove().then(function() {
+					request.get(urls[sort], function(error, response, body) {
+						if (!error && response.statusCode === 200) {
+							var $ = cheerio.load(body);
+							var imvdb = {
+								date: new Date().toString(),
+								tracks: []
+							};
+							$('table.imvdb-chart-table tr').each(function(i) {
+								var track = {
+									name: trim(($(this).find('.artist_line').next('p').text() || '')),
+									slug: trim(($(this).find('.artist_line').next('p').find('a').attr('href') || '')).substring(19),
+									title: trim(($(this).find('.artist_line a').attr('title') || '')),
+									slugTitle: $(this).find('.artist_line a').attr('href').substring(parseInt($(this).find('.artist_line a').attr('href').lastIndexOf('/'), 10) + 1),
+									image: trim(($(this).find('img').attr('src') || ''))
+								}
+								imvdb.tracks.push(track);
+							});
+							ref.set(imvdb);
+							res.json(imvdb.tracks);
+						}
+					});
+				});
+			} else {
+				res.json(snapshot.val().tracks);
+			}
+		});
+	}
 }

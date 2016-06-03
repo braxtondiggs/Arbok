@@ -43,6 +43,7 @@ module.exports = function(config) {
       'client/bower_components/angularfire/dist/angularfire.js',
       'client/bower_components/classie/classie.js',
       'client/bower_components/angular-notify/dist/angular-notify.js',
+      'client/bower_components/geofire/dist/geofire.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'client/app/app.js',

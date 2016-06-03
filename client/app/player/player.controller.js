@@ -33,11 +33,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
             showinfo: 0,
             rel: 0,
             iv_load_policy: 3,
-            autoplay: 0
-        },
-        firebase: {
-            queue: [],
-            chat: []
+            autoplay: 1
         }
     };
     notify.config({
@@ -65,7 +61,21 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
     $scope.startPlayer = function() {
         Idle.watch();
         Idle.setIdle(2);
-        $scope.player.isActive = true;
+        if ($scope.user && $scope.user.player) {
+            Player.get($scope.user.player).$loaded().then(function(player) {
+                $scope.player.firebase = player;
+                Player.ref($scope.user.player).child('active').set(true);
+                Player.ref($scope.user.player).child('active').onDisconnect().set(false);
+                $scope.queue = Queue.get($scope.user.player);
+                $scope.history = History.get($scope.user.player);
+                $scope.error = Error.get();
+                $scope.queue.$loaded().then(function(queue) {
+                    $scope.player.isActive = true;
+                    $scope.queue = queue;
+                    play();
+                });
+            });
+        }
     };
     $scope.getTrack = function() {
         $http.post('/api/tracks', {
@@ -86,13 +96,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
 
     $scope.onReady = function(event) {
         $scope.playerEvent = event;
-        $scope.queue = Queue.get($scope.user.player);
-        $scope.history = History.get($scope.user.player);
-        $scope.error = Error.get();
-        $scope.queue.$loaded().then(function(queue) {
-            $scope.queue = queue;
-            play();
-        });
+        $scope.startPlayer();
     };
     $scope.onStateChange = function(event) {
         if (event.data === YT.PlayerState.ENDED) {
@@ -128,6 +132,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
         $scope.player.height = $(window).height();
         $scope.$apply();
     });
+
     function play() {
         if (angular.isDefined($scope.queue) || $scope.queue.length > 0) {
             $('#currentlyPlaying').addClass('active');
@@ -135,10 +140,12 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
             $scope.playerEvent.target.setPlaybackQuality('small');
             $scope.loading = false;
             activateBar();
-        }else {
+            $scope.player.firebase.nowPlaying = $scope.queue[0];//please finish
+        } else {
             $scope.getTrack();
         }
     }
+
     function songEnded() {
         detonate();
         $scope.loading = true;
@@ -148,6 +155,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
             })
         });
     }
+
     function detonate() {
         if ($scope.detonate !== null) {
             $timeout.cancel($scope.detonate);
@@ -156,6 +164,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
             songEnded();
         }, 10000);
     }
+
     function activateBar() {
         $timeout(function() {
             $('#currentlyPlaying').removeClass('active');
@@ -187,6 +196,8 @@ var SetupCtrl = function($scope, $timeout, $http, $mdDialog, Error, Player, User
 
                             Player.create(obj).then(function(player) {
                                 $scope.user.player = player.key();
+                                var geoFire = Player.location();
+                                geoFire.set(player.key(), [parseFloat(response.data[0].lat), parseFloat(response.data[0].lon)]);
                                 $scope.user.$save().then(function() {
                                     $mdDialog.hide();
                                     $scope.startPlayer($scope, Idle);

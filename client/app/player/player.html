@@ -26,7 +26,7 @@
             <source ng-src="assets/videos/box-background.mp4" type="video/mp4">
         </video>
         <div youtube-video video-id="{{player.id}}" width="{{player.width}}" height="{{player.height}}" player-vars="player.vars" on-ready="onReady(event)" on-state-change="onStateChange(event)" on-error="onError(event)" on-controller-ready="onControllerReady(controller)" on-api-loading-failure="onApiLoadingFailure()" on-playback-quality-change="onPlaybackQualityChange(event)" on-playback-rate-change="onPlaybackRateChange(event)"></div>
-        <div class="loading animated" ng-class="(loading)?'fadeIn':'fadeOut'" ng-show="loading" ng-init="loading = true;">
+        <div class="loading animated" ng-class="(loading)?'fadeIn':'fadeOut'" ng-show="loading" ng-init="loading = false;">
             <div class="loading_container">
                 <img src="assets/images/loading.jpg" class="animated" ng-class="(loading)?'bounceIn delay-2':'bounceOut'" />
                 <p class="loading_txt animated" ng-class="(loadingTxt)?'bounceInLeft':bounceOutRight">{{loadingTxt}}</p>

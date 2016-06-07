@@ -9,6 +9,7 @@ import path from 'path';
 
 export default function(app) {
   // Insert routes below
+  app.use('/api/artists', require('./api/artist'));
   app.use('/api/search', require('./api/search'));
   app.use('/api/tracks', require('./api/track'));
   // All undefined asset or api routes should return a 404

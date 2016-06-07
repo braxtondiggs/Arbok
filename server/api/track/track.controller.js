@@ -1,5 +1,5 @@
 'use strict';
-var Echonest = require('echonestjs');
+var SpotifyWebApi = require('spotify-web-api-node');
 var firebase = require('firebase');
 var request = require('request');
 var async = require('async');
@@ -10,7 +10,6 @@ var _ = require('lodash');
 // Gets a list of Tracks
 export function index(req, res) {
 	if (req.body.params.pid) {
-		Echonest.init('0NPSO7NBLICGX3CWQ');
 		async.waterfall([
 			fireBaseFunc,
 			echoNestFunc,
@@ -41,7 +40,7 @@ export function index(req, res) {
 	}
 
 	function echoNestFunc(callback) {
-		var last = req.body.params.last || 'Drake';
+		/*var last = req.body.params.last || 'Drake';
 		Echonest.get('artist/profile', {
 			name: last
 		}, function(err, res) {
@@ -51,7 +50,17 @@ export function index(req, res) {
 			}, function(err, data) {
 				callback(null, data.response.artists)
 			});
-		});
+		});*/
+	var spotifyApi = new SpotifyWebApi({
+		clientId: '8d3caf1621064039aa632d113dad7365',
+		clientSecret: 'a051adb73187405a81a9d50206f1036e'
+	});
+	console.log(req.params.slug);
+	spotifyApi.searchArtists(req.params.slug).then(function(data) {
+		console.log(data.items);
+	}, function(err) {
+		console.log(err);
+	});
 	}
 
 	function imvdbFunc(arg1, callback) {

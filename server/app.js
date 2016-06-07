@@ -5,7 +5,7 @@
 'use strict';
 
 import express from 'express';
-import cors  from 'cors';
+import cors from 'cors';
 import config from './config/environment';
 import http from 'http';
 

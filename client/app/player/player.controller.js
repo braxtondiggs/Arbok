@@ -2,7 +2,7 @@
 /*jshint latedef: false*/
 /*global stepsForm*/
 
-var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, Idle, User, Player, Error, notify, Queue, History) {
+var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToast, Auth, Idle, User, Player, History, Error, notify, Queue, Chat, Vote, Room) {
     $scope.detonate = null;
     $scope.auth = Auth;
     $scope.auth.$onAuth(function(authData) {
@@ -11,7 +11,8 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
             $scope.user = User.get(user.id).$loaded().then(function(data) {
                 $scope.user = data;
                 if (angular.isDefined($scope.user.player)) {
-                    $scope.startPlayer($scope, Idle);
+                    //console.log('hello')
+                    //$scope.startPlayer($scope, Idle);
                 } else {
                     showSetup($mdDialog, $scope);
                 }
@@ -67,13 +68,48 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
                 Player.ref($scope.user.player).child('active').set(true);
                 Player.ref($scope.user.player).child('active').onDisconnect().set(false);
                 $scope.queue = Queue.get($scope.user.player);
-                $scope.history = History.get($scope.user.player);
                 $scope.error = Error.get();
+                $scope.history = History.get($scope.user.player);
+                Chat.get($scope.user.player).$loaded().then(function(chat) {
+                    chat.$watch(function(event) {
+                        if (event.event === 'child_added') {
+                            Chat.getSingle($scope.user.player, event.key).$loaded().then(function(msg) {
+                                notify({
+                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + msg.message + '</p></span>'
+                                });
+                            });
+                        }
+                    });
+                });
+                Room.get($scope.user.player).$loaded().then(function(room) {
+                    room.$watch(function(event) {
+                        if (event.event === 'child_added' || event.event === 'child_changed') {
+                            Room.getSingle($scope.user.player, event.key).$loaded().then(function(msg) {    
+                                notify({
+                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + ' just joined the room!</h3></span>'
+                                });
+                            });
+                        }
+                    });
+                });
                 $scope.queue.$loaded().then(function(queue) {
                     $scope.player.isActive = true;
                     $scope.queue = queue;
                     play();
+                    queue.$watch(function(event) {
+                        console.log(event);
+                        if (event.event === 'child_added') {
+                            Queue.getSingle($scope.user.player, event.key).$loaded().then(function(track) {
+                                var msg = (track.user) ? track.user.name + ' just added a song' : 'The queue was empty!',
+                                    sub = (track.user) ? track.artists[0].name + ' - ' + track.song_title : 'So we picked a song for you.';
+                                notify({
+                                    messageTemplate: '<img ng-src="' + track.image.o + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg + '</h3><p>' + sub + '</p></span>'
+                                });
+                            });
+                        }
+                    });
                 });
+                
             });
         }
     };
@@ -135,12 +171,27 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, Auth, 
 
     function play() {
         if (angular.isDefined($scope.queue) || $scope.queue.length > 0) {
-            $('#currentlyPlaying').addClass('active');
-            $scope.playerEvent.target.loadVideoById($scope.queue[0].youtube[0]);
-            $scope.playerEvent.target.setPlaybackQuality('small');
-            $scope.loading = false;
-            activateBar();
-            $scope.player.firebase.nowPlaying = $scope.queue[0];//please finish
+            if ($scope.playerEvent) {
+                $('#currentlyPlaying').addClass('active');
+                $scope.playerEvent.target.loadVideoById($scope.queue[0].sources[0].source_data);
+                $scope.playerEvent.target.setPlaybackQuality('small');
+                $scope.loading = false;
+                activateBar();
+                $scope.player.firebase.nowPlaying = $scope.queue[0];
+                $scope.player.firebase.$save();
+                Vote.get($scope.user.player, $scope.queue[0].$id).$loaded().then(function(vote) {
+                    vote.$watch(function(event) {
+                        if (event.event === 'child_added' || event.event === 'child_changed') {
+                            Vote.getSingle($scope.user.player, $scope.queue[0].$id, event.key).$loaded().then(function(msg) {
+                                console.log(msg);
+                                notify({
+                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + ((msg.status) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
+                                });
+                            });
+                        }
+                    });
+                });
+            }
         } else {
             $scope.getTrack();
         }

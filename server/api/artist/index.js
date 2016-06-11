@@ -5,6 +5,7 @@ var controller = require('./artist.controller');
 
 var router = express.Router();
 
+router.get('/find/:id', controller.find);
 router.get('/id/:id', controller.id);
 router.get('/slug/:id', controller.slug);
 router.get('/bio/:slug', controller.bio);

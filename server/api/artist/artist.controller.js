@@ -3,6 +3,15 @@ var request = require('request');
 var _ = require('lodash');
 var SpotifyWebApi = require('spotify-web-api-node');
 
+export function find(req, res) {
+	request.get('http://imvdb.com/api/v1/video/' + req.params.id + '?include=sources,featured', function(error, response, body) {
+		console.log(body);
+		if (!error && response.statusCode === 200) {
+			res.json(JSON.parse(body));
+		}
+	});
+}
+
 export function id(req, res) {
 	request.get('http://imvdb.com/api/v1/entity/' + req.params.id + '?include=artist_videos,featured_videos', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
@@ -29,7 +38,7 @@ export function related(req, res) {
 		clientSecret: 'a051adb73187405a81a9d50206f1036e'
 	});
 	var slug = req.params.slug;
-	spotifyApi.searchArtists('"'+slug+'"').then(function(data) {
+	spotifyApi.searchArtists('"' + slug + '"').then(function(data) {
 		var items = data.body.artists.items;
 		spotifyApi.getArtistRelatedArtists(items[0].id).then(function(data) {
 			res.json(data.body.artists);

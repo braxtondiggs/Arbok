@@ -132,7 +132,7 @@ export function imvdb(req, res) {
 							$('table.imvdb-chart-table tr').each(function(i) {
 								var track = {
 									name: trim(($(this).find('.artist_line').next('p').text() || '')),
-									slug: trim(($(this).find('.artist_line').next('p').find('a').attr('href') || '')).substring(19),
+									slug: trim(($(this).find('.artist_line').next('p').find('a').attr('href') || '')).substring(20),
 									title: trim(($(this).find('.artist_line a').attr('title') || '')),
 									slugTitle: $(this).find('.artist_line a').attr('href').substring(parseInt($(this).find('.artist_line a').attr('href').lastIndexOf('/'), 10) + 1),
 									image: trim(($(this).find('img').attr('src') || ''))

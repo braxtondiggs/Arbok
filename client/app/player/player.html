@@ -35,11 +35,11 @@
         <div id="popups">
             <div id="currentlyPlaying">
                 <div class="album-cover">
-                    <img alt="" ng-src="{{queue[0].image.b}}" err-src="images/logo_missing.png" />
+                    <img alt="" ng-src="{{activeQueueFB.image.b}}" err-src="images/logo_missing.png" />
                 </div>
                 <div class="music-info">
-                    <h3>{{queue[0].artists[0].name}}</h3>
-                    <p>{{queue[0].song_title}}</p>
+                    <h3>{{activeQueueFB.artists[0].name}}</h3>
+                    <p>{{activeQueueFB.song_title}}</p>
                 </div>
             </div>
             <!--<div id="voteOff" class="animated" ng-class="(vote.status)?'bounceInUp':bounceOutUp" ng-show="vote.status">

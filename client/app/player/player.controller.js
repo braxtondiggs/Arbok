@@ -2,7 +2,7 @@
 /*jshint latedef: false*/
 /*global stepsForm*/
 
-var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToast, Auth, Idle, User, Player, History, Error, notify, Queue, Chat, Vote, Room) {
+var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToast, lodash, Auth, Idle, User, Player, History, Error, notify, Queue, Chat, Vote, Room) {
     $scope.detonate = null;
     $scope.auth = Auth;
     $scope.auth.$onAuth(function(authData) {
@@ -11,8 +11,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
             $scope.user = User.get(user.id).$loaded().then(function(data) {
                 $scope.user = data;
                 if (angular.isDefined($scope.user.player)) {
-                    //console.log('hello')
-                    //$scope.startPlayer($scope, Idle);
+                    init();
                 } else {
                     showSetup($mdDialog, $scope);
                 }
@@ -52,6 +51,12 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
         $scope.isIdle = true;
         $scope.$apply();
     });
+
+    function init() {
+        if (angular.isDefined($scope.user.player) && angular.isDefined($scope.playerEvent)) {
+            $scope.startPlayer();
+        }
+    }
     $scope.closeMenu = function() {
         $mdSidenav('left').close();
     };
@@ -84,9 +89,9 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                 Room.get($scope.user.player).$loaded().then(function(room) {
                     room.$watch(function(event) {
                         if (event.event === 'child_added' || event.event === 'child_changed') {
-                            Room.getSingle($scope.user.player, event.key).$loaded().then(function(msg) {    
+                            Room.getSingle($scope.user.player, event.key).$loaded().then(function(msg) {
                                 notify({
-                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + ' just joined the room!</h3></span>'
+                                    messageTemplate: '<img ng-src="' + msg.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.name + ' just joined the room!</h3></span>'
                                 });
                             });
                         }
@@ -97,7 +102,6 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                     $scope.queue = queue;
                     play();
                     queue.$watch(function(event) {
-                        console.log(event);
                         if (event.event === 'child_added') {
                             Queue.getSingle($scope.user.player, event.key).$loaded().then(function(track) {
                                 var msg = (track.user) ? track.user.name + ' just added a song' : 'The queue was empty!',
@@ -105,11 +109,12 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                                 notify({
                                     messageTemplate: '<img ng-src="' + track.image.o + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg + '</h3><p>' + sub + '</p></span>'
                                 });
+                                play();
                             });
                         }
                     });
                 });
-                
+
             });
         }
     };
@@ -122,17 +127,15 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
         }).then(function(response) {
             if (response.status === 200) {
                 detonate();
-                $scope.queue.$add(response.data).then(function(res) {
-                    console.log('added');
-                    console.log(res);
-                });
+                response.data.priority = 0;
+                $scope.queue.$add(response.data);
             }
         });
     };
 
     $scope.onReady = function(event) {
         $scope.playerEvent = event;
-        $scope.startPlayer();
+        init();
     };
     $scope.onStateChange = function(event) {
         if (event.data === YT.PlayerState.ENDED) {
@@ -148,19 +151,17 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
     };
     $scope.onError = function() {
         notify({
-            messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>',
-            classes: 'activity-modal'
+            messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>'
         });
-        $scope.error.$add($scope.queue[0]).then(function() {
-            $scope.queue.$remove($scope.queue[0]).then(function() {
+        /*$scope.error.$add($scope.activeQueueFB).then(function() {
+            $scope.queue.$remove($scope.activeQueueFB).then(function() {
                 play();
             });
-        });
+        });*/
     };
     $scope.onApiLoadingFailure = function() {
         notify({
-            messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems like  you have been disconnected from the internet</p></span>',
-            classes: 'activity-modal'
+            messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems like  you have been disconnected from the internet</p></span>'
         });
     };
     $(window).resize(function() {
@@ -170,19 +171,23 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
     });
 
     function play() {
-        if (angular.isDefined($scope.queue) || $scope.queue.length > 0) {
+        if (angular.isDefined($scope.queue) && $scope.queue.length > 0) {
             if ($scope.playerEvent) {
                 $('#currentlyPlaying').addClass('active');
-                $scope.playerEvent.target.loadVideoById($scope.queue[0].sources[0].source_data);
+                $scope.activeQueue  = lodash.orderBy($scope.queue, ['active', 'priority'], ['asc', 'desc']);
+                $scope.activeQueueFB = $scope.queue[$scope.queue.$indexFor($scope.activeQueue[0].$id)];
+                $scope.playerEvent.target.loadVideoById($scope.activeQueueFB.sources[0].source_data);
                 $scope.playerEvent.target.setPlaybackQuality('small');
                 $scope.loading = false;
                 activateBar();
-                $scope.player.firebase.nowPlaying = $scope.queue[0];
+                $scope.player.firebase.nowPlaying = $scope.activeQueueFB;
                 $scope.player.firebase.$save();
-                Vote.get($scope.user.player, $scope.queue[0].$id).$loaded().then(function(vote) {
+                $scope.activeQueueFB.active = true;
+                $scope.queue.$save($scope.activeQueueFB);
+                Vote.get($scope.user.player, $scope.activeQueueFB.$id).$loaded().then(function(vote) {
                     vote.$watch(function(event) {
                         if (event.event === 'child_added' || event.event === 'child_changed') {
-                            Vote.getSingle($scope.user.player, $scope.queue[0].$id, event.key).$loaded().then(function(msg) {
+                            Vote.getSingle($scope.user.player, $scope.activeQueueFB.$id, event.key).$loaded().then(function(msg) {
                                 console.log(msg);
                                 notify({
                                     messageTemplate: '<img ng-src="' + msg.user.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + ((msg.status) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
@@ -200,8 +205,8 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
     function songEnded() {
         detonate();
         $scope.loading = true;
-        $scope.history.$add($scope.queue[0]).then(function() {
-            $scope.queue.$remove($scope.queue[0]).then(function() {
+        $scope.history.$add($scope.activeQueueFB).then(function() {
+            $scope.queue.$remove($scope.activeQueueFB).then(function() {
                 play();
             })
         });

@@ -17,8 +17,10 @@ export function index(req, res) {
 			youtubeFunc
 		], function(err, results) {
 			if (err) {
-				console.log('error');
-				return;
+				getFeatured(function() {
+
+				});
+				return err;
 			}
 			res.json(results);
 		});
@@ -28,42 +30,35 @@ export function index(req, res) {
 
 	function fireBaseFunc(callback) {
 		var db = firebase.database();
-		var ref = db.ref('Player/' + req.body.params.pid);
+		var ref = db.ref('Player/' + req.body.params.pid + '/queue');
 		ref.once('value', function(snapshot) {
-			if (!_.isEmpty(snapshot.val())) {
-				console.log('passed');
-				callback(null);
+			if (_.isNull(snapshot.val()) || _.isEmpty(snapshot.val())) {
+				callback();
 			}
 		}, function() {
-			return callback();
+			return callback({ err: 100 });
 		});
 	}
 
 	function echoNestFunc(callback) {
-		/*var last = req.body.params.last || 'Drake';
-		Echonest.get('artist/profile', {
-			name: last
-		}, function(err, res) {
-			Echonest.get('artist/similar', {
-				results: 2,
-				id: res.response.artist.id
-			}, function(err, data) {
-				callback(null, data.response.artists)
+		var spotifyApi = new SpotifyWebApi({
+			clientId: '8d3caf1621064039aa632d113dad7365',
+			clientSecret: 'a051adb73187405a81a9d50206f1036e'
+		});
+		var last = req.body.params.last || 'Drake';
+		spotifyApi.searchArtists(last).then(function(data) {
+			spotifyApi.getArtistRelatedArtists(data.body.artists.items[0].id).then(function(data) {
+				callback(null, data.body.artists);
+			}, function(err) {
+				callback(err);
 			});
-		});*/
-	var spotifyApi = new SpotifyWebApi({
-		clientId: '8d3caf1621064039aa632d113dad7365',
-		clientSecret: 'a051adb73187405a81a9d50206f1036e'
-	});
-	console.log(req.params.slug);
-	spotifyApi.searchArtists(req.params.slug).then(function(data) {
-		console.log(data.items);
-	}, function(err) {
-		console.log(err);
-	});
+		}, function(err) {
+			callback(err);
+		});
 	}
 
 	function imvdbFunc(arg1, callback) {
+		var matches = [];
 		async.eachSeries(arg1, function(similar, series) {
 			var rand = Math.floor(Math.random() * arg1.length);
 			request.get('http://imvdb.com/api/v1/search/videos?q=' + encodeURI(arg1[rand].name), function(error, response, body) {
@@ -73,32 +68,34 @@ export function index(req, res) {
 						var rand2 = Math.floor(Math.random() * data.results.length);
 						for (var i = 0; i < data.results.length; i++) {
 							if (data.results[rand2].artists[0].name.toLowerCase() === arg1[rand].name.toLowerCase()) {
-								callback(null, data.results[rand2]);
+								matches.push(data.results[rand2]);
 								break;
 							}
 						}
+					} else {
+						callback({ err: 102 });
 					}
+				} else {
+					callback({ err: 101 });
 				}
 				series();
 			});
 		}, function(err) {
-			callback(err);
+			if (err) {
+				callback(err);
+			} else {
+				callback(null, matches[0]);
+			}
 		});
 	}
 
 	function youtubeFunc(arg1, callback) {
 		request.get('http://imvdb.com/api/v1/video/' + String(arg1.id) + '?include=sources,featured', function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				var data = JSON.parse(body),
-					youtube = [];
-				for (var key in data.sources) {
-					if (data.sources[key].source === 'youtube') {
-						youtube.push(data.sources[key].source_data);
-					}
-				}
-				arg1.youtube = youtube;
-				arg1.featured = data.featured;
-				callback(null, arg1);
+				var data = JSON.parse(body);
+				callback(null, data);
+			} else {
+				callback({ err: 103 });
 			}
 		});
 	}
@@ -106,6 +103,50 @@ export function index(req, res) {
 	function errorHandler(err) {
 		res.status(500);
 		res.render('error', { error: err });
+	}
+
+	function getFeatured() {
+		var last = req.body.params.last || 'Drake';
+		async.waterfall([
+			function(callback) {
+				request.get('http://imvdb.com/api/v1/search/entities?q=' + last, function(error, response, body) { //please finish
+					if (!error && response.statusCode === 200) {
+						var data = JSON.parse(body);
+						if (data.results.length) {
+							for (var i = 0; i < data.results.length; i++) {
+								if (data.results[i].slug === last) {//$scope.last_track.get('IMVDBartistId')) {
+									callback(null, data.results[i].id);
+									break;
+								}
+							}
+							callback();
+						}
+					}
+				});
+			},
+			function(arg1, callback) {
+				request.get('http://imvdb.com/api/v1/entity/' + arg1 + '?include=featured_videos', function(error, response, body) {
+					if (!error && response.statusCode === 200) {
+						var data = JSON.parse(body);
+						if (data.featured_artist_videos) {
+							if (data.featured_artist_videos.videos) {
+								callback(null, Math.floor(Math.random() * data.featured_artist_videos.videos.length))
+							} else {
+								callback();
+							}
+						}
+					}
+				});
+			}
+		], function(err, result) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			console.log('getFeatured');
+			console.log(result);
+			return(result);
+		});
 	}
 
 }

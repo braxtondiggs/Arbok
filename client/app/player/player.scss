@@ -8,7 +8,24 @@ md-dialog {
         margin: 0;
     }
 }
-
+#video-container {
+    margin-top: -64px;
+}
+#voteOff {
+    position: absolute;
+    width: 100%;
+    background-color: black;
+    color: white;
+    left: 0;
+    right: 0;
+    opacity: .7;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 20px;
+    transition: 1s;
+    display: block;
+    top: 40%;
+}
 #bgvid {
     position: fixed;
     bottom: 0;

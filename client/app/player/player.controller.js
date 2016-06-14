@@ -2,8 +2,9 @@
 /*jshint latedef: false*/
 /*global stepsForm*/
 
-var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToast, lodash, Auth, Idle, User, Player, History, Error, notify, Queue, Chat, Vote, Room) {
+var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToast, $interval, lodash, Auth, Idle, User, Player, History, Error, notify, Queue, Chat, Vote, Room) {
     $scope.detonate = null;
+    $scope.numRoom = 0;
     $scope.auth = Auth;
     $scope.auth.$onAuth(function(authData) {
         if (authData) {
@@ -28,7 +29,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
         width: $(window).width(),
         height: $(window).height(),
         vars: {
-            controls: 1,
+            controls: 0,
             disablekb: 0,
             showinfo: 0,
             rel: 0,
@@ -53,7 +54,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
     });
 
     function init() {
-        if (angular.isDefined($scope.user.player) && angular.isDefined($scope.playerEvent)) {
+        if (angular.isDefined($scope.user) && angular.isDefined($scope.user.player) && angular.isDefined($scope.playerEvent)) {
             $scope.startPlayer();
         }
     }
@@ -73,6 +74,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                 Player.ref($scope.user.player).child('active').set(true);
                 Player.ref($scope.user.player).child('active').onDisconnect().set(false);
                 $scope.queue = Queue.get($scope.user.player);
+                $scope.room = Room.get($scope.user.player);
                 $scope.error = Error.get();
                 $scope.history = History.get($scope.user.player);
                 Chat.get($scope.user.player).$loaded().then(function(chat) {
@@ -80,18 +82,18 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                         if (event.event === 'child_added') {
                             Chat.getSingle($scope.user.player, event.key).$loaded().then(function(msg) {
                                 notify({
-                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + msg.message + '</p></span>'
+                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="assets/images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + msg.message + '</p></span>'
                                 });
                             });
                         }
                     });
                 });
-                Room.get($scope.user.player).$loaded().then(function(room) {
+                $scope.room.$loaded().then(function(room) {
                     room.$watch(function(event) {
                         if (event.event === 'child_added' || event.event === 'child_changed') {
                             Room.getSingle($scope.user.player, event.key).$loaded().then(function(msg) {
                                 notify({
-                                    messageTemplate: '<img ng-src="' + msg.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.name + ' just joined the room!</h3></span>'
+                                    messageTemplate: '<img ng-src="' + msg.image + '" src="assets/images/logo_missing.png"><span class="content"><h3 class="header">' + msg.name + '</h3><p>just joined the room!</p></span>'
                                 });
                             });
                         }
@@ -107,13 +109,20 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                                 var msg = (track.user) ? track.user.name + ' just added a song' : 'The queue was empty!',
                                     sub = (track.user) ? track.artists[0].name + ' - ' + track.song_title : 'So we picked a song for you.';
                                 notify({
-                                    messageTemplate: '<img ng-src="' + track.image.o + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg + '</h3><p>' + sub + '</p></span>'
+                                    messageTemplate: '<img ng-src="' + track.image.o + '" src="assets/images/logo_missing.png"><span class="content"><h3 class="header">' + msg + '</h3><p>' + sub + '</p></span>'
                                 });
-                                play();
+                                if ($scope.queue.length === 0) {
+                                    play();
+                                }
                             });
                         }
                     });
                 });
+                $interval(function() {
+                    notify({
+                        messageTemplate: '<img src="assets/images/logo_missing.png"><span class="content"><h3 class="header">Join in on the conversation!</h3><p>Visit http://app.alma.life for more info</p></span>'
+                    });
+                }, 600000);//10mins
 
             });
         }
@@ -141,6 +150,9 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
         if (event.data === YT.PlayerState.ENDED) {
             songEnded();
         } else if (event.data === YT.PlayerState.PLAYING) {
+            $scope.loading = false;
+            $('#currentlyPlaying').addClass('active');
+            activateBar();
             if ($scope.detonate !== null) {
                 $timeout.cancel($scope.detonate);
                 $scope.detonate = null;
@@ -150,19 +162,28 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
 
     };
     $scope.onError = function() {
-        notify({
-            messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>'
-        });
-        /*$scope.error.$add($scope.activeQueueFB).then(function() {
-            $scope.queue.$remove($scope.activeQueueFB).then(function() {
-                play();
+        $scope.loading = true;
+        var src = lodash.filter($scope.activeQueueFB.sources, ['source', 'youtube']);
+        if (src.length > 0) {
+            delete $scope.activeQueueFB.sources[0];
+            play();
+        }else {
+            notify({
+                messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>'
             });
-        });*/
+            $scope.error.$add($scope.activeQueueFB).then(function() {
+                $scope.queue.$remove($scope.activeQueueFB).then(function() {
+                    play();
+                });
+            });
+        }
+        
     };
     $scope.onApiLoadingFailure = function() {
         notify({
             messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems like  you have been disconnected from the internet</p></span>'
         });
+        $scope.onError();
     };
     $(window).resize(function() {
         $scope.player.width = $(window).width();
@@ -173,13 +194,11 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
     function play() {
         if (angular.isDefined($scope.queue) && $scope.queue.length > 0) {
             if ($scope.playerEvent) {
-                $('#currentlyPlaying').addClass('active');
                 $scope.activeQueue  = lodash.orderBy($scope.queue, ['active', 'priority'], ['asc', 'desc']);
                 $scope.activeQueueFB = $scope.queue[$scope.queue.$indexFor($scope.activeQueue[0].$id)];
-                $scope.playerEvent.target.loadVideoById($scope.activeQueueFB.sources[0].source_data);
-                $scope.playerEvent.target.setPlaybackQuality('small');
-                $scope.loading = false;
-                activateBar();
+                var src = lodash.filter($scope.activeQueueFB.sources, ['source', 'youtube']);
+                $scope.playerEvent.target.loadVideoById(src[0].source_data);
+                $scope.playerEvent.target.setPlaybackQuality('medium');
                 $scope.player.firebase.nowPlaying = $scope.activeQueueFB;
                 $scope.player.firebase.$save();
                 $scope.activeQueueFB.active = true;
@@ -188,10 +207,13 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                     vote.$watch(function(event) {
                         if (event.event === 'child_added' || event.event === 'child_changed') {
                             Vote.getSingle($scope.user.player, $scope.activeQueueFB.$id, event.key).$loaded().then(function(msg) {
-                                console.log(msg);
                                 notify({
-                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + ((msg.status) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
+                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="assets/images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + ((msg.status) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
                                 });
+                                var activeUsers = $scope.room.length;
+                                if (vote.length / activeUsers > 0.5) {
+                                    activateSongChange();
+                                }
                             });
                         }
                     });
@@ -201,14 +223,34 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
             $scope.getTrack();
         }
     }
-
+    function activateSongChange() {
+        $scope.counter = 10;
+        $scope.skip = true;
+        var counter = $interval(function() {
+            $scope.counter--;
+            if ($scope.counter === 0) {
+                $interval.cancel(counter);
+                $timeout(function() {
+                    $scope.skip = false;
+                    songEnded();
+                }, 1000);
+            }
+        }, 1000, 10);
+    }
     function songEnded() {
         detonate();
         $scope.loading = true;
+        if ($scope.history.length > 10) {
+            lodash.forEachRight($scope.history, function(history, key) {
+                if (key > 10) {
+                    $scope.history.$remove($scope.history[key]);
+                }
+            });
+        }
         $scope.history.$add($scope.activeQueueFB).then(function() {
             $scope.queue.$remove($scope.activeQueueFB).then(function() {
                 play();
-            })
+            });
         });
     }
 
@@ -227,7 +269,8 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
         }, 60000);
     }
 };
-var SetupCtrl = function($scope, $timeout, $http, $mdDialog, Error, Player, User, Idle) {
+PlayerCtrl.$inject = ['$scope', '$mdDialog', '$timeout', '$mdSidenav', '$http', '$mdToast', '$interval', 'lodash', 'Auth', 'Idle', 'User', 'Player', 'History', 'Error', 'notify', 'Queue', 'Chat', 'Vote', 'Room'];
+var SetupCtrl = function($scope, $timeout, $http, $mdDialog, Error, Player, User) {
     $scope.intro = true;
     $scope.playerForm = {};
     $timeout(function() {
@@ -256,7 +299,7 @@ var SetupCtrl = function($scope, $timeout, $http, $mdDialog, Error, Player, User
                                 geoFire.set(player.key(), [parseFloat(response.data[0].lat), parseFloat(response.data[0].lon)]);
                                 $scope.user.$save().then(function() {
                                     $mdDialog.hide();
-                                    $scope.startPlayer($scope, Idle);
+                                    $scope.startPlayer();
                                 });
                             }).catch(function(err) {
                                 Error.system('Something went very wrong, please try to refresh the page!');
@@ -271,6 +314,7 @@ var SetupCtrl = function($scope, $timeout, $http, $mdDialog, Error, Player, User
         $scope.intro = false;
     };
 };
+SetupCtrl.$inject = ['$scope', '$timeout', '$http', '$mdDialog', 'Error', 'Player', 'User'];
 var AuthCtrl = function($scope, $mdDialog, $timeout, Auth, User, Error) {
     $scope.hide = function(modal) {
         $mdDialog.hide();
@@ -349,7 +393,7 @@ var AuthCtrl = function($scope, $mdDialog, $timeout, Auth, User, Error) {
         }
     };
 };
-
+AuthCtrl.$inject = ['$scope', '$mdDialog', '$timeout', 'Auth', 'User', 'Error'];
 function showSetup(mdDialog, $scope) {
     mdDialog.show({
         templateUrl: 'components/modals/player.tmpl.html',

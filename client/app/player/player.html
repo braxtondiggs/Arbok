@@ -42,9 +42,9 @@
                     <p>{{activeQueueFB.song_title}}</p>
                 </div>
             </div>
-            <!--<div id="voteOff" class="animated" ng-class="(vote.status)?'bounceInUp':bounceOutUp" ng-show="vote.status">
-                I guess nobody liked this song! Song Changing in <span class="countdown">{{vote.counter}}</span>
-            </div>-->
+            <div id="voteOff" class="animated" ng-class="(skip)?'bounceInUp':bounceOutUp" ng-show="skip">
+                I guess nobody liked this song! Song Changing in <span class="countdown">{{counter}}</span>
+            </div>
         </div>
     </div>
 </div>

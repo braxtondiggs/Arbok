@@ -137,7 +137,9 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
             if (response.status === 200) {
                 detonate();
                 response.data.priority = 0;
-                $scope.queue.$add(response.data);
+                $scope.queue.$add(response.data).then(function() {
+                    play();
+                });
             }
         });
     };
@@ -197,27 +199,32 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                 $scope.activeQueue  = lodash.orderBy($scope.queue, ['active', 'priority'], ['asc', 'desc']);
                 $scope.activeQueueFB = $scope.queue[$scope.queue.$indexFor($scope.activeQueue[0].$id)];
                 var src = lodash.filter($scope.activeQueueFB.sources, ['source', 'youtube']);
-                $scope.playerEvent.target.loadVideoById(src[0].source_data);
-                $scope.playerEvent.target.setPlaybackQuality('medium');
-                $scope.player.firebase.nowPlaying = $scope.activeQueueFB;
-                $scope.player.firebase.$save();
-                $scope.activeQueueFB.active = true;
-                $scope.queue.$save($scope.activeQueueFB);
-                Vote.get($scope.user.player, $scope.activeQueueFB.$id).$loaded().then(function(vote) {
-                    vote.$watch(function(event) {
-                        if (event.event === 'child_added' || event.event === 'child_changed') {
-                            Vote.getSingle($scope.user.player, $scope.activeQueueFB.$id, event.key).$loaded().then(function(msg) {
-                                notify({
-                                    messageTemplate: '<img ng-src="' + msg.user.image + '" src="assets/images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + ((msg.status) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
+                if (src.length > 0) {
+                    $scope.playerEvent.target.loadVideoById(src[0].source_data);
+                    $scope.playerEvent.target.setPlaybackQuality('medium');
+                    $scope.player.firebase.nowPlaying = $scope.activeQueueFB;
+                    $scope.player.firebase.$save();
+                    $scope.activeQueueFB.active = true;
+                    $scope.queue.$save($scope.activeQueueFB);
+                    Vote.get($scope.user.player, $scope.activeQueueFB.$id).$loaded().then(function(vote) {
+                        vote.$watch(function(event) {
+                            if (event.event === 'child_added' || event.event === 'child_changed') {
+                                Vote.getSingle($scope.user.player, $scope.activeQueueFB.$id, event.key).$loaded().then(function(msg) {
+                                    notify({
+                                        messageTemplate: '<img ng-src="' + msg.user.image + '" src="assets/images/logo_missing.png"><span class="content"><h3 class="header">' + msg.user.name + '</h3><p>' + ((msg.status) ? 'Liked' : 'Disliked') + ' this song!</p></span>',
+                                    });
+                                    var activeUsers = $scope.room.length;
+                                    var negs = lodash.filter(vote, ['status', false]);
+                                    if (negs.length / activeUsers > 0.5) {
+                                        activateSongChange();
+                                    }
                                 });
-                                var activeUsers = $scope.room.length;
-                                if (vote.length / activeUsers > 0.5) {
-                                    activateSongChange();
-                                }
-                            });
-                        }
+                            }
+                        });
                     });
-                });
+                } else {
+                    $scope.onError();
+                }
             }
         } else {
             $scope.getTrack();

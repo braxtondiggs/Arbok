@@ -6,6 +6,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
     $scope.detonate = null;
     $scope.numRoom = 0;
     $scope.auth = Auth;
+    $scope.last = 'Drake';
     $scope.auth.$onAuth(function(authData) {
         if (authData) {
             var user = (authData.provider === 'facebook') ? authData.facebook : authData.password;
@@ -122,7 +123,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                     notify({
                         messageTemplate: '<img src="assets/images/logo_missing.png"><span class="content"><h3 class="header">Join in on the conversation!</h3><p>Visit http://app.alma.life for more info</p></span>'
                     });
-                }, 600000);//10mins
+                }, 600000); //10mins
 
             });
         }
@@ -131,7 +132,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
         $http.post('/api/tracks', {
             params: {
                 pid: $scope.user.player,
-                last: 'Drake' //replace
+                last: $scope.last
             }
         }).then(function(response) {
             if (response.status === 200) {
@@ -169,7 +170,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
         if (src.length > 0) {
             delete $scope.activeQueueFB.sources[0];
             play();
-        }else {
+        } else {
             notify({
                 messageTemplate: '<span class="content"><h3 class="header">The was a small hiccup</h3><p>It seems we couldn\'t play this video</p></span>'
             });
@@ -179,7 +180,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                 });
             });
         }
-        
+
     };
     $scope.onApiLoadingFailure = function() {
         notify({
@@ -196,16 +197,16 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
     function play() {
         if (angular.isDefined($scope.queue) && $scope.queue.length > 0) {
             if ($scope.playerEvent) {
-                $scope.activeQueue  = lodash.orderBy($scope.queue, ['active', 'priority'], ['asc', 'desc']);
+                $scope.activeQueue = lodash.orderBy($scope.queue, ['active', 'priority'], ['asc', 'desc']);
                 $scope.activeQueueFB = $scope.queue[$scope.queue.$indexFor($scope.activeQueue[0].$id)];
                 var src = lodash.filter($scope.activeQueueFB.sources, ['source', 'youtube']);
                 if (src.length > 0) {
                     $scope.playerEvent.target.loadVideoById(src[0].source_data);
-                    $scope.playerEvent.target.setPlaybackQuality('medium');
                     $scope.player.firebase.nowPlaying = $scope.activeQueueFB;
                     $scope.player.firebase.$save();
                     $scope.activeQueueFB.active = true;
                     $scope.queue.$save($scope.activeQueueFB);
+                    $scope.last = $scope.activeQueueFB.artists[0].name;
                     Vote.get($scope.user.player, $scope.activeQueueFB.$id).$loaded().then(function(vote) {
                         vote.$watch(function(event) {
                             if (event.event === 'child_added' || event.event === 'child_changed') {
@@ -215,8 +216,10 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                                     });
                                     var activeUsers = $scope.room.length;
                                     var negs = lodash.filter(vote, ['status', false]);
-                                    if (negs.length / activeUsers > 0.5) {
-                                        activateSongChange();
+                                    if (negs.length > 0) {
+                                        if (negs.length / activeUsers > 0.5) {
+                                            activateSongChange();
+                                        }
                                     }
                                 });
                             }
@@ -230,6 +233,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
             $scope.getTrack();
         }
     }
+
     function activateSongChange() {
         $scope.counter = 10;
         $scope.skip = true;
@@ -244,6 +248,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
             }
         }, 1000, 10);
     }
+
     function songEnded() {
         detonate();
         $scope.loading = true;
@@ -401,6 +406,7 @@ var AuthCtrl = function($scope, $mdDialog, $timeout, Auth, User, Error) {
     };
 };
 AuthCtrl.$inject = ['$scope', '$mdDialog', '$timeout', 'Auth', 'User', 'Error'];
+
 function showSetup(mdDialog, $scope) {
     mdDialog.show({
         templateUrl: 'components/modals/player.tmpl.html',

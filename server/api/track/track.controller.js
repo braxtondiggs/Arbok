@@ -11,15 +11,16 @@ var _ = require('lodash');
 export function index(req, res) {
 	if (req.body.params.pid) {
 		async.waterfall([
-			fireBaseFunc,
-			echoNestFunc,
+			spotifyFunc,
 			imvdbFunc,
 			youtubeFunc
 		], function(err, results) {
 			if (err) {
-				getFeatured(function() {
-
-				});
+				if (req.body.params.lastId) {
+					getFeatured();
+				} else {
+					getTop();
+				}
 				return err;
 			}
 			res.json(results);
@@ -28,19 +29,7 @@ export function index(req, res) {
 		errorHandler({ id: 101, msg: 'Key Missing' });
 	}
 
-	function fireBaseFunc(callback) {
-		var db = firebase.database();
-		var ref = db.ref('Player/' + req.body.params.pid + '/queue');
-		ref.once('value', function(snapshot) {
-			if (_.isNull(snapshot.val()) || _.isEmpty(snapshot.val())) {
-				callback();
-			}
-		}, function() {
-			return callback({ err: 100 });
-		});
-	}
-
-	function echoNestFunc(callback) {
+	function spotifyFunc(callback) {
 		var spotifyApi = new SpotifyWebApi({
 			clientId: '8d3caf1621064039aa632d113dad7365',
 			clientSecret: 'a051adb73187405a81a9d50206f1036e'
@@ -58,33 +47,34 @@ export function index(req, res) {
 	}
 
 	function imvdbFunc(arg1, callback) {
-		var matches = [];
+		var matches;
 		async.eachSeries(arg1, function(similar, series) {
 			var rand = Math.floor(Math.random() * arg1.length);
-			request.get('http://imvdb.com/api/v1/search/videos?q=' + encodeURI(arg1[rand].name), function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					var data = JSON.parse(body);
-					if (data.total_results !== 0) {
-						var rand2 = Math.floor(Math.random() * data.results.length);
-						for (var i = 0; i < data.results.length; i++) {
-							if (data.results[rand2].artists[0].name.toLowerCase() === arg1[rand].name.toLowerCase()) {
-								matches.push(data.results[rand2]);
+			if (_.isUndefined(matches)) {
+				request.get('http://imvdb.com/api/v1/search/videos?q=' + encodeURI(arg1[rand].slug), function(error, response, body) {
+					if (!error && response.statusCode === 200) {
+						var data = JSON.parse(body);
+						if (data.total_results !== 0) {
+							var filterdObj = _.filter(data.results, function(o) {
+									return o.artists[0].slug === arg1[rand].slug
+								}),
+								filteredRand = Math.floor(Math.random() * filterdObj.length);
+							for (var i = 0; i < filterdObj.length; i++) {
+								matches = data.results[filteredRand];
 								break;
 							}
 						}
-					} else {
-						callback({ err: 102 });
 					}
-				} else {
-					callback({ err: 101 });
-				}
+					series();
+				});
+			} else {
 				series();
-			});
+			}
 		}, function(err) {
-			if (err) {
+			if (err || _.isUndefined(matches)) {
 				callback(err);
 			} else {
-				callback(null, matches[0]);
+				callback(null, matches);
 			}
 		});
 	}
@@ -106,46 +96,53 @@ export function index(req, res) {
 	}
 
 	function getFeatured() {
-		var last = req.body.params.last || 'Drake';
 		async.waterfall([
-			function(callback) {
-				request.get('http://imvdb.com/api/v1/search/entities?q=' + last, function(error, response, body) { //please finish
-					if (!error && response.statusCode === 200) {
-						var data = JSON.parse(body);
-						if (data.results.length) {
-							for (var i = 0; i < data.results.length; i++) {
-								if (data.results[i].slug === last) {//$scope.last_track.get('IMVDBartistId')) {
-									callback(null, data.results[i].id);
-									break;
-								}
-							}
-							callback();
-						}
-					}
-				});
-			},
+			async.apply(youtubeFunc, { id: req.body.params.lastId }),
 			function(arg1, callback) {
-				request.get('http://imvdb.com/api/v1/entity/' + arg1 + '?include=featured_videos', function(error, response, body) {
-					if (!error && response.statusCode === 200) {
-						var data = JSON.parse(body);
-						if (data.featured_artist_videos) {
-							if (data.featured_artist_videos.videos) {
-								callback(null, Math.floor(Math.random() * data.featured_artist_videos.videos.length))
-							} else {
-								callback();
-							}
-						}
-					}
-				});
-			}
+				if (!_.isEmpty(arg1.featured_artists)) {
+					callback(null, arg1.featured_artists)
+				} else {
+					callback();
+				}
+			},
+			imvdbFunc,
+			youtubeFunc
 		], function(err, result) {
 			if (err) {
-				console.log(err);
-				return;
+				return err;
 			}
-			console.log('getFeatured');
-			console.log(result);
-			return(result);
+			res.json(result);
+		});
+	}
+
+	function getTop() {
+		var db = firebase.database(),
+			ref = db.ref('Discover/fresh/tracks');
+		ref.once('value').then(function(snapshot) {
+			var i = 0,
+				rand = Math.floor(Math.random() * snapshot.numChildren());
+			snapshot.forEach(function(snapshot) {
+				if (i === rand) {
+					async.waterfall([
+						function(callback) {
+							request.get('http://imvdb.com/api/v1/search/videos?q=' + snapshot.val().slug + ' ' + snapshot.val().slugTitle, function(error, response, body) {
+								if (!error && response.statusCode === 200) {
+									callback(null, JSON.parse(body).results[0]);
+								} else {
+									callback();
+								}
+							});
+						},
+						youtubeFunc
+					], function(err, result) {
+						if (err) {
+							return err;
+						}
+						res.json(result);
+					});
+				}
+				i++;
+			});
 		});
 	}
 

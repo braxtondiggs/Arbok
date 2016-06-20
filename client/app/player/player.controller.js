@@ -132,7 +132,8 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
         $http.post('/api/tracks', {
             params: {
                 pid: $scope.user.player,
-                last: $scope.last
+                last: $scope.last,
+                lastId: $scope.lastId
             }
         }).then(function(response) {
             if (response.status === 200) {
@@ -207,6 +208,7 @@ var PlayerCtrl = function($scope, $mdDialog, $timeout, $mdSidenav, $http, $mdToa
                     $scope.activeQueueFB.active = true;
                     $scope.queue.$save($scope.activeQueueFB);
                     $scope.last = $scope.activeQueueFB.artists[0].name;
+                    $scope.lastId = $scope.activeQueueFB.id;
                     Vote.get($scope.user.player, $scope.activeQueueFB.$id).$loaded().then(function(vote) {
                         vote.$watch(function(event) {
                             if (event.event === 'child_added' || event.event === 'child_changed') {

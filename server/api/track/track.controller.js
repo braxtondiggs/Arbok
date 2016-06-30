@@ -51,12 +51,13 @@ export function index(req, res) {
 		async.eachSeries(arg1, function(similar, series) {
 			var rand = Math.floor(Math.random() * arg1.length);
 			if (_.isUndefined(matches)) {
-				request.get('http://imvdb.com/api/v1/search/videos?q=' + encodeURI(arg1[rand].slug), function(error, response, body) {
+				var slug = _.isUndefined(arg1[rand].slug)?arg1[rand].name:arg1[rand].slug;
+				request.get('http://imvdb.com/api/v1/search/videos?q=' + encodeURI(slug), function(error, response, body) {
 					if (!error && response.statusCode === 200) {
 						var data = JSON.parse(body);
 						if (data.total_results !== 0) {
 							var filterdObj = _.filter(data.results, function(o) {
-									return o.artists[0].slug === arg1[rand].slug
+									return o.artists[0].name === slug
 								}),
 								filteredRand = Math.floor(Math.random() * filterdObj.length);
 							for (var i = 0; i < filterdObj.length; i++) {

@@ -1,6 +1,6 @@
-# Arbok ![Arbok](http://sprites.pokecheck.org/i/024.gif)
+# Arbok ![Arbok](icon.png)
 
-With the Alma app you can watch music videos, search for music based on your unique taste, and discover new emerging artists on your iOS/Android device for free. Access a vast catalogue of new undiscovered artists from around the world in a beautiful video app.
+With the Alma app you can watch music videos, search for music based on your unique taste, and discover new emerging artists on your iOS/Android device for free. Access a vast catalog of new undiscovered artists from around the world in a beautiful video app.
 
 This project was generated with the [Angular Full-Stack Generator](https://github.com/DaftMonk/generator-angular-fullstack) version 3.7.3.
 
